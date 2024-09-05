@@ -1,0 +1,40 @@
+process help=*
+PARM PAN TYPE=STRING
+PARM INP TYPE=STRING COUNT=(2:20)
+PARM OUT TYPE=STRING COUNT=(2:20)
+
+END-PROC
+.TITLE
+brovey - apply Brovey Transform to pan sharpen msi
+.HELP
+PURPOSE:
+
+The input is a pan image plus n multi-spectral images, all of the same
+nl, ns. It is assumed that the 2-20 msi images have been scaled up to
+the pan resolution. There are n output images, i.e. the pan-sharpened
+msi.
+
+The Brovey transform is:
+
+bandN = pan * bandN / (band1 + band2 + band3 + ... + bandM)
+
+EXECUTION:
+
+Example
+
+brovey PAN inp=(B1,B2,B3,B4,B5) out=(S1,S2,S3,S4,S5)
+                               
+ ORIGINAL PROGRAMMER:    W. Bunch Tue Aug  3 2010
+ COGNIZANT PROGRAMMER:   W. Bunch Tue Aug  3 2010
+ 
+ REVISION HISTORY
+  Tue Aug  3 2010 WB   Initial version
+  
+.LEVEL1
+.VARIABLE PAN
+STRING - Input PAN image file
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output sharpened images
+.END

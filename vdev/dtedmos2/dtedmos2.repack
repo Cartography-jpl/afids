@@ -1,0 +1,4 @@
+$ vpack dtedmos2.com -mixed -
+	-p dtedmos2.pdf dtedquad.pdf -
+	-t tstdtedmos2.pdf
+$ Exit

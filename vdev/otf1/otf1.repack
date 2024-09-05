@@ -1,0 +1,6 @@
+$ vpack otf1.com -mixed -
+	-s otf1.f -
+	-i otf1.imake -
+	-p otf1.pdf -
+	-t tstotf1.pdf tstotf1.log
+$ Exit

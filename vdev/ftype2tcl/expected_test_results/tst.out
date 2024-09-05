@@ -1,0 +1,106 @@
+tstftype2tcl
+ush rm -f xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+let $echo="no"
+ 
+**** For non existing file, val = 0, ftype = 0, fsubtype = 0
+Should be                   val = 0, ftype = 0, fsubtype = 0
+UNIQUE: fsize = 0
+ftype2tcl inp=/mbox val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+let $echo="no"
+ 
+**** For protected file (/mbox), val = 0, ftype = 0, fsubtype = 0
+Should be                        val = 0, ftype = 0, fsubtype = 0
+UNIQUE: fsize = 0
+ush rm -f xfoo.bar
+ush touch xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.bar
+let $echo="no"
+ 
+**** For empty file, val = 1, ftype = -2, fsubtype = 0
+Should be            val = 1, ftype = -2, fsubtype = 0
+UNIQUE: fsize = 0
+ush rm -f xfoo.bar
+ush ls > xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.bar
+let $echo="no"
+ 
+**** For unknown file, val = 1, ftype = -1, fsubtype = 0
+Should be              val = 1, ftype = -1, fsubtype = 0
+UNIQUE: fsize = 195
+gen xfoo.img nl=1 ns=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+ftype2tcl inp=xfoo.img val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.img
+let $echo="no"
+ 
+**** For vanilla VICAR file, val = 1, ftype = 1, fsubtype = 5
+Should be                    val = 1, ftype = 1, fsubtype = 5
+UNIQUE: fsize = 477
+gtgen out=xfoo.img 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)",  +
+          "ModelTiePointTag=(202,103,0,351807.4,5316081.3,0.0)",  +
+          "ModelTiePointTag=(2,103,0,350807.4,5316081.3,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+ftype2tcl inp=xfoo.img val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.img
+let $echo="no"
+ 
+**** For VICAR file with GeoTIFF label, val = 1, ftype = 1, fsubtype = 4
+Should be                               val = 1, ftype = 1, fsubtype = 4
+UNIQUE: fsize = 604
+gen xfoo.img nl=1 ns=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+vtiff3-from inp=xfoo.img out=xfoo.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+ftype2tcl inp=xfoo.tif val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.img xfoo.tif
+let $echo="no"
+ 
+**** For vanilla TIFF file, val = 1, ftype = 2, fsubtype = 3
+Should be                   val = 1, ftype = 2, fsubtype = 3
+UNIQUE: fsize = 264
+gtgen out=xfoo.img 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)",  +
+          "ModelTiePointTag=(202,103,0,351807.4,5316081.3,0.0)",  +
+          "ModelTiePointTag=(2,103,0,350807.4,5316081.3,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+vtiff3-from inp=xfoo.img out=xfoo.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+ftype2tcl inp=xfoo.tif val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+Beginning VICAR task ftype2tcl
+ftype2tcl version Wed Jan  2 2008
+ush rm -f xfoo.img xfoo.tif
+let $echo="no"
+ 
+**** For GeoTIFF file, val = 1, ftype = 2, fsubtype = 2
+Should be              val = 1, ftype = 2, fsubtype = 2
+UNIQUE: fsize = 388
+exit
+slogoff

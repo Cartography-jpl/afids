@@ -1,0 +1,6 @@
+$ vpack ccdrecip.com -mixed -
+	-s ccdrecip.f -
+	-i ccdrecip.imake -
+	-p ccdrecip.pdf -
+	-t tstccdrecip.pdf tstccdrecip.log
+$ Exit

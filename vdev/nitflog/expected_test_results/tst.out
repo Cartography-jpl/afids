@@ -1,0 +1,5 @@
+nitflog inp=../test_data/002yy14a.i22 out=002yy14a.i22 'noImg
+Beginning VICAR task nitflog
+nitflog version Sat Dec 29 2007
+end-proc
+disable-log

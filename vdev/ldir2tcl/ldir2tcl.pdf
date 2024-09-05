@@ -1,0 +1,39 @@
+process help=*
+
+local dumstring string
+
+parm strvar  type=name default="dumstring"
+
+END-PROC
+
+.TITLE
+ldir2tcl - copy local directory path to passed TAE variable
+
+.HELP
+PURPOSE:
+ldir2tcl copies the local directory path to a passed string variable
+
+EXECUTION:
+
+Example:
+
+ldir2tcl strvar=ldir
+            where ldir is a TAE TCL variable of type string
+          
+TIMING: 
+
+Instantaneous.  
+
+ORIGINAL PROGRAMMER:    W Bunch
+COGNIZANT PROGRAMMER:   A Zobrist
+ 
+REVISION HISTORY
+Fri Aug  6 2004 WLB Initial release.
+  Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+ 
+.LEVEL1
+.variable strvar
+TAE TCL variable name, string, set to local directory path.
+
+.END
+

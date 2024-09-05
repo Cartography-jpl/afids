@@ -1,0 +1,4 @@
+$ vpack rpccorn.com -mixed -
+	-p rpccorn.pdf -
+	-t tstrpccorn.pdf
+$ Exit

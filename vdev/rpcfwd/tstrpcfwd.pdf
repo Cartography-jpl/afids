@@ -1,0 +1,33 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR RPCFWD
+
+ibis-gen xxxb nc=5 nr=4 format=(DOUB,DOUB,DOUB,DOUB,DOUB) +
+  datacol=(1,2) data=(44.825279,35.881943,45.080002,35.87611, +
+  45.075832,35.84,44.825832,35.845833)
+pixmap (xxxb,../test_data/qb1_iraq_dem.hlf) +
+    mapcol=(1,2) pixcol=(4,5) 'maptopix
+getzval (../test_data/qb1_iraq_dem.hlf, +
+    xxxb) cols=(4,5,3) win=2
+label-list /home/alz/ikapp/xxchip3.img
+
+rpcfwd (xxxb,../test_data/xxchip2.img)
+ibis-l xxxb
+write "expect some discrepancy due to srtm-dted difference"
+goto theend
+NITF_CORNERLAT1='35.881943'
+NITF_CORNERLON1='44.825279'
+NITF_CORNERLAT2='35.87611'
+NITF_CORNERLON2='45.080002'
+NITF_CORNERLAT3='35.84'
+NITF_CORNERLON3='45.075832'
+NITF_CORNERLAT4='35.845833'
+NITF_CORNERLON4='44.825832'
+
+theend>
+end-proc

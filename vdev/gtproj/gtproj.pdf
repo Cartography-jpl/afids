@@ -1,0 +1,188 @@
+PROCESS       HELP=*
+PARM INP    TYPE=(STRING) COUNT=3
+PARM INCOL  TYPE=INTEGER COUNT=2:3 
+PARM OUTCOL TYPE=INTEGER COUNT=2:3
+PARM ALTMAP TYPE=KEYWORD COUNT=0:1 VALID=(EPOSC,TEC) DEFAULT=TEC
+PARM EP_PAR TYPE=(STRING,150) COUNT=0:1 DEFAULT=--
+END-PROC
+.TITLE
+VICAR/IBIS Program "gtproj"
+.HELP
+PURPOSE
+
+   "gtproj" converts map coordinates from one map projection to
+another using the EPOSC map conversion routines.  The input can
+either by (x,y) or (x,y,z) columns in an IBIS file.  If two
+columns are specified (the x,y case), then an all-zero z column
+is generated for input to the EPOSC routines.  Similarly, if
+no z column is provided for output, then the EPOSC z output is
+ignored.  The name of the IBIS file is the first element of the
+INP parameter.
+
+   The map coordinate specifications for both input and output
+must be in the headers of two VICAR files which are the second
+and third elements of the INP parameter.  These files must have
+GeoTIFF state labels with sufficient parameters to specify a
+mapping.
+
+If zero or one datum is given, then the conversion will assume
+same datum for input and output.  If both input and output have
+a datum, then datum conversion will take place as well.
+ 
+The columns in the IBIS file for coordinate I/O are given
+by the parameters INCOL and OUTCOL.
+
+The EP_PAR parameter is added for special use of the EPOSC parameters
+in code testing situations.  To obtain a listing of these, 
+call Gerald I. Evenden at (508)563-6766 or write to same at:
+
+
+
+        P.O. Box 1027
+
+        N. Falmouth, MA 02556-1027
+
+        USA
+
+
+or e-mail  gie@kai.er.usgs.gov
+
+The 'TEC keyword is provided to use an alternative mapping package
+from US ARMY TEC to calculate the mapping.  This can be used to test
+or confirm the EPOSC mapping routine, or to replace it if it doesn't 
+work.  The TEC package had fourteen map projection routines that 
+matched up to the eposc package so those have been activated:
+
+Cassini
+Equidistant Cylindrical (Plate Caree)
+van der Grinten (I)
+Lambert Conformal Conic
+Mercator
+Miller Cylindrical
+Orthographic
+Polyconic
+Sinusoidal
+Transverse Mercator
+Universal Polar Stereographic
+Albers Equal Area
+UTM
+
+Spheroids that have been activated have the codes:
+
+Airy                           AA 6377563.396 6356256.9090 299.324964600
+
+Modified Airy                  AM 6377340.189 6356034.4480 299.324964600
+
+Australian National            AN 6378160.000 6356774.7190 298.250000000
+
+Bessel 1841                    BR 6377397.155 6356078.9630 299.152812800
+
+Bessel 1841(Namibia)           BN 6377483.865 6356165.3830 299.152812800
+
+Clarke 1866                    CC 6378206.400 6356583.8000 294.978698200
+
+Clarke 1880                    CD 6378249.145 6356514.8700 293.465000000
+
+Everest                        EA 6377276.345 6356075.4130 300.801700000
+
+Everest (E. Malasia, Brunei)   EB 6377298.556 6356097.5500 300.801700000
+
+Everest 1956 (India)           EC 6377301.243 6356100.2280 300.801700000
+
+Everest 1969 (West Malasia)    ED 6377295.664 6356094.6680 300.801700000
+
+Everest 1948(W.Mals. & Sing.)  EE 6377304.063 6356103.0390 300.801700000
+
+Mod. Fischer 1960(South Asia)  FA 6378155.000 6356773.3200 298.300000000
+
+GRS 80                         RF 6378137.000 6356752.3141 298.257222101
+
+Helmert 1906                   HE 6378200.000 6356818.1700 298.300000000
+
+Hough                          HO 6378270.000 6356794.3430 297.000000000
+
+Indonesian 1974                ID 6378160.000 6356774.5040 298.247000000
+
+International                  IN 6378388.000 6356911.9460 297.000000000
+
+Krassovsky                     KA 6378245.000 6356863.0190 298.300000000
+
+South American 1969            SA 6378160.000 6356774.7190 298.250000000
+
+WGS 72                         WD 6378135.000 6356750.5200 298.260000000
+
+WGS 84                         WE 6378137.000 6356752.3142 298.257223563
+
+Other spheroids can be input by using their a,b values
+
+EXAMPLE
+
+gtproj (myibisfile,img_lambert,img_albers) incol=(2,3,4) outcol=(5,6,7)
+
+
+RESTRICTIONS
+
+None.  The IBIS column length is dynamically allocated. 
+
+WRITTEN BY:            Albert L. Zobrist	Feb 2000
+
+COGNIZANT PROGRAMMER:  Barbara McGuffie
+
+Revisions:
+Fri Jan 11 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+
+
+.LEVEL1
+.VARIABLE INP
+ IBIS interface file, the
+ input GeoTIFF ref header,
+ and the output GeoTIFF
+ ref header
+.VARIABLE INCOL
+ (x,y) or (x,y,z) to be mapped
+.VARIABLE OUTCOL
+ (x,y) or (x,y,z) output
+.VARIABLE ALTMAP
+ 'EPOSC - use the EPOSC routines
+ 'TEC   - use the US ARMY TEC
+          routines
+.VARIABLE EP_PAR
+ string for EPOSC parameters
+
+.LEVEL2
+.VARIABLE INP
+All three files are required.  The GeoTIFF references are
+in the state part of the VICAR header for VICAR files.
+
+See VICAR routine GTGEN for methods of creating GeoTIFF header
+files.
+.VARIABLE INCOL
+If a z column is not provided by the user, the program will
+provide a zero filled z column for input to the mapping
+routines.
+
+It would be unusual, but it is allowed to have (x,y) input and 
+(x,y,z) output, or vice-versa.
+.VARIABLE OUTCOL
+If a z column is not provided by the user, the program will
+discard the z column from the mapping routines.
+
+It would be unusual, but it is allowed to have (x,y) input and 
+(x,y,z) output, or vice-versa.
+.VARIABLE EP_PAR
+The EP_PAR parameter is added for special use of the EPOSC parameters
+in code testing situations.  To obtain a listing of these, 
+call Gerald I. Evenden at (508)563-6766 or write to same at:
+
+
+
+        P.O. Box 1027
+
+        N. Falmouth, MA 02556-1027
+
+        USA
+
+
+or e-mail  gie@kai.er.usgs.gov
+
+.END

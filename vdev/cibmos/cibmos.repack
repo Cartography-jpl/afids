@@ -1,0 +1,4 @@
+$ vpack cibmos.com -mixed -
+	-p cibmos.pdf ciblog.pdf -
+	-t tstcibmos.pdf
+$ Exit

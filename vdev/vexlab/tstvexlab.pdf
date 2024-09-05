@@ -1,0 +1,15 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR VEXLAB
+
+vexlab inp=foo.img meta=foo.txt
+
+end-proc

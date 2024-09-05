@@ -1,0 +1,33 @@
+/***********************************************************************
+
+                     IMAKE FILE FOR PROGRAM geomv
+
+   To Create the build file give the command:
+
+		$ vimake geomv			(VMS)
+   or
+		% vimake geomv			(Unix)
+
+
+************************************************************************/
+
+
+#define PROGRAM	geomv
+
+#define MODULE_LIST geomv.cc
+
+#define MAIN_LANG_C_PLUS_PLUS
+
+#define USES_C_PLUS_PLUS
+#define USES_ANSI_C
+#define CCC_TEMPLATES
+
+#define R2LIB
+
+#define LIB_CARTO
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB
+/*#define LIB_LOCAL	/* remove on delivery */
+/*#define DEBUG		/* remove on delivery */
+/************************* End of Imake file ***************************/

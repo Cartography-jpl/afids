@@ -1,0 +1,6 @@
+$ vpack qchop.com -
+	-s qchop.c -
+	-i qchop.imake -
+	-p qchop.pdf -
+	-t tstqchop.pdf
+$ Exit

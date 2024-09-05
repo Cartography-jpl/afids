@@ -1,0 +1,29 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+!  simple case
+
+ibis-gen xxx1 nr=3 nc=5 datacols=(4,5) deffmt="DOUB" data=(1.0,1.0,434.0,322.0,1002.0,478.0)
+!rpcinv2 inp=(xxx1, bob.img, dem.hlf)
+rpcinv2 inp=(xxx1, ../test_data/bob.img, ../test_data/dem.hlf) 'print fixdted=y
+
+ibis-list xxx1
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

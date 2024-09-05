@@ -1,0 +1,62 @@
+gen out=x.img nl=64 ns=64 linc=0 sinc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+qsar inp=x.img out=y.img area=(1,1,1,7,50,1,7,3,1,50)
+Beginning VICAR task qsar
+QSAR version 14 Feb 2010 (64-bit) - RJB
+fft22 y.img ffty.img
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+FORWARD TRANSFORM
+TRANSFORM COMPLETED
+qsar inp=x.img out=z.img area=(32,32,5,5,200)
+Beginning VICAR task qsar
+QSAR version 14 Feb 2010 (64-bit) - RJB
+fft22 z.img fftz.img
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+FORWARD TRANSFORM
+TRANSFORM COMPLETED
+wnr2005 inp=(fftz.img,ffty.img) out=ffts.img 'direct
+Beginning VICAR task wnr2005
+wnr2005 version Fri Dec 28 2007
+fft22 inp=ffts.img out=blur.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+wnr2005 inp=(ffts.img,ffty.img) out=fftss.img 'wiener
+Beginning VICAR task wnr2005
+wnr2005 version Fri Dec 28 2007
+fft22 inp=fftss.img out=restored.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+wnr2005 inp=(ffts.img,fftz.img) out=fftss.img 'amplitude
+Beginning VICAR task wnr2005
+wnr2005 version Fri Dec 28 2007
+fft22 inp=fftss.img out=symmetricrestoration.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+wnr2005 inp=(ffts.img,fftz.img) out=fftss.img 'ratio
+Beginning VICAR task wnr2005
+wnr2005 version Fri Dec 28 2007
+fft22 inp=fftss.img out=kernel.img 'inverse format=real
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+wnr2005 inp=(ffts.img,fftss.img) out=ffts.img 'direct
+Beginning VICAR task wnr2005
+wnr2005 version Fri Dec 28 2007
+fft22 inp=ffts.img out=restwk.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+end-proc
+disable-log

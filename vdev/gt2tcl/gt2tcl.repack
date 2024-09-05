@@ -1,0 +1,6 @@
+$ vpack gt2tcl.com -mixed -
+	-s gt2tcl.c -
+	-i gt2tcl.imake -
+	-p gt2tcl.pdf -
+	-t tstgt2tcl.pdf
+$ Exit

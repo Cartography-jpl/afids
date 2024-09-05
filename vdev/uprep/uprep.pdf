@@ -1,0 +1,75 @@
+PROCESS      HELP=*
+PARM INP           TYPE=STRING  COUNT=(1:12)
+PARM OUT           TYPE=STRING  COUNT=1
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "uprep"
+.HELP
+PURPOSE
+ This program was developed specifically for
+ the SHIVA project.  It creates training
+ samples using the output from stats or ustats
+ program.  The inputs are the image files
+ that were input into the stats or ustats
+ program and the ibis statistics file that
+ was output from the stat or ustat program.
+ The output is an ibis file where samples
+ were chosen from the image using stratified
+ sampling and are classified into the
+ class as specified by the input statistics
+ file.  The sampled pixel x is classified
+ into the class with the smallest Mahalanobis
+ distance.
+
+.PAGE
+
+ The output is an IBIS file that contains
+ the class name, line, sample, and the
+ dn values.  For example, if there are
+ 3 image input files then the output
+ file would have the format:
+
+ col      data
+ ===      ====
+  1       class name
+  2       line
+  3       sample
+  4       dn from image 1
+  5       dn from image 2
+  6       dn from image 3
+
+.PAGE
+WRITTEN BY:      P. KIM
+
+REVISIONS:
+   6 Jul 2011 (Initial)
+
+.LEVEL1
+.VARIABLE INP
+ Image files that
+ used to create
+ the class ibis
+ file using stats
+ or ustats and
+ the class ibis
+ file output from
+ stats or ustats
+
+.VARIABLE OUT
+ Output IBIS file
+ ** read PURPOSE
+ section
+
+.END
+
+
+
+
+
+
+
+
+
+
+

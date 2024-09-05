@@ -1,0 +1,53 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = destripe
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+#CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+FFLAGS += -Wunused-parameter -Wunused -Wuninitialized -Wsurprising -Wintrinsic-shadow -Wno-globals
+
+# Note:
+# In local development system needed subroutines are in ../sub
+#	stacka_big.c
+# Note: c trick used in stacka_big.c - ignore messages due to:
+#	-Wimplicit-function-declaration
+CPPFLAGS += -I../sub -I.
+#CFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+CFLAGS += -Wundef -Wconversion -Wsign-compare
+#CFLAGS += -Wunreachable-code -Wextra
+
+# Extra files font depends on
+
+destripe:  ../sub/stacka_big.o 
+
+#COMMENTS
+##############################################################
+#
+#  For gfortran:
+# -Wall includes:
+#       -Waliasing
+#       -Wampersand,
+#       -Wconversion, 
+#       -Wsurprising, 
+#       -Wc-binding-type, 
+#       -Wintrinsics-std, 
+#       -Wno-tabs, 
+#       -Wintrinsic-shadow, 
+#       -Wline-truncation, 
+#       -Wtarget-lifetime, 
+#       -Wreal-q-constant 
+#       -Wunused
+#
+# -Wextra includes:
+#       -Wcompare-reals 
+#       -Wunused-parameter
+#################################################
+

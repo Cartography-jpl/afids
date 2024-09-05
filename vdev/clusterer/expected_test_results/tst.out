@@ -1,0 +1,200 @@
+ Trivial Test for clusterer
+clusterer ct/subsamples.ibis (subclusters.ibis, classifiedsubsamples.ibis) nclusters=20
+Beginning VICAR task clusterer
+clusterer - 10-09-2019 - rjb - 64-bit
+getting samples
+getting temporary
+getting clusters
+setting bounding box
+
+initializing clusters
+
+binning clusters
+
+iter: 1 total changed: 2861.774366 theshold: 0.000000
+
+iter: 2 total changed: 537.707311 theshold: 0.000000
+
+iter: 3 total changed: 282.609543 theshold: 0.000000
+
+iter: 4 total changed: 225.527084 theshold: 0.000000
+
+iter: 5 total changed: 176.083698 theshold: 0.000000
+
+iter: 6 total changed: 177.079983 theshold: 0.000000
+
+iter: 7 total changed: 158.968960 theshold: 0.000000
+
+iter: 8 total changed: 136.721892 theshold: 0.000000
+
+iter: 9 total changed: 167.320042 theshold: 0.000000
+
+iter: 10 total changed: 149.905622 theshold: 0.000000
+
+iter: 11 total changed: 130.637535 theshold: 0.000000
+
+iter: 12 total changed: 218.249269 theshold: 0.000000
+
+iter: 13 total changed: 169.303148 theshold: 0.000000
+
+iter: 14 total changed: 148.544251 theshold: 0.000000
+
+iter: 15 total changed: 78.016145 theshold: 0.000000
+
+iter: 16 total changed: 129.830067 theshold: 0.000000
+
+iter: 17 total changed: 208.327786 theshold: 0.000000
+
+iter: 18 total changed: 261.463848 theshold: 0.000000
+
+iter: 19 total changed: 177.612968 theshold: 0.000000
+
+iter: 20 total changed: 118.017617 theshold: 0.000000
+
+iter: 21 total changed: 118.333750 theshold: 0.000000
+
+iter: 22 total changed: 78.219893 theshold: 0.000000
+
+iter: 23 total changed: 67.908217 theshold: 0.000000
+
+iter: 24 total changed: 56.699346 theshold: 0.000000
+
+iter: 25 total changed: 48.308809 theshold: 0.000000
+
+iter: 26 total changed: 33.670480 theshold: 0.000000
+
+iter: 27 total changed: 24.882347 theshold: 0.000000
+
+iter: 28 total changed: 26.801378 theshold: 0.000000
+
+iter: 29 total changed: 22.054943 theshold: 0.000000
+
+iter: 30 total changed: 15.156101 theshold: 0.000000
+
+iter: 31 total changed: 14.835873 theshold: 0.000000
+
+iter: 32 total changed: 18.085951 theshold: 0.000000
+
+iter: 33 total changed: 10.695356 theshold: 0.000000
+
+iter: 34 total changed: 10.524133 theshold: 0.000000
+
+iter: 35 total changed: 12.291523 theshold: 0.000000
+
+iter: 36 total changed: 10.965384 theshold: 0.000000
+
+iter: 37 total changed: 9.832107 theshold: 0.000000
+
+iter: 38 total changed: 9.808222 theshold: 0.000000
+
+iter: 39 total changed: 11.500530 theshold: 0.000000
+
+iter: 40 total changed: 5.078251 theshold: 0.000000
+
+iter: 41 total changed: 4.812774 theshold: 0.000000
+
+iter: 42 total changed: 6.452029 theshold: 0.000000
+
+iter: 43 total changed: 8.893387 theshold: 0.000000
+
+iter: 44 total changed: 6.183310 theshold: 0.000000
+
+iter: 45 total changed: 4.879320 theshold: 0.000000
+
+iter: 46 total changed: 7.265065 theshold: 0.000000
+
+iter: 47 total changed: 1.813005 theshold: 0.000000
+
+iter: 48 total changed: 2.030553 theshold: 0.000000
+
+iter: 49 total changed: 1.982488 theshold: 0.000000
+
+iter: 50 total changed: 4.331934 theshold: 0.000000
+
+iter: 51 total changed: 1.047700 theshold: 0.000000
+
+iter: 52 total changed: 4.377908 theshold: 0.000000
+
+iter: 53 total changed: 4.205848 theshold: 0.000000
+
+iter: 54 total changed: 1.286383 theshold: 0.000000
+
+iter: 55 total changed: 1.195809 theshold: 0.000000
+
+iter: 56 total changed: 1.093108 theshold: 0.000000
+
+iter: 57 total changed: 0.744891 theshold: 0.000000
+
+iter: 58 total changed: 0.758812 theshold: 0.000000
+
+iter: 59 total changed: 0.601304 theshold: 0.000000
+
+iter: 60 total changed: 0.824856 theshold: 0.000000
+
+iter: 61 total changed: 0.545980 theshold: 0.000000
+
+iter: 62 total changed: 0.565068 theshold: 0.000000
+
+iter: 63 total changed: 0.767320 theshold: 0.000000
+
+iter: 64 total changed: 0.636090 theshold: 0.000000
+
+iter: 65 total changed: 0.507207 theshold: 0.000000
+
+iter: 66 total changed: 0.416575 theshold: 0.000000
+
+iter: 67 total changed: 0.465708 theshold: 0.000000
+
+iter: 68 total changed: 0.440734 theshold: 0.000000
+
+iter: 69 total changed: 0.035885 theshold: 0.000000
+
+iter: 70 total changed: 0.000000 theshold: 0.000000
+
+writing output
+========================================
+FINAL RESULT total num of clusters: 7 converged: YES
+
+========================================
+ibis-l subclusters.ibis
+Beginning VICAR task ibis
+ 
+Number of Rows:7  Number of Columns: 17      
+File Version:IBIS-2  Organization:ROW  SubType:NONE
+ 
+Rows: 1:7
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+     CLASS 1     1481.00        4.00      407.57      389.80      543.61
+     CLASS 3     4953.00        4.00      215.83      239.98      310.65
+     CLASS 7     9657.00        4.00       87.98      144.17      142.09
+     CLASS 9     7216.00        4.00      162.28      212.37      493.31
+    CLASS 11     4149.00        4.00      299.78      302.64      416.77
+    CLASS 15    12070.00        4.00      115.78      172.22      320.19
+    CLASS 19      123.00        4.00      738.11      738.23      749.17
+ 
+Rows: 1:7
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+      389.17     4413.24     3247.66     3507.88     -106.60     -738.28
+      287.08     1078.21      640.98      641.53      103.48      -41.84
+      219.53      487.53      411.53      389.54      560.35      567.67
+      255.12     1535.75     1042.10      828.95      634.27      861.11
+      328.36     1454.58      950.13     1193.52     -276.20     -492.97
+      232.83      451.55      310.46      257.36      217.39      263.91
+      711.41    14524.92    13885.16    15831.62    13266.65    10657.46
+ 
+Rows: 1:7
++-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17
++-----------+-----------+-----------+-----------+-----------
+     8382.01     2589.60     3223.77    -1636.54     3425.60
+     3023.15      476.06      567.37     -390.56      617.17
+     2913.63      352.06      330.26      345.73      308.44
+     6231.08      735.12      561.82      368.13      421.25
+     3400.07      783.97     1162.09     -869.43     1317.10
+     2652.11      243.61      193.13       65.79      171.90
+    17660.58    12393.66    15431.07     8222.87    16324.16
+let $echo="no"

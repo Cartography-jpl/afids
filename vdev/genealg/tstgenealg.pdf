@@ -1,0 +1,151 @@
+procedure
+<<<<<<< HEAD
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Oct 14 2019 - RJB
+! TEST SCRIPT FOR GENEALG
+!
+! Vicar Programs:
+!       translog label-list 
+!
+! External programs
+!   <none> 
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+=======
+
+
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Oct 02, 2019 - RJB
+! TEST SCRIPT FOR GENEALG
+!
+! Vicar Programs:
+!       translog ibis-list geneplot
+! 
+! External Programs"
+!       <none>
+!
+! Parameters:
+!       <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+>>>>>>> 520503d7254079782296bc0f6f9f7e72a32257fc
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+<<<<<<< HEAD
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+=======
+>>>>>>> 520503d7254079782296bc0f6f9f7e72a32257fc
+refgbl $echo
+refgbl $autousage
+
+body
+let $autousage="none"
+<<<<<<< HEAD
+let _onfail="goto rm"
+let $echo="yes"
+
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/mipl/vgr vgr
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data/plotbkrd pl
+    else
+!        ush ln -s $AFIDS_TESTDATA/plotbkrd pl
+        ush ln -s /media/sf_raid3/test_data/plotbkrd pl
+    end-if
+end-if
+=======
+let _onfail="stop"
+let $echo="no"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/plitbkrd pb
+else
+!CARTLAB
+   if (aftestdata = "")
+        ush ln -s /raid3/test_data/plotbkrd pb
+    else
+        ush ln -s $AFIDS_TESTDATA/plotbkrd pb
+    end-if
+end-if
+let _onfail="goto rm"
+
+let $echo="yes"
+
+
+!genealg inp=(../../../data/wv2/gene_alg_input_mod/catDat.ibis, ../../../data/wv2/gene_alg_input_mod/record_2.ibis) out=../../../data/wv2/gene_alg_output/optimum2.ibis mutation=0.08 crossover=0.7 evolutions=5 population=500
+>>>>>>> 520503d7254079782296bc0f6f9f7e72a32257fc
+
+
+<<<<<<< HEAD
+!ush date
+!genealg inp=(gene_alg_input_mod/catDat.ibis, ../../../data/wv2/gene_alg_input_mod/record_2.ibis) out=../../../data/wv2/gene_alg_output/optimum2.ibis mutation=0.08 crossover=0.7 evolutions=5 population=500
+
+ush date
+genealg inp=(pl/master2.int, pl/sugar.int) out=optimum2.ibis mutation=0.08 crossover=0.7 evolutions=100 population=500
+
+genealg inp=(pl/master_final.int, pl/sand.int) out=new_product1.int mutation=0.08 crossover=0.7 evolutions=100 population=500
+
+let $echo="no"
+write "The following ABENDS when it cannot find id=8883"
+let $eho="yes"
+genealg inp=(pl/master_final.int, pl/AN.int) out=new_product2.int mutation=0.08 crossover=0.7 evolutions=100 population=500
+=======
+ush date
+genealg inp=(pb/master_final.int, pb/sand.int) out=new_product1.int mutation=0.08 crossover=0.7 evolutions=100 population=500
+!
+let $echo="no"
+write "The following should ABEND"
+! should abend with message:
+!   Code should not reach here
+! id 8889 was not in one of the categores
+!
+!avoiding assert[0] and process status code = 6.
+! ** ABEND called **
+!
+let $echo="yes"
+genealg inp=(pb/master_final.int, pb/AN.int) out=new_product2.int mutation=0.08 crossover=0.7 evolutions=100 population=500
+>>>>>>> 520503d7254079782296bc0f6f9f7e72a32257fc
+
+ush date
+
+rm>
+let $echo="no"
+<<<<<<< HEAD
+
+ush rm pl
+=======
+ush rm pb
+>>>>>>> 520503d7254079782296bc0f6f9f7e72a32257fc
+END-PROC

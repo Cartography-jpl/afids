@@ -1,0 +1,6 @@
+$ vpack gtcrop.com -mixed -
+	-s gtcrop.c -
+	-i gtcrop.imake -
+	-p gtcrop.pdf -
+	-t tstgtcrop.pdf gtcrop.dat
+$ Exit

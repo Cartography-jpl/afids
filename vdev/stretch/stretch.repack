@@ -1,0 +1,8 @@
+$ vpack stretch.com -mixed -
+	-s stretch.f manual_stretch.f hist_params.f get_histogram.f -
+	   exclude_histogram.f histogram_stretch.f bimodal.f hpeak.f -
+	   astretch.f post_stretch.f print_histogram.f stati.f -
+	-p stretch.pdf -
+	-t tststretch.pdf new_session.log -
+	-i stretch.imake
+$ Exit

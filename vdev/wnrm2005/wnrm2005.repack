@@ -1,0 +1,6 @@
+$ vpack wnrm2005.com -mixed -
+	-s wnrm2005.c -
+	-i wnrm2005.imake -
+	-p wnrm2005.pdf -
+	-t tstwnrm2005.pdf devwnrm2005.pdf
+$ Exit

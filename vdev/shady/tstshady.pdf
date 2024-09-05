@@ -1,0 +1,59 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR SHADY
+! tests BYTE images
+!
+! Vicar Programs:
+!       gen list
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+refgbl $echo
+refgbl $autousage
+body
+let $autousage = "none"
+let _onfail="stop"
+let $echo="no"
+write "THIS IS A TEST OF MODULE SHADY"
+write "FIRST WE WILL TEST THE CONTOUR OPTION"
+let $echo="yes"
+gen a NL=500 NS=500
+let $echo="no"
+write "GENERATE CONTOURS"
+let $echo="yes"
+shady a b 'NOSHADE
+let $echo="no"
+write "LIST THE RESULT OF THE DEFAULT PARAMETERS"
+
+let $echo="yes"
+list b (1,1,5,10)
+list b (401,401,5,10)
+let $echo="no"
+
+write "TRY OTHER PARAMETERS"
+let $echo="yes"
+shady a c 'NOSHADE CONT=(0,10,3)
+list c  (1,1,5,10)
+list c (401,401,5,10)
+let $echo="no"
+write "TRY THE SHADING OPTION"
+write "THE RESULT SHOULD BE FLAT 128 EXCEPT AT THE EDGES"
+write "FOR ILLUMINATION AT 45 DEGREES FROM UP"
+let $echo="yes"
+shady a d 'NOCONTOU SHADE=5
+list d  (1,1,5,10)
+list d (401,401,5,10)
+let $echo="no"
+write "TRY BOTH TOGETHER"
+let $echo="yes"
+shady a e CONT=(0,10,3) SHADE=0 'DBUG SCALE=(6,100)
+list e (1,1,5,10)
+list e (401,401,5,10)
+let $echo="no"
+end-proc

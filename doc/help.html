@@ -1,0 +1,1992 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <title>Help</title>
+</head>
+
+
+<body style="background-color: white;" lang="EN-US" link="blue" vlink="blue">
+
+<div class="Section1">
+<p><b>AFIDS Image Co-Registration System (v4.0p; 26JUN2007):</b></p>
+
+<p><b>HOW TO Coregister and Map Project Multidate ALI,
+Aster, Hyperion, Ikonos,
+Landsat, MODIS, NTM, SPOT, and Quickbird Imagery</b><span style="font-weight: normal;">,
+with no manual tiepoint selection, and only one resampling. Note that
+not every
+image is a good candidate for coregistration because of clouds, smoke,
+haze,
+dramatic change (e.g., agricultural fields; seasonal foliage; land
+surface
+destruction; water fluctuations; temporal forest or urban
+expansion/contraction), image quality, resolution, off-nadir viewing,
+and/or
+other image scene changing events. This Automated Fusion of Image Data
+System
+(AFIDS) software package was developed at the NASA/Caltech/Jet
+Propulsion
+Laboratory in the Cartographic Applications Laboratory (Section 386).
+For
+information, contact: Dr. Nevin A. Bryant, 818-354-7236. Refer to the
+Users
+Guide for further information.</span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><a href="#toproceed">Check List -- Here's What You Need To
+Proceed...</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step1">STEP
+1: DIRECTORY INITIALIZATION</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step2">STEP
+2: IMAGE MOSAIC GENERATION</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step3">STEP
+3: IMAGE COREGISTRATION PROCESSING: MASTER Image</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step4">STEP
+4: IMAGE COREGISTRATION PROCESSING: SECONDARY Image</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step5">STEP
+5: IMAGE COREGISTRATION PROCESSING: ADDITIONAL BANDS</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#step6">STEP
+6: GeoTIFF Utilities</a> </li>
+
+  <li class="MsoNormal" style=""><a href="#rid">RID
+Connected Components Change Detection Analysis</a></li>
+
+</ul>
+
+<div class="MsoNormal" style="margin: 0in 0in 0.0001pt; text-align: center;" align="center">
+<hr align="center" size="3" width="100%"></div>
+
+<p><a name="toproceed"><b>Check List - Here's
+What You Need To Proceed...</b></a><span style=""></span>
+</p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Select
+two (or more) multidate satellite images</b><span style="font-weight: normal;"> (of the same sensor type) from
+the list/description below (e.g., two or more multidate Hyperion
+images). Choose one image/date to be the "Master," to which the
+"Secondary" image(s) will be coregistered. If registering a new image
+to a previously registered image, you will need the directory location
+and filename of the previously registered image file. Output image
+products can be generated in either UTM or Platte Carree map
+projections, or matched to an external GeoTIFF's projection.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Ikonos "Geo"
+Panchromatic and/or Multispectral Imagery in TIFF (.tif) format with
+their metadata (.met) and header (.hdr) files. The Ikonos Pan channel
+is 1.0m resolution, and the Multispectral bands (blu, grn, red, nir)
+are 4.0m resolution. The Pan channel should be the "Master" (unless
+only <span class="grame">Multispectral</span> data
+is being registered). </li>
+
+      <li class="MsoNormal" style="">Quickbird
+"Basic" Panchromatic and Multispectral Imagery in TIFF or NITF (.tif or
+.NTF) format with the TIFF metadata (.imd) file. <span style="color: black;">The NITF version uses metadata and rpc
+parameters that are stored in the NITF file.</span>&nbsp;The
+Quickbird Pan channel is 0.61m resolution, and the Multispectral bands
+(blu, grn, red, nir) are 2.44m resolution. <span style="color: black;">The Pan channel is used as the
+"Master" for both Panchromatic AND Multispectral data that are being
+registered.</span></li>
+
+      <li class="MsoNormal" style="">SPOT
+Fill me in
+</li>
+
+      <li class="MsoNormal" style="">Hyperion
+Hyperspectral Imagery in HDF (.L1R) format (not GeoTiff) with their
+metadata (acs.hdf) file. The 30m resolution Hyperion data file contains
+224 (of 242) spectral channels (0.43 to 2.4um). </li>
+
+      <li class="MsoNormal" style="">Aster Level 1B
+(and 1A) Imagery in HDF (.hdf or no suffix). The Aster metadata file is
+not required. Aster bands 1, 2, and 3N are 15m visual wavelengths;
+bands 4-9 are 30m shortwave; and bands 10-14 are 90m thermal infrared.
+ONLY Aster imagery taken during the day can be registered (night data
+is not supported). Use of Level 1B imagery (versus 1A) is strongly
+recommended. </li>
+
+      <li class="MsoNormal" style="">MODIS MOD021KM
+(1km) spectral imagery and MOD03 (Geophysical metadata) in HDF format
+(.hdf and .hdf.met). The input can be either daytime or nighttime
+imagery, but only day-to-day or night-to-night imagery can be
+registered (no day/night registration). The registered output imagery
+is usually either UTM or Platte Carree map projection, but the UTM
+projection may cross two or more zones due to the large geographic
+extent of the MODIS imagery. Only MOD021KM Level-1B (1km) imagery
+containing 38 bands are currently supported. MODIS band wavelengths
+range from 0.64 to 14.24um. All bands are output at 1km resolution. </li>
+
+      <li class="MsoNormal" style="">Landsat
+uncorrected (L0R, or otherwise raw) Landsat MSS, TM, ETM, or ETM+
+Imagery in TIFF (.b03; *nn3.tif) or USGS "NLAPS" (.I3 or .FST) format
+with their metadata (.met, .ip3, .H1, or .MTL) file. The 80m Landsat
+MSS contains 4 files. The 30m TM and ETM Landsats contain 7 or 8
+spectral channels (blu, grn, red, nir, fir, tir, Geology Shortwave, and
+15m Panchromatic). Landsat coregistration is a separate process from
+the creation of the Landsat base map mosaic (described below).</li>
+
+      <li class="MsoNormal" style=""><span style="color: black;">ALI Imagery in HDF (.M1R) format (not
+GeoTiff) with their metadata (acs.hdf) file. The 30m resolution ALI
+data file contains 10 spectral channels (0.43 to 2.4um), with band 1
+being a 10m resolution Panchromatic channel.</span></li>
+
+      <li class="MsoNormal" style=""><span style="color: black;">NTM (National Technical Means) data in
+NITF (.NTF) format with rpc parameters. See separate document for
+details.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>&nbsp;
+AOI - Gather Lat/Long coordinates describing your image Area Of
+Interest.</b><span style="font-weight: normal;">
+Review your satellite image's Metadata to obtain Latitude and Longitude
+coordinates completely surrounding your imagery's geographic area. Also
+note your particular subarea AOI coordinates (if different from the
+whole image). You will need to expand the whole-image coordinates for
+specifying the DEM, and CIB or Landsat mosaic dimensions. For NITF
+imagery, this information can be obtained using AFIDS as mentioned in
+STEP 1. </span></li>
+
+  <li class="MsoNormal" style=""><span style="color: black;"><b>&nbsp; Landsat/CIB -
+Obtain Orthorectified Landsat OR CIB Compressed Image Base data that
+completely covers your image's geographic area</b></span><span style="color: black;">. (Skip this step if you have the JPL
+Landsat database <i>and</i></span><span style="color: black;"> are registering Hyperion, ALI, Aster,
+or other Landsat imagery.) AFIDS requires either a Landsat or CIB image
+base to impart map projection characteristics during the coregistration
+process. Choose either CIB or Landsat data, but NOT both. The Landsat
+data is required for Hyperion, ALI, and Landsat coregistration tasks,
+and is also the best choice for Aster data. Choose CIB for Ikonos,
+&nbsp;Quickbird,&nbspSPOT and NTM. MODIS does NOT require an image base
+file. For a Landsat image base, obtain orthorectified Landsat 4, 5, or
+7 data in UTM map projection and TIFF format (See Users Guide). Up to
+four Landsat images can be mosaicked at one time, or extract an area
+from the AFIDS/Landsat World Database file (if available; See the Users
+Guide).&nbsp; For a CIB image base, obtain Compressed Image Base 1
+or 5-meter CDROMs. The CIB CDROMs can be used directly or copied to a
+hard disk. The CIB CDROM should completely cover the image's geographic
+area, but keep the area small, as the file size can quickly become very
+large. Data from up to four CIB CDROMs can be accessed for one mosaic.
+CIB 10-meter resolution data are not currently supported. If reading
+from the CDROM, be sure to put it in the computer's CDROM tray. </span></li>
+
+  <li class="MsoNormal" style=""><b>&nbsp;
+DEM - Obtain Digital Elevation Model (DEM) "DTED" CDROMs completely
+covering the image area, or use the AFIDS/SRTM L2 World DEM database </b><span style="font-weight: normal;">(if available; See Users
+Guide). DEM data is used to correct for topographic relief displacement
+during the coregistration process. The DTED CDROMs can be used
+directly, or the CD<span style="color: black;">'</span>s
+DEM files can be copied to a hard disk. If copied to disk, be sure to
+preserve the DTED directory structure (e.g.,
+~/dtedraw/dted/e042/34.dt1; Longitudes always have 3 digits) and use
+LOWER CASE characters. If the image<span style="color: black;">'</span>s
+geographic area crosses a DTED CDROM boundary, the data from both
+CDROMs must be copied to disk. Both DTED Level 1 and Level 2 are
+supported. Up to 30 DEM cells can be mosaicked at a time. If reading
+from the CDROM, be sure to put it in the computer<span style="color: black;">'</span>s CDROM tray. DTED data
+is NOT used by MODIS (use the provided "~/data/vdev/etop02nobath.hlf"
+two-minute DEM). </span></li>
+
+</ul>
+
+<p><a name="step1"><b>STEP 1: DIRECTORY
+INITIALIZATION</b></a><span style=""></span>
+- <span style="color: black;">The first step
+is to enter a unique 1-10 character <b>task identifier</b></span><span style="color: black;"> (keyword or project ID </span><span style='font-family: "Times New Roman"; color: black;'>"</span><span style="color: black;">key</span><span style='font-family: "Times New Roman"; color: black;'>"</span><span style="color: black;">) for this task/project effort, then
+click the <a name="OLE_LINK64"></a><a name="OLE_LINK63"></a>'Continue' button to begin the
+automatic task of creating two internal directories (final<i>key</i></span><span style="color: black;"> and raw<i>key</i></span><span style="color: black;">). Avoid
+names that start with an x, and don't use any special characters or
+spaces.
+Note that the rest of the gui is not operational until a task name is
+entered.
+When returning to </span>AFIDS<span style="color: black;">,
+re-enter the previous
+task name.</span> </p>
+
+<p>Be sure to review your data's metadata files and note the
+geographic
+coordinates and viewing angles. For Quickbird, SPOT, Ikonos, and NTM NITF
+images, use
+the <b>NITF Geometry</b> tool obtained through the <span style='font-family: "Times New Roman"; color: black;'>"</span>Step
+6: Utilities<span style="">"</span> Button on the
+main AFIDS gui, and described in <span style='font-family: "Times New Roman"; color: black;'>"</span>Information
+Utilities.<span style='font-family: "Times New ",Roman;'> "</span></p>
+
+<p><a name="step2"><b>STEP 2: IMAGE MOSAIC
+GENERATION</b></a><span style=""></span>
+- <span style="color: black;">This step
+creates two mosaic files that are used internally to correct map
+projection and
+topographic relief displacement errors. The two DEM options are used to
+create
+a dtedmos file for all imagery selections except MODIS. The two Landsat
+options
+are used to create a basemos file for ALI, Aster, Hyperion, and Landsat
+imagery
+selections. The CIB option is used to create a basemos file for the
+remaining
+Ikonos, Quickbird, SPOT and NTM imagery selections. For this Step 2, you
+must create
+both dtedmos and basemos files (as identified above). Create a DTED DEM
+(Digital Elevation Model) mosaic, CIB (Controlled Image Base 1 or
+5-meter)
+mosaic, and/or Landsat mosaic file, by selecting the appropriate Step 2
+button
+followed by the Setup button, to begin the data preparation process. To
+use
+either of the AFIDS. options, you must have the JPL-prepared global
+bases.
+Otherwise, you must have access to individual DTED-1, Landsat UTM Band
+3 files,
+and/or CIB 1 or 5 meter cdrom datasets. Note, for Quickbird and NTM
+images in
+NITF format with rpcs, a CIB image base is recommended but not
+required. If not
+provided, the user will be required to enter a Latitude/Longitude
+Sample/Line control
+point. </span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Controlled
+Image Base Mosaic (For Ikonos, Quickbird, SPOT, and NTM):</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Note, Make a
+CIB mosaic for Ikonos, Quickbird, SPOT, and NTM, and optionally for Aster
+imagery. A Landsat mosaic is preferred for Aster and required for
+Hyperion, ALI, and Landsat. MODIS imagery does not require a CIB or
+Landsat image base. </li>
+
+      <li class="MsoNormal" style=""><b>CIB
+Source Directory:</b><span style="font-weight: normal;">
+M<span style="color: black;">osaics from up to four CIB 1
+or 5-meter datasets can be made. Copy the CIB CDROM to hard disk when
+multiple datasets are required. CIB 1 and 5 meter sources should not be
+mixed. Use the Browse button to locate the CIB</span>'<span style="color: black;">s </span>"<span style="color: black;">a.toc</span>"<span style="color: black;"> file.&nbsp;</span> CIB
+10-meter data are not supported. <span style="color: black;">Make
+a CIB mosaic when coregistering Ikonos, Quickbird, SPOT, NTM, and optionally,
+Aster imagery. MODIS does not require a CIB image base. It is
+recommended that NITF datasets (NTM and Quickbird/NITF with rpcs) use a
+CIB image base, but they can be registered without a CIB by providing a
+control point</span>. </span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Mosaic:</b><span style="font-weight: normal;"> Use
+the </span><span style='font-family: "Times New Roman"; color: black;'>default
+Output Filename or add <b>_cib.img</b></span><span style='font-family: "Times New Roman"; color: black;'> to
+the end of your filename. The preferred output directory location is
+/basemos.</span> </li>
+
+      <li class="MsoNormal" style=""><b>AOI
+Selection:</b><span style="font-weight: normal;">
+Enter the Geographic Limits of the CIB data to be mosaicked. Use (-)
+for West and South. The CIB CDROM should completely cover the image's
+geographic area, <span style="color: black;">but don</span>'<span style="color: black;">t over extend the boundaries as a very
+large file can result. Fractional latitude and longitude boundaries are
+recommended.</span></span></li>
+
+      <li class="MsoNormal" style="">Select the <b>"View
+image when complete"</b><span style="font-weight: normal;">
+button to display the mosaic at completion. In the xvd display program,
+click the "Zoom Factor" button and choose 'Zoom to Fit' to see the
+entire image. Select "Tools/Stretch..." to display a variety of
+optional contrast enhancement options ('Gaussian' usually works best).
+Select "File/Exit" to quit and close the display program. </span></li>
+
+      <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> to begin the mosaic process. <a name="OLE_LINK1"></a><a name="OLE_LINK2"></a></span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>DTED
+Formatted DEM Mosaic (All Image Types except MODIS):</b>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Note, for
+MODIS, always use the provided "~/data/vdev/etop02nobath.hlf" DEM file.
+        <span style='font-family: "Times New Roman"; color: black;'>Use
+the AFIDS/SRTM World DEM DB option instead, if possible.</span> </li>
+
+      <li class="MsoNormal" style=""><b>DTED
+Source Directory:</b><span style="font-weight: normal;">
+Select the DTED source (CDROM or hard disk directory). DTED CDROMs can
+be used directly <span style="color: black;">(IF all the
+DEMs are on one CDROM),</span> or the CD's DEM files can be
+copied to a hard disk. If copied to disk, be sure to preserve the DTED
+directory structure (e.g., ~/dtedraw/dted/e042/34.dt1; Longitudes
+always have 3 digits) and use LOWER CASE characters. If the image's
+geographic area crosses a DTED CDROM boundary, the data from both
+CDROMs must be copied to disk. If reading from the CDROM, be sure to
+put it in the computer's CDROM tray. &nbsp;To mount a CD:&nbsp;
+/cdrom/cdrom0 or /mnt/cdrom</span></li>
+
+      <li class="MsoNormal" style=""><b>DTED
+level:</b><span style="font-weight: normal;"> Click
+whether the DEM data are Level 1 (90m; 3-arcsecond) or Level 2 (30m;
+1-arcsecond). </span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Mosaic:</b><span style="font-weight: normal;"> Use
+the default Output Filename whenever possible, or add _dem.img to the
+end of your filename. The default directory location is /dtedmos. </span></li>
+
+      <li class="MsoNormal" style=""><b>AOI
+Selection:</b><span style="font-weight: normal;">
+Enter the Geographic Limits of the DEM data to be mosaicked. Use (-)
+for West and South. The specified area should be larger than the
+satellite image's geographic coordinates. </span></li>
+
+      <li class="MsoNormal" style="">Select the <b>"View
+image when complete"</b><span style="font-weight: normal;">
+button to display the mosaic at completion. In the display program,
+click the "Zoom Factor" button and choose 'Zoom to Fit' to see the
+entire image. Select "Tools/Stretch..." to display a variety of
+optional contrast enhancement options ('Gaussian' usually works best).
+Select "File/Exit" to quit and close the display program. </span></li>
+
+      <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> button to begin the mosaic
+process. </span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>AFIDS/SRTM
+Global DEM Mosaic (All Image Types except MODIS):</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Note, this
+option requires access <span style='font-family: "Times New Roman"; color: black;'>to the
+JPL-prepared global 1-arc second AFIDS/SRTM L2 World DEM database
+(Refer to the Users Guide).</span> </li>
+
+      <li class="MsoNormal" style=""><b>DTED
+Source Directory:</b><span style="font-weight: normal;">
+        </span><span style='font-family: "Times New Roman"; color: black;'>Locate
+the SRTM/DTED elevation database. Once found, it will be </span>'<span style='font-family: "Times New Roman"; color: black;'>remembered</span>'<span style='font-family: "Times New Roman"; color: black;'> for
+subsequent acquisitions. </span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Mosaic:</b><span style="font-weight: normal;"> </span><span style='font-family: "Times New Roman"; color: black;'>Use
+the Browse button to define the directory path and filename for the
+output file. "_dem.img" is automatically added to the end of your
+filename. Usually, output this file to the /dtedmos directory.</span>
+      </li>
+
+      <li class="MsoNormal" style=""><b>AOI
+Selection:</b><span style="font-weight: normal;">
+Enter the Geographic Limits of the DEM data to be mosaicked. Use (-)
+for West and South. The specified area should be larger than the
+satellite image's geographic coordinates. Only integer values can be
+entered. </span></li>
+
+      <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> button to begin the mosaic
+process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Landsat
+Mosaic (For ALI, Aster, Landsat, and Hyperion):</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Note, Make a
+Landsat mosaic for Aster, Landsat, ALI, and Hyperion imagery, and a CIB
+mosaic for Ikonos, Quickbird, SPOT, and NTM coregistration. MODIS imagery
+does not require a CIB or Landsat mosaic to provide map projection
+characteristics. </li>
+
+      <li class="MsoNormal" style=""><b>Source/Destination
+Selection:</b><span style="font-weight: normal;">
+Choose up to four Landsat scenes (and metadata files) to be mosaicked
+(NOT the Landsat you may be coregistering). <span style="color: black;">Only Landsat 4, 5, and 7
+orthorectified datasets in UTM map projection and TIFF format can be
+used. </span>Be sure that the selected scenes have adjacent
+path/row coordinates. Click the Browse button to locate the input
+Landsat directory/file. Landsat band 3 (nn3) is preferred.</span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Mosaic:</b><span style="font-weight: normal;"> Click
+the Browse button to select a directory/file location (/basemos is
+preferred). Use the default Output Filename, or add _landsat.img to the
+end of your filename. </span></li>
+
+      <li class="MsoNormal" style="">Select the <b>"View
+image when complete"</b><span style="font-weight: normal;">
+button to display the mosaic at completion. In the xvd display program,
+click the "Zoom Factor" button and choose 'Zoom to Fit<a name="OLE_LINK4"></a><a name="OLE_LINK3"></a>'
+to see the entire image. Select "Tools/Stretch..." to display a variety
+of optional contrast enhancement options ('Gaussian' usually works
+best). Select "File/Exit" to quit and close the display program. </span></li>
+
+      <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> button to begin the mosaic
+process. </span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>AFIDS/Landsat
+Basemap Mosaic (For ALI, Aster, Landsat, and Hyperion):</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Note, <span style='font-family: "Times New Roman"; color: black;'>This
+option requires access to the JPL-prepared global 1-arc second Landsat
+database (Refer to the Users Guide). </span>Make a Landsat
+mosaic for Aster, Landsat, ALI, and Hyperion imagery, and a CIB mosaic
+for Ikonos, SPOT and Quickbird coregistration. MODIS imagery does not require
+a CIB or Landsat mosaic to provide map projection characteristics. </li>
+
+      <li class="MsoNormal" style=""><b>AFIDS
+WDB Source Directory:</b><span style="font-weight: normal;">
+        </span><span style='font-family: "Times New Roman"; color: black;'>Locate
+the Landsat mosaic database. Once found, it will be </span>'<span style='font-family: "Times New Roman ;color:black";'>remembered</span>'<span style='font-family: "Times New Roman"; color: black;'> for
+subsequent acquisitions</span><span style="color: black;">.</span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Mosaic:</b><span style="font-weight: normal;"> Click
+the Browse button to select a directory/file location (/basemos is
+preferred). Use the default Output Filename, or add _landsat.img to the
+end of your filename. </span></li>
+
+      <li class="MsoNormal" style=""><b>AOI
+Selection:</b><span style="font-weight: normal;">
+Enter the Geographic Limits of the DEM data to be mosaicked. Use (-)
+for West and South. The specified area should be larger than the
+satellite image's geographic coordinates. Only integer values can be
+entered.</span></li>
+
+      <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> button to begin the mosaic
+process. </span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><a name="step3"><b>STEP 3: IMAGE
+COREGISTRATION PROCESSING: MASTER Image</b></a><span style=""></span> - Creates the "Master" satellite
+image to which all other multidate images will be coregistered. BE SURE
+to
+FIRST choose the Image Type (ALI, Aster, Hyperion, Ikonos, Landsat,
+MODIS, NTM,
+Quickbird, SPOT) you will be coregistering from the Sensor Type list (on the
+left
+side of the main menu), then click the "Setup..." button to begin the
+"Master" task. </p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Source/Output
+Selection:</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><span style="color: black;">ALI: Click the top-most "Browse"
+button to find and select the raw ALI scene that is to become the
+"Master" image (.M1R), and to which all other secondary ALI scenes will
+be coregistered. Use the Browse button to locate the ALI acs Metadata
+(.MET) file, and the Landsat mosaic and DTED Elevation files you
+created in Step 2. If the ACS file is unavailable, select any
+placeholder file, and (later) choose the Manual Tiepoints process. Then
+browse to select a location and filename to put your registered/map
+projected master image. The recommended output directory is the final<i>xxx</i></span><span style="color: black;"> directory (created in Step 1 using
+the supplied <i>xxx</i></span><span style="color: black;"> name). Browse/Enter filenames in the
+optional Site Reference input and output boxes ONLY IF you have a
+pre-existing georeferenced subarea image for which you want to produce
+a matching ALI subarea image file. NOTE, if the optional Site Reference
+file is provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format. Note that ALI
+uses four separate sensors to cover a given area, and despite the AFIDS
+attempt to merge/feather the four images together, the ALI image will
+often show brightness boundaries between the sensors.</span></li>
+
+      <li class="MsoNormal" style="">Aster: Click
+the top-most "Browse" button to find and select the raw Aster scene
+that is to become the "Master" image (.hdf), and to which all other
+secondary Aster scenes will be coregistered. The Aster metadata (.met)
+file is not required. Use the Browse button to locate the Landsat
+mosaic and DTED Elevation files you created in Step 2. Then browse to
+select a location and filename to put your registered/map projected
+master image. The recommended output directory is the "final/xxx/"
+directory (created in Step 1 using the supplied /xxx/ name). <span style="color: black;">Browse/Enter filenames in the optional
+Site Reference input and output boxes ONLY IF you have a pre-existing
+georeferenced subarea image for which you want to produce a matching
+Aster subarea image file. NOTE, if the optional Site Reference file is
+provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Hyperion:
+Click the top-most <a name="OLE_LINK6"></a><a name="OLE_LINK5"></a>"Browse" button to find and
+select the raw Hyperion scene that is to become the "Master" image
+(.L1R), and to which all other secondary Hyperion scenes will be
+coregistered. Use the Browse button to locate the Hyperion "acs"
+Metadata (.MET) file, and the Landsat mosaic and DTED Elevation files
+you created in Step 2. If the ACS file is unavailable, select any
+placeholder file, and (later) choose the 'Manual Tiepoints' process.
+Then browse to select a location and filename to put your
+registered/map projected master image. The recommended output directory
+is the "final/xxx/" directory (created in Step 1 using the supplied
+/xxx/ name). <span style="color: black;">Browse/Enter
+filenames in the optional Site Reference input and output boxes ONLY IF
+you have a pre-existing georeferenced subarea image for which you want
+to produce a matching Hyperion subarea image file. NOTE, if the
+optional Site Reference file is provided, all subsequent processing
+will reference the subareas georeference (not the full image). The Site
+Reference file must be at least 1200x1200 pixels in size, and can be in
+either VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Ikonos: Click
+the top-most "Browse" button to find and select the raw Ikonos scene
+that is to become the "Master" image (.tif only), and to which all
+other secondary Ikonos scenes will be coregistered. Use the Browse
+button to locate the Ikonos Metadata (.txt or .met) file and Header
+(.hdr) files, as well as the CIB mosaic and DTED Elevation files you
+created in Step 2. <span style="color: black;">If the
+metadata is unavailable or damaged, you will need to choose the </span>"<span style="color: black;">Manual Tiepoints</span>"<span style="color: black;"> process. </span>Browse to
+select a location and filename to put your registered/map projected
+master image. The recommended output directory is the "final/xxx/"
+directory (created in Step 1 using the supplied /xxx/ name). <span style="color: black;">In the </span>"<span style="color: black;">Optional Out RPC/TIFF</span>"<span style="color: black;"> slot, browse or enter a path/name if
+you want to create a copy of the input Ikonos image with improved
+rational polynomial coefficients. The output format is GeoTIFF.
+Browse/Enter filenames in the optional Site Reference input and output
+boxes ONLY IF you have a pre-existing georeferenced subarea image for
+which you want to produce a matching Ikonos subarea image file. NOTE,
+if the optional Site Reference file is provided, all subsequent
+processing will reference the subareas georeference (not the full
+image). The Site Reference file must be at least 1200x1200 pixels in
+size, and can be in either VICAR/GT or GeoTIFF format. The output is
+always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Landsat: Click
+the top-most "Browse" button to find and select the raw (unrectified)
+Landsat scene band (usually Band 3) that is to become the "Master"
+image (nn3.tif, .b03, .I3, or .FST), and to which all other secondary
+Landsat scenes will be coregistered. Use the Browse button to locate
+the Landsat metadata file (.met, .ip3, .H1, or MTL.FST), and the
+Landsat mosaic and DTED Elevation files you created in Step 2. Then
+browse to select a location and filename to put your registered/map
+projected master image. The recommended output directory is the 'final<i>xxx</i><span style="font-style: normal;"> directory (created in Step 1
+using the supplied </span><i>xxx</i><span style="font-style: normal;"> name). <span style="color: black;">Browse/Enter filenames in the optional
+Site Reference input and output boxes ONLY IF you have a pre-existing
+georeferenced subarea image for which you want to produce a matching
+Landsat subarea image file. NOTE, if the optional Site Reference file
+is provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format.</span></span></li>
+
+      <li class="MsoNormal" style="">MODIS: Click
+the top-most "Browse" button to find and select the raw MODIS
+(MOD021KM) scene that is to become the "Master" image (.hdf), and to
+which all other secondary MODIS scenes will be coregistered. The master
+image also requires a Geolocation file (MOD03) file (.hdf) to provide
+metadata information. Because of the large size of many MODIS images,
+they are sometimes provided into two parts. If your MODIS file is
+provided in two parts, and your area of interest requires both parts,
+use the browse buttons to enter the second image/metadata information
+into the "Image 2/Geoloc 2" slots. MODIS does not require a CIB or
+Landsat mosaic, or a specially prepared DTED file. In the "Elevation
+Image" slot, browse to locate the '~/data/vdev/etop02nobath.hlf' DEM
+file. Finally, browse to select a location and filename to put your
+registered/map projected master image. The recommended output directory
+is the "final/xxx/" directory (created in Step 1 using the supplied
+/xxx/ name). <span style="color: black;">Browse/Enter
+filenames in the optional Site Reference input and output boxes ONLY IF
+you have a pre-existing georeferenced subarea image for which you want
+to produce a matching MODIS subarea image file. NOTE, if the optional
+Site Reference file is provided, all subsequent processing will
+reference the subareas georeference (not the full image). The Site
+Reference file must be at least 1200x1200 pixels in size, and can be in
+either VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Quickbird:
+Click the top-most "Browse" button to find and select the raw Quickbird
+Panchromatic (not Multispectral) scene that is to become the <a name="OLE_LINK8"></a><a name="OLE_LINK7"></a>"Master"
+image (.tif or .ntf), and to which all other secondary Quickbird scenes
+will be coregistered. Use the Browse button to locate the Quickbird
+Metadata (.imd) file, as well as the CIB mosaic and DTED Elevation
+files you created in Step 2. <span style="color: black;">If
+the metadata is unavailable or damaged, you will need to choose the </span>"<span style="color: black;">Manual Tiepoints</span>"<span style="color: black;"> process. </span>Browse to
+select a location and filename to put your registered/map projected
+master image. The recommended output directory is the "final/xxx/"
+directory (created in Step 1 using the supplied /xxx/ name). <a name="OLE_LINK69"></a><a name="OLE_LINK70"></a><span style="color: black;">In the </span>"<span style="color: black;">Optional Out RPC/TIFF</span>"<span style="color: black;"> slot, browse or enter a path/name if
+you want to create a copy of the input Quickbird image with improved
+rational polynomial coefficients (requires NITF input). The output
+format is GeoTIFF. Browse/Enter filenames in the optional Site
+Reference input and output boxes ONLY IF you have a pre-existing
+georeferenced subarea image for which you want to produce a matching
+ALI subarea image file. NOTE, if the optional Site Reference file is
+provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format</span>.</li>
+
+      <li class="MsoNormal" style="">SPOT:
+Fill me in
+</li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'>NTM:
+See separate documentation. A CIB image is not required, but if not
+provided, the user must provide a control point. The </span>"<span style="color: black;">Optional Out RPC/TIFF</span>"<span style="color: black;"> slot is <b>not</b></span><span style="color: black;"> optional for subsequent BE chip
+preparation (in Secondary dialog box).</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Area of
+Interest Selection:</b><span style="font-weight: normal;">
+Leave blank to coregister the entire image, or enter starting and
+ending image lines (rows) and samples (columns) to define a subarea for
+coregistration. This can be useful for trimming an image if the image
+area exceeds the Landsat/CIB or DTED mosaic. For Ikonos, SPOT and Quickbird,
+a subarea of less than 15000x15000 is recommended (smaller dimensions
+will produce a better registration in mountainous areas), or increase
+the Grid Fineness for very large images. <span style="color: black;">Multispectral
+subareas are not currently allowed (choose full scene). </span>Click
+the "View Input Image" button to display the image and help identify
+the line/sample subarea limits. In the display program, click the "Zoom
+Factor" button and choose 'Zoom to Fit' to see the entire image. Select
+"Tools/Stretch..." to display a variety of optional contrast
+enhancement options ('Gaussian' usually works best). Select "File/Exit"
+to quit and close the display program. <span style="color: black;">The
+display may take a minute or two; be patient!</span></span></li>
+
+  <li class="MsoNormal" style=""><b>Coregistration
+Parameters:</b>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><b>Grid
+Fineness:</b><span style="font-weight: normal;">
+These values define the grid used by the (internal) automated tiepoint
+selection and matching routines. The default values have been optimized
+for each particular image type. Increase these values if the
+registration results are unsatisfactory, or images are over
+15000x15000. Generally, (Horz*Vert)&lt;1,000,000 preferred;
+&lt;4,000,000 maximum (2000x2000 grid).</span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Pixel Size</b><span style="font-weight: normal;">
+(Ikonos/Quickbird only): The default is the nominal panchromatic pixel
+size (Ikonos = 1.0; Quickbird = 0.61). The multispectral sizes are
+Ikonos = 4.0m and Quickbird = 2.44m.</span></li>
+
+      <li class="MsoNormal" style=""><b>Output
+Map Projection:</b><span style="font-weight: normal;">
+For all image types, choose Platte Carree (geographic; rectangular) or
+UTM output map projection, or provide your own Reference (target) map
+projection. Use the browse button to find your own existing AFIDS or
+external GeoTIFF target reference image. If the GeoTIFF file is from an
+external source, only the following projections are currently
+supported: Platte Carree, UTM, Albers Equal Area, and Lambert Conformal
+Conic with two standard parallels. Note that the large area coverage of
+MODIS images can cause projection problems in the far northern and
+southern latitudes (use the AOI Selection option, above, to remove
+extreme latitudes from the imagery).</span></li>
+
+      <li class="MsoNormal" style=""><b>Resample
+Method:</b><span style="font-weight: normal;"> Use
+the default 'Bilinear' interpolation for the best pixel matching and
+smooth pixel transitions. Use 'Nearest Neighbor' to preserve pixel
+values, but with up to half-pixel offsets.</span></li>
+
+      <li class="MsoNormal" style=""><b>Raster
+Type:</b><span style="font-weight: normal;"> Use
+'Area' to have the origin (0,0) in the upper left corner of the pixel.
+Use 'Point' for the origin to be placed in the center of the pixel.
+Generally, 'Area' is used for images and 'Point' is used for DEMs and
+other map-like raster products. This option is overruled if the 'Output
+Map Projection/Reference' option (above) is specified. This option can
+be helpful for georeference compatibility with commercially-generated
+imagery.</span></li>
+
+      <li class="MsoNormal" style=""><b>Acquisition
+Time</b><span style="font-weight: normal;"> (MODIS
+only): Select whether the MODIS scene is Daytime or Nighttime.</span></li>
+
+      <li class="MsoNormal" style=""><a name="OLE_LINK16"></a><a name="OLE_LINK15"></a><b>Initial
+FFT Search Size</b><span style="font-weight: normal;">
+(Hyperion and ALI): Use this option if the coregistration product is
+unsatisfactory. The smaller (196/256) FFT size often works better with
+images that have clouds present. Alternatively, an option is provided
+to manually find two or three tiepoints for guiding the automated FFT
+tiepoint process. This option is especially necessary if the Hyperion
+ACS metadata file is missing or damaged. After clicking the 'Choose
+...' button, allow 30 seconds for two 'xvd' diplay windows and a dialog
+box to appear. Use the display program to find a common tiepoint near
+the top of the Hyperion image, and a second point near the bottom of
+the image. Other imagery may require three points. Enter the Line (row)
+and Sample (Column) numbers of the tiepoint pixels into the dialog box
+and click the 'Accept' button.</span></li>
+
+      <li class="MsoNormal" style=""><b>Sensor</b><span style='font-family: "Times New Roman"; color: black; font-weight: normal;'>
+(ALI only) :Always choose the default Panchromatic unless you dont have
+Panchromatic data with your Multispectral data.</span></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'><b>Optional
+Control Point</b></span><span style='font-family: "Times New Roman"; color: black;'>: (For
+NTM or Quickbird NITF images only.) Required when correlation fails
+because the NITF image's rpc coordinates are inaccurate, or when the
+CIB image base is unavailable. Enter the Line (row) and Sample (column)
+for an accurately known Latitude and Longitude coordinate position.</span></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman "; color: black;'><b>Manual
+Tiepoints</b></span><span style='font-family: "Times New Roman"; color: black;'>
+(SPOT, Quickbird, NTM, Ikonos only): Use this option if the correlation
+fails, is unsatisfactory, or you want to improve <a name="OLE_LINK74"></a><a name="OLE_LINK73"></a>the
+accuracy of the rpc(s) through a better correlation. Upon clicking the </span><b>"</b><span style="font-weight: normal;">Choose...</span><b>"</b><span style='font-family: "Times New Roman"; color: black; font-weight: normal;'>
+button, two windows will appear (be patient, the second window may take
+a full minute). Find one common tiepoint between the input and CIB
+images (addition tiepoints are ignored). Click the </span><b>"</b><span style="font-weight: normal;">Accept</span><b>"</b><span style='font-family: "Times New Roman"; color: black; font-weight: normal;'>
+button to record your entered values. Be sure to close the </span>'<span style='font-family: "Times New Roman"; color: black;'>xvd</span>'<span style='font-family: "Times New Roman "; color: black;'>
+display windows.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="">Click the <b>"Start"</b><span style="font-weight: normal;"> button to begin the Master
+Image Coregistration process. </span></li>
+
+  <li class="MsoNormal" style=""><b>Registration
+Review:</b><span style="font-weight: normal;"> <span style="color: black;">Four (4) optional tools are provided
+to review the output registration accuracy. Note, if the optional Site
+Reference subfile is provided, the Registration Review will show the </span></span><span style="color: black;"><b>full</b></span><span style="color: black;"> image registration, although
+subsequent AFIDS processing will reference the subarea file.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><b>Output:</b><span style="font-weight: normal;"> Click this button and press
+"Review" to display the registered Master image. </span></li>
+
+      <li class="MsoNormal" style=""><b>Base
+Overlay:</b><span style="font-weight: normal;">
+Click this button and press "Review" to display the Master image
+superimposed on the Landsat or CIB mosaic used in the registration
+process. This option is useful for evaluating registration errors on an
+image/feature basis. This option is not available for MODIS datasets.</span></li>
+
+      <li class="MsoNormal" style=""><b>Accuracy:</b><span style="font-weight: normal;"> Click this button and press
+"Review" to display a "Vector Magnitude" map. This map provides a
+coarse grid of vectors showing the direction and magnitude of "rubber
+sheeting" that occurred in the registration of the Master image to the
+Landsat/CIB map projection mosaic. The magnitudes are sized for display
+and are NOT to scale. They provide a 'relative' evaluation of a local
+point's spatial adjustment. A small 'tick' indicates the base point's
+location. </span></li>
+
+      <li class="MsoNormal" style=""><b>Accuracy
+Overlay:</b><span style="font-weight: normal;">
+Click this button and press "Review" to display the "Vector Magnitude"
+points overlayed on the registered Master image. </span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><a name="step4"><b>STEP 4: IMAGE
+COREGISTRATION PROCESSING: SECONDARY Image</b></a><span style=""></span> - Create the multidate "Secondary"
+satellite image which will be coregistered to your existing "Master"
+satellite image (created in Step 3 above). BE SURE the Image Type you
+will be
+coregistering has been correctly selected from the Sensor Type list (on
+the
+left side of the main menu), then click the "Setup..." button to
+begin the "Secondary" task. </p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Source/Output
+Selection:</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><span style="color: black;">ALI: Click the top-most "Browse"
+button to find and select the raw multidate ALI scene that is to become
+the "Secondary" image (.M1R), coregistered to the Master scene created
+in Step 3. Use the Browse button to locate the Secondary ALI's acs
+Metadata (.MET) file, and the Landsat mosaic and DTED Elevation files
+created in Step 2. If the ACS file is unavailable, select any
+placeholder file, and (later) choose the Manual Tiepoints process.
+Browse to locate the output Master ALI image from Step 3 (NOT the Site
+Reference output file from Step 3). Then browse to select a location
+and filename to put your registered/map projected Secondary image. The
+recommended output directory is the final<i>xxx</i></span><span style="color: black;"> directory (created in Step 1 using
+the supplied <i>xxx</i></span><span style="color: black;"> name). Browse/Enter filenames in the
+optional Site Reference input and output boxes ONLY IF you have a
+pre-existing georeferenced subarea image for which you want to produce
+a matching ALI subarea image file. NOTE, if the optional Site Reference
+file is provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format. Note that ALI
+uses four separate sensors to cover a given area, and despite the AFIDS
+attempt to merge/feather the four images together, the ALI image will
+often show brightness boundaries between the sensors.</span></li>
+
+      <li class="MsoNormal" style="">Aster: Click
+the top-most "Browse" button to find and select the raw multidate Aster
+scene that is to become the "Secondary" image (.hdf), coregistered to
+the Master scene created in Step 3. By repeating this step, several
+Secondary images can be coregistered to the Master image. The Aster
+metadata (.met) file is not required. Use the Browse button to locate
+the Landsat mosaic and DTED Elevation files you created in Step 2, and
+the output registered Master Aster image from Step 3 <span style="color: black;">(NOT the Site Reference output file
+from Step 3)</span>. Then browse to select a location and
+filename to put your registered/map projected Secondary image. The
+recommended output directory is the "final/xxx/" directory (created in
+Step 1 using the supplied /xxx/ name). <span style="color: black;">Browse/Enter
+filenames in the optional Site Reference input and output boxes ONLY IF
+you have a pre-existing georeferenced subarea image for which you want
+to produce a matching Aster subarea image file. NOTE, if the optional
+Site Reference file is provided, all subsequent processing will
+reference the subareas georeference (not the full image). The Site
+Reference file must be at least 1200x1200 pixels in size, and can be in
+either VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Hyperion:
+Click the top-most "Browse" button to find and select the raw multidate
+Hyperion scene that is to become the "Secondary" image (.L1R),
+coregistered to the Master scene created in Step 3. Use the Browse
+button to locate the Secondary Hyperion's "ACS" Metadata (.MET) file,
+and the Landsat mosaic and DTED Elevation files created in Step 2. If
+the ACS file is unavailable, select any placeholder file, and (later)
+choose the 'Manual Tiepoints' option. Browse to locate the output
+Master Hyperion image from Step 3 <span style="color: black;">(NOT
+the Site Reference output file from Step 3)</span>. Then browse
+to select a location and filename to put your registered/map projected
+Secondary image. The recommended output directory is the "final/xxx/"
+directory (created in Step 1 using the supplied /xxx/ name). <span style="color: black;">Browse/Enter filenames in the optional
+Site Reference input and output boxes ONLY IF you have a pre-existing
+georeferenced subarea image for which you want to produce a matching
+Hyperion subarea image file. NOTE, if the optional Site Reference file
+is provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Ikonos: Click
+the top-most "Browse" button to find and select the raw multidate
+Ikonos scene that is to become the "Secondary" image (.tif only),
+coregistered to the Master Ikonos scene created in Step 3. Use the
+Browse button to locate the Secondary Ikonos' Metadata (.txt or .met)
+file and Header (.hdr) files, as well as the CIB mosaic and DTED
+Elevation files created in Step 2. <a name="OLE_LINK58"></a><a name="OLE_LINK57"></a><span style="color: black;">If
+the metadata is unavailable or damaged, you will need to choose the </span>"<span style="color: black;">Manual Tiepoints</span>"<span style="color: black;"> process. </span>Browse to
+locate the output Master Ikonos image from Step 3 <span style="color: black;">(NOT the Site Reference output file
+from Step 3)</span>. Then browse to select a location and
+filename to put your registered/map projected Secondary image. The
+recommended output directory is the "final/xxx/" directory (created in
+Step 1 using the supplied /xxx/ name). <span style="color: black;">In
+the </span>"<span style="color: black;">Optional
+Out RPC/TIFF</span>"<span style="color: black;">
+slot, browse or enter a path/name if you want to create a copy of the
+input secondary Ikonos image with improved rational polynomial
+coefficients. The output format is GeoTIFF. Browse/Enter filenames in
+the optional Site Reference input and output boxes ONLY IF you have a
+pre-existing georeferenced subarea image for which you want to produce
+a matching Ikonos subarea image file. NOTE, if the optional Site
+Reference file is provided, all subsequent processing will reference
+the subareas georeference (not the full image). The Site Reference file
+must be at least 1200x1200 pixels in size, and can be in either
+VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Landsat: Click
+the top-most "Browse" button to find and select the raw (uncorrected)
+multidate Landsat scene (usually Band 3) that is to become the
+"Secondary" image (*_nn3.tif, .b03, or .I3), coregistered to the Master
+scene created in Step 3. By repeating this Step 4, several Secondary
+images can be coregistered to the Master image. Use the Browse button
+to locate the Landsat metadata (.met, .ip3, .H1, or MTL.FST) file, the
+Landsat mosaic and DTED Elevation files you created in Step 2, and the
+output registered Master Landsat image from Step 3 <span style="color: black;">(NOT the Site Reference output file
+from Step 3)</span>. Then browse to select a location and
+filename to put your registered/map projected Secondary image. The
+recommended output directory is the 'final<i>xxx</i><span style="font-style: normal;">' directory (created in Step 1
+using the supplied </span><i>xxx</i><span style="font-style: normal;"> name). <span style="color: black;">Browse/Enter filenames in the optional
+Site Reference input and output boxes ONLY IF you have a pre-existing
+georeferenced subarea image for which you want to produce a matching
+Landsat subarea image file. NOTE, if the optional Site Reference file
+is provided, all subsequent processing will reference the subareas
+georeference (not the full image). The Site Reference file must be at
+least 1200x1200 pixels in size, and can be in either VICAR/GT or
+GeoTIFF format. The output is always VICAR/GT format.</span></span></li>
+
+      <li class="MsoNormal" style="">MODIS: Click
+the top-most "Browse" button to find and select the raw multidate MODIS
+(MOD021KM) scene that is to become the "Secondary" image (.hdf),
+coregistered to the Master screne created in Step 3. The Secondary
+image also requires it's Geolocation file (MOD03) file (.hdf) to
+provide metadata information. If your Master MODIS file was provided in
+two parts, your Secondary image may also be in two parts (the second
+part is not required). If there are two parts, use the browse buttons
+to enter the Part 2 image/metadata information into the "Image 2/Geoloc
+2" slots. MODIS does not require a CIB or Landsat mosaic, or a
+specially prepared DTED file. In the "Elevation Image" slot, browse to
+locate the '/data/vdev/etop02 nobath.hlf' DEM file. Browse to locate
+the output Master MODIS image from Step 3 <span style="color: black;">(NOT the Site Reference output file
+from Step 3)</span>. Finally, browse to select a location and
+filename to put your registered/map projected Secondary image. The
+recommended output directory is the "final/xxx/" directory (created in
+Step 1 using the supplied /xxx/ name). <span style="color: black;">Browse/Enter
+filenames in the optional Site Reference input and output boxes ONLY IF
+you have a pre-existing georeferenced subarea image for which you want
+to produce a matching MODIS subarea image file. NOTE, if the optional
+Site Reference file is provided, all subsequent processing will
+reference the subareas georeference (not the full image). The Site
+Reference file must be at least 1200x1200 pixels in size, and can be in
+either VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">Quickbird:
+Click the top-most "Browse" button to find and select the raw multidate
+Quickbird Panchromatic scene that is to become the "Secondary" image,
+coregistered to the Master scene created in Step 3. <span style="color: black;">The Secondary image must be the same
+original format as the Master (e.g., tif/tif; nitf/nitf; pan/pan). </span>Use
+the Browse button to locate the Secondary image's Metadata (.imd) file,
+as well as the CIB mosaic and DTED Elevation files created in Step 2. <span style="color: black;">If the metadata is unavailable or
+damaged, you will need to choose the </span>"<span style="color: black;">Manual Tiepoints</span>"<span style="color: black;"> process. </span>Browse to
+locate (/finalxxx) the output Master Quickbird image from Step 3 <span style="color: black;">(NOT the Site Reference output file
+from Step 3)</span>. Then browse to select a location and
+filename to put your registered/map projected Secondary image. The
+recommended output directory is the "final/xxx/" directory (created in
+Step 1 using the supplied /xxx/ name). <span style="color: black;">In
+the </span>"<span style="color: black;">Optional
+Out RPC/TIFF</span>"<span style="color: black;">
+slot, browse or enter a path/name if you want to create a copy of the
+input secondary Quickbird image with improved rational polynomial
+coefficients (NITF only. The output format is GeoTIFF. Browse/Enter
+filenames in the optional Site Reference input and output boxes ONLY IF
+you have a pre-existing georeferenced subarea image for which you want
+to produce a matching Quickbird subarea image file. NOTE, if the
+optional Site Reference file is provided, all subsequent processing
+will reference the subareas georeference (not the full image). The Site
+Reference file must be at least 1200x1200 pixels in size, and can be in
+either VICAR/GT or GeoTIFF format. The output is always VICAR/GT format.</span></li>
+
+      <li class="MsoNormal" style="">SPOT:
+Fill me in
+</li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'>NTM:
+See separate documentation. A CIB image is recommended but not required.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Area of
+Interest Selection:</b><span style="font-weight: normal;">
+Leave blank to coregister the entire image, or enter starting and
+ending image lines (rows) and samples (columns) to define a subarea for
+coregistration. This can be useful for trimming an image if the image
+area exceeds the Landsat/CIB or DTED mosaic. For Ikonos, SPOT and Quickbird,
+a subarea of less than 15000x15000 is recommended (smaller dimensions
+will produce a better registration in mountainous areas), or increase
+the Grid Fineness for very large images. Click the "View Input Image"
+button to display the image and help identify the line/sample subarea
+limits. In the display program, click the "Zoom Factor" button and
+choose 'Zoom to Fit' to see the entire image. Select "Tools/Stretch..."
+to display a variety of optional contrast enhancement options
+('Gaussian' usually works best). Select "File/Exit" to quit and close
+the display program. <span style="color: black;">The
+display may take a minute or two; be patient!</span></span></li>
+
+  <li class="MsoNormal" style=""><b>Coregistration
+Parameters:</b>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><b>Initial
+FFT Search Size</b><span style="font-weight: normal;">
+(Hyperion only): Use this option if the coregistration product is
+unsatisfactory. The smaller (256) FFT size often works better with
+images that have clouds present. Alternatively, an option is provided
+to manually find two tiepoints for guiding the automated FFT tiepoint
+process. This option is especially necessary if the Hyperion ACS
+metadata file is missing or damaged. After clicking the 'Choose ...'
+button, allow 30 seconds for two 'xvd' diplay windows and a dialog box
+to appear. Use the display program to find a common tiepoint near the
+top of the Hyperion image, and a second point near the bottom of the
+image. </span><span style='font-family: "Times New Roman"; color: black;'>Other
+imagery may require three points. </span>Enter the Line (row)
+and Sample (Column) numbers of the tiepoint pixels into the dialog box
+and click the 'Accept' button.</li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'><b>Optional
+Control Point</b></span><span style='font-family: "Times New Roman"; color: black;'>:
+Optional for Quickbird and NTM NITF images. Only required if your image
+fails to correlate. Enter the Line (row) and Sample (column) for an
+accurately known Latitude and Longitude coordinate position.</span></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman "; color: black;'><b>Manual
+Tiepoints</b></span><span style='font-family: "Times New Roman"; color: black;'>
+(SPOT, Quickbird, NTM, Ikonos only): Use this option if the correlation
+fails, is unsatisfactory, or you want to improve the accuracy of the
+rpc(s) through a better correlation. Upon clicking the </span>"<span style='font-family: "Times New Roman "; color: black;'>Choose...</span>"<span style='font-family: "Times New Roman"; color: black;'>
+button, two windows will appear (be patient, the second window may take
+a full minute). Find one common tiepoint between the input and CIB
+images (addition tiepoints are ignored). Click the </span>"<span style='font-family: "Times New Roman"; color: black;'>Accept</span>"<span style='font-family: "Times New Roman"; color: black;'>
+button to record your entered values. Be sure to close the </span>'<span style='font-family: "Times New Roman"; color: black;'>xvd </span>'<span style='font-family: "Times New Roman ;color:black";'>display
+windows.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the Master
+Image Coregistration process. </span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="color: black;"><span style="color: windowtext;"><b>Battlefield Entity
+Selection Parameters </b></span><span style="color: windowtext;">(Quickbird and NTM Imagery Only):<b>
+    </b></span><span style='font-family: "Times New Roman";'>Use this option to
+create a Master and Secondary chips centered on user-provided BE
+coordinates.&nbsp; Coordinates not found in the input imagery will
+be skipped. There is no current limit on the number of BE entries.</span><o:p></o:p>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="color: black;"><span style='font-family: "Times ",New Roman;'><b>Be List:</b></span><span style='font-family: "Times New Roman";'> Browse to find an
+ascii/text file containing Battlefield Entity coordinates in the
+following format: longtitude, latitude, BE#, and short text string
+(with no blanks).</span><o:p></o:p></li>
+
+      <li class="MsoNormal" style="color: black;"><span style='font-family: "Times New Roman";'><b>Output Chip
+Type:</b></span><span style='font-family: "Times New Roman";'> Choose either VICAR
+or GeoTIFF output format.</span><o:p></o:p></li>
+
+      <li class="MsoNormal" style="color: black;"><span style='font-family: "Times New Roman";'><b>Output Chip
+Prefix:</b></span><span style='font-family: "Times New Roman";'> Short descriptive
+text placed at the beginning of the output chip</span><span style="color: windowtext;">'</span><span style='font-family: "Times New Roman";'>s filename.</span><o:p></o:p></li>
+
+      <li class="MsoNormal" style="color: black;"><span style='font-family: "Times New Roman";'><b>Chip Pixel
+Size (meters):</b></span><span style='font-family: "Times New Roman";'> Pixel resolution of
+the output chip. Can be smaller (higher resolution) than the
+Master/Secondary pixel size.</span><o:p></o:p></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'><b>Chip
+Window Size (pixels):</b></span><span style='font-family: "Times New Roman"; color: black;'> The
+size of the output (square) chip images. The minimum size is 1200x1200.
+The default is 4096x4096.</span></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'><b>Master
+Reference RPC:</b></span><span style='font-family: "Times New Roman"; color: black;'>
+Browse to find the Master Image</span>'<span style="">s
+RPC tiff file created in Step 3.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Registration
+Review:</b><span style="font-weight: normal;"> <span style="color: black;">Five (5) optional tools are provided
+to review the output registration accuracy. Note, if the optional Site
+Reference subfile is provided, the Registration Review will show the </span></span><span style="color: black;"><b>full</b></span><span style="color: black;"> image registration, although
+subsequent AFIDS processing will reference the subarea file.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><b>Output:</b><span style="font-weight: normal;"> Click this button and press
+"Review" to display the registered Secondary image.</span></li>
+
+      <li class="MsoNormal" style=""><b>Base
+Overlay</b><span style="font-weight: normal;"> (not
+available for MODIS): Click this button and press "Review" to display
+the Secondary image superimposed on the Landsat or CIB mosaic used in
+the registration process. This option is useful for evaluating
+registration errors on an image/feature basis.</span></li>
+
+      <li class="MsoNormal" style=""><b>Master
+Overlay:</b><span style="font-weight: normal;">
+Click this button and press "Review" to display the Secondary image
+superimposed on the Master image. This option is useful for evaluating
+registration errors on an image/feature basis.</span></li>
+
+      <li class="MsoNormal" style=""><b>Accuracy:</b><span style="font-weight: normal;"> Click this button and press
+"Review" to display a "Vector Magnitude" map. This map provides a
+coarse grid of vectors showing the direction and magnitude of "rubber
+sheeting" that occurred in the registration of the Secondary image to
+the Master image. The magnitudes are sized for display and are NOT to
+scale. They provide a 'relative' evaluation of a local point's spatial
+adjustment. A small 'tick' indicates the base point's location.</span></li>
+
+      <li class="MsoNormal" style=""><b>Accuracy
+Overlay:</b><span style="font-weight: normal;">
+Click this button and press "Review" to display the "Vector Magnitude"
+points overlayed on the registered Secondary image.</span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><a name="step5"><b>Step 5: IMAGE
+COREGISTRATION PROCESSING: ADDITIONAL BANDS</b></a><span style=""></span> - Use this Step to extract and
+coregister
+the Ikonos/Quickbird Panchromatic and four multispectral (blu, grn,
+red, nir)
+bands, any of the 224 Hyperion hyperspectral bands, any of the 10 ALI
+bands,
+any of the 14 Aster bands, up to 8 Landsat bands, and any of the 38
+MODIS bands
+from your Master/Secondary images coregisterd in Steps 3 and 4 above.
+(Refer to
+Appendix B in the Users Guide for a complete list of all sensor bands.)
+This
+step must be repeated for each desired Aster and MODIS band. Multiple
+bands can
+be output for Hyperion, Ikonos and Quickbird. <span style="color: black;">If the
+optional Site Reference file was used in Steps 3 or 4, the output
+additional
+bands will reflect the Site Reference dimensions. </span>BE SURE
+the Image Type
+you will be coregistering has been correctly selected from the Sensor
+Type list
+(on the left side of the main menu), then click the "Setup..." button
+to begin the "Additional Band" task. </p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Source/Output
+Selection:</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><span style="color: black;">ALI: Click the 'Additional Band'
+"Browse" button to find and select the original (raw) Master or
+Secondary ALI scene .hdf; .M1R) that you want to select bands from. In
+the second slot, browse to find the registered <a name="OLE_LINK54"></a><a name="OLE_LINK51"></a><a name="OLE_LINK52"></a><a name="OLE_LINK53"></a>Master, Secondary, or Site
+Reference image created in Steps 3 or 4. If the selection is Master or
+Secondary, be sure the first slot is consistent, i.e., Master with
+Master, etc. Then browse to select a location and filename to put your
+output Band images. The software will append a band number at the end
+of your filename. The recommended output directory is the final<i>xxx</i></span><span style="color: black;"> directory (created in Step 1 using
+the supplied <i>xxx</i></span><span style="color: black;"> name).</span></li>
+
+      <li class="MsoNormal" style="">Aster: Click
+the 'Additional Band' "Browse" button to find and select the original
+(raw) Master or Secondary Aster scene (.hdf) that you want to select
+bands from. In the second slot, browse to find the registered <span style="color: black;">Master, Secondary, or Site Reference
+image created in Steps 3 or 4. If the selection is Master or Secondary,
+be sure the first slot is consistent, i.e., Master with Master, etc</span>.
+Then browse to select a location and filename to put your output Band.
+The recommended output directory is the "final/xxx/" directory (created
+in Step 1 using the supplied /xxx/ name).</li>
+
+      <li class="MsoNormal" style="">Hyperion:
+Click the 'Additional Band' "Browse" button to find and select the
+original (raw) Master or Secondary Hyperion scene .hdf; .L1R) that you
+want to select bands from. In the second slot, browse to find the
+registered <span style="color: black;">Master, Secondary,
+or Site Reference image created in Steps 3 or 4. If the selection is
+Master or Secondary, be sure the first slot is consistent, i.e., Master
+with Master, etc</span>. Then browse to select a location and
+filename to put your output Band images. The software will append a
+band number at the end of your filename. The recommended output
+directory is the "final/xxx/" directory (created in Step 1 using the
+supplied /xxx/ name).</li>
+
+      <li class="MsoNormal" style="">Ikonos: Click
+the 'Additional Band' "Browse" button to find and select the (raw)
+Master or Secondary Ikonos scene (.tif) that you want to select bands
+from. In the second slot, browse to find the registered <span style="color: black;">Master, Secondary, or Site Reference
+image created in Steps 3 or 4. If the selection is Master or Secondary,
+be sure the first slot is consistent, i.e., Master with Master, etc</span>.
+Then browse to select a location and filename to put your output Band.
+The software will append a band suffix at the end of your filename. The
+recommended output directory is the "final/xxx/" directory (created in
+Step 1 using the supplied /xxx/ name).</li>
+
+      <li class="MsoNormal" style="">Landsat: Click
+the 'Additional Band' "Browse" button to find and select the additional
+Master or Secondary Landsat band (e.g., *_nn1.tif, *.I2, .b04, or
+*.FST) that you want to coregister.&nbsp;In the second slot, browse
+to find the registered <span style="color: black;">Master,
+Secondary, or Site Reference image created in Steps 3 or 4. If the
+selection is Master or Secondary, be sure the first slot is consistent,
+i.e., Master with Master, etc</span>. Then browse to select a
+location and filename to put your output Band. The recommended output
+directory is the 'final<i>xxx</i><span style="font-style: normal;">' directory (created in Step 1
+using the supplied </span><i>xxx</i><span style="font-style: normal;"> name). Repeat this process for
+each additional Landsat band to be coregistered.</span></li>
+
+      <li class="MsoNormal" style="">MODIS: Click
+the 'Additional Band' "Browse" button to find and select the original
+(raw) Master or Secondary MODIS scene (.hdf) that you want to select
+bands from. In the second slot, browse to select input file's
+Geolocation file (MOD03) file (.hdf) to provide metadata information.
+If your MODIS file was provided in two parts, use the browse buttons to
+enter the Part 2 image/metadata information into the "Image 2/Geoloc 2"
+slots. In the fifth slot, browse to find the registered <span style="color: black;">Master, Secondary, or Site Reference
+image created in Steps 3 or 4. If the selection is Master or Secondary,
+be sure the first slot is consistent, i.e., Master with Master, etc</span>.
+Then browse to select a location and filename to put your output Band.
+The recommended output directory is the "final/xxx/" directory (created
+in Step 1 using the supplied /xxx/ name).</li>
+
+      <li class="MsoNormal" style="">Quickbird: <span style="color: black;">Additional Bands are currently
+supported for full image scenes only (i.e., AOI/subarea selection in
+Step 3 and 4 was left blank to select the whole scene). </span>Click
+the 'Additional Band' "Browse" button to find and select the (raw)
+Master or Secondary Quickbird Multispectral scene that you want to
+select bands from (e.g., red, grn, blu, or nir). Use the Browse button
+to locate the Master/Secondary image's Metadata file <span style="color: black;">file</span>. In the third slot,
+browse to find the registered <span style="color: black;">Master,
+Secondary, or Site Reference image created in Steps 3 or 4. If the
+selection is Master or Secondary, be sure the first slot is consistent,
+i.e., Master with Master, etc</span>. Then browse to select a
+location and filename to put your output Band. The software will append
+a band suffix at the end of your filename. The recommended output
+directory is the "final/xxx/" directory (created in Step 1 using the
+supplied /xxx/ name).</li>
+
+      <li class="MsoNormal" style="">SPOT:
+Fill me in
+</li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Coregistration
+Parameters:</b><span style="font-weight: normal;"> <span style="color: black;">For ALI, enter the starting band
+number (1-10), and the number (quantity) of subsequent bands to be
+extracted and registered</span> For Aster, select the desired
+sensor type (Visual and Near InfraRed; Short Wave InfraRed; Thermal
+InfraRed) and the band number. <span style="color: black;">Note
+that band 2 is the Aster </span>"<span style="color: black;">Master</span>"<span style="color: black;"> band and is therefore excluded from
+the band selection menu. </span>The Aster Surface Emissivity
+(AST05), Surface Kinetic Temperature (AST08), and Surface Radiance-TIR
+(AST09) can also be registered. For Hyperion, enter the starting band
+number, and the number (quantity) of subsequent bands to be extracted
+and registered. For MODIS, enter a band number between 1 and 36, except
+for bands 13 and 14 which are specified as "13L, 13H, 14L, 14H". This
+option is not used by Ikonos or Quickbird. </span></li>
+
+  <li class="MsoNormal" style=""><b>Acquisition
+Time</b><span style="font-weight: normal;"> (MODIS
+only): Select whether the MODIS scene is Daytime or Nighttime. </span></li>
+
+  <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin
+Coregistration and extraction of individual bands. </span></li>
+
+  <li class="MsoNormal" style=""><b>Registration
+Review:</b><span style="font-weight: normal;"> </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style=""><b>Output:</b><span style="font-weight: normal;"> Click this button and press
+"Review" to display the registered band. If the Site Reference file was
+used in Steps 3 or 4, the display will reflect the Site Reference file.</span></li>
+
+      <li class="MsoNormal" style=""><b>Master
+Overlay:</b><span style="font-weight: normal;">
+Click this button and press "Review" to display the selected ban
+superimposed on the Master or Secondary image. This option is useful
+for evaluating registration errors on an image/feature basis.</span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><a name="step6"><b>STEP 6: GeoTIFF UTILITIES</b></a><span style=""></span> - This set of OPTIONAL utilities
+includes Processing,
+Displaying, and Informational (accuracy assessment) tools.</p>
+
+<p><b>'Process Utilities'</b><span style="font-weight: normal;"> are for trimming
+and matching images in VICAR and GeoTIFF (.tif) formats, usually for
+export to
+another image processing software package. Note that the 'Remap' and
+'Correlation' options involve a second resampling of the input imagery.
+</span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Cut VICAR
+Sub-Image (VICAR Output): </b><span style="font-weight: normal;">Use this option to cut a piece
+out of a Master or Secondary band generated using this Coregistration
+system, Both the input and output will remain in VICAR 'gt' format. </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the browse buttons to locate the input band (outputs from
+Steps 4, 5, or 6), and the desired location/filename of the subarea
+output image.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+Input Image</b><span style="font-weight: normal;">"
+button to view the input band, and write down the Beginning Line and
+Sample, and Ending Line and Sample of the desired subarea. Enter those
+numbers into the AOI slots.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the subarea image after it has been
+generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Cut VICAR
+Sub-Image (GeoTIFF Output): </b><span style="font-weight: normal;">Use this option to cut a piece
+out of a Master or Secondary band generated using this Coregistration
+system, The output will be converted to GeoTIFF (georeferenced TIFF)
+format for export to another image processing software package. </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the browse buttons to locate the input band (outputs from
+Steps 4, 5, or 6), and the desired location/filename of the subarea
+output image (.tif).</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+Input Image</b><span style="font-weight: normal;">"
+button to view the input band, and write down the Beginning Line and
+Sample, and Ending Line and Sample of the desired subarea. Enter those
+numbers into the AOI slots.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the subarea image after it has been
+generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Remap
+VICAR to Existing GeoTIFF Reference: </b><span style="font-weight: normal;">Use this option to match
+(resample) a Master or Secondary band generated using this
+Coregistration system, to your existing GeoTIFF image (.tif). Note that
+the GeoTIFF image must have georeference information in its TIFF
+header, and is currently limited to Platte Carree, UTM, Albers Equal
+Area, and Lambert Conformal Conic with Two Standard Parallels. The
+output will be converted to GeoTIFF (georeferenced TIFF) format for
+export to another image processing package. Also note that this option
+will not produce a pixel-to-pixel registration with the reference
+image; use the "Correlation Correction" after this remapping to obtain
+registration. </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the first browse button to locate the VICAR-formatted input
+band (outputs from Steps 4, 5, or 6), Use the second browse button to
+locate the GeoTiff reference image (the image to which the input band
+will be mapped to). Use the third browse button to enter the desired
+location/filename of the output image (.tif).</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the remapped (resampled) image after it
+has been generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Correlation
+Correction GeoTIFF to GeoTIFF: </b><span style="font-weight: normal;">Use this option to obtain
+pixel-to-pixel registration between two GeoTIFF images (.tif). Note
+that both GeoTIFF images must have georeference information in their
+TIFF headers. The input will be resampled and output in GeoTIFF format.
+    </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the first browse button to locate the input GeoTIFF image that
+is to be registered. Use the second browse button to locate the GeoTiff
+reference image (the image to which the input band will be mapped). Use
+the third browse button to enter the desired location/filename of the
+output image (.tif).</span></li>
+
+      <li class="MsoNormal" style=""><b>Cut
+to Cover:</b><span style="font-weight: normal;"> The
+default is recommended. Click 'Reference' if the input image is to be
+trimmed to match the dimensions of the Reference image (second input).
+Click 'Input' to retain all the input image's area, but note that this
+option may result in an output image of different size and starting
+position than the reference image. The default is 'Reference'. 'Gore
+Width' is the number of black pixels added to pad the input image when
+output. </span></li>
+
+      <li class="MsoNormal" style=""><b>Interpolation:</b><span style="font-weight: normal;"> Choose the interpolation
+method. The default is recommended. 'Bilinear' splits and resamples
+pixels, but gives a precise pixel-to-pixel fit. 'Nearest Neighbor'
+preserves pixel integrity by duplicating or removing pixels, but often
+produces half-pixel offsets.</span></li>
+
+      <li class="MsoNormal" style=""><b>Poly
+Fit:</b><span style="font-weight: normal;"> The
+default is recommended. Choose the desired polynomial fit. The default
+is Piecewise Linear. Options include: Linear, Keystone, Quadratic, and
+Cubic. </span></li>
+
+      <li class="MsoNormal" style=""><b>Initial
+FFT Window Size:</b><span style="font-weight: normal;">
+The default is recommended. Increase this number if the initial output
+image registration quality is poor. Valid numbers are: 32, 64, 128,
+256, 512, and 1024. The default is 64.</span></li>
+
+      <li class="MsoNormal" style=""><b>FFT
+Footprint Zoom:</b><span style="font-weight: normal;">
+The default is recommended. Increase this number if the output image
+registration quality is poor, and adjusting the "Initial FFT Window
+Size" parameter hasn't helped. This parameter expands the area under
+which the FFT will be calculated by "leap frogging" pixels. Small
+numbers (1-10) are best, if you need to change the default. Should only
+be used with images that are two meter resolution or better. </span></li>
+
+      <li class="MsoNormal" style=""><b>Correlation
+Tolerance:</b><span style="font-weight: normal;">
+The default is recommended. This parameter controls which tiepoints are
+used in the resampling process. Lowering the Tolerance will increase
+the number of lower-quality tiepoints. Raising the Tolerance will
+decrease the total number of tiepoints, but the remaining tiepoints
+will be of very high quality. Adjust this parameter only if you are
+having problems obtaining a good registration.</span></li>
+
+      <li class="MsoNormal" style=""><b>Grid
+Fineness:</b><span style="font-weight: normal;">
+These values define the grid used by the automated tiepoint selection
+and matching routines. 500x500 or 1200x1200 are good choices over the
+default, but they will increase the processing time. Generally, Horz *
+Vert should be less than 1,000,000.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the remapped (resampled) image after it
+has been generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process. </span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Convert
+NTM to GeoTIFF: </b><span style="color: black; font-weight: normal;">Use this option
+to convert a NTM image dataset in NITF format to GeoTiff (georeferenced
+TIFF) format for export to another image processing software package.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the browse buttons to locate the input imagery and the desired
+location/filename of the output image (.tif).</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the imagery image after it has been
+generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Convert
+RPC to GeoTIFF: </b><span style="color: black; font-weight: normal;">Use this option
+to re-project an AFIDS output GeoTIFF Quickbird, SPOT, Ikonos, or NTM image
+dataset with rpc(s), to Platte Carree, UTM, or other existing GeoTIFF
+Reference image, with only a single resampling.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the browse buttons to locate the input imagery (.tif), and
+elevation file covering the input image, and the desired
+location/filename of the output image (.tif).</span></li>
+
+      <li class="MsoNormal" style=""><span style='font-family: "Times New Roman"; color: black;'>Select
+all the desired processing parameters. Refer to Step 3</span>'<span style='font-family: "Times New Roman"; color: black;'>s </span>"<span style='font-family: "Times New Roman "; color: black;'>Coregistration
+Parameters</span>"<span style='font-family: "Times New Roman"; color: black;'> for
+descriptions. If the reference option is selected, browse to locate the
+GeoTIFF image you would like your input (GeoTIFF) image to match. For </span>"<span style="color: black;"><b>Coverage Selection</b></span><span style="color: black;">,</span> "<span style="color: black;"> choose </span>'<span style="color: black;">Cover Reference</span>'<span style="color: black;"> to trim (or fill) the input file to
+match the reference image</span>'<span style="color: black;">s
+area coverage. Choose </span>'<span style="color: black;">Cover
+Input</span>'<span style="color: black;"> to include
+only the input image</span>'<span style="color: black;">s
+area coverage.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>View
+image when complete</b><span style="font-weight: normal;">"
+button to automatically display the imagery image after it has been
+generated.</span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><span style="color: black;"><b>RID Connected Component
+Analysis:</b></span><span style="color: black;">
+The Registered Image Difference Connected Component Analysis function
+(Change Detection) is described in a separate Section at the end of
+this Section.</span></li>
+
+</ul>
+
+<p><b>'Display Utilities'</b><span style="font-weight: normal;"> are for
+displaying and comparing image datasets. The 'xvd' display program is
+used for
+all image displays.</span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>Display
+Image:</b><span style="font-weight: normal;"> This
+option displays the requested VICAR image.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be displayed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Display
+image vs. base or master: </b><span style="font-weight: normal;">This option displays a selected
+image with either the Landsat or CIB mosaic (if the selected image was
+a 'Master'), or if the selected image is a 'Secondary,' it displays it
+with the 'Master.' <a name="OLE_LINK23"></a><a name="OLE_LINK24"></a></span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be displayed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Display
+image vs. water mask: </b><span style="font-weight: normal;">This
+option displays a selected image against a coarse-scale land/water
+mask. &nbsp;</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be displayed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Display
+RMS 90% vectors: </b><span style="font-weight: normal;">This
+option displays a <span style="color: black;">"Vector
+Magnitude" map. This map provides a coarse grid of vectors showing the
+direction and magnitude of "rubber sheeting" that occurred in the
+registration of the Master to base image or Secondary image to the
+Master image. The magnitudes are sized for display and are NOT to
+scale. They provide a relative evaluation of a local point's spatial
+adjustment. The small 'tick' indicates the base point's location.</span></span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be displayed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Display
+image with RMS 90% vectors: </b><span style="font-weight: normal;">This option displays the <span style="color: black;">"Vector Magnitude" map overlaid on the
+selected image. This map provides a coarse grid of vectors showing the
+direction and magnitude of "rubber sheeting" that occurred in the
+registration of the Master to base image or Secondary image to the
+Master image. The magnitudes are sized for display and are NOT to
+scale. They provide a relative evaluation of a local point's spatial
+adjustment. The small 'tick' indicates the base point's location.</span></span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be displayed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><b>'Information Utilities'</b><span style="font-weight: normal;"> are for
+displaying image accuracy and georeference information. </span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style=""><b>RMS 90%
+(pixels): </b><span style="font-weight: normal;">This
+option performs an accuracy test of the selected image against its
+reference image (Landsat/CIB mosaic or 'Master'). It generates a coarse
+grid of correlation tiepoints to calculate a root-mean-square (RMS).</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be tested. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>CEP 90%
+(pixels): </b><span style="font-weight: normal;">This
+option performs a Circular Error Probability (CEP) test of the selected
+image against its reference image (Landsat/CIB mosaic or 'Master'). It
+generates a coarse grid of correlation tiepoints to calculate the CEP,
+providing a pixel accuracy distance within which points will fall half
+the time.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be processed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>Satellite
+pointing error: </b><span style="font-weight: normal;">This
+option calculates the minimum satellite pointing error for the given
+image file, as measured between the ephemeris and the orthorectified
+base map locations, and considering the AFIDS built-in satellite model.</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be processed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>GeoTIFF
+label: </b><span style="font-weight: normal;">This
+option lists the VICAR label on the selected image (i.e., VICAR program
+'label-list'). The output is displayed in the process window.
+&nbsp; </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be processed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>VICAR
+Mapping: </b><span style="font-weight: normal;">This
+option lists a VICAR image's GeoTIFF map coordinates and georeference
+information (i.e., VICAR program 'gtlist'). The output is displayed in
+the process window. &nbsp;</span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be processed. </span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process. <o:p></o:p></span></li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style=""><b>NITF
+Geometry: </b><span style="font-weight: normal;">This
+option lists selected metadata from NITF-formatted images provided by
+Quickbird, SPOT, Ikonos, and NTM. The metadata includes the geographic
+coordinates for the four image corners and center, plus information
+that can affect registration quality including Oblique Angle, Roll
+Angle, Ground Sample Distance (GSD), and other information. The output
+is displayed in a new window. &nbsp;<o:p></o:p></span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Click the "<b>Setup</b><span style="font-weight: normal;">" button to display a dialog
+box. Use the Browse button and a select an image to be processed. <o:p></o:p></span></li>
+
+      <li class="MsoNormal" style="">Click the "<b>Start</b><span style="font-weight: normal;">" button to begin the process.</span></li>
+
+    </ul>
+
+  </li>
+
+</ul>
+
+<p><a name="rid"><b>Registered Image
+Difference (RID) Connected Component
+Analysis</b></a><span style=""></span> -
+The purpose of this
+utility is to create a visual color-coded mask of the 'change
+detection' (image
+subtraction) between two image dates, using spectral thresholds and
+custom
+filters to focus on the specific characteristics of a desired target
+pixel set.
+This approach will work for all AFIDS-supported sensor types where two
+images
+have been co-registered (NTM, Quickbird, SPOT, Aster, Landsat, etc.). To
+start this
+process, select "RID Connected Component Analysis" from the Utilities
+Menu and click the "Setup" button to display the RID dialog box.</p>
+
+<p>The RID process has two phases: 1) "Filter Design," which
+involves
+stepwise iteration of values and the viewing of results, and 2) "Filter
+Use," which is the repeated application of pre-defined filters in a
+production environment. The "Filter Design" phase and process is
+described below in a series of steps:</p>
+
+<p><span style='font-family: "Times New Roman";'>-</span><span style='font-size: 7pt; font-family: "Times New Roman";'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><b>Step 1, Input Images:</b><span style="font-weight: normal;"> Use the
+"Browse" buttons to locate the two co-registered images that are to
+be analyzed.&nbsp; Any AFIDS-registered images can be selected. For
+consistency, the first image should be the oldest date, and the second
+image
+should be the newest date. You should also know the location in the
+image of
+one or more target(s) of interest that you want to search for elsewhere
+in the
+image.</span></p>
+
+<p><span style='font-family: "Times New Roman";'>-</span><span style='font-size: 7pt; font-family: "Times New Roman";'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><b>Step 2, Filter Files:</b><span style="font-weight: normal;"> The
+"Save Filter" box is for saving your RID parameters. The "Reload
+Filter" box is for retrieving a saved RID parameter file. Use the
+"Browse" buttons to locate a directory to save or retrieve the
+parameter file. The ".flt" suffix MUST be entered as part of the file
+name. Be sure to click the "Save" button to actually save your
+parameter file. A reloaded parameter file must be re-entered into the
+save box
+for it to be resaved after modification.</span></p>
+
+<p><span style='font-family: "Times New Roman";'>-</span><span style='font-size: 7pt; font-family: "Times New Roman";'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><b>Step 3, Tools:</b><span style="font-weight: normal;"> The options
+specified in the "Tools" box provide a methodology for filling in the
+remaining "Thresholds," "Filters," and "Spectral
+Filters" dialog boxes. Perform each of these tool options in order,
+from
+top to bottom. Be sure to click "OK" when the "Job Ended"
+dialog box appears.</span></p>
+
+<ul type="disc">
+
+  <li class="MsoNormal" style="">Click <b>"Display
+Input Images"</b><span style="font-weight: normal;">
+then click the "Start" button. This will bring up two xvd display
+windows showing the two input images. These images are for reference
+and information. Reposition the displays on the monitor screen so they
+are available for subsequent review, but don't cover the RID dialog box
+OR the xterm window. </span></li>
+
+  <li class="MsoNormal" style="">Click <b>"Input
+Histograms"</b><span style="font-weight: normal;">
+then click the "Start" button.&nbsp; This step will generate
+frequency histograms of the two input images and report them in the
+xterm window (scroll back for review). These histograms are primarily
+for reference and information. </span></li>
+
+  <li class="MsoNormal" style="">Click <b>"Equalized
+Histograms"</b><span style="font-weight: normal;">
+then click the "Start" button. Three equalized histograms will appear
+in the xterm window for: 1) The first Image; 2) The second Image
+(histogram-matched to the first Image); and 3) The difference image (of
+the two equalized images). For change detection, the primary interest
+is in the tails of the difference image, where the maximum "Plus" and
+"Minus" change has occurred between the two images. </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Choose
+"cut-off" points from the (difference image) tails, and enter these
+values into the "Plus" and "Minus" boxes located in the "Thresholds"
+dialog box. The "Plus" cut-off point (pixel value) indicates the lowest
+"bright" pixel of "changed" interest. All the values greater than the
+"Plus" value will be considered in the subsequent processing.
+Correspondingly, the "Minus" cut-off point indicates the highest "dark"
+pixel of interest. These first "guesses" can be iterated upon later. </li>
+
+      <li class="MsoNormal" style="">If the
+difference image has a large spike at its "negative" end, there may be
+some shadow, gore, water, or other dark featues in the imagery.
+Optionally, select a pixel value that cuts off the spike, and enter
+this pixel value in the "Shadow" box located in the "Threshold" dialog
+box. All the image pixels below this threshold will be excluded from
+analysis. This first "guess" can also be iterated upon later. </li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="">Click <b>"Plus/Minus
+Components"</b><span style="font-weight: normal;">
+then click the "Start" button. This step generates "Plus" and "Minus"
+image masks (0/1) and uses xvd to display them showing those areas that
+are above (plus) and below (minus) the specified thresholds. As
+displayed, "Light" pixels are light pixels in Image 1 and dark pixels
+in Image 2. "Dark" pixels are light pixels in Image 2 and dark pixels
+in Image 1. </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">These initial
+black and white displays are for review purposes. If one of the Plus or
+Minus displays is NOT picking up your known target location, then you
+should modify (broaden/lower) the Plus, Minus, and Shadow threshold
+values. </li>
+
+      <li class="MsoNormal" style="">Alternatively,
+if one of the displays IS picking up your target, but is also selecting
+a lot of other unrelated pixels (noise) and objects are starting to
+coalesce, then you need to tighten/raise the thresholds. </li>
+
+      <li class="MsoNormal" style="">This process
+can be iterated as many times as desired, but be SURE to click the
+"Start" button (at the bottom of the RID dialog box) after changing the
+thresholds, to make the new values effective. </li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="">Click <b>"Component
+Numbers"</b><span style="font-weight: normal;"> then
+click the "Start" button. This step assigns a unique number to every
+separate pixel group ("cluster" or "polygon") found in the imagery. To
+ensure that every light and dark pixel group is visually displayable,
+the number one (1) million is added to all the dark (Minus) pixel
+groups, and the number two (2) million is added to all the light (Plus)
+pixel groups. The user must REMEMBER to subtract the 1 or 2 million to
+get the actual component number for a given pixel group (e.g., the
+number 2,017,154 is really 17,154). </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">Find and
+determine the pixel group number containing your target using the xvd
+display of the Plus/Minus image. Be prepared to enter this number in
+the next step. </li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="">Click <b>"Property
+List for"</b><span style="font-weight: normal;">,
+enter the pixel group number from the previous step, then click the
+"Start" button. Various statistics that describe the selected target
+pixel group will be displayed in the xterm window. Use these values to
+customize and hone the analysis to focus specifically on your target
+object's particular spectral and shape characteristics, and all other
+pixel groups that are similar. Enter values in the "Spectral Filters"
+and "Filters" dialog boxes. Note that these parameters are optional,
+and some may not be appropriate or relevant for your particular target.
+    </span>
+    <ul type="circle">
+
+      <li class="MsoNormal" style="">From the
+displayed property statistics, enter "Foreground" and "Background"
+thresholds in the "Spectral Filters" dialog box. "Foreground" refers to
+the target pixel values, and "Background" refers to the (contrasting)
+pixel area around the target. The entered minimum and maximum values
+should generally be +/- 50 of the spectral mean of your target pixel
+group. Values can be entered for both the first and second image, but
+filling all the parameters may not be necessary for your target case.
+Generally, provide parameters for the First Image Foreground and
+Background, then fill in the rest as needed. This process can be
+iterated. </li>
+
+      <li class="MsoNormal" style="">Mirroring (on
+by default) causes two searches for pixels matching the threshold
+criteria. The second search is a mirror image of the first, i.e., the
+spectral filter values for the first image and second image are
+interchanged, and the results are combined using the "and" logical. </li>
+
+      <li class="MsoNormal" style="">From the
+displayed property statistics, enter minimum amd maximum values for the
+"Area," "Diameter," and "Area/Diameter Ratio" fields in the "Filters"
+dialog box. "Area" controls the number of pixels in the target pixel
+group (and subsequent similar target pixel groups to be found).
+"Diameter" is for controlling the horizontal and vertical lengths of
+the target groups. "A/D Ratio" is for controlling the shape of the
+target groups. Not all of these parameters may be relevant to your
+target's characteristics, and over specifying them might hinder
+detection. </li>
+
+    </ul>
+
+  </li>
+
+  <li class="MsoNormal" style="">Click <b>"Filtered
+Property List"</b><span style="font-weight: normal;">
+then click the "Start" button. This tool will generate statisitics for
+all the pixel group polygons in the color change detection image.
+However, only the first thirty (30) pixel group statisitics are printed
+to the xterm window. This information is provided primarily for
+reference purposes. </span></li>
+
+  <li class="MsoNormal" style="">Click <b>"None"</b><span style="font-weight: normal;"> then click the "Start" button.
+This step resets all intermediate files and generates a color change
+detection image based upon all the selected thresholds and filters. A
+color image will display with Red indicating target pixel objects from
+Image 1, and blue indicating target pixel objects from image 2. If the
+change detection product does not meet your expectations, you can
+revisit any of the "Tools" to determine new "Filters" or "Spectral
+Filters" parameters. After making any changes, be SURE to click </span><b>"Refilter"</b><span style="font-weight: normal;"> from the bottom of the RID
+dialog box. (Threshold Plus/Minus changes required use of the "Start"
+button.) Expect that several iterations may be necessary to obtain
+satisfactory results. </span></li>
+
+  <li class="MsoNormal" style="">Click <b>"Refilter"</b><span style="font-weight: normal;"> (at the bottom of the RID
+dialog box) if any changes are made in <a name="OLE_LINK88"></a><a name="OLE_LINK87"></a>the "Filters" or "Spectral
+Filters" parameters (not "Thresholds") as part of an iteration process.
+This implements the new changes and generates a new color change
+detection display. </span></li>
+
+</ul>
+
+<p><span style='font-family: "Times New Roman";'>-</span><span style='font-size: 7pt; font-family: "Times New Roman";'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><b>Step 4, Save Filter:</b><span style="font-weight: normal;"> Be sure to
+save your filter parameters in the "Save Filter" box located in the
+"Filter Files" dialog box. Use the "Browse" buttons to
+locate a directory to save the parameter file. The ".flt" suffix MUST
+be entered as part of the file name. Be sure to click the "Save"
+button to actually save your parameter file. </span></p>
+
+</div>
+
+</body>
+</html>

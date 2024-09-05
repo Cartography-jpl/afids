@@ -1,0 +1,67 @@
+procedure
+body
+
+goto curr
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   quad=(66.47,36.51,66.48,36.50) out=xxxtest1.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   quad=(66.47,36.54,66.475,36.48) out=xxxtest2.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid12/cib05/basemos/" cibtab="cib05_db.int" +
+   quad=(-112.26,42.07,-112.24,41.97) out=xxxtest3.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid12/cib05/basemos/" cibtab="cib05_db.int" +
+   quad=(-112.26,42.07,-112.24,42.04) out=xxxtest4.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   quad=(127.69,38.97,127.74,38.92) out=22jun.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid12/cib05/basemos/" cibtab="cib05_db.int" +
+   quad=(31.92,46.85,32.00,46.81) out=ukr.img pstring="xxxtst" +
+   xvd=y   ! this case has no cib1 yet
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   quad=(31.92,46.85,32.00,46.81) out=ukr.img pstring="xxxtst" +
+   xvd=y   ! this case has no cib1 yet
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   pathalt="/raid12/cib05/basemos/" cibtabalt="cib05_db.int" +
+   quad=(31.92,46.85,32.00,46.81) out=ukr.img pstring="xxxtst" +
+   xvd=y
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   pathalt="/raid12/cib05/basemos/" cibtabalt="cib05_db.int" +
+   quad=(127.69,38.97,127.74,38.92) out=22jun.img pstring="xxxtst" +
+   xvd=y
+
+curr>
+
+! the ultimate case
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   pathalt="/raid12/cib05/basemos/" cibtabalt="cib05_db.int" +
+   quad=(46.995,35.32,47.005,35.31) out=partial.img pstring="xxxtst" +
+   xvd=y partial=10.0
+
+goto theend
+
+cibcut path="/raid12/cib05/basemos/" cibtab="cib05_db.int" +
+   quad=(46.995,35.32,47.005,35.31) out=partial.img pstring="xxxtst" +
+   xvd=y partial=10.0
+
+!lsat case
+
+cibcut path="/raid1/cib01/basemos/" cibtab="cib01_db.int" +
+   pathalt="/raid10/landsat/" cibtabalt="landsat_db.int" +
+   quad=(46.995,35.32,47.005,35.31) out=partial.img pstring="xxxtst" +
+   xvd=y partial=10.0 suffix2=""
+
+theend>
+end-proc

@@ -1,0 +1,31 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! basic case 
+
+gen xxxim1 nl=4 ns=6
+list xxxim1
+
+imsplit xxxim1 (xxxim2,xxxim3)
+
+list xxxim2
+list xxxim3
+
+! test odd ns
+
+gen xxxim1 nl=4 ns=5
+list xxxim1
+
+
+imsplit xxxim1 (xxxim2,xxxim3)
+
+list xxxim2
+list xxxim3
+
+end-proc

@@ -1,0 +1,13 @@
+procedure
+refgbl $echo
+
+body
+!let _onfail="continue"
+let $echo="yes"
+
+ush cp raw tstimg
+gtasterfix tstimg
+label-l tstimg
+
+
+end-proc

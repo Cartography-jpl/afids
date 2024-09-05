@@ -1,0 +1,30 @@
+procedure
+refgbl $echo
+
+body
+
+let $echo="yes"
+
+
+gen xxxim0 nl=300 ns=310
+f2 inp=xxxim0 out=xxxdted func="(line+samp)%256"
+
+gtgen in=xxxdted 'tiecnvrt 'rectfit +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,10,80,0.0)", +
+          "ModelTiePointTag=(0,300,0,10,10,0.0)", +
+          "ModelTiePointTag=(310,0,0,80,80,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+ibis-copy modis_int x
+elvcor2 x x2 xxxdted
+
+ibis-l x2 nr=8 cols=(1,2,3,4,5,6) +
+   cfor="%9.4f %9.4f %9.4f %9.4f %9.4f %9.4f" sr=133
+ibis-l x2 nr=8 cols=(7,8,9,10,11,12) +
+   cfor="%9.4f %9.4f %9.4f %9.4f %10.3f %9.4f" sr=133
+ibis-l x2 nr=8 cols=(13,14,15,16,17) +
+   cfor="%9.4f %9.4f %9.5f %9.5f %9.5f" sr=133
+
+end-proc

@@ -1,0 +1,5 @@
+#! /bin/sh -f
+
+$RUBY ${AFIDS_ROOT}/vdev/argus/quick_copy_list.rb "$1"
+read -s -p "---- Done. Press <Return> to continue --"
+

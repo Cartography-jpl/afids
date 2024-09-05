@@ -1,0 +1,111 @@
+PROCESS       HELP=*
+PARM INP       TYPE=(STRING) COUNT=3
+PARM PRINT     TYPE=KEYWORD COUNT=(0:1) VALID=(PRINT) DEFAULT=--
+PARM THRESH    TYPE=REAL COUNT=(0:1) DEFAULT=--
+PARM COLS      TYPE=INTEGER COUNT=5 DEFAULT=(1, 2, 3, 4, 5)
+PARM FIXDTED   TYPE=STRING COUNT=0:1 VALID=(y, n) DEFAULT=n
+END-PROC
+.TITLE
+VICAR/IBIS Program "rpcinv2"
+.HELP
+PURPOSE
+
+   "rpcinv2" calculates the longitude, latitude of the image.
+It performs RPC and RPC inverse iteratively to calculate a more
+correct longitude and latitude.
+
+EXECUTION
+
+The steps of the algorithm are as follows:
+-----------------------------------------
+
+calculate the lon, lat using RPC inverse
+do 10 times
+   Get elevation using bilinear interpolation from DEM using lon, lat
+   Calculate a new x, y of the image using RPC with inputs
+      lon, lat, and elevation
+   Acquire a more correct lon, lat using RPC inverse
+   If the error of old and new lon, lat is less than thresh
+      then break from loop
+enddo
+
+EXAMPLES
+
+     rpcinv2 INP=(xxx1, bob.img, dem.hlf) 'print thresh=0.1
+             cols=(3,2,1,4,5) fixdted=n
+
+   The above command will take in the IBIS file xxx1, image
+file bob.img, the DEM file dem.hlf and calculate the
+lon, lat.  The 'print statement tells to print the debug
+statements.  The thresh tells the algorithm to quit if the error is
+less than 0.1.  The cols describe which columns of the IBIS file
+contains what data (see variables) and the fixdted of 'n' tells
+the algorithm to not use the elevation specified in the IBIS file
+but rather the elevation in the dem.hlf.  The output is to the lon,
+lat columns of the input IBIS file.
+
+
+RESTRICTIONS
+
+None to date.  A null IBIS file will give an appropriate error
+and abort.
+
+Original Programmer: P. Kim, 3 Dec, 2007
+
+Revision:
+  4  Nov 2009 Fixed documentation of fixdted
+                                               P. Kim
+  8  Jul 2009 Fixed format string size from 5 to 8
+                                               P. Kim
+  19 Mar 2009 Fixed a bug in getElv function dem data
+              acquisition was wrong.           P. Kim
+
+.LEVEL1
+.VARIABLE INP
+ Input IBIS interface file,
+ image file, and DEM file in
+ this order
+.VARIABLE PRINT
+ Specifies whether to print the
+ debug statement or not
+.VARIABLE THRESH
+ Specifies the acceptable error
+ threshold.
+.VARIABLE COLS
+ Specifies which columns of the
+ IBIS file contain X, Y, elev,
+ lon, lat data.
+.VARIABEL FIXDTED
+ Specifies whether to acquire
+ the elevation from DEM or not.
+ If 'n', then elevation will
+ be read in from the DEM file.
+ If 'y', then elevation will
+ be read in from the IBIS file.
+
+.LEVEL2
+.VARIABLE COLS
+ Depending on the ordering, the
+ input is as follows:
+ (X, Y, elev, lon, lat)
+ i. e.
+
+ (3, 2, 1, 4, 5)
+ specifies that X is in column 3
+ Y is in column2, elev in 1, lon
+ in 4, and lat in 5 of the IBIS
+ file.  Default is
+ (1, 2, 3, 4, 5).
+
+.END
+
+
+
+
+
+
+
+
+
+
+

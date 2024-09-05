@@ -1,0 +1,198 @@
+#=======================================================================
+# This makefile is used to generate the mosaic data. Before running this
+# you should source the setup_afids_env file for the software you are 
+# using (i.e., /raid3/afids/install/etc/afids/setup_afids_env.sh).
+
+# Directory argus scripts are located
+script_dir = $(AFIDS_ROOT)/vdev/argus
+
+#=======================================================================
+# The first step is to process the aflight data, make corrections, and
+# relate the exterior orientation with each of the camera image files.
+#
+# This depends on the "jpl_processing_config.yml" file, which you should 
+# create by hand.
+#
+# We go through all of the jpeg/cr2 files and pull out the EXIF time 
+# stamp. Because this takes a while to do, we store the results in an 
+# intermediate file so we don't need to redo this.
+
+image_time.dat: 
+	ruby $(script_dir)/create_image_time.rb jpl_processing_config.yml \
+          $@.generating && mv $@.generating $@
+
+nav_data.csv: jpl_processing_config.yml image_time.dat
+	ruby $(script_dir)/create_csv.rb jpl_processing_config.yml image_time.dat \
+          $@.generating && mv $@.generating $@
+
+# Just repeat the report given by nav_data.csv, but without generating
+# the csv file.
+
+nav_report:
+	ruby $(script_dir)/create_csv.rb jpl_processing_config.yml image_time.dat
+
+#=======================================================================
+# The second step is to do camera calibration. This requires the
+# file camera_calibrate_config.yml to be created.
+
+camera_calibrated.yml: camera_calibration_config.yml nav_data.csv
+	ruby $(script_dir)/camera_calibration.rb nav_data.csv \
+            camera_calibration_config.yml $@.generating && mv $@.generating $@
+
+#=======================================================================
+# For testing camera calibration, it is useful to orthorectify single
+# row/camera images, and to produce CIB data for a set of rows. These
+# rules allow you to do that if desired. These produce ERDAS imagine
+# files. The data is produced at the CIB resolution of 1 meter rather
+# than the mosaic resolution of 2.5 meter.
+
+# Example for row 3, camera 1 is ortho_3_1.img
+calibration_results/ortho_%.img: camera_calibrated.yml nav_data.csv
+	mkdir -p calibration_results
+	ruby $(script_dir)/ortho_rectify.rb nav_data.csv \
+             camera_calibrated.yml $@.generating && mv $@.generating $@
+
+# Example for row 3 through 4 is cib_3_4.img
+calibration_results/cib_%.img: camera_calibrated.yml nav_data.csv
+	mkdir -p calibration_results
+	ruby $(script_dir)/cib_image.rb nav_data.csv camera_calibrated.yml \
+             $@.generating && mv $@.generating $@
+
+# Canned set useful as a default. We tar this up, because I find this
+# easier to copy to my local machine to view rather than trying to view
+# it over the network
+ROW1 = 1
+ROW2 = 2
+
+calibration_results: calibration_results.tar.gz
+
+calibration_results.tar.gz: calibration_results/cib_$(ROW1)_$(ROW2).img \
+     calibration_results/ortho_${ROW1}_1.img \
+     calibration_results/ortho_${ROW1}_2.img \
+     calibration_results/ortho_${ROW1}_3.img \
+     calibration_results/ortho_${ROW1}_4.img \
+     calibration_results/ortho_${ROW1}_5.img \
+     calibration_results/ortho_${ROW1}_6.img \
+     calibration_results/ortho_${ROW1}_7.img \
+     calibration_results/ortho_${ROW1}_8.img \
+     calibration_results/ortho_${ROW1}_9.img \
+     calibration_results/ortho_${ROW1}_10.img \
+     calibration_results/ortho_${ROW1}_11.img \
+     calibration_results/ortho_${ROW1}_12.img \
+     calibration_results/ortho_${ROW1}_13.img \
+     calibration_results/ortho_${ROW2}_1.img \
+     calibration_results/ortho_${ROW2}_2.img \
+     calibration_results/ortho_${ROW2}_3.img \
+     calibration_results/ortho_${ROW2}_4.img \
+     calibration_results/ortho_${ROW2}_5.img \
+     calibration_results/ortho_${ROW2}_6.img \
+     calibration_results/ortho_${ROW2}_7.img \
+     calibration_results/ortho_${ROW2}_8.img \
+     calibration_results/ortho_${ROW2}_9.img \
+     calibration_results/ortho_${ROW2}_10.img \
+     calibration_results/ortho_${ROW2}_11.img \
+     calibration_results/ortho_${ROW2}_12.img \
+     calibration_results/ortho_${ROW2}_13.img \
+	tar -czf $@ $^
+
+#=======================================================================
+# Then we generate a shapefile describing the footprint of each of
+# the images.
+
+footprint.shp: camera_calibrated.yml nav_data.csv
+	ruby $(script_dir)/create_footprint.rb nav_data.csv \
+             camera_calibrated.yml $@
+
+#=======================================================================
+# Now we can produce mosaic tiff files.
+
+mosaic/q_%.tif : footprint.shp camera_calibrated.yml nav_data.csv jpl_processing_config.yml
+	mkdir -m g+w -p mosaic
+	ruby $(script_dir)/generate_tile.rb jpl_processing_config.yml \
+             nav_data.csv camera_calibrated.yml footprint.shp \
+             $@.generating && mv $@.generating $@
+
+mosaic/mos_%_r.vic: 
+	mkdir -m g+w -p mosaic
+	ruby $(script_dir)/generate_one_deg.rb $@.generating $^ && \
+          mv $@.generating $@
+
+mosaic/mos_%_g.vic: 
+	mkdir -m g+w -p mosaic
+	ruby $(script_dir)/generate_one_deg.rb $@.generating $^ && \
+          mv $@.generating $@
+
+mosaic/mos_%_b.vic: 
+	mkdir -m g+w -p mosaic
+	ruby $(script_dir)/generate_one_deg.rb $@.generating $^ && \
+          mv $@.generating $@
+
+#=======================================================================
+# Rule for building rpc input data for use in afids.
+
+rpc/%_r.img: camera_calibrated.yml nav_data.csv
+	mkdir -m g+w -p rpc
+	ruby $(script_dir)/rpc_generate.rb nav_data.csv \
+          camera_calibrated.yml $@ && mv $@.generating $@
+
+rpc_row_% : 
+	make rpc/image_$*_1_r.img rpc/image_$*_2_r.img rpc/image_$*_3_r.img \
+    rpc/image_$*_4_r.img rpc/image_$*_5_r.img rpc/image_$*_6_r.img \
+    rpc/image_$*_7_r.img rpc/image_$*_8_r.img rpc/image_$*_9_r.img \
+    rpc/image_$*_10_r.img rpc/image_$*_11_r.img rpc/image_$*_12_r.img \
+    rpc/image_$*_13_r.img
+
+#=======================================================================
+# Rule for building high resolution data
+
+high_resolution/%.tif: footprint.shp camera_calibrated.yml nav_data.csv
+	mkdir -m g+w -p $(dir $@)
+	ruby $(script_dir)/high_resolution_image.rb \
+             nav_data.csv camera_calibrated.yml footprint.shp \
+             $@.generating && mv $@.generating $@
+
+#=======================================================================
+# List of files we should build
+
+product_list.in : footprint.shp camera_calibrated.yml nav_data.csv jpl_processing_config.yml
+	ruby $(script_dir)/determine_tile_list.rb jpl_processing_config.yml \
+             nav_data.csv camera_calibrated.yml footprint.shp \
+             $@.generating && mv $@.generating $@
+
+highres_list.in : footprint.shp camera_calibrated.yml nav_data.csv
+	ruby $(script_dir)/determine_highres_list.rb \
+             nav_data.csv camera_calibrated.yml footprint.shp \
+             $@.generating && mv $@.generating $@
+
+ifdef INCLUDE_PRODUCT
+include product_list.in
+endif
+
+ifdef INCLUDE_HIGHRES
+include highres_list.in
+endif
+
+#=======================================================================
+# Default action is to build all tiles
+
+# all_do_it : $(one_deg_list) $(tile_list)
+
+# all:
+#	$(MAKE) INCLUDE_PRODUCT=t all_do_it
+
+all_do_it : $(highres_list)
+
+all:
+	$(MAKE) INCLUDE_HIGHRES=t all_do_it
+
+tile_count_do_it:
+	echo $(tile_list) | wc
+
+tile_count:
+	$(MAKE) INCLUDE_PRODUCT=t tile_count_do_it
+
+one_deg_count_do_it:
+	echo $(one_deg_list) | wc
+
+one_deg_count:
+	$(MAKE) INCLUDE_PRODUCT=t one_deg_count_do_it

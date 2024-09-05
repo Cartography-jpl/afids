@@ -1,0 +1,321 @@
+gen ba.img 3 4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen bb.img 2 4 ival=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen bc.img 4 4 ival=40
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtappend (ba.img, bb.img, bc.img) bd.img
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list bd.img
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+     Samp     1       3
+   Line
+      1       0   1   2   3
+      2       1   2   3   4
+      3       2   3   4   5
+      4      20  21  22  23
+      5      21  22  23  24
+      6      40  41  42  43
+      7      41  42  43  44
+      8      42  43  44  45
+      9      43  44  45  46
+gtappend (ba.img, bb.img, bc.img) bd.img SIZE=(1,1,3,3)
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list bd.img
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+     Samp     1       3
+   Line
+      1       0   1   2
+      2       1   2   3
+      3       2   3   4
+      4      20  21  22
+      5      21  22  23
+      6      40  41  42
+      7      41  42  43
+      8      42  43  44
+gen ba.img 3 4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen bb.img 2 7 ival=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen bc.img 4 9 ival=40
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtappend (ba.img, bb.img, bc.img) be.img SIZE=(2,2,2,2)
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list be.img
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+     Samp     1
+   Line
+      1       2   3
+      2       3   4
+      3      22  23
+      4      42  43
+      5      43  44
+gen ha.img 3 4 'HALF
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen hb.img 2 4  'HALF ival=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen hc.img 4 4 'HALF ival=40
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtappend (ha.img, hb.img, hc.img) hd.img
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list hd.img
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+     Samp       1     2     3     4
+   Line
+      1         0     1     2     3
+      2         1     2     3     4
+      3         2     3     4     5
+      4        20    21    22    23
+      5        21    22    23    24
+      6        40    41    42    43
+      7        41    42    43    44
+      8        42    43    44    45
+      9        43    44    45    46
+gtappend (ha.img, hb.img, hc.img) he.img SIZE=(2,3,8,5)
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list he.img
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp       1     2
+   Line
+      1         3     4
+      2         4     5
+      3        23    24
+      4        43    44
+      5        44    45
+      6        45    46
+gen ra.img 3 4 'REAL4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen rb.img 2 4  'REAL4 ival=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen rc.img 4 4 'REAL4 ival=40
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtappend (ra.img, rb.img, rc.img) rd.img
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list rd.img
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp             1           2           3           4
+   Line
+      1       0.000E+00   1.000E+00   2.000E+00   3.000E+00
+      2       1.000E+00   2.000E+00   3.000E+00   4.000E+00
+      3       2.000E+00   3.000E+00   4.000E+00   5.000E+00
+      4       2.000E+01   2.100E+01   2.200E+01   2.300E+01
+      5       2.100E+01   2.200E+01   2.300E+01   2.400E+01
+      6       4.000E+01   4.100E+01   4.200E+01   4.300E+01
+      7       4.100E+01   4.200E+01   4.300E+01   4.400E+01
+      8       4.200E+01   4.300E+01   4.400E+01   4.500E+01
+      9       4.300E+01   4.400E+01   4.500E+01   4.600E+01
+gtappend (ra.img, rb.img, rc.img) re.img SIZE=(2,2,2,2)
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+list re.img 'REAL4
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp             1           2
+   Line
+      1       2.000E+00   3.000E+00
+      2       3.000E+00   4.000E+00
+      3       2.200E+01   2.300E+01
+      4       4.200E+01   4.300E+01
+      5       4.300E+01   4.400E+01
+gen xxxim1 nl=2 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim3 nl=4 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,1,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,101,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,1,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtappend (xxxim2,xxxim4) xxxim5
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+gtlist xxxim5
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim1 nl=3 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim3 nl=4 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,1,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,101,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,1,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtappend (xxxim2,xxxim4) xxxim5 'overlap1
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+gtlist xxxim5
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+ Task:GTGEN     User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       2   3   4   5   6
+list xxxim4
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+ Task:GTGEN     User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       2   3   4   5   6
+      4       3   4   5   6   7
+list xxxim5
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       0   1   2   3   4
+      4       1   2   3   4   5
+      5       2   3   4   5   6
+      6       3   4   5   6   7
+gen xxxim1 nl=2 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim3 nl=4 ns=5 ival=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtappend (xxxim2,xxxim3) xxxim4 'nomapck
+Beginning VICAR task gtappend
+gtappend version Sat Dec 29 2007
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+ Task:GTAPPEND  User:smyth     Date_Time:Fri Aug 16 21:43:52 2013
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3      20  21  22  23  24
+      4      21  22  23  24  25
+      5      22  23  24  25  26
+      6      23  24  25  26  27
+end-proc
+disable-log

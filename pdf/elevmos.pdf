@@ -1,0 +1,117 @@
+procedure
+! elevmos ensures that there is an elevation model in dtedmos/ covering fname
+! It checks passed keyword elevset to choose the data source.
+
+parm fname string ! NITF or VICAR input
+local dummy type=string
+parm elev_name type=name default=dummy 
+
+! Use Cedar Beach
+parm elevset type=keyword valid=(cb,dt)
+
+local minLon real
+local maxLon real
+local minLat real
+local maxLat real
+local minLonI int
+local maxLonI int
+local minLatI int
+local maxLatI int
+local moslon int
+local moslat int
+local moslon2 int
+local moslat2 int
+local qexist int
+local elevroot type=(string,128)
+local elevfile string
+local prefix string
+
+body
+! This was modified by mms, wlb.
+write "elevmos version Thu May 26 2011"
+
+! Replaced the old calculation with a new short python script
+imagebound inp=&fname min_lon=minLon max_lon=maxLon min_lat=minLat max_lat=maxLat
+
+write "minLat=&minLat"
+write "maxLat=&maxLat"
+write "minLon=&minLon"
+write "maxLon=&maxLon"
+
+! fudge for the coreg algorithms
+let minLat=minLat-0.07
+let maxLat=maxLat+0.07
+let minLon=minLon-0.07
+let maxLon=maxLon+0.07
+
+if (elevset="cb") goto cedarbeach
+if (elevset="dt") goto srtmdted2
+goto theend
+
+! SRTM DTED-2
+srtmdted2>
+
+write "elevmos extracting from SRTM DTED-2"
+
+let minLatI=$fix(minLat)
+let maxLatI=$fix(maxLat)+1
+let minLonI=$fix(minLon)
+let maxLonI=$fix(maxLon)+1
+
+write "minLatI=&minLatI"
+write "maxLatI=&maxLatI"
+write "minLonI=&minLonI"
+write "maxLonI=&maxLonI"
+
+let prefix = "dtedmos/d&minLonI" // "_&minLatI" // "_&maxLonI" // "_&maxLatI"
+let elevfile = "dtedmos/d&minLonI" // "_&minLatI" // "_&maxLonI" // "_&maxLatI" // "_dem.img"
+file2tcl &elevfile val=qexist
+if (qexist=0)
+   translog ELEV_ROOT elevroot
+
+   mos_l2_dem slon=&minLonI slat=&minLatI +
+              elon=&maxLonI elat=&maxLatI +
+              DIRin="&elevroot" +
+              out="&prefix" DIRout="./"
+
+   compresschk &elevfile
+end-if
+
+let elev_name = elevfile
+
+goto passname
+
+! Cedar Beach
+cedarbeach>
+
+write "elevmos extracting from Cedar Beach"
+
+let minLatI=$fix(minLat*10)
+let maxLatI=$fix(maxLat*10)
+let minLonI=$fix(minLon*10)
+let maxLonI=$fix(maxLon*10)
+
+! fudge for mos_5m_elv
+let minLon=minLon-0.1
+let minLat=minLat-0.04
+
+let elevfile = "dtedmos/cb&minLonI" // "_&minLatI" // "_&maxLonI" // "_&maxLatI" // "_dem.img"
+file2tcl &elevfile val=qexist
+if (qexist=0)
+   translog ELEV_ROOT elevroot
+   mos_5m_elv lat=&minLat long=&minLon lat2=&maxLat long2=&maxLon fname=&elevfile
+   compresschk &elevfile
+end-if
+
+let elev_name = elevfile
+
+goto passname
+
+
+# DO NOT REMOVE OR COMMENT THESE LINES
+# THEY ARE USED TO PASS THE COMPUTED FILENAME BACK TO THE CALLER
+passname>
+write "elevmosElevfile &elevfile"
+
+theend>
+end-proc

@@ -1,0 +1,6 @@
+$ vpack sargonb.com -mixed -
+	-s sargonb.f -
+	-i sargonb.imake -
+	-p sargonb.pdf -
+	-t tstsargonb.pdf new_session.log
+$ Exit

@@ -1,0 +1,95 @@
+procedure
+
+refgbl $echo
+! Jun 22, 2012 - RJB
+! TEST SCRIPT FOR IMGSTAT
+! tests BYTE, HALF images
+!
+! Vicar Programs:
+!       gen ibis-list mss statplt  
+! 
+! parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+! Requires an external graphics package - gnuplot
+!  the *.gpi data produced by statplt are gnuplot scripts
+!
+body
+let _onfail="stop"
+let $echo="no"
+!
+!	BYTE images for ustats
+!
+write "!!!!!!!!!!!!!!!!!!!!!!!!"
+write " BYTE images for USTATS"
+write "!!!!!!!!!!!!!!!!!!!!!!!!"
+let $echo="yes"
+gen agen 128 128
+gen bgen 128 128 linc=2 sinc=2
+gen cgen 128 128 linc=4 sinc=4
+!
+!	Run with just the defaults
+!
+ustats (agen,bgen,cgen) ustats1 (1,1,128,128)
+ibis-list ustats1 'format 'group
+!
+!	Try out percentage option
+!
+ustats (agen,bgen,cgen) ustats2 (1,1,128,128) percent=0.5
+ibis-list ustats2 'format 'group
+mss (agen,bgen,cgen) mssgen
+!
+!	Use MSS formated data
+!
+let $echo="no"
+let _onfail="continue"
+write "MSS is no longer a valid parameter"
+write "Following ABENDS"
+let $echo="yes"
+ustats mssgen ustats3 (1,1,128,128) mss=3
+!ibis-list ustats3 'format 'group
+
+let $echo="no"
+let _onfail="stop"
+write " statplt plots"
+let $echo="yes"
+! EXTRA TESTS 
+statplt ustats1 plotout=ustats1.eps
+ush $GNUPLOT ustats1.eps.gpi
+statplt ustats2  plotout=ustats2.eps
+ush $GNUPLOT ustats2.eps.gpi
+let $echo="no"
+
+write "!!!!!!!!!!!!!!!!!!!!!!!!"
+write " HALF images for USTATS"
+write "!!!!!!!!!!!!!!!!!!!!!!!!"
+let $echo="yes"
+
+gen hgen 128 128 format=half
+gen igen 128 128 linc=2 sinc=2 format=half
+gen jgen 128 128 linc=4 sinc=4 format=half
+
+!
+!   Run with just the defaults
+!
+ustats (hgen,igen,jgen) hstats1 (1,1,128,128)
+ibis-list hstats1 'format 'group
+!
+!   Try out percentage option
+!
+ustats (hgen,igen,jgen) hstats2 (1,1,128,128) percent=0.5
+ibis-list hstats2 'format 'group
+
+let $echo="no"
+write " statplt plots"
+let $echo="yes"
+! EXTRA TESTS 
+statplt hstats1 plotout=hstats1.eps
+ush $GNUPLOT hstats1.eps.gpi
+statplt hstats2 plotout=hstats2.eps
+ush $GNUPLOT hstats2.eps.gpi
+let $echo="no"
+
+end-proc

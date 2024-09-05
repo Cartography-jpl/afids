@@ -1,0 +1,62 @@
+procedure
+
+! Oct 11, 2019 - RJB
+! TEST SCRIPT FOR DETCLST
+!
+! Vicar Programs:
+!   gen
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+!
+! External Test Data:
+!   <none>
+
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+gen x 10 10
+
+gen y 10 10 modulo=5
+
+detclst x x1 1
+detclst x x2 2
+detclst x x3 3
+
+list x
+list x1
+list x2
+list x3
+
+
+detclst y y1 1
+detclst y y2 2
+detclst y y3 3
+
+list y
+list y1
+list y2
+list y3
+
+
+let $echo="no"
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

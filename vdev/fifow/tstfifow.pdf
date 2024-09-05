@@ -1,0 +1,10 @@
+procedure
+refgbl $echo
+body
+
+let $echo="no"
+
+! Write the value
+fifow pipename="foo" value="bar"
+
+end-proc

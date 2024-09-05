@@ -1,0 +1,123 @@
+procedure help=*
+parm inp     type=(string,99) count=1
+parm outpre  type=(string,99) count=1
+parm nl      type=int default=-1
+parm ns      type=int default=-1
+parm nbands  type=int default=1
+parm force8  type=keyword count=(0:1) valid=force8 default=--
+body
+
+let _onfail="continue"
+
+local afidsroot type=(string,128)
+local osname type=(string,20)
+translog AFIDS_ROOT afidsroot
+translog OS_NAME osname
+ush &afidsroot/vdev/vextract &inp &outpre &nl &ns
+
+local nitfnl int
+local nitfns int
+
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+	"fileVar2DecVal ", &"outpre".txt, " NITF_ROWS=") +
+	intvar=nitfnl
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+	"fileVar2DecVal ", &"outpre".txt, " NITF_COLUMNS=") +
+	intvar=nitfns
+
+if (force8="force8")
+    label-create inp=&"outpre".hlf out=&"outpre".img nl=&nitfnl ns=&nitfns nb=&nbands format=byte
+else
+  if (osname="SunOS")
+    write "osname: &osname"
+    label-create inp=&"outpre".hlf out=&"outpre".img nl=&nitfnl ns=&nitfns nb=&nbands format=half
+  else
+    write "osname: &osname"
+    write "using host=sun-4"
+    label-create inp=&"outpre".hlf out=&"outpre".img nl=&nitfnl ns=&nitfns nb=&nbands format=half host=sun-4
+  end-if
+end-if
+
+ush rm &"outpre".hlf
+
+vexlab inp=&"outpre".img meta=&"outpre".txt
+
+end-proc
+
+.title
+VICAR Program vextract - logs NITF image file to VICAR
+.help
+PURPOSE
+
+     VEXTRACT logs NITF image and metadata
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     vextract INP=A OUTPRE=B NL=C NS=D NBANDS=E
+     
+     where
+
+     A           is an NITF input image
+     B           is a prefix for output files
+     C, D        are optional line, sample counts overriding the values indicated in the NITF header; must be used together
+     E           is the number of BSQ bands in the input     
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Mon Jul  2 2007
+    Fixed strdup memory bug
+  Tue Jun  6 2006
+    Added kludge support for multi-band input "nbands" parm
+  Tue Nov  8 2005
+    Updated support for alternate corner formats
+  Tue May  3 2005
+    Added check for non SunOS environment when labeling
+  Mon Mar 28 2005
+    Renamed vextract binary, removing xx_bit suffix
+  Fri Mar 11 2005
+    Linux port (fixed errno)
+  Mon Mar  7 2005
+    Bug fix
+  Fri Mar  4 2005
+    Added mpd26a field export
+  Tue Feb  8 2005
+    Pushed nitf processing (derived from extract) out to 64-bit standalone subprogram
+  Tue Dec 21 2004
+    Enhanced to pad short images
+  Fri Dec 17 2004
+    Added continuation from error when unblock_image fails to read input
+  Thu Dec 16 2004
+    Added nl/ns parms to override erroneous NITF header nl/ns    
+  Mon Dec 13 2004
+    Added MEAN_GSD, DYNAMIC_RANGE, ROLL_ANG, corners to geotiff label
+  Mon Dec  6 2004
+    Removed quotes from numeric data written to meta data file
+  Wed Dec  2 2004
+    Moved NITF_OBL_ANG and NITF_ANGLE_TO_NORTH tags from logger meta data to geotiff label
+  Wed Dec  1 2004
+    Added support for image datim export and use of use26a dff
+  Wed Nov 17 2004
+    Initial version
+
+.level1
+.var inp
+Input NITF image file
+.var outpre
+Output file prefix
+.var nl
+Overrides the line count indicated by the NITF header; must be used with ns.
+.var ns
+Overrides the sample count indicated by the NITF header; must be used with nl.
+.end

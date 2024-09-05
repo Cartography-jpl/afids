@@ -1,0 +1,58 @@
+procedure help=*
+parm ip       type=(string,99) count=1
+parm port     type=(string,99) count=1
+parm filename type=(string,99) count=1
+body
+
+let _onfail="continue"
+
+!local afidsroot type=(string,128)
+!local osname type=(string,20)
+!translog AFIDS_ROOT afidsroot
+!ush &afidsroot/../bin/vifclient &ip &port &filename
+tush vifClient &ip &port &filename
+
+end-proc
+
+.title
+VICAR Program vifclient -- Runs vif in client mode
+.help
+PURPOSE
+
+     Runs vif in client mode
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     vifclient ip port filename
+     
+     where
+
+     ip       is the server IP address
+     port     is the server port number
+     filename is the notification filename
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Fri May  5 2006
+    Initial version
+
+.level1
+.var ip
+Server ip address
+.var port
+Server port number
+.var filename
+Notification filename
+.end

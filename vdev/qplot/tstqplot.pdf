@@ -1,0 +1,176 @@
+procedure
+parm    mode    type=keyword count=(0:1) valid=(batch,nobatch,inter) default=batch
+
+local  plotxxx type=string count=1
+! Feb 22, 2017 - RJB
+! TEST SCRIPT FOR PLOTINT
+! tests BYTE, and HALF images
+!       tstqplot2 tests all supported formats
+!
+! Vicar Programs:
+!       translog gen 
+! 
+! External programs
+!       gnuplot 5.0.x or greater
+!       gimp 2.6
+! 
+! Parameters:
+!   mode - method for processing: 
+!       1) batch provides no display but creates .eps files
+!       2) interactive or nobatch is used for display requiring
+!       user interaction. 
+!           
+!   In batch mode it produces files testx.eps by calling gnuplot
+!       to create the encapsulated postscript file which can be
+!       later viewed with ghostscript or gimp
+!   In interactive or nobatch mode gnuplot is called with a window
+!       manager for X11. The gnuplot display is killed by
+!       a mouse click anywhere on the plot panel
+!            
+!   In 2017 a test was added to ensure gnuplot is available for
+!       the interactive parameter.
+!
+! External test data: 
+!       <none>
+!            
+! Output:    
+!   GENed test data sets, .gpi and .eps files and intermediate 
+!       tmp* files 
+!   the *.gpi data produced by statplt are gnuplot scripts
+!            
+
+refgbl $echo
+body
+let _onfail="stop"
+let $echo="no"
+translog inp=GNUPLOT trans=plotxxx
+
+!used strictly for detection of gnuplot 
+write "plotxxx = &plotxxx"
+if (mode = "nobatch" or mode = "inter")
+    if (plotxxx = "")
+        write "GNUPLOT environment variable not defined"
+        stop
+    end-if
+end-if
+let $echo="yes"
+
+! Generate BYTE datasets to test with
+
+gen inp1 nl=40 ns=40 linc=1 sinc=1
+gen inp2 nl=40 ns=40 linc=1 sinc=2 
+gen inp3 nl=128 ns=128 linc=5 sinc=5
+gen inp4 nl=40 ns=40 linc=4 sinc=-5 ival=220
+gen inp5 nl=40 ns=40 linc=3 sinc=7 ival=60 
+
+! gen halfword
+gen half1 nl=40 ns=40 ival=1000 linc=5 sinc=10 format=HALF
+
+! defaults - 1 band
+qplot inp1 proc=(1,1,1,20,20) 
+
+! display this file:
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT QPLOT.PSF.gpi
+end-if
+
+! Bigger plot 9x12 inch - 3 bands
+
+qplot (inp1,inp2,inp3) proc=(1,1,1,20,20, 2,1,1,20,20, 3,50,50,70,70) +
+    ylen=12 title="QPLOT Test 2 - Tall Display" out=qplot2 
+
+! display this file:
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot2.gpi
+end-if
+
+! 3-Bands - normalize the DN values to 1 
+
+qplot (inp1,inp2,inp3) 'norm proc=(1,1,1,20,20, 2,1,1,20,20, 3,1,1,128,128) +
+     title="QPLOT Test 3 - Normalize DNs" ytitle="Normalized DN Value" out=qplot3 
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot3.gpi
+end-if
+
+! Change some labels - plot only 1st of 3 bands
+
+qplot (inp1,inp2,inp3) title="QPLOT Test 4 - Plot 1st of 3 images" +
+      xtitle="This is the X axis" ytitle="This is the Y axis" +
+      proc=(3,1,1,64,64) out=qplot4
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot4.gpi
+end-if
+
+! Check 'notics 
+
+qplot inp1 proc=(1,1,1,20,20) tics=notics +
+    title="QPLOT Test 5 - No tics" out=qplot5
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot5.gpi
+end-if
+!
+!  3-Bands - yscale less than max DN - Tall plot
+
+qplot (inp1,inp2,inp3) proc=(1,1,1,20,20, 2,1,1,20,20, 3,50,50,70,70) +
+    ylen=12 yscale=(0,70) title="QPLOT Test 6 - Truncate Y-Scale" out=qplot6
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot6.gpi
+end-if
+
+! 3-Bands - displace each by 20 DN  
+ 
+qplot (inp1,inp1,inp3) proc=(1,1,1,20,20, 2,1,1,20,20, 3,50,50,70,70) +
+    ylen=12 displace=20 title="QPLOT Test 7 - Displace by 20 DN (Line1,Line2,are same)" out=qplot7
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot7.gpi
+end-if 
+
+! 5-Bands 
+qplot (inp1,inp2,inp3,inp4,inp5) ylen=12  title="QPLOT Test 8 - 5 Bands" +
+    proc=(1,1,1,20,20, 2,1,1,20,20, 3,1,1,20,20, 4,1,1,20,20, 5,1,1,20,20) +  
+    ylen=12 out=qplot8
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot8.gpi
+end-if
+ 
+! Halfword
+
+qplot half1 proc=(1,1,1,20,20) ylen=9 title="QPLOT Test 9 - HALF image"  yscale=(0,2000) out=qplot9
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot9.gpi
+end-if
+
+qplot half1 proc=(1,1,1,20,20) ylen=10 title="QPLOT Test 10 - HALF image - RDS = 900" +
+     yscale=(0,2000) RDS=900 out=qplot10
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot10.gpi
+end-if
+
+! Produce postscript      
+
+qplot inp1 yscale=(0,70) proc=(1,1,1,20,20) plotfmt=eps +
+    title="QPLOT Test 11 - Postscript Output" out=qplot11
+
+ush $GNUPLOT qplot11.eps.gpi
+
+if (mode = "nobatch" or mode = "inter")
+    ush gimp qplot11.eps
+end-if
+
+! test new NOLABEL parameter
+qplot half1 proc=(1,1,1,20,20) title="QPLOT Test 12 - HALF image - No labels"  +
+  yscale=(0,2000) nolabel=nolabel out=qplot12
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT qplot12.gpi
+end-if
+
+let $echo="no"
+end-proc

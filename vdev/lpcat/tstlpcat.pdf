@@ -1,0 +1,21 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $echo="yes"
+let $autousage="none"
+
+ibis-gen xxxlptst1.slp datacol=1 data=(1,4,2,0,0,5295,0,2,4,2,0,10,5295,10,3,4,2,0,20,5295,20) nc=1 nr=21 'ibis-2 format=(DOUB)
+
+ibis-gen xxxlptst2.slp datacol=1 data=(1,4,2,0,0,30,0,2,4,2,0,10,90,10) nc=1 nr=14 'ibis-2 format=(DOUB)
+
+ibis-gen xxxlptst1.dlp datacol=(1,2) data=(1,1,2,2,3,3) strcol=3 string=(hwy1, hwy2, hwy3) 'ibis-2 nc=3 nr=3 format=(FULL, FULL, A16)
+
+ibis-gen xxxlptst2.dlp datacol=(1,2) data=(1,1,2,2) strcol=3 string=(rd1, rd2) 'ibis-2 nc=3 nr=2 format=(FULL, FULL, A16)
+
+lpcat inp=(xxxlptst1.slp, xxxlptst2.slp, xxxlptst1.dlp, xxxlptst2.dlp) out=(xxxlptst3.slp, xxxlptst3.dlp)
+
+lplist inp=(xxxlptst3.slp, xxxlptst3.dlp)
+
+theend>
+end-proc

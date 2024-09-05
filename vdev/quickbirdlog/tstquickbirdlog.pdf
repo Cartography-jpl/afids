@@ -1,0 +1,18 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR QUICKBIRDLOG
+
+! TIFF
+
+! NITF
+quickbirdlog imdin=02FEB02084158-S2AS-000000063767_01_P001.IMD txtout=02FEB02084158-S2AS-000000063767_01_P001.txt
+
+end-proc

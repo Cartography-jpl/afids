@@ -1,0 +1,17 @@
+procedure
+
+body
+
+cncmp inp1=alcase2apr03bxm.site.tst.img +
+      inp2=alcase2dec02bxs.site.tst.img +
+  skipto=0 tool=0 toolval=0 +
+  thresh=80 +
+  mthresh=-999999 +
+  minarea=1 +
+  maxarea=18 +
+  minadratio=0.0 +
+  maxadratio=999999.0 +
+  minimg1=500 +
+  maximg1=800 
+
+end-proc

@@ -1,0 +1,9 @@
+procedure
+body
+
+!   TEST compresschk HANDYPROC
+
+gen xxim1 nl=10 ns=10
+compresschk xxim1
+
+end-proc

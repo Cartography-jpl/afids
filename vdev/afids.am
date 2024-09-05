@@ -1,0 +1,3516 @@
+# I'm not sure yet if it is better to put all the source in here (making one
+# long file) or in separate .am files in each subdirectory (making tons of 
+# very short files). For now put everything here, and we can change this
+# later if I change my mind.
+
+# This testing uses GNU Makefile specific functions. It would be too complicated
+# take make this work with all Makefiles, and at least for now we can assume we
+# have GNU make whenever we are doing tests.
+#  
+#  8-11-2013 - Ray Bambery - Added certain comments to facilitate the git Cookbook
+#  4-19-2014 - added TIFF_LIBS to vtiff3 to build under MacOSX 10.8.5/fink gcc 4.8.2 compiler
+#
+# SECTION 0 - Check Environment
+# =======================================================================
+afids_CHECK = 
+afids_P2_CHECK =
+
+TESTS_ENVIRONMENT = 
+TESTS += $(afids_CHECK) $(afids_P2_CHECK)
+check_PROGRAM+= $(afids_CHECK)
+check_DATA+= $(patsubst %.diff, %.out, $(afids_CHECK))
+check_DATA+= $(patsubst %.diff, %.p2_out, $(afids_P2_CHECK))
+
+check: check_clean
+
+check_clean:
+	-rm -r Test
+
+CLEAN_HOOK += check_clean
+
+# Run test in a scratch area (so temporary files don't interfere with other
+# tests). We use tput to color the output for terminals that support it.
+# To see if your terminal supports color in unix enter "msgcat --color=test"
+# setaf (foreground) color codes: 0=black,1=red,2=green,3=yellow,4=blue,5=purple,6=cyan,7=white,
+# 9=default color as foreground color
+red = $$(tput setaf 1)
+green = $$(tput setaf 2)
+blue = $$(tput setaf 4)
+default = $$(tput sgr0)
+
+# Valgrind can optionally be used
+VALGRIND_PROG = $(if $(VALGRIND), valgrind --track-origins=yes --trace-children=yes --error-exitcode=1  --max-stackframe=8261912)
+
+# We set up the data in 2 ways, depending on if we are installing this as
+# part of the build or not
+if BUILD_AFIDS_DATA
+afids_data_setup = export LANDSAT_ROOT="$(landsatdir)" && export ELEV_ROOT="$(srtml2dir)" && export CIB1_ROOT="$(cib01dir)" && export CIB5_ROOT="$(cib05dir)" && export SPICEDATA="$(datacspice)" && export AFIDS_VDEV_DATA="$(abs_builddir)/afids_data/data/vdev"
+else
+afids_data_setup = source $(AFIDS_DATA)/setup_afids_data.sh
+endif
+
+# Similarly, we get the taetm program in 2 ways depending on if we are building
+# this or not
+if BUILD_VICAR
+taetm_prog = $(abs_builddir)/taetm
+else
+taetm_prog = $(VICAR_PREFIX)/vicar/tae/bin/taetm
+endif
+
+# Have a bunch of environment variables to set up before doing a test.
+if BUILD_VICAR
+test_setup =  export ELLIPSOID_DATA="$(abs_srcdir)/$(srcgeotrans)" && \
+        export DATUM_DATA="$(abs_srcdir)/$(srcgeotrans)" && \
+        export TAEPDF="$(abs_builddir)" && \
+        export GNUPLOT="$(GNUPLOT_ABS)" && \
+        $(afids_data_setup) && \
+	export TAE_PATH="$(abs_builddir):$(test_top_dir)/$*:$(abs_srcdir)/$(srcvicarlib):$(abs_srcdir)/$(srcvidslib)" && \
+        export AFIDS_ROOT="$(abs_builddir)" && \
+        export PATH="$(bindir):${PATH}" && \
+        export LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(GNUPLOT_PREFIX)/lib:$(GNUPLOT_PREFIX)/lib64:${LD_LIBRARY_PATH}" && \
+        ulimit -s 32768 
+else
+test_setup =  export ELLIPSOID_DATA="$(abs_srcdir)/$(srcgeotrans)" && \
+        export DATUM_DATA="$(abs_srcdir)/$(srcgeotrans)" && \
+        export TAEPDF="$(VICAR_PREFIX)/vicar/tae/pdf" && \
+        export GNUPLOT="$(GNUPLOT_ABS)" && \
+        $(afids_data_setup) && \
+	export TAE_PATH="$(abs_builddir):$(test_top_dir)/$*:$(VICAR_PREFIX)/vicar/bin:$(VICAR_PREFIX)/vicar/lib:$(VICAR_PREFIX)/vicar/vids/lib" && \
+        export AFIDS_ROOT="$(abs_builddir)" && \
+        export PATH="$(bindir):${PATH}" && \
+        export LD_LIBRARY_PATH="$(DESTDIR)$(libdir):$(GNUPLOT_PREFIX)/lib:$(GNUPLOT_PREFIX)/lib64:${LD_LIBRARY_PATH}" && \
+        ulimit -s 32768 
+endif
+# Location of test data
+export AFIDS_TESTDATA=@afidstestdatadir@
+
+# Special backdoor to hardcode the user and date/time strings that appear
+# in the history of labels. Used to make comparisons easier, 
+# regardless of who is actually running the tests, and at what time it is run
+# the history information will be the set to these values.
+export AFIDS_FAKE_TEST_USER=afids_test_user
+export AFIDS_FAKE_TEST_DAT_TIM=Sat Jan  1 00:00:00 2000
+
+test_top_dir := $(shell cd $(abs_srcdir)/$(srcafids)/; pwd)
+abs_script_dir := $(shell cd $(abs_srcdir)/$(srcscript)/; pwd)
+
+# Note down below we use the V2LIB to point to our AFIDS. This isn't really
+# the V2LIB, but the slogon.pdf script hardwires things to look in the 
+# $AFIDS_ROOT/vdev directory, and we don't actually have that directory yet.
+Test/%.out : Test/test_data 
+	@-rm -r Test/$*scratch
+	@$(MKDIR_P) Test/$*scratch
+	@cd Test/$*scratch; \
+          for i in $(test_top_dir)/$*/*.dat; do \
+            ln -s $$i . ;\
+          done; \
+          for i in $(test_top_dir)/$*/chk*; do \
+            ln -s $$i . ;\
+          done; \
+          for i in $(test_top_dir)/$*/tst*; do \
+            ln -s $$i . ;\
+          done
+	@echo "${blue}Starting test $*${default}"
+	@echo "procedure" > Test/$*scratch/tst.pdf
+	@echo "body" >> Test/$*scratch/tst.pdf
+	@echo "enable-log" >> Test/$*scratch/tst.pdf
+	@echo "tst$*" >> Test/$*scratch/tst.pdf
+	@echo "disable-log" >> Test/$*scratch/tst.pdf
+	@echo "end-proc" >> Test/$*scratch/tst.pdf
+	@cd Test/$*scratch && \
+        $(test_setup) && \
+        ( $(VALGRIND_PROG) $(taetm_prog) -s ./tst.pdf > ../$*.log 2>&1 ) && echo "${green}Test run $* suceeded${default}" && exit 0; echo "${red}Test run $* failed${default}"
+	@mv Test/$*scratch/session.log Test/$(@F) 
+
+Test/%.p2_out : Test/test_data 
+	@-rm -r Test/$*scratch
+	@$(MKDIR_P) Test/$*scratch
+	@cd Test/$*scratch; \
+          for i in $(test_top_dir)/p2tests/*.dat; do \
+            ln -s $$i . ;\
+          done; \
+          for i in $(test_top_dir)/p2tests/chk*; do \
+            ln -s $$i . ;\
+          done; \
+          for i in $(test_top_dir)/p2tests/tst*; do \
+            ln -s $$i . ;\
+          done
+	@echo "${blue}Starting test $*${default}"
+	@echo "procedure" > Test/$*scratch/tst.pdf
+	@echo "body" >> Test/$*scratch/tst.pdf
+	@echo "enable-log" >> Test/$*scratch/tst.pdf
+	@echo "tst$*" >> Test/$*scratch/tst.pdf
+	@echo "disable-log" >> Test/$*scratch/tst.pdf
+	@echo "end-proc" >> Test/$*scratch/tst.pdf
+	@cd Test/$*scratch && \
+        $(test_setup) && \
+        ( $(VALGRIND_PROG) $(taetm_prog) -s ./tst.pdf > ../$*.log 2>&1 ) && echo "${green}Test run $* suceeded${default}" && exit 0; echo "${red}Test run $* failed${default}"
+	@mv Test/$*scratch/session.log Test/$(@F) 
+
+Test/test_data : 
+	$(MKDIR_P) Test
+	$(LN_S) @afidstestdatadir@ Test/test_data > /dev/null 2>&1
+
+Test/%.diff : $(srcafids)/%/expected_test_results/tst.out
+	echo "$(abs_script_dir)/tst_compare.sh Test/$*.out $(test_top_dir)/$*/expected_test_results/tst.out > Test/$*.diff_result || exit 1" > $@
+	if test -n "$(VALGRIND)"; then \
+           echo "grep ERROR Test/$*.log | grep -v 'ERROR SUMMARY: 0 errors' >> Test/$*.diff_result && exit 1" >> $@; \
+        fi
+	chmod +x $@
+
+Test/%.diff : $(srcafids)/p2tests/expected_test_results/tst%.out
+	echo "$(abs_script_dir)/tst_compare.sh Test/$*.p2_out $(test_top_dir)/p2tests/groundtruth/tst$*.out > Test/$*.diff_result || exit 1" > $@
+	if test -n "$(VALGRIND)"; then \
+           echo "grep ERROR Test/$*.log | grep -v 'ERROR SUMMARY: 0 errors' >> Test/$*.diff_result && exit 1" >> $@; \
+        fi
+	chmod +x $@
+
+
+#=============================================
+# Install template for building stand alone programs
+
+afidsroot_DATA = @srcafids@/AfidsMakefile.in
+EXTRA_DIST+= @srcafids@/AfidsMakefile.in.in
+CLEAN_HOOK += clean_afids_makefile
+
+clean_afids_makefile:
+	-rm @srcafids@/AfidsMakefile.in
+
+#=============================================
+# To make debugging easier, we link in the PDF file for each
+# of the executable in the directory we build in. This isn't
+# used for anything by us, but it means that the user can execute,
+# debug, etc. the program where it is built.
+
+%.pdf: 
+	ln -s $(addprefix $(srcdir)/, $(filter %/$@, $(dist_afids_DATA) $(p2prog_DATA) $(taepdf_DATA))) .
+
+# For some reason LCOV can't find VICMAIN_FOR, so we link it to the local
+# directory
+VICMAIN_FOR:
+	$(LN_S) $(VICMAIN_FOR_LOCATION) .
+
+# Helper routines, used by a few programs
+noinst_LTLIBRARIES += libafidshelper.la
+libafidshelper_la_SOURCES = @srcafids@/helpers/AsterManager.c
+libafidshelper_la_SOURCES+= @srcafids@/helpers/AsterManager.h
+libafidshelper_la_SOURCES+= @srcafids@/helpers/cloud_masks.c
+libafidshelper_la_SOURCES+= @srcafids@/helpers/cloud_masks.h
+libafidshelper_la_SOURCES+= @srcafids@/helpers/LandsatManager.c
+libafidshelper_la_SOURCES+= @srcafids@/helpers/LandsatManager.h
+libafidshelper_la_LIBADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+libafidshelper_la_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS)
+libafidshelper_la_CPPFLAGS+= $(CODE_COVERAGE_CPPFLAGS)
+libafidshelper_la_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+libafidshelper_la_CXXFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CXXFLAGS)
+EXTRA_libafidshelper_la_DEPENDENCIES = $(CARTO_BUILD_DEPEND)
+
+# All of the PDF files are listed separately at the end.
+
+# SECTION 1 - All the programs
+#=============================================
+# All the programs. 
+
+# Program acca
+afids_PROGRAMS += acca
+EXTRA_acca_DEPENDENCIES = $(CARTO_BUILD_DEPEND) acca.pdf 
+acca_SOURCES = @srcafids@/acca/acca.c
+acca_SOURCES+= @srcafids@/acca/ACCA_Utils.c
+acca_SOURCES+= @srcafids@/acca/ACCA_Utils.h
+acca_LDADD = libafidshelper.la $(CODE_COVERAGE_LIBS)
+acca_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) -I$(srcdir)/$(srcafids)/acca
+acca_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+acca_CPPFLAGS+= $(CODE_COVERAGE_CPPFLAGS)
+acca_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Not really a dependency of acca, but we tack it on here to force the
+# installation of all the pdf file in VICAR (if we are building that). This
+# forces this to be available for testing
+EXTRA_acca_DEPENDENCIES+= $(filter %.pdf, $(notdir $(p2prog_DATA) $(taepdf_DATA)))
+
+# Program ascnum
+afids_PROGRAMS += ascnum
+EXTRA_ascnum_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ascnum.pdf
+EXTRA_DIST+= @srcafids@/ascnum/tstascnum.pdf
+EXTRA_DIST+= @srcafids@/ascnum/expected_test_results
+ascnum_SOURCES = @srcafids@/ascnum/ascnum.c
+ascnum_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ascnum_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ascnum_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program cvdnorm
+afids_PROGRAMS += cvdnorm
+EXTRA_cvdnorm_DEPENDENCIES = $(CARTO_BUILD_DEPEND) cvdnorm.pdf
+cvdnorm_SOURCES = @srcafids@/cvdnorm/cvdnorm.c
+cvdnorm_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+cvdnorm_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+cvdnorm_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtigeolo
+afids_PROGRAMS += gtigeolo
+EXTRA_gtigeolo_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtigeolo.pdf
+gtigeolo_SOURCES = @srcafids@/gtigeolo/gtigeolo.c
+gtigeolo_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtigeolo_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtigeolo_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program f2multi
+afids_PROGRAMS += f2multi
+EXTRA_f2multi_DEPENDENCIES = $(CARTO_BUILD_DEPEND) f2multi.pdf
+f2multi_SOURCES = @srcafids@/f2multi/f2multi.c
+f2multi_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+f2multi_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+f2multi_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program f2multi976
+afids_PROGRAMS += f2multi976
+EXTRA_f2multi976_DEPENDENCIES = $(CARTO_BUILD_DEPEND) f2multi976.pdf
+f2multi976_SOURCES = @srcafids@/f2multi976/f2multi976.c
+f2multi976_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+f2multi976_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+f2multi976_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program nacma
+afids_PROGRAMS += nacma
+EXTRA_nacma_DEPENDENCIES = $(CARTO_BUILD_DEPEND) nacma.pdf
+nacma_SOURCES = @srcafids@/nacma/nacma.c
+nacma_SOURCES+= @srcafids@/nacma/NACMA_Utils.c
+nacma_SOURCES+= @srcafids@/nacma/NACMA_Utils.h
+nacma_LDADD = libafidshelper.la $(CODE_COVERAGE_LIBS)
+nacma_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+nacma_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+nacma_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program acopin - modified 2013-08-28
+afids_PROGRAMS += acopin
+EXTRA_acopin_DEPENDENCIES = $(CARTO_BUILD_DEPEND) acopin.pdf
+EXTRA_DIST+= @srcafids@/acopin/tstacopin.pdf
+EXTRA_DIST+= @srcafids@/acopin/expected_test_results
+#EXTRA_DIST+= $(srcdir)/$(srcafids)/acopin/acopin.dat
+#EXTRA_DIST+= $(srcdir)/$(srcafids)/acopin/acopin2.dat
+#EXTRA_DIST+= $(srcdir)/$(srcafids)/acopin/acopin3.dat
+acopin_SOURCES = @srcafids@/acopin/acopin.c
+acopin_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+acopin_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+acopin_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/addnoise
+# Program addnoise - 2013-08-28
+afids_PROGRAMS += addnoise
+EXTRA_addnoise_DEPENDENCIES = $(CARTO_BUILD_DEPEND) addnoise.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/addnoise/tstaddnoise.pdf
+EXTRA_DIST+= @srcafids@/addnoise/expected_test_results
+addnoise_SOURCES = @srcafids@/addnoise/addnoise.F
+addnoise_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+addnoise_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+addnoise_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+
+# Program aggrg
+afids_PROGRAMS += aggrg
+EXTRA_aggrg_DEPENDENCIES = $(CARTO_BUILD_DEPEND) aggrg.pdf
+EXTRA_DIST+= @srcafids@/aggrg/tstaggrg.pdf
+EXTRA_DIST+= @srcafids@/aggrg/expected_test_results
+EXTRA_DIST+= $(srcdir)/$(srcafids)/aggrg/*.dat
+aggrg_SOURCES = @srcafids@/aggrg/aggrg.c
+aggrg_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+aggrg_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+aggrg_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program aggrg2
+
+afids_PROGRAMS += aggrg2
+EXTRA_aggrg2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) aggrg2.pdf
+EXTRA_DIST += @srcafids@/aggrg2/tstaggrg2.pdf
+EXTRA_DIST+= @srcafids@/aggrg2/expected_test_results
+EXTRA_DIST+= $(srcdir)/$(srcafids)/aggrg2/*.dat
+aggrg2_SOURCES = @srcafids@/aggrg2/aggrg2.c
+aggrg2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+aggrg2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+aggrg2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program alilog
+afids_PROGRAMS += alilog
+EXTRA_alilog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) alilog.pdf
+alilog_SOURCES = @srcafids@/alilog/alilog.c
+alilog_LDADD = $(HDFEOS_LIBS) $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+alilog_CPPFLAGS = $(AM_CPPFLAGS) $(HDFEOS_CFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+alilog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+if BUILD_HDFEOS
+alilog_LDADD += libhdfeos.la
+endif
+
+# Program apodize - 2013-08-28
+afids_PROGRAMS += apodize
+EXTRA_apodize_DEPENDENCIES = $(CARTO_BUILD_DEPEND) apodize.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/apodize/tstapodize.pdf
+EXTRA_DIST+= @srcafids@/apodize/expected_test_results
+apodize_SOURCES = @srcafids@/apodize/apodize.F
+apodize_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+apodize_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+apodize_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program asc2tcl
+afids_PROGRAMS += asc2tcl
+EXTRA_asc2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) asc2tcl.pdf
+EXTRA_DIST += @srcafids@/asc2tcl/tstasc2tcl.pdf
+EXTRA_DIST+= @srcafids@/asc2tcl/expected_test_results
+asc2tcl_SOURCES = @srcafids@/asc2tcl/asc2tcl.c
+asc2tcl_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+asc2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+asc2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program asterlog
+afids_PROGRAMS += asterlog
+EXTRA_asterlog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) asterlog.pdf
+EXTRA_DIST += @srcafids@/asterlog/tstasterlog.pdf
+EXTRA_DIST+= @srcafids@/asterlog/expected_test_results
+asterlog_SOURCES = @srcafids@/asterlog/asterlog.c
+asterlog_LDADD = $(HDFEOS_LIBS) $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+asterlog_CPPFLAGS = $(AM_CPPFLAGS) $(HDFEOS_CFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+asterlog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+if BUILD_HDFEOS
+asterlog_LDADD += libhdfeos.la
+endif
+
+# Program astroref
+afids_PROGRAMS += astroref
+EXTRA_astroref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) astroref.pdf
+astroref_SOURCES = @srcafids@/astroref/astroref.c
+astroref_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+astroref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+astroref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program astrtchr - 2016-08-17
+afids_PROGRAMS += astrtchr
+EXTRA_astrtchr_DEPENDENCIES = $(CARTO_BUILD_DEPEND) astrtchr.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/astrtchr/tstastrtchr.pdf
+EXTRA_DIST+= @srcafids@/astrtchr/expected_test_results
+astrtchr_SOURCES = @srcafids@/astrtchr/astrtchr.F
+astrtchr_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+astrtchr_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+astrtchr_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program average - 2013-08-28
+afids_PROGRAMS += average
+EXTRA_average_DEPENDENCIES = $(CARTO_BUILD_DEPEND) average.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/average/tstaverage.pdf
+EXTRA_DIST+= @srcafids@/average/expected_test_results
+average_SOURCES = @srcafids@/average/average.F
+average_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+average_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+average_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program bowtie
+afids_PROGRAMS += bowtie
+EXTRA_bowtie_DEPENDENCIES = $(CARTO_BUILD_DEPEND) bowtie.pdf
+bowtie_SOURCES = @srcafids@/bowtie/bowtie.c
+bowtie_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+bowtie_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+bowtie_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program boxflt2 - 2013-08-28
+afids_PROGRAMS += boxflt2
+EXTRA_boxflt2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) boxflt2.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/boxflt2/tstboxflt2.pdf
+EXTRA_DIST+= @srcafids@/boxflt2/expected_test_results
+boxflt2_SOURCES = @srcafids@/boxflt2/boxflt2.F
+boxflt2_SOURCES += @srcafids@/boxflt2/boxflt2c.c
+boxflt2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+boxflt2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+boxflt2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+boxflt2_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program calfit
+afids_PROGRAMS += calfit
+EXTRA_calfit_DEPENDENCIES = $(CARTO_BUILD_DEPEND) calfit.pdf
+EXTRA_DIST += @srcafids@/calfit/tstcalfit.pdf
+EXTRA_DIST+= @srcafids@/calfit/expected_test_results
+calfit_SOURCES = @srcafids@/calfit/calfit.c
+calfit_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+calfit_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+calfit_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ccdnoise
+afids_PROGRAMS += ccdnoise
+EXTRA_ccdnoise_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ccdnoise.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ccdnoise/tstccdnoise.pdf
+EXTRA_DIST+= @srcafids@/ccdnoise/expected_test_results
+ccdnoise_SOURCES = @srcafids@/ccdnoise/ccdnoise.F
+ccdnoise_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ccdnoise_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ccdnoise_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ccdrecip - 2013-08-11
+afids_PROGRAMS += ccdrecip
+EXTRA_ccdrecip_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ccdrecip.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ccdrecip/tstccdrecip.pdf
+EXTRA_DIST+= @srcafids@/ccdrecip/expected_test_results
+ccdrecip_SOURCES = @srcafids@/ccdrecip/ccdrecip.F
+ccdrecip_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ccdrecip_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ccdrecip_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ccdrecip - 2013-08-11
+afids_PROGRAMS += ccdslope
+EXTRA_ccdslope_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ccdslope.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ccdslope/tstccdslope.pdf
+EXTRA_DIST+= @srcafids@/ccdslope/expected_test_results
+ccdslope_SOURCES = @srcafids@/ccdslope/ccdslope.F
+ccdslope_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ccdslope_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ccdslope_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ccomp - 2013-08-30
+afids_PROGRAMS += ccomp
+EXTRA_ccomp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ccomp.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ccomp/tstccomp.pdf
+EXTRA_DIST+= @srcafids@/ccomp/expected_test_results
+ccomp_SOURCES = @srcafids@/ccomp/ccomp.F
+ccomp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ccomp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ccomp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+
+# Program chipper2
+afids_PROGRAMS += chipper2
+EXTRA_chipper2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) chipper2.pdf
+chipper2_SOURCES = @srcafids@/chipper2/chipper2.c
+chipper2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+chipper2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+
+# Program classifier
+afids_PROGRAMS += classifier
+EXTRA_classifier_DEPENDENCIES = $(CARTO_BUILD_DEPEND) classifier.pdf
+EXTRA_DIST += @srcafids@/classifier/tstclassifier.pdf
+EXTRA_DIST+= @srcafids@/classifier/expected_test_results
+classifier_SOURCES = @srcafids@/classifier/classifier.c
+classifier_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+classifier_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+classifier_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program clusterer
+afids_PROGRAMS += clusterer
+EXTRA_clusterer_DEPENDENCIES = $(CARTO_BUILD_DEPEND) clusterer.pdf
+EXTRA_DIST += @srcafids@/clusterer/tstclusterer.pdf
+EXTRA_DIST+= @srcafids@/clusterer/expected_test_results
+clusterer_SOURCES = @srcafids@/clusterer/clusterer.c
+clusterer_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+clusterer_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+clusterer_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program colort - 2016-08-17 - RJB
+afids_PROGRAMS += colort
+EXTRA_colort_DEPENDENCIES = $(CARTO_BUILD_DEPEND) colort.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/colort/tstcolort.pdf
+EXTRA_DIST+= @srcafids@/colort/expected_test_results
+colort_SOURCES = @srcafids@/colort/colort.F
+colort_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+colort_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+colort_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program compject
+afids_PROGRAMS += compject
+EXTRA_compject_DEPENDENCIES = $(CARTO_BUILD_DEPEND) compject.pdf
+EXTRA_DIST += @srcafids@/compject/tstcompject.pdf
+EXTRA_DIST+= @srcafids@/compject/expected_test_results
+compject_SOURCES = @srcafids@/compject/compject.c
+compject_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+compject_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+compject_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program comprs
+afids_PROGRAMS += comprs
+EXTRA_comprs_DEPENDENCIES = $(CARTO_BUILD_DEPEND) comprs.pdf
+EXTRA_DIST += @srcafids@/comprs/tstcomprs.pdf
+EXTRA_DIST+= @srcafids@/comprs/expected_test_results
+comprs_SOURCES = @srcafids@/comprs/comprs.c
+comprs_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+comprs_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+comprs_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program comptab
+afids_PROGRAMS += comptab
+EXTRA_comptab_DEPENDENCIES = $(CARTO_BUILD_DEPEND) comptab.pdf
+EXTRA_DIST += @srcafids@/comptab/tstcomptab.pdf
+EXTRA_DIST+= @srcafids@/comptab/expected_test_results
+comptab_SOURCES = @srcafids@/comptab/comptab.c
+comptab_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+comptab_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+comptab_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program comptab2
+afids_PROGRAMS += comptab2
+EXTRA_comptab2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) comptab2.pdf
+EXTRA_DIST += @srcafids@/comptab2/tstcomptab2.pdf
+EXTRA_DIST+= @srcafids@/comptab2/expected_test_results
+comptab2_SOURCES = @srcafids@/comptab2/comptab2.c
+comptab2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+comptab2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+comptab2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program concomp
+afids_PROGRAMS += concomp
+EXTRA_concomp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) concomp.pdf
+EXTRA_DIST += @srcafids@/concomp/tstconcomp.pdf
+EXTRA_DIST+= @srcafids@/concomp/expected_test_results
+concomp_SOURCES = @srcafids@/concomp/concomp.c
+concomp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+concomp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+concomp_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program concompi
+afids_PROGRAMS += concompi
+EXTRA_concompi_DEPENDENCIES = $(CARTO_BUILD_DEPEND) concompi.pdf
+EXTRA_DIST += @srcafids@/concompi/tstconcompi.pdf
+EXTRA_DIST+= @srcafids@/concompi/expected_test_results
+concompi_SOURCES = @srcafids@/concompi/concompi.c
+concompi_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+concompi_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+concompi_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program concomp1 - 2016-08-17 - RJB
+afids_PROGRAMS += concomp1
+EXTRA_concomp1_DEPENDENCIES = $(CARTO_BUILD_DEPEND) concomp1.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/concomp1/tstconcomp1.pdf
+EXTRA_DIST+= @srcafids@/concomp1/expected_test_results
+concomp1_SOURCES = @srcafids@/concomp1/concomp1.F
+concomp1_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+concomp1_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+concomp1_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program createfile - 2013-08-11
+afids_DATA += createfile.pdf
+EXTRA_DIST += @srcafids@/createfile/tstcreatefile.pdf
+EXTRA_DIST+= @srcafids@/createfile/expected_test_results
+
+# Program demfix
+afids_PROGRAMS += demfix
+EXTRA_demfix_DEPENDENCIES = $(CARTO_BUILD_DEPEND) demfix.pdf
+EXTRA_DIST += @srcafids@/demfix/tstdemfix.pdf
+EXTRA_DIST+= @srcafids@/demfix/expected_test_results
+demfix_SOURCES = @srcafids@/demfix/demfix.c
+demfix_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+demfix_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+demfix_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program deriv - 2013-08-29
+afids_PROGRAMS += deriv
+EXTRA_deriv_DEPENDENCIES = $(CARTO_BUILD_DEPEND) deriv.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/deriv/tstderiv.pdf
+EXTRA_DIST+= @srcafids@/deriv/expected_test_results
+deriv_SOURCES = @srcafids@/deriv/deriv.F
+deriv_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+deriv_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+deriv_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program destripe - 2013-08-29
+afids_PROGRAMS += destripe
+EXTRA_destripe_DEPENDENCIES = $(CARTO_BUILD_DEPEND) destripe.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/destripe/tstdestripe.pdf
+EXTRA_DIST+= @srcafids@/destripe/expected_test_results
+destripe_SOURCES = @srcafids@/destripe/destripe.F
+destripe_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+destripe_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+destripe_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+
+# Program detstat - modified 2013-08-29
+afids_PROGRAMS += detstat
+EXTRA_detstat_DEPENDENCIES = $(CARTO_BUILD_DEPEND) detstat.pdf
+EXTRA_DIST += @srcafids@/detstat/tstdetstat.pdf
+EXTRA_DIST+= @srcafids@/detstat/expected_test_results
+detstat_SOURCES = @srcafids@/detstat/detstat.c
+detstat_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+detstat_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+detstat_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program difnear
+afids_PROGRAMS += difnear
+EXTRA_difnear_DEPENDENCIES = $(CARTO_BUILD_DEPEND) difnear.pdf
+EXTRA_DIST += @srcafids@/difnear/tstdifnear.pdf
+EXTRA_DIST+= @srcafids@/difnear/expected_test_results
+difnear_SOURCES = @srcafids@/difnear/difnear.c
+difnear_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+difnear_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+difnear_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program difpic - 2016-08-17 - RJB
+afids_PROGRAMS += difpic
+EXTRA_difpic_DEPENDENCIES = $(CARTO_BUILD_DEPEND) difpic.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/difpic/tstdifpic.pdf
+EXTRA_DIST+= @srcafids@/difpic/expected_test_results
+difpic_SOURCES = @srcafids@/difpic/difpic.F
+difpic_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+difpic_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+difpic_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program difpica
+afids_PROGRAMS += difpica
+EXTRA_difpica_DEPENDENCIES = $(CARTO_BUILD_DEPEND) difpica.pdf
+difpica_SOURCES = @srcafids@/difpica/difpica.c
+difpica_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+difpica_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+difpica_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program dtedvlog
+afids_PROGRAMS += dtedvlog
+EXTRA_dtedvlog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) dtedvlog.pdf
+EXTRA_DIST += @srcafids@/dtedvlog/tstdtedvlog.pdf
+EXTRA_DIST+= @srcafids@/dtedvlog/expected_test_results
+dtedvlog_SOURCES = @srcafids@/dtedvlog/dtedvlog.c
+dtedvlog_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+dtedvlog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+dtedvlog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program edibis - add 2013-08-30
+afids_PROGRAMS += edibis
+EXTRA_edibis_DEPENDENCIES = $(CARTO_BUILD_DEPEND) edibis.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/edibis/tstedibis.pdf
+EXTRA_DIST+= @srcafids@/edibis/expected_test_results
+edibis_SOURCES = @srcafids@/edibis/edibis.F
+edibis_SOURCES += @srcafids@/edibis/edibis_terminal.c
+edibis_SOURCES += @srcafids@/edibis/edibis_windows.c
+edibis_SOURCES += @srcafids@/edibis/edibis.FIN
+edibis_LDADD = $(CARTO_LIBS) $(CURSES_LIBS) $(CODE_COVERAGE_LIBS)
+edibis_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+edibis_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+edibis_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ephref
+afids_PROGRAMS += ephref
+EXTRA_ephref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ephref.pdf
+ephref_SOURCES = @srcafids@/ephref/ephref.c
+ephref_SOURCES+= @srcafids@/ephref/ephreference_camera.h
+ephref_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ephref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ephref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# This shouldn't be needed. As near as I can tell, there is a bug in 
+# automake using fortran. But this seems to do the trick to allow building.
+vpath %.F @srcdir@/@srcafids@/f2
+
+# Program f2
+afids_PROGRAMS += f2
+EXTRA_f2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) f2.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/f2/tstf2.pdf
+EXTRA_DIST+= @srcafids@/f2/expected_test_results
+f2_SOURCES = @srcafids@/f2/f2.F
+f2_SOURCES+= @srcafids@/f2/f2.fin
+f2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+f2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+f2_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program f2comp
+afids_PROGRAMS += f2comp
+EXTRA_f2comp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) f2comp.pdf
+f2comp_SOURCES = @srcafids@/f2comp/f2comp.c
+f2comp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+f2comp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+f2comp_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program f2ratio
+afids_PROGRAMS += f2ratio
+EXTRA_f2ratio_DEPENDENCIES = $(CARTO_BUILD_DEPEND) f2ratio.pdf
+f2ratio_SOURCES = @srcafids@/f2ratio/f2ratio.c
+f2ratio_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+f2ratio_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+f2ratio_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program fastmos - 2016-08-17 - RJB
+afids_PROGRAMS += fastmos
+EXTRA_fastmos_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fastmos.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fastmos/tstfastmos.pdf
+EXTRA_DIST+= @srcafids@/fastmos/expected_test_results
+fastmos_SOURCES = @srcafids@/fastmos/fastmos.F
+fastmos_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fastmos_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fastmos_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program featherv
+afids_PROGRAMS += featherv
+EXTRA_featherv_DEPENDENCIES = $(CARTO_BUILD_DEPEND) featherv.pdf
+featherv_SOURCES = @srcafids@/featherv/featherv.c
+featherv_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+featherv_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+featherv_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program featherw
+afids_PROGRAMS += featherw
+EXTRA_featherw_DEPENDENCIES = $(CARTO_BUILD_DEPEND) featherw.pdf
+featherw_SOURCES = @srcafids@/featherw/featherw.c
+featherw_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+featherw_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+featherw_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program feathery
+afids_PROGRAMS += feathery
+EXTRA_feathery_DEPENDENCIES = $(CARTO_BUILD_DEPEND) feathery.pdf
+feathery_SOURCES = @srcafids@/feathery/feathery.c
+feathery_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+feathery_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+feathery_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/filter
+
+# Program filter - Modified 2013-09-17
+afids_PROGRAMS += filter
+EXTRA_filter_DEPENDENCIES = $(CARTO_BUILD_DEPEND) filter.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/filter/tstfilter.pdf
+EXTRA_DIST+= @srcafids@/filter/expected_test_results
+filter_SOURCES = @srcafids@/filter/filter.F
+filter_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+filter_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+filter_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/font
+
+# Program font
+afids_PROGRAMS += font
+EXTRA_font_DEPENDENCIES = $(CARTO_BUILD_DEPEND) font.pdf VICMAIN_FOR
+font_SOURCES = @srcafids@/font/font.F
+font_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+font_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+font_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program fft11 - 2016-08-17 - RJB
+afids_PROGRAMS += fft11
+EXTRA_fft11_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fft11.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fft11/tstfft11.pdf
+EXTRA_DIST+= @srcafids@/fft11/expected_test_results
+fft11_SOURCES = @srcafids@/fft11/fft11.F
+fft11_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fft11_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fft11_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program fft22 - 2016-08-17 - RJB
+afids_PROGRAMS += fft22
+EXTRA_fft22_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fft22.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fft22/tstfft22.pdf
+EXTRA_DIST+= @srcafids@/fft22/expected_test_results
+fft22_SOURCES = @srcafids@/fft22/fft22.F
+fft22_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fft22_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fft22_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# 
+# Program fft2005
+afids_PROGRAMS += fft2005
+EXTRA_fft2005_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fft2005.pdf
+EXTRA_DIST += @srcafids@/fft2005/tstfft2005.pdf
+EXTRA_DIST+= @srcafids@/fft2005/expected_test_results
+fft2005_SOURCES = @srcafids@/fft2005/fft2005.c
+fft2005_SOURCES+= @srcafids@/fft2005/my_fftw3.h
+fft2005_LDADD = $(FFTW_LIBS) $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fft2005_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(FFTW_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fft2005_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program fftflip - Added 2013-09-18
+afids_PROGRAMS += fftflip
+EXTRA_fftflip_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fftflip.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fftflip/tstfftflip.pdf
+EXTRA_DIST+= @srcafids@/fftflip/expected_test_results
+fftflip_SOURCES = @srcafids@/fftflip/fftflip.F
+fftflip_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fftflip_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fftflip_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program fftmag - 2016-08-17 - RJB
+afids_PROGRAMS += fftmag
+EXTRA_fftmag_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fftmag.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fftmag/tstfftmag.pdf
+EXTRA_DIST+= @srcafids@/fftmag/expected_test_results
+fftmag_SOURCES = @srcafids@/fftmag/fftmag.F
+fftmag_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fftmag_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fftmag_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program fftmagic - 2016-08-17 - RJB
+afids_PROGRAMS += fftmagic
+EXTRA_fftmagic_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fftmagic.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fftmagic/tstfftmagic.pdf
+EXTRA_DIST+= @srcafids@/fftmagic/expected_test_results
+fftmagic_SOURCES = @srcafids@/fftmagic/fftmagic.F
+fftmagic_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fftmagic_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fftmagic_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program fifor
+afids_PROGRAMS += fifor
+EXTRA_fifor_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fifor.pdf
+fifor_SOURCES = @srcafids@/fifor/fifor.c
+fifor_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fifor_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fifor_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program fifow
+afids_PROGRAMS += fifow
+EXTRA_fifow_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fifow.pdf
+EXTRA_DIST += @srcafids@/fifow/tstfifow.pdf
+EXTRA_DIST+= @srcafids@/fifow/expected_test_results
+fifow_SOURCES = @srcafids@/fifow/fifow.c
+fifow_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fifow_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fifow_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program file2tcl
+if HAVE_ITCL
+afids_PROGRAMS += file2tcl
+endif
+EXTRA_file2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) file2tcl.pdf
+EXTRA_DIST += @srcafids@/file2tcl/tstfile2tcl.pdf
+EXTRA_DIST+= @srcafids@/file2tcl/expected_test_results
+file2tcl_SOURCES = @srcafids@/file2tcl/file2tcl.c
+file2tcl_LDADD = $(GEOTIFF_LIBS) $(PROJ_LIBS) $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+file2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(GEOTIFF_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+file2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program fitg
+afids_PROGRAMS += fitg
+EXTRA_fitg_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fitg.pdf
+fitg_SOURCES = @srcafids@/fitg/fitg.c
+fitg_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+fitg_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fitg_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program fitsin - 2013-08-22
+afids_PROGRAMS += fitsin
+EXTRA_fitsin_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fitsin.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fitsin/tstfitsin.pdf
+EXTRA_DIST+= @srcafids@/fitsin/expected_test_results
+fitsin_SOURCES = @srcafids@/fitsin/fitsin.F
+fitsin_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+fitsin_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fitsin_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# This shouldn't be needed. As near as I can tell, there is a bug in 
+# automake using fortran. But this seems to do the trick to allow building.
+vpath %.F @srcdir@/@srcafids@/fitsout
+
+# Program fitsout
+afids_PROGRAMS += fitsout
+EXTRA_fitsout_DEPENDENCIES = $(CARTO_BUILD_DEPEND) fitsout.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/fitsout/tstfitsout.pdf
+EXTRA_DIST+= @srcafids@/fitsout/expected_test_results
+fitsout_SOURCES = @srcafids@/fitsout/fitsout.F
+fitsout_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+fitsout_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+fitsout_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program flot - 2016-08-17 - RJB 
+afids_PROGRAMS += flot
+EXTRA_flot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) flot.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/flot/tstflot.pdf
+EXTRA_DIST+= @srcafids@/flot/expected_test_results
+flot_SOURCES = @srcafids@/flot/flot.F
+flot_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+flot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+flot_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+#
+# Program ftype2tcl
+if HAVE_ITCL
+afids_PROGRAMS += ftype2tcl
+endif
+EXTRA_ftype2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ftype2tcl.pdf
+EXTRA_DIST += @srcafids@/ftype2tcl/tstftype2tcl.pdf
+EXTRA_DIST+= @srcafids@/ftype2tcl/expected_test_results
+ftype2tcl_SOURCES = @srcafids@/ftype2tcl/ftype2tcl.c
+ftype2tcl_LDADD = $(GEOTIFF_LIBS) $(PROJ_LIBS) $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ftype2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(GEOTIFF_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ftype2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gausnois - added 2013-08-11
+afids_PROGRAMS += gausnois
+EXTRA_gausnois_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gausnois.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/gausnois/tstgausnois.pdf
+EXTRA_DIST+= @srcafids@/gausnois/expected_test_results
+gausnois_SOURCES = @srcafids@/gausnois/gausnois.F
+gausnois_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gausnois_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gausnois_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ge1ref
+afids_PROGRAMS += ge1ref
+EXTRA_ge1ref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ge1ref.pdf
+ge1ref_SOURCES = @srcafids@/ge1ref/ge1ref.c
+ge1ref_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ge1ref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ge1ref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program genealg
+afids_PROGRAMS += genealg
+EXTRA_genealg_DEPENDENCIES = $(CARTO_BUILD_DEPEND) genealg.pdf
+genealg_SOURCES = @srcafids@/genealg/genealg.c
+genealg_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+genealg_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+genealg_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program genealg2
+afids_PROGRAMS += genealg2
+EXTRA_genealg2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) genealg2.pdf
+genealg2_SOURCES = @srcafids@/genealg2/genealg2.c
+genealg2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+genealg2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+genealg2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program geneplot
+afids_PROGRAMS += geneplot
+EXTRA_geneplot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) geneplot.pdf
+geneplot_SOURCES = @srcafids@/geneplot/geneplot.c
+geneplot_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+geneplot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+geneplot_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program geneprep
+afids_PROGRAMS += geneprep
+EXTRA_geneprep_DEPENDENCIES = $(CARTO_BUILD_DEPEND) geneprep.pdf
+geneprep_SOURCES = @srcafids@/geneprep/geneprep.c
+geneprep_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+geneprep_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+geneprep_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program geomv
+afids_PROGRAMS += geomv
+EXTRA_geomv_DEPENDENCIES = $(CARTO_BUILD_DEPEND) geomv.pdf
+geomv_SOURCES = @srcafids@/geomv/geomv.cc
+EXTRA_DIST+= @srcafids@/geomv/zmabend.h
+EXTRA_DIST+= @srcafids@/geomv/tstgeomv.pdf
+EXTRA_DIST+= @srcafids@/geomv/expected_test_results
+geomv_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+geomv_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+geomv_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program getdelta
+afids_PROGRAMS += getdelta
+EXTRA_getdelta_DEPENDENCIES = $(CARTO_BUILD_DEPEND) getdelta.pdf
+getdelta_SOURCES = @srcafids@/getdelta/getdelta.c
+getdelta_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+getdelta_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+getdelta_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program getzval
+afids_PROGRAMS += getzval
+EXTRA_getzval_DEPENDENCIES = $(CARTO_BUILD_DEPEND) getzval.pdf
+getzval_SOURCES = @srcafids@/getzval/getzval.c
+getzval_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+getzval_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+getzval_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program goeslog
+afids_PROGRAMS += goeslog
+EXTRA_goeslog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) goeslog.pdf
+goeslog_SOURCES = @srcafids@/goeslog/goeslog.c
+goeslog_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+goeslog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+goeslog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program grid3pt
+afids_PROGRAMS += grid3pt
+EXTRA_grid3pt_DEPENDENCIES = $(CARTO_BUILD_DEPEND) grid3pt.pdf gengrid2.pdf
+EXTRA_DIST+= @srcafids@/grid3pt/tstgrid3pt.pdf
+EXTRA_DIST+= @srcafids@/grid3pt/expected_test_results
+grid3pt_SOURCES = @srcafids@/grid3pt/grid3pt.c
+grid3pt_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+grid3pt_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+grid3pt_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gridavg
+afids_PROGRAMS += gridavg
+EXTRA_gridavg_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gridavg.pdf
+gridavg_SOURCES = @srcafids@/gridavg/gridavg.c
+gridavg_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gridavg_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gridavg_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gridck
+afids_PROGRAMS += gridck
+EXTRA_gridck_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gridck.pdf
+gridck_SOURCES = @srcafids@/gridck/gridck.c
+gridck_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gridck_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gridck_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gridcomp
+afids_PROGRAMS += gridcomp
+EXTRA_gridcomp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gridcomp.pdf
+gridcomp_SOURCES = @srcafids@/gridcomp/gridcomp.c
+gridcomp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gridcomp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gridcomp_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gt2tcl
+afids_PROGRAMS += gt2tcl
+EXTRA_gt2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gt2tcl.pdf
+EXTRA_DIST+= @srcafids@/gt2tcl/tstgt2tcl.pdf
+EXTRA_DIST+= @srcafids@/gt2tcl/expected_test_results
+gt2tcl_SOURCES = @srcafids@/gt2tcl/gt2tcl.c
+gt2tcl_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gt2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gt2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtappend
+afids_PROGRAMS += gtappend
+EXTRA_gtappend_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtappend.pdf
+EXTRA_DIST+= @srcafids@/gtappend/tstgtappend.pdf
+EXTRA_DIST+= @srcafids@/gtappend/expected_test_results
+gtappend_SOURCES = @srcafids@/gtappend/gtappend.c
+gtappend_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtappend_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtappend_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtasterfix
+afids_PROGRAMS += gtasterfix
+EXTRA_gtasterfix_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtasterfix.pdf
+gtasterfix_SOURCES = @srcafids@/gtasterfix/gtasterfix.c
+gtasterfix_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtasterfix_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtasterfix_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtcopy. Note thate gtcomp.pdf listed here is needed
+# by the unit test, so we need to make sure we have a copy available
+afids_PROGRAMS += gtcopy
+EXTRA_gtcopy_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtcopy.pdf gtcomp.pdf
+EXTRA_DIST+= @srcafids@/gtcopy/tstgtcopy.pdf
+EXTRA_DIST+= @srcafids@/gtcopy/expected_test_results
+gtcopy_SOURCES = @srcafids@/gtcopy/gtcopy.c
+gtcopy_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtcopy_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtcopy_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtcrop
+afids_PROGRAMS += gtcrop
+EXTRA_gtcrop_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtcrop.pdf
+EXTRA_DIST+= @srcafids@/gtcrop/tstgtcrop.pdf
+EXTRA_DIST+= @srcafids@/gtcrop/gtcrop.dat
+EXTRA_DIST+= @srcafids@/gtcrop/expected_test_results
+gtcrop_SOURCES = @srcafids@/gtcrop/gtcrop.c
+gtcrop_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtcrop_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtcrop_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtdel
+afids_PROGRAMS += gtdel
+EXTRA_gtdel_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtdel.pdf
+EXTRA_DIST+= @srcafids@/gtdel/tstgtdel.pdf
+EXTRA_DIST+= @srcafids@/gtdel/expected_test_results
+gtdel_SOURCES = @srcafids@/gtdel/gtdel.c
+gtdel_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtdel_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtdel_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtgen
+afids_PROGRAMS += gtgen
+EXTRA_gtgen_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtgen.pdf
+EXTRA_DIST+= @srcafids@/gtgen/tstgtgen.pdf
+EXTRA_DIST+= @srcafids@/gtgen/expected_test_results
+gtgen_SOURCES = @srcafids@/gtgen/gtgen.c
+gtgen_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtgen_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtgen_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtgenup
+afids_PROGRAMS += gtgenup
+EXTRA_gtgenup_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtgenup.pdf
+gtgenup_SOURCES = @srcafids@/gtgenup/gtgenup.c
+gtgenup_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtgenup_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtgenup_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtgore
+afids_PROGRAMS += gtgore
+EXTRA_gtgore_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtgore.pdf
+gtgore_SOURCES = @srcafids@/gtgore/gtgore.c
+gtgore_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtgore_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtgore_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtlabfix
+afids_PROGRAMS += gtlabfix
+EXTRA_gtlabfix_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtlabfix.pdf
+EXTRA_DIST+= @srcafids@/gtlabfix/tstgtlabfix.pdf
+EXTRA_DIST+= @srcafids@/gtlabfix/expected_test_results
+gtlabfix_SOURCES = @srcafids@/gtlabfix/gtlabfix.c
+gtlabfix_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtlabfix_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtlabfix_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtlist
+afids_PROGRAMS += gtlist
+EXTRA_gtlist_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtlist.pdf
+EXTRA_DIST+= @srcafids@/gtlist/tstgtlist.pdf
+EXTRA_DIST+= @srcafids@/gtlist/expected_test_results
+gtlist_SOURCES = @srcafids@/gtlist/gtlist.c
+gtlist_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtlist_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtlist_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtmss
+afids_PROGRAMS += gtmss
+EXTRA_gtmss_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtmss.pdf
+gtmss_SOURCES = @srcafids@/gtmss/gtmss.c
+gtmss_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+gtmss_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtmss_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtproj
+afids_PROGRAMS += gtproj
+EXTRA_gtproj_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtproj.pdf gtmove.pdf
+gtproj_SOURCES = @srcafids@/gtproj/gtproj.c
+gtproj_LDADD = libgeotrans.la $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+gtproj_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcgeotrans) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtproj_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtpswarp. This is just a PDF file with no source code
+EXTRA_gtproj_DEPENDENCIES += gtpswarp.pdf gtwarp.pdf util6.pdf
+EXTRA_DIST+= @srcafids@/gtpswarp/tstgtpswarp.pdf
+EXTRA_DIST+= @srcafids@/gtpswarp/tstinp.img
+EXTRA_DIST+= @srcafids@/gtpswarp/tstref.img
+EXTRA_DIST+= @srcafids@/gtpswarp/expected_test_results
+
+# Program gtrot
+afids_PROGRAMS += gtrot
+EXTRA_gtrot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtrot.pdf
+gtrot_SOURCES = @srcafids@/gtrot/gtrot.c
+gtrot_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+gtrot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtrot_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtsize
+afids_PROGRAMS += gtsize
+EXTRA_gtsize_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtsize.pdf
+gtsize_SOURCES = @srcafids@/gtsize/gtsize.c
+gtsize_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+gtsize_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtsize_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program gtstat
+afids_PROGRAMS += gtstat
+EXTRA_gtstat_DEPENDENCIES = $(CARTO_BUILD_DEPEND) gtstat.pdf
+gtstat_SOURCES = @srcafids@/gtstat/gtstat.c
+gtstat_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+gtstat_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+gtstat_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/hist
+
+# Program hist - modified - 2016-08-17 - rjb
+# splot.c was for VAX Regis graphics - not needed for Linux
+afids_PROGRAMS += hist
+EXTRA_hist_DEPENDENCIES = $(CARTO_BUILD_DEPEND) hist.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/hist/tsthist.pdf
+hist_SOURCES = @srcafids@/hist/hist.F
+#hist_SOURCES += @srcafids@/hist/splot.c
+hist_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+hist_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+hist_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program hyperionlog
+afids_PROGRAMS += hyperionlog
+EXTRA_hyperionlog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) hyperionlog.pdf
+hyperionlog_SOURCES = @srcafids@/hyperionlog/hyperionlog.c
+hyperionlog_LDADD = $(HDFEOS_LIBS) $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+hyperionlog_CPPFLAGS = $(AM_CPPFLAGS) $(HDFEOS_CFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+hyperionlog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+if BUILD_HDFEOS
+hyperionlog_LDADD += libhdfeos.la $(CODE_COVERAGE_LIBS)
+endif
+
+# Program ibis2asc - mod 2013-09-16
+afids_PROGRAMS += ibis2asc
+EXTRA_ibis2asc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibis2asc.pdf
+EXTRA_DIST+= @srcafids@/ibis2asc/tstibis2asc.pdf
+EXTRA_DIST+= @srcafids@/ibis2asc/expected_test_results
+ibis2asc_SOURCES = @srcafids@/ibis2asc/ibis2asc.c
+ibis2asc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibis2asc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibis2asc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibis2img
+afids_PROGRAMS += ibis2img
+EXTRA_ibis2img_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibis2img.pdf
+EXTRA_DIST+= @srcafids@/ibis2img/tstibis2img.pdf
+EXTRA_DIST+= @srcafids@/ibis2img/expected_test_results
+ibis2img_SOURCES = @srcafids@/ibis2img/ibis2img.c
+ibis2img_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibis2img_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibis2img_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibis2rpc
+afids_PROGRAMS += ibis2rpc
+EXTRA_ibis2rpc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibis2rpc.pdf
+ibis2rpc_SOURCES = @srcafids@/ibis2rpc/ibis2rpc.c
+ibis2rpc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibis2rpc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibis2rpc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsq2
+afids_PROGRAMS += ibislsq2
+EXTRA_ibislsq2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsq2.pdf
+ibislsq2_SOURCES = @srcafids@/ibislsq2/ibislsq2.c
+ibislsq2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibislsq2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibislsq2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsq3
+afids_PROGRAMS += ibislsq3
+EXTRA_ibislsq3_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsq3.pdf
+ibislsq3_SOURCES = @srcafids@/ibislsq3/ibislsq3.c
+ibislsq3_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibislsq3_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibislsq3_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsq4 - added 2013-09-06
+afids_PROGRAMS += ibislsq4
+EXTRA_ibislsq4_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsq4.pdf
+EXTRA_DIST+= @srcafids@/ibislsq4/tstibislsq4.pdf
+EXTRA_DIST+= @srcafids@/ibislsq4/expected_test_results
+ibislsq4_SOURCES = @srcafids@/ibislsq4/ibislsq4.c
+ibislsq4_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ibislsq4_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibislsq4_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsq9
+afids_PROGRAMS += ibislsq9
+EXTRA_ibislsq9_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsq9.pdf
+ibislsq9_SOURCES = @srcafids@/ibislsq9/ibislsq9.c
+ibislsq9_LDADD = libafidshelper.la $(GSL_LIBS)  $(CODE_COVERAGE_LIBS)
+ibislsq9_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS)  $(CODE_COVERAGE_CPPFLAGS)
+ibislsq9_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+ibislsq9_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsqf
+afids_PROGRAMS += ibislsqf
+EXTRA_ibislsqf_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsqf.pdf
+EXTRA_DIST+= @srcafids@/ibislsqf/tstibislsqf.pdf
+EXTRA_DIST+= @srcafids@/ibislsqf/expected_test_results
+ibislsqf_SOURCES = @srcafids@/ibislsqf/ibislsqf.c
+ibislsqf_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibislsqf_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibislsqf_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibislsql
+afids_PROGRAMS += ibislsql
+EXTRA_ibislsql_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibislsql.pdf
+EXTRA_DIST+= @srcafids@/ibislsql/tstibislsql.pdf
+EXTRA_DIST+= @srcafids@/ibislsql/expected_test_results
+ibislsql_SOURCES = @srcafids@/ibislsql/ibislsql.c
+ibislsql_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibislsql_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibislsql_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibisclst
+afids_PROGRAMS += ibisclst
+EXTRA_ibisclst_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibisclst.pdf
+ibisclst_SOURCES = @srcafids@/ibisclst/ibisclst.c
+ibisclst_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibisclst_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibisclst_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibisclst2
+afids_PROGRAMS += ibisclst2
+EXTRA_ibisclst2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibisclst2.pdf
+EXTRA_DIST+= @srcafids@/ibisclst2/tstibisclst2.pdf
+EXTRA_DIST+= @srcafids@/ibisclst2/expected_test_results
+ibisclst2_SOURCES = @srcafids@/ibisclst2/ibisclst2.cc
+ibisclst2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibisclst2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibisclst2_CXXFLAGS = $(AM_CXXFLAGS) $(CODE_COVERAGE_CXXFLAGS)
+
+# Program ibisclst3
+afids_PROGRAMS += ibisclst3
+EXTRA_ibisclst3_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibisclst3.pdf
+EXTRA_DIST+= @srcafids@/ibisclst3/tstibisclst3.pdf
+EXTRA_DIST+= @srcafids@/ibisclst3/expected_test_results
+ibisclst3_SOURCES = @srcafids@/ibisclst3/ibisclst3.cc
+ibisclst3_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibisclst3_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibisclst3_CXXFLAGS = $(AM_CXXFLAGS) $(CODE_COVERAGE_CXXFLAGS)
+
+# Program dig2refl
+dist_afids_SCRIPTS += @srcafids@/dig2refl/dig2refl
+dist_afids_DATA += @srcafids@/dig2refl/dig2refl_config.py
+EXTRA_DIST+= @srcafids@/dig2refl/dig2refl
+
+# Program ibisnlsq
+afids_PROGRAMS += ibisnlsq
+EXTRA_ibisnlsq_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibisnlsq.pdf
+EXTRA_DIST+= @srcafids@/ibisnlsq/tstibisnlsq.pdf
+EXTRA_DIST+= @srcafids@/ibisnlsq/expected_test_results
+ibisnlsq_SOURCES = @srcafids@/ibisnlsq/ibisnlsq.c
+ibisnlsq_LDADD = $(GSL_LIBS) $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ibisnlsq_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibisnlsq_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ibisx
+afids_PROGRAMS += ibisx
+EXTRA_ibisx_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ibisx.pdf
+ibisx_SOURCES = @srcafids@/ibisx/ibisx.c
+ibisx_LDADD = libafidshelper.la $(CODE_COVERAGE_LIBS)
+ibisx_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ibisx_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+ibisx_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program icat
+afids_PROGRAMS += icat
+EXTRA_icat_DEPENDENCIES = $(CARTO_BUILD_DEPEND) icat.pdf
+EXTRA_DIST+= @srcafids@/icat/tsticat.pdf
+EXTRA_DIST+= @srcafids@/icat/expected_test_results
+icat_SOURCES = @srcafids@/icat/icat.c
+icat_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+icat_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+icat_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program idgen
+afids_PROGRAMS += idgen
+EXTRA_idgen_DEPENDENCIES = $(CARTO_BUILD_DEPEND) idgen.pdf
+idgen_SOURCES = @srcafids@/idgen/idgen.c
+idgen_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+idgen_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+idgen_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ifthen - Added 2013-09-17
+afids_PROGRAMS += ifthen
+EXTRA_ifthen_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ifthen.pdf
+EXTRA_DIST+= @srcafids@/ifthen/tstifthen.pdf
+EXTRA_DIST+= @srcafids@/ifthen/expected_test_results
+ifthen_SOURCES = @srcafids@/ifthen/ifthen.c
+ifthen_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ifthen_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ifthen_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ikonoslog
+afids_PROGRAMS += ikonoslog
+EXTRA_ikonoslog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ikonoslog.pdf
+ikonoslog_SOURCES = @srcafids@/ikonoslog/ikonoslog.c
+ikonoslog_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ikonoslog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ikonoslog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ikref
+afids_PROGRAMS += ikref
+EXTRA_ikref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ikref.pdf
+ikref_SOURCES = @srcafids@/ikref/ikref.c
+ikref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ikref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ikref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ilist
+afids_PROGRAMS += ilist
+EXTRA_ilist_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ilist.pdf
+EXTRA_DIST+= @srcafids@/ilist/tstilist.pdf
+EXTRA_DIST+= @srcafids@/ilist/expected_test_results
+ilist_SOURCES = @srcafids@/ilist/ilist.c
+ilist_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ilist_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ilist_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program img2ascii - added 2013-09-01
+afids_PROGRAMS += img2ascii
+EXTRA_img2ascii_DEPENDENCIES = $(CARTO_BUILD_DEPEND) img2ascii.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/img2ascii/tstimg2ascii.pdf
+EXTRA_DIST+= @srcafids@/img2ascii/expected_test_results
+img2ascii_SOURCES = @srcafids@/img2ascii/img2ascii.F
+img2ascii_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+img2ascii_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+img2ascii_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program imcorner
+afids_PROGRAMS += imcorner
+EXTRA_imcorner_DEPENDENCIES = $(CARTO_BUILD_DEPEND) imcorner.pdf
+EXTRA_DIST += @srcafids@/imcorner/tstimcorner.pdf
+EXTRA_DIST+= @srcafids@/imcorner/expected_test_results
+imcorner_SOURCES = @srcafids@/imcorner/imcorner.c
+imcorner_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+imcorner_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+imcorner_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program imgstat - added 2013-09-01
+afids_PROGRAMS += imgstat
+EXTRA_imgstat_DEPENDENCIES = $(CARTO_BUILD_DEPEND) imgstat.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/imgstat/tstimgstat.pdf
+EXTRA_DIST+= @srcafids@/imgstat/expected_test_results
+imgstat_SOURCES = @srcafids@/imgstat/imgstat.F
+imgstat_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+imgstat_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+imgstat_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program imgsum  - added 2013-09-17
+afids_PROGRAMS += imgsum 
+EXTRA_imgsum_DEPENDENCIES = $(CARTO_BUILD_DEPEND) imgsum.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/imgsum/tstimgsum.pdf
+EXTRA_DIST+= @srcafids@/imgsum/expected_test_results
+imgsum_SOURCES = @srcafids@/imgsum/imgsum.F
+imgsum_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+imgsum_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+imgsum_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program imlog
+afids_PROGRAMS += imlog
+EXTRA_imlog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) imlog.pdf
+imlog_SOURCES = @srcafids@/imlog/imlog.c
+imlog_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+imlog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+imlog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program immerge
+afids_PROGRAMS += immerge
+EXTRA_immerge_DEPENDENCIES = $(CARTO_BUILD_DEPEND) immerge.pdf
+EXTRA_DIST+= @srcafids@/immerge/tstimmerge.pdf
+EXTRA_DIST+= @srcafids@/immerge/expected_test_results
+immerge_SOURCES = @srcafids@/immerge/immerge.c
+immerge_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+immerge_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+immerge_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program imsplit
+afids_PROGRAMS += imsplit
+EXTRA_imsplit_DEPENDENCIES = $(CARTO_BUILD_DEPEND) imsplit.pdf
+EXTRA_DIST+= @srcafids@/imsplit/tstimsplit.pdf
+EXTRA_DIST+= @srcafids@/imsplit/expected_test_results
+imsplit_SOURCES = @srcafids@/imsplit/imsplit.c
+imsplit_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+imsplit_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+imsplit_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program indexmerge - Added 2013-09-17
+afids_PROGRAMS += indexmerge
+EXTRA_indexmerge_DEPENDENCIES = $(CARTO_BUILD_DEPEND) indexmerge.pdf
+EXTRA_DIST+= @srcafids@/indexmerge/tstindexmerge.pdf
+EXTRA_DIST+= @srcafids@/indexmerge/expected_test_results
+indexmerge_SOURCES = @srcafids@/indexmerge/indexmerge.c
+indexmerge_SOURCES+= @srcafids@/indexmerge/indexmerge.h
+indexmerge_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+indexmerge_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+indexmerge_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program insect
+afids_PROGRAMS += insect
+EXTRA_insect_DEPENDENCIES = $(CARTO_BUILD_DEPEND) insect.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/insect/tstinsect.pdf
+EXTRA_DIST+= @srcafids@/insect/expected_test_results
+insect_SOURCES = @srcafids@/insect/insect.F
+insect_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+insect_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+insect_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program insert - 2016-08-17 - RJB
+afids_PROGRAMS += insert
+EXTRA_insert_DEPENDENCIES = $(CARTO_BUILD_DEPEND) insert.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/insert/tstinsert.pdf
+insert_SOURCES = @srcafids@/insert/insert.F
+insert_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+insert_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+insert_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program interlv - 20130915
+afids_PROGRAMS += interlv
+EXTRA_interlv_DEPENDENCIES = $(CARTO_BUILD_DEPEND) interlv.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/interlv/tstinterlv.pdf
+EXTRA_DIST+= @srcafids@/interlv/expected_test_results
+interlv_SOURCES = @srcafids@/interlv/interlv.F
+interlv_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+interlv_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+interlv_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program lab2asc
+afids_PROGRAMS += lab2asc
+EXTRA_lab2asc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lab2asc.pdf
+lab2asc_SOURCES = @srcafids@/lab2asc/lab2asc.c
+lab2asc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+lab2asc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lab2asc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program lab2tcl - 2013-09-01
+afids_PROGRAMS += lab2tcl
+EXTRA_lab2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lab2tcl.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/lab2tcl/tstlab2tcl.pdf
+EXTRA_DIST+= @srcafids@/lab2tcl/expected_test_results
+lab2tcl_SOURCES = @srcafids@/lab2tcl/lab2tcl.F
+lab2tcl_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+lab2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lab2tcl_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program lave - 2013-09-01
+afids_PROGRAMS += lave
+EXTRA_lave_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lave.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/lave/tstlave.pdf
+EXTRA_DIST+= @srcafids@/lave/expected_test_results
+lave_SOURCES = @srcafids@/lave/lave.F
+lave_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+lave_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lave_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program ldir2tcl
+afids_PROGRAMS += ldir2tcl
+EXTRA_ldir2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ldir2tcl.pdf
+EXTRA_DIST += @srcafids@/ldir2tcl/tstldir2tcl.pdf
+EXTRA_DIST+= @srcafids@/ldir2tcl/expected_test_results
+ldir2tcl_SOURCES = @srcafids@/ldir2tcl/ldir2tcl.c
+ldir2tcl_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+ldir2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ldir2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program lgeom - 2016-08-17 - RJB
+afids_PROGRAMS += lgeom
+EXTRA_lgeom_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lgeom.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/lgeom/tstlgeom.pdf
+EXTRA_DIST+= @srcafids@/lgeom/expected_test_results
+lgeom_SOURCES = @srcafids@/lgeom/lgeom.F
+lgeom_SOURCES += @srcafids@/lgeom/lgeom_unix.F
+lgeom_SOURCES += @srcafids@/lgeom/mvb.c
+lgeom_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+lgeom_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lgeom_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+lgeom_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program linshft
+afids_PROGRAMS += linshft
+EXTRA_linshft_DEPENDENCIES = $(CARTO_BUILD_DEPEND) linshft.pdf
+EXTRA_DIST+= @srcafids@/linshft/tstlinshft.pdf
+EXTRA_DIST+= @srcafids@/linshft/expected_test_results
+linshft_SOURCES = @srcafids@/linshft/linshft.c
+linshft_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+linshft_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+linshft_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program longsize
+afids_PROGRAMS += longsize
+EXTRA_longsize_DEPENDENCIES = $(CARTO_BUILD_DEPEND) longsize.pdf
+longsize_SOURCES = @srcafids@/longsize/longsize.c
+longsize_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+longsize_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+longsize_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program lsatref
+afids_PROGRAMS += lsatref
+EXTRA_lsatref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lsatref.pdf
+lsatref_SOURCES = @srcafids@/lsatref/lsatref.c
+lsatref_LDADD = libafidshelper.la $(CODE_COVERAGE_LIBS)
+lsatref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lsatref_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+lsatref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program lsatstrtch
+afids_PROGRAMS += lsatstrtch
+EXTRA_lsatstrtch_DEPENDENCIES = $(CARTO_BUILD_DEPEND) lsatstrtch.pdf
+lsatstrtch_SOURCES = @srcafids@/lsatref/lsatstrtch.c
+lsatstrtch_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+lsatstrtch_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+lsatstrtch_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ltgen - 2013-08-11 - Removed from p2prog.am
+afids_PROGRAMS += ltgen
+EXTRA_ltgen_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ltgen.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/ltgen/tstltgen.pdf
+EXTRA_DIST+= @srcafids@/ltgen/expected_test_results
+ltgen_SOURCES = @srcafids@/ltgen/ltgen.F
+ltgen_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ltgen_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ltgen_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program maxmin - 2013-08-11 - Removed from p2prog.am
+afids_PROGRAMS += maxmin
+EXTRA_maxmin_DEPENDENCIES = $(CARTO_BUILD_DEPEND) maxmin.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/maxmin/tstmaxmin.pdf
+EXTRA_DIST+= @srcafids@/maxmin/expected_test_results
+maxmin_SOURCES = @srcafids@/maxmin/maxmin.F
+maxmin_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+maxmin_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+maxmin_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program median - 2016-08-17 - RJB
+afids_PROGRAMS += median
+EXTRA_median_DEPENDENCIES = $(CARTO_BUILD_DEPEND) median.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/median/tstmedian.pdf
+EXTRA_DIST+= @srcafids@/median/expected_test_results
+median_SOURCES = @srcafids@/median/median.F
+median_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+median_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+median_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program minfilt - 2013-09-01
+afids_PROGRAMS += minfilt
+EXTRA_minfilt_DEPENDENCIES = $(CARTO_BUILD_DEPEND) minfilt.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/minfilt/tstminfilt.pdf
+EXTRA_DIST+= @srcafids@/minfilt/expected_test_results
+minfilt_SOURCES = @srcafids@/minfilt/minfilt.F
+minfilt_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+minfilt_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+minfilt_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Temporary, only build this if we are also building carto. This will go
+# away in a bit, once the new carto library is installed on the system.
+if BUILD_CARTO
+# Program pldsref
+afids_PROGRAMS += pldsref
+EXTRA_pldsref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) pldsref.pdf
+pldsref_SOURCES = @srcafids@/pldsref/pldsref.c
+pldsref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+pldsref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+pldsref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+endif
+
+# Program spotref
+afids_PROGRAMS += spotref
+EXTRA_spotref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) spotref.pdf
+EXTRA_DIST += @srcafids@/spotref/tstspotref.pdf
+EXTRA_DIST+= @srcafids@/spotref/expected_test_results
+spotref_SOURCES = @srcafids@/spotref/spotref.c
+spotref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+spotref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+spotref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpdeyeref
+afids_PROGRAMS += rpdeyeref
+EXTRA_rpdeyeref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpdeyeref.pdf
+rpdeyeref_SOURCES = @srcafids@/rpdeyeref/rpdeyeref.c
+rpdeyeref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpdeyeref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpdeyeref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpdeyestrtch
+afids_PROGRAMS += rpdeyestrtch
+EXTRA_rpdeyestrtch_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpdeyestrtch.pdf
+rpdeyestrtch_SOURCES = @srcafids@/rpdeyeref/rpdeyestrtch.c
+rpdeyestrtch_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpdeyestrtch_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpdeyestrtch_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Progam rpcslant.pdf
+EXTRA_DIST += @srcafids@/rpcslant/tstrpcslant.pdf
+EXTRA_DIST += @srcafids@/rpcslant/expected_test_results
+# This test runs fine, except that one of the lines in the output
+# wraps around depending on etop02nobath.hlf (so a longer path causes
+# the line to wrap. Not sure how to do comparison, so just leave this
+# test out for now
+#afids_CHECK += Test/rpcslant.diff
+Test/rpcslant.out: genpc.pdf rpcslant.pdf rpccorn.pdf gt2rpc.pdf \
+      gengrid.pdf rpcwarp.pdf rpc2grid.pdf
+
+# Program medimg
+afids_PROGRAMS += medimg
+EXTRA_medimg_DEPENDENCIES = $(CARTO_BUILD_DEPEND) medimg.pdf
+EXTRA_DIST+= @srcafids@/medimg/tstmedimg.pdf
+EXTRA_DIST+= @srcafids@/medimg/expected_test_results
+medimg_SOURCES = @srcafids@/medimg/medimg.c
+medimg_LDADD = libafidshelper.la $(GSL_LIBS) $(CODE_COVERAGE_LIBS)
+medimg_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+medimg_CPPFLAGS+= -I$(srcdir)/$(srcafids)/helpers
+medimg_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program meteolog
+afids_PROGRAMS += meteolog
+EXTRA_meteolog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) meteolog.pdf
+meteolog_SOURCES = @srcafids@/meteolog/meteolog.c
+meteolog_SOURCES += @srcafids@/meteolog/sunup.c
+meteolog_SOURCES += @srcafids@/meteolog/f2c.h
+meteolog_SOURCES += @srcafids@/meteolog/sunup.h
+meteolog_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+meteolog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+meteolog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program mf
+afids_PROGRAMS += mf
+EXTRA_mf_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mf.pdf
+mf_SOURCES = @srcafids@/mf/mf.c
+mf_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+mf_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mf_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program mf3
+afids_PROGRAMS += mf3
+EXTRA_mf3_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mf3.pdf
+EXTRA_DIST+= @srcafids@/mf3/tstmf3.pdf
+EXTRA_DIST+= @srcafids@/mf3/expected_test_results
+mf3_SOURCES = @srcafids@/mf3/mf3.c
+mf3_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+mf3_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mf3_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program mf4 - Added 2013-09-01
+afids_PROGRAMS += mf4
+EXTRA_mf4_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mf4.pdf
+EXTRA_DIST+= @srcafids@/mf4/tstmf4.pdf
+EXTRA_DIST+= @srcafids@/mf4/expected_test_results
+mf4_SOURCES = @srcafids@/mf4/mf4.c
+mf4_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+mf4_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mf4_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program modislog_mod021km
+afids_PROGRAMS += modislog_mod021km
+EXTRA_modislog_mod021km_DEPENDENCIES = $(CARTO_BUILD_DEPEND) modislog_mod021km.pdf
+modislog_mod021km_SOURCES = @srcafids@/modislog_mod021km/modislog_mod021km.c
+modislog_mod021km_LDADD = $(HDFEOS_LIBS) $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+modislog_mod021km_CPPFLAGS = $(AM_CPPFLAGS) $(HDFEOS_CFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+modislog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+if BUILD_HDFEOS
+modislog_mod021km_LDADD += libhdfeos.la 
+endif
+
+# Procedure momgen2 - 2013-08-11
+afids_DATA += momgen2.pdf
+EXTRA_DIST += @srcafids@/momgen2/tstmomgen2.pdf
+EXTRA_DIST+= @srcafids@/momgen2/expected_test_results
+
+# Program moore
+afids_PROGRAMS += moore
+EXTRA_moore_DEPENDENCIES = $(CARTO_BUILD_DEPEND) moore.pdf
+moore_SOURCES = @srcafids@/moore/moore.c
+moore_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+moore_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+moore_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program mooresc
+afids_PROGRAMS += mooresc
+EXTRA_mooresc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mooresc.pdf
+mooresc_SOURCES = @srcafids@/mooresc/mooresc.c
+mooresc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+mooresc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mooresc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program mosplot - 2008-0823
+afids_PROGRAMS += mosplot
+EXTRA_mosplot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mosplot.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/mosplot/tstmosplot.pdf
+EXTRA_DIST+= @srcafids@/mosplot/expected_test_results
+mosplot_SOURCES = @srcafids@/mosplot/mosplot.F
+mosplot_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+mosplot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mosplot_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program mss - 2016-08-17 - RJB
+afids_PROGRAMS += mss
+EXTRA_mss_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mss.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/mss/tstmss.pdf
+EXTRA_DIST+= @srcafids@/mss/expected_test_results
+mss_SOURCES = @srcafids@/mss/mss.F
+mss_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+mss_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mss_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+
+# Program mvecall
+afids_PROGRAMS += mvecall
+EXTRA_mvecall_DEPENDENCIES = $(CARTO_BUILD_DEPEND) mvecall.pdf
+EXTRA_DIST+= @srcafids@/mvecall/tstmvecall.pdf
+EXTRA_DIST+= @srcafids@/mvecall/expected_test_results
+mvecall_SOURCES = @srcafids@/mvecall/mvecall.c
+mvecall_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+mvecall_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+mvecall_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program newimd
+afids_PROGRAMS += newimd
+EXTRA_newimd_DEPENDENCIES = $(CARTO_BUILD_DEPEND) newimd.pdf
+newimd_SOURCES = @srcafids@/newimd/newimd.c
+newimd_SOURCES += @srcafids@/newimd/meanSunEl.c
+newimd_LDADD = $(CARTO_LIBS) $(SPICE_LIBS) $(CODE_COVERAGE_LIBS)
+newimd_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(SPICE_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+newimd_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program nitflog
+afids_PROGRAMS += nitflog
+EXTRA_nitflog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) nitflog.pdf
+EXTRA_DIST+= @srcafids@/nitflog/tstnitflog.pdf
+EXTRA_DIST+= @srcafids@/nitflog/expected_test_results
+nitflog_SOURCES = @srcafids@/nitflog/nitflog.c
+nitflog_SOURCES += @srcafids@/nitflog/nitftools.c
+nitflog_SOURCES += @srcafids@/nitflog/nitftools.h
+nitflog_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+nitflog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+nitflog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program norangle - added 2013-09-16
+afids_PROGRAMS += norangle
+EXTRA_norangle_DEPENDENCIES = $(CARTO_BUILD_DEPEND) norangle.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/norangle/tstnorangle.pdf
+EXTRA_DIST+= @srcafids@/norangle/expected_test_results
+norangle_SOURCES = @srcafids@/norangle/norangle.F
+norangle_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+norangle_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+norangle_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+
+# Program nxt - added 2013-08-12
+afids_PROGRAMS += nxt
+EXTRA_nxt_DEPENDENCIES = $(CARTO_BUILD_DEPEND) nxt.pdf
+EXTRA_DIST+= @srcafids@/nxt/tstnxt.pdf
+EXTRA_DIST+= @srcafids@/nxt/expected_test_results
+nxt_SOURCES = @srcafids@/nxt/nxt.c
+nxt_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+nxt_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+nxt_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program otf1 - added 2013-8-23
+afids_PROGRAMS += otf1   
+EXTRA_otf1_DEPENDENCIES = $(CARTO_BUILD_DEPEND) otf1.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/otf1/tstotf1.pdf
+EXTRA_DIST+= @srcafids@/otf1/expected_test_results
+otf1_SOURCES = @srcafids@/otf1/otf1.F
+otf1_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+otf1_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+otf1_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program paint
+afids_PROGRAMS += paint
+EXTRA_paint_DEPENDENCIES = $(CARTO_BUILD_DEPEND) paint.pdf
+paint_SOURCES = @srcafids@/paint/paint.F
+paint_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+paint_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+paint_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program perspec - added 2013-8-23
+afids_PROGRAMS += perspec
+EXTRA_perspec_DEPENDENCIES = $(CARTO_BUILD_DEPEND) perspec.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/perspec/tstperspec.pdf
+EXTRA_DIST+= @srcafids@/perspec/expected_test_results
+perspec_SOURCES = @srcafids@/perspec/perspec.F
+perspec_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+perspec_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+perspec_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program picmtch4
+afids_PROGRAMS += picmtch4
+EXTRA_picmtch4_DEPENDENCIES = $(CARTO_BUILD_DEPEND) picmtch4.pdf
+picmtch4_SOURCES = @srcafids@/picmtch4/picmtch4.c
+picmtch4_LDADD = $(FFTW_LIBS) $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+picmtch4_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(FFTW_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+picmtch4_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program pixmap
+afids_PROGRAMS += pixmap
+EXTRA_pixmap_DEPENDENCIES = $(CARTO_BUILD_DEPEND) pixmap.pdf
+pixmap_SOURCES = @srcafids@/pixmap/pixmap.c
+pixmap_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+pixmap_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+pixmap_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program pixstat - Added 2013-09-17
+afids_PROGRAMS += pixstat
+EXTRA_pixstat_DEPENDENCIES = $(CARTO_BUILD_DEPEND) pixstat.pdf
+EXTRA_DIST += @srcafids@/pixstat/tstpixstat.pdf
+EXTRA_DIST+= @srcafids@/pixstat/expected_test_results
+pixstat_SOURCES = @srcafids@/pixstat/pixstat.c
+pixstat_SOURCES += @srcafids@/pixstat/output.c
+pixstat_SOURCES += @srcafids@/pixstat/unit_filter.c
+pixstat_SOURCES += @srcafids@/pixstat/unit_filter2.c
+pixstat_SOURCES += @srcafids@/pixstat/pixstat.h
+pixstat_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+pixstat_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS)  $(CODE_COVERAGE_CPPFLAGS)
+pixstat_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program plotbkrd
+afids_PROGRAMS += plotbkrd
+EXTRA_plotbkrd_DEPENDENCIES = $(CARTO_BUILD_DEPEND) plotbkrd.pdf
+plotbkrd_SOURCES = @srcafids@/plotbkrd/plotbkrd.c
+plotbkrd_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+plotbkrd_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+plotbkrd_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program plotint - added 2013-8-23
+afids_PROGRAMS += plotint
+EXTRA_plotint_DEPENDENCIES = $(CARTO_BUILD_DEPEND) plotint.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/plotint/tstplotint.pdf
+EXTRA_DIST+= @srcafids@/plotint/expected_test_results
+plotint_SOURCES = @srcafids@/plotint/plotint.F
+plotint_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+plotint_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+plotint_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program pltgraf - added 2013-8-23
+afids_PROGRAMS += pltgraf
+EXTRA_pltgraf_DEPENDENCIES = $(CARTO_BUILD_DEPEND) pltgraf.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/pltgraf/tstpltgraf.pdf
+EXTRA_DIST+= @srcafids@/pltgraf/expected_test_results
+pltgraf_SOURCES = @srcafids@/pltgraf/pltgraf.F
+pltgraf_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+pltgraf_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+pltgraf_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program plab2tcl
+afids_PROGRAMS += plab2tcl
+EXTRA_plab2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) plab2tcl.pdf
+EXTRA_DIST+= @srcafids@/plab2tcl/tstplab2tcl.pdf
+EXTRA_DIST+= @srcafids@/plab2tcl/expected_test_results
+plab2tcl_SOURCES = @srcafids@/plab2tcl/plab2tcl.c
+plab2tcl_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+plab2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+plab2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program polarect - 2016-08-17 - RJB
+afids_PROGRAMS += polarect
+EXTRA_polarect_DEPENDENCIES = $(CARTO_BUILD_DEPEND) polarect.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/polarect/tstpolarect.pdf
+EXTRA_DIST+= @srcafids@/polarect/expected_test_results
+polarect_SOURCES = @srcafids@/polarect/polarect.F
+polarect_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+polarect_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+polarect_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program polygeov
+afids_PROGRAMS += polygeov
+EXTRA_polygeov_DEPENDENCIES = $(CARTO_BUILD_DEPEND) polygeov.pdf
+EXTRA_DIST+= @srcafids@/polygeov/tstpolygeov.pdf
+EXTRA_DIST+= @srcafids@/polygeov/expected_test_results
+polygeov_SOURCES = @srcafids@/polygeov/polygeov.c
+polygeov_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+polygeov_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+polygeov_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program power - added 2013-8-23
+afids_PROGRAMS += power
+EXTRA_power_DEPENDENCIES = $(CARTO_BUILD_DEPEND) power.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/power/tstpower.pdf
+EXTRA_DIST+= @srcafids@/power/expected_test_results
+power_SOURCES = @srcafids@/power/power.F
+power_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+power_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+power_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program psf - added 2013-8-24
+afids_PROGRAMS += psf
+EXTRA_psf_DEPENDENCIES = $(CARTO_BUILD_DEPEND) psf.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/psf/tstpsf.pdf
+EXTRA_DIST+= @srcafids@/psf/expected_test_results
+psf_SOURCES = @srcafids@/psf/psf.F
+psf_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+psf_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+psf_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program psrgbish
+afids_PROGRAMS += psrgbish
+EXTRA_psrgbish_DEPENDENCIES = $(CARTO_BUILD_DEPEND) psrgbish.pdf
+psrgbish_SOURCES = @srcafids@/psrgbish/psrgbish.c
+psrgbish_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+psrgbish_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+psrgbish_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program qbref
+afids_PROGRAMS += qbref
+EXTRA_qbref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) qbref.pdf
+qbref_SOURCES = @srcafids@/qbref/qbref.c
+qbref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+qbref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+qbref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program qchop
+afids_PROGRAMS += qchop
+EXTRA_qchop_DEPENDENCIES = $(CARTO_BUILD_DEPEND) qchop.pdf
+qchop_SOURCES = @srcafids@/qchop/qchop.c
+qchop_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+qchop_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+qchop_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program qplot2 - added 2013-8-19
+afids_PROGRAMS += qplot2
+EXTRA_qplot2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) qplot2.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/qplot2/tstqplot2.pdf
+EXTRA_DIST+= @srcafids@/qplot2/expected_test_results
+qplot2_SOURCES = @srcafids@/qplot2/qplot2.F
+qplot2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+qplot2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+qplot2_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Procedure qplot - 2013-08-21
+afids_DATA += qplot.pdf
+EXTRA_DIST += @srcafids@/qplot/tstqplot.pdf
+EXTRA_DIST+= @srcafids@/qplot/expected_test_results
+
+vpath %.F @srcdir@/@srcafids@/qsar
+
+# Program qsar - Modified 2013-09-01
+afids_PROGRAMS += qsar
+EXTRA_qsar_DEPENDENCIES = $(CARTO_BUILD_DEPEND) qsar.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/qsar/tstqsar.pdf
+EXTRA_DIST+= @srcafids@/qsar/expected_test_results
+qsar_SOURCES = @srcafids@/qsar/qsar.F
+qsar_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+qsar_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+qsar_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program qswp2005
+afids_PROGRAMS += qswp2005
+EXTRA_qswp2005_DEPENDENCIES = $(CARTO_BUILD_DEPEND) qswp2005.pdf
+EXTRA_DIST+= @srcafids@/qswp2005/tstqswp2005.pdf
+EXTRA_DIST+= @srcafids@/qswp2005/expected_test_results
+qswp2005_SOURCES = @srcafids@/qswp2005/qswp2005.c
+qswp2005_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+qswp2005_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+qswp2005_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program quickbirdlog
+afids_PROGRAMS += quickbirdlog
+EXTRA_quickbirdlog_DEPENDENCIES = $(CARTO_BUILD_DEPEND) quickbirdlog.pdf
+quickbirdlog_SOURCES = @srcafids@/quickbirdlog/quickbirdlog.c
+quickbirdlog_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+quickbirdlog_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+quickbirdlog_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program radagen - 2016-08-17 - RJB
+afids_PROGRAMS += radagen
+EXTRA_radagen_DEPENDENCIES = $(CARTO_BUILD_DEPEND) radagen.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/radagen/tstradagen.pdf
+EXTRA_DIST+= @srcafids@/radagen/expected_test_results
+radagen_SOURCES = @srcafids@/radagen/radagen.F
+radagen_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+radagen_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+radagen_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program randpixel - added 2013-09-17
+afids_PROGRAMS += randpixel
+EXTRA_randpixel_DEPENDENCIES = $(CARTO_BUILD_DEPEND) randpixel.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/randpixel/tstrandpixel.pdf
+EXTRA_DIST+= @srcafids@/randpixel/expected_test_results
+randpixel_SOURCES = @srcafids@/randpixel/randpixel.F
+randpixel_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+randpixel_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+randpixel_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# This shouldn't be needed. As near as I can tell, there is a bug in 
+# automake using fortran. But this seems to do the trick to allow building.
+vpath %.F @srcdir@/@srcafids@/rastovec
+
+# Program rastovec
+afids_PROGRAMS += rastovec
+EXTRA_rastovec_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rastovec.pdf VICMAIN_FOR
+rastovec_SOURCES = @srcafids@/rastovec/rastovec.F
+rastovec_SOURCES += @srcafids@/rastovec/lregn.F
+rastovec_SOURCES += @srcafids@/rastovec/flabl.F
+rastovec_SOURCES += @srcafids@/rastovec/slabl.F
+rastovec_SOURCES += @srcafids@/rastovec/csegs.F
+rastovec_SOURCES += @srcafids@/rastovec/comps.F
+rastovec_SOURCES += @srcafids@/rastovec/polyc.F
+rastovec_SOURCES += @srcafids@/rastovec/open_files.F
+rastovec_SOURCES += @srcafids@/rastovec/cycle.F
+rastovec_SOURCES += @srcafids@/rastovec/links.F
+rastovec_SOURCES += @srcafids@/rastovec/ccp.F
+rastovec_SOURCES += @srcafids@/rastovec/opvr.F
+rastovec_SOURCES += @srcafids@/rastovec/outpol.F
+rastovec_SOURCES += @srcafids@/rastovec/close_pol.F
+rastovec_SOURCES += @srcafids@/rastovec/reduce.F
+rastovec_SOURCES += @srcafids@/rastovec/outedg.F
+rastovec_SOURCES += @srcafids@/rastovec/movcen.F
+rastovec_LDADD = $(VICAR_RTL_LIBS)  $(CODE_COVERAGE_LIBS)
+rastovec_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rastovec_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Procedure ratio - 2016-08-17 - rjb
+dist_afids_DATA += @srcafids@/ratio/ratio.pdf
+EXTRA_DIST += @srcafids@/ratio/tstratio.pdf
+EXTRA_DIST+= @srcafids@/ratio/expected_test_results
+
+# Program ratio0 - 2016-08-17 - RJB
+afids_PROGRAMS += ratio0
+EXTRA_ratio0_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ratio0.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ratio0/tstratio.pdf
+ratio0_SOURCES = @srcafids@/ratio0/ratio0.F
+ratio0_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ratio0_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ratio0_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program repair - 2016-08-17 - RJB
+afids_PROGRAMS += repair
+EXTRA_repair_DEPENDENCIES = $(CARTO_BUILD_DEPEND) repair.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/repair/tstrepair.pdf
+EXTRA_DIST+= @srcafids@/repair/expected_test_results
+repair_SOURCES = @srcafids@/repair/repair.F
+repair_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+repair_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+repair_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program rgb2ish
+afids_PROGRAMS += rgb2ish
+EXTRA_rgb2ish_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rgb2ish.pdf
+rgb2ish_SOURCES = @srcafids@/rgb2ish/rgb2ish.c
+rgb2ish_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rgb2ish_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rgb2ish_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Procedure rotate - Added 2013-08-30
+afids_DATA += rotate.pdf
+EXTRA_DIST += @srcafids@/rotate/tstrotate.pdf
+EXTRA_DIST+= @srcafids@/rotate/expected_test_results
+
+# Program rotate2 - Added 2013-08-30
+afids_PROGRAMS += rotate2
+EXTRA_rotate2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rotate2.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/rotate2/tstrotate2.pdf
+EXTRA_DIST+= @srcafids@/rotate2/expected_test_results
+rotate2_SOURCES = @srcafids@/rotate2/rotate2.F
+rotate2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+rotate2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rotate2_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program rowop2
+afids_PROGRAMS += rowop2
+EXTRA_rowop2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rowop2.pdf
+rowop2_SOURCES = @srcafids@/rowop2/rowop2.c
+rowop2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rowop2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rowop2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpc2ibis
+afids_PROGRAMS += rpc2ibis
+EXTRA_rpc2ibis_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpc2ibis.pdf
+rpc2ibis_SOURCES = @srcafids@/rpc2ibis/rpc2ibis.c
+rpc2ibis_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpc2ibis_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpc2ibis_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpc2sc
+afids_PROGRAMS += rpc2sc
+EXTRA_rpc2sc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpc2sc.pdf
+rpc2sc_SOURCES = @srcafids@/rpc2sc/rpc2sc.c
+rpc2sc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpc2sc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpc2sc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpc_fit
+#afids_PROGRAMS += rpc_fit
+#EXTRA_rpc_fit_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpc_fit.pdf
+#rpc_fit_SOURCES = @srcafids@/rpc_fit/rpc_fit.cc
+#rpc_fit_LDADD = $(VICAR_RTL_LIBS) libgeocal.la $(GDAL_LIBS) $(CODE_COVERAGE_LIBS)
+#rpc_fit_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(BLITZ_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+
+# Program rpcfwd
+afids_PROGRAMS += rpcfwd
+EXTRA_rpcfwd_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpcfwd.pdf
+rpcfwd_SOURCES = @srcafids@/rpcfwd/rpcfwd.c
+rpcfwd_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpcfwd_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpcfwd_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpcinv2
+afids_PROGRAMS += rpcinv2
+EXTRA_rpcinv2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpcinv2.pdf
+rpcinv2_SOURCES = @srcafids@/rpcinv2/rpcinv2.c
+rpcinv2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpcinv2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpcinv2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpcscale
+afids_PROGRAMS += rpcscale
+EXTRA_rpcscale_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpcscale.pdf
+rpcscale_SOURCES = @srcafids@/rpcscale/rpcscale.c
+rpcscale_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpcscale_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpcscale_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program rpcsccub
+afids_PROGRAMS += rpcsccub
+EXTRA_rpcsccub_DEPENDENCIES = $(CARTO_BUILD_DEPEND) rpcsccub.pdf
+rpcsccub_SOURCES = @srcafids@/rpcsccub/rpcsccub.c
+rpcsccub_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+rpcsccub_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+rpcsccub_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program sampler
+afids_PROGRAMS += sampler
+EXTRA_sampler_DEPENDENCIES = $(CARTO_BUILD_DEPEND) sampler.pdf
+EXTRA_DIST += @srcafids@/sampler/tstsampler.pdf
+EXTRA_DIST+= @srcafids@/sampler/expected_test_results
+sampler_SOURCES = @srcafids@/sampler/sampler.c
+sampler_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+sampler_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+sampler_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program sargonb - added 2013-8-30
+afids_PROGRAMS += sargonb
+EXTRA_sargonb_DEPENDENCIES = $(CARTO_BUILD_DEPEND) sargonb.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/sargonb/tstsargonb.pdf
+EXTRA_DIST+= @srcafids@/sargonb/expected_test_results
+sargonb_SOURCES = @srcafids@/sargonb/sargonb.F
+sargonb_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+sargonb_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+sargonb_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program sc2rpc
+afids_PROGRAMS += sc2rpc
+EXTRA_sc2rpc_DEPENDENCIES = $(CARTO_BUILD_DEPEND) sc2rpc.pdf
+sc2rpc_SOURCES = @srcafids@/sc2rpc/sc2rpc.c
+sc2rpc_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+sc2rpc_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+sc2rpc_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program scinterp
+afids_PROGRAMS += scinterp
+EXTRA_scinterp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) scinterp.pdf
+scinterp_SOURCES = @srcafids@/scinterp/scinterp.c
+scinterp_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+scinterp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+scinterp_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program sdsems - added 2018-07-10
+afids_PROGRAMS += sdsems
+EXTRA_sdsems_DEPENDENCIES = $(CARTO_BUILD_DEPEND) sdsems.pdf
+EXTRA_DIST += @srcafids@/sdsems/tstsdsems.pdf
+EXTRA_DIST+= @srcafids@/sdsems/expected_test_results
+sdsems_SOURCES = @srcafids@/sdsems/sdsems.c
+sdsems_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+sdsems_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+sdsems_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program shady - 2016-08-17 - RJB
+afids_PROGRAMS += shady
+EXTRA_shady_DEPENDENCIES = $(CARTO_BUILD_DEPEND) shady.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/shady/tstshady.pdf
+EXTRA_DIST+= @srcafids@/shady/expected_test_results
+shady_SOURCES = @srcafids@/shady/shady.F
+shady_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+shady_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+shady_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+# Program shady2 - 2016-08-17 - RJB
+afids_PROGRAMS += shady2
+EXTRA_shady2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) shady2.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/shady2/tstshady2.pdf
+EXTRA_DIST+= @srcafids@/shady2/expected_test_results
+shady2_SOURCES = @srcafids@/shady2/shady2.F
+shady2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+shady2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+shady2_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+#
+#
+# Program shp2rast
+afids_PROGRAMS += shp2rast
+EXTRA_shp2rast_DEPENDENCIES = $(CARTO_BUILD_DEPEND) shp2rast.pdf
+shp2rast_SOURCES = @srcafids@/shp2rast/shp2rast.c
+shp2rast_SOURCES += @srcafids@/shp2rast/concave.c
+shp2rast_SOURCES += @srcafids@/shp2rast/line.c
+shp2rast_SOURCES += @srcafids@/shp2rast/zvprintf.c
+EXTRA_DIST+= @srcafids@/shp2rast/concave.h
+EXTRA_DIST+= @srcafids@/shp2rast/gems.h
+EXTRA_DIST+= @srcafids@/shp2rast/zmabend.h
+EXTRA_DIST+= @srcafids@/shp2rast/zvprintf.h
+shp2rast_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+shp2rast_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+shp2rast_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program shp2vic
+afids_PROGRAMS += shp2vic
+EXTRA_shp2vic_DEPENDENCIES = $(CARTO_BUILD_DEPEND) shp2vic.pdf
+shp2vic_SOURCES = @srcafids@/shp2vic/shp2vic.c
+shp2vic_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+shp2vic_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+shp2vic_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/size
+
+# Program size
+afids_PROGRAMS += size
+EXTRA_size_DEPENDENCIES = $(CARTO_BUILD_DEPEND) size.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/size/tstsize.pdf
+EXTRA_DIST+= @srcafids@/size/expected_test_results
+size_SOURCES = @srcafids@/size/size.F
+size_SOURCES += @srcafids@/size/compress.F
+size_SOURCES += @srcafids@/size/getsize.F
+size_SOURCES += @srcafids@/size/magnify.F
+size_SOURCES += @srcafids@/size/sintrp.F
+size_SOURCES += @srcafids@/size/snoin.F
+size_SOURCES += @srcafids@/size/sread.F
+size_SOURCES += @srcafids@/size/update_label.F
+size_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+size_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+# On centos 7 with gfortran 4.8.3 this fails it unit test
+# with compiled with -O2. Not sure why, but reduce the 
+# optimization level to make the problem go away
+size_FFLAGS = $(AM_FFLAGS) -O0 $(CODE_COVERAGE_FFLAGS)
+
+# Program sort
+afids_PROGRAMS += sort
+EXTRA_sort_DEPENDENCIES = $(CARTO_BUILD_DEPEND) sort.pdf
+EXTRA_DIST+= @srcafids@/sort/tstsort.pdf
+EXTRA_DIST+= @srcafids@/sort/expected_test_results
+sort_SOURCES = @srcafids@/sort/sort.c
+sort_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+sort_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+sort_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program spot - added 2013-8-24
+afids_PROGRAMS += spot 
+EXTRA_spot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) spot.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/spot/tstspot.pdf
+EXTRA_DIST+= @srcafids@/spot/expected_test_results
+spot_SOURCES = @srcafids@/spot/spot.F
+spot_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+spot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+spot_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# This shouldn't be needed. As near as I can tell, there is a bug in 
+# automake using fortran. But this seems to do the trick to allow building.
+vpath %.F @srcdir@/@srcafids@/starcat3
+
+# Program starcat3 - mod 2013-09-13
+afids_PROGRAMS += starcat3
+EXTRA_starcat3_DEPENDENCIES = $(CARTO_BUILD_DEPEND) starcat3.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/starcat3/tststarcat3.pdf
+EXTRA_DIST+= @srcafids@/starcat3/expected_test_results
+starcat3_SOURCES = @srcafids@/starcat3/starcat3.F
+starcat3_LDADD = $(VICAR_RTL_LIBS)  $(CODE_COVERAGE_LIBS)
+starcat3_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+starcat3_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+if HAVE_G77
+else
+  starcat3_FFLAGS += -fno-range-check
+endif
+
+# Program str2tcl
+afids_PROGRAMS += str2tcl
+EXTRA_str2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) str2tcl.pdf
+EXTRA_DIST+= @srcafids@/str2tcl/tststr2tcl.pdf
+EXTRA_DIST+= @srcafids@/str2tcl/expected_test_results
+str2tcl_SOURCES = @srcafids@/str2tcl/str2tcl.c
+str2tcl_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+str2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+str2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+vpath %.F @srcdir@/@srcafids@/stretch
+
+# Program stretch
+afids_PROGRAMS += stretch
+EXTRA_stretch_DEPENDENCIES = $(CARTO_BUILD_DEPEND) stretch.pdf VICMAIN_FOR
+stretch_SOURCES = @srcafids@/stretch/stretch.F
+stretch_SOURCES += @srcafids@/stretch/astretch.F
+stretch_SOURCES += @srcafids@/stretch/bimodal.F
+stretch_SOURCES += @srcafids@/stretch/exclude_histogram.F
+stretch_SOURCES += @srcafids@/stretch/get_histogram.F
+stretch_SOURCES += @srcafids@/stretch/hist_params.F
+stretch_SOURCES += @srcafids@/stretch/histogram_stretch.F
+stretch_SOURCES += @srcafids@/stretch/hpeak.F
+stretch_SOURCES += @srcafids@/stretch/manual_stretch.F
+stretch_SOURCES += @srcafids@/stretch/post_stretch.F
+stretch_SOURCES += @srcafids@/stretch/print_histogram.F
+stretch_SOURCES += @srcafids@/stretch/stati.F
+stretch_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+stretch_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+stretch_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program subsamp - added 2013-9-01
+afids_PROGRAMS += subsamp
+EXTRA_subsamp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) subsamp.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/subsamp/tstsubsamp.pdf
+EXTRA_DIST+= @srcafids@/subsamp/expected_test_results
+subsamp_SOURCES = @srcafids@/subsamp/subsamp.F
+subsamp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+subsamp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+# The mcmodel=medium option is needs to avoid an error
+# relocation truncated to fit: R_X86_64_PC32 against `.bss'
+subsamp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS) -mcmodel=medium
+
+# Program substr2tcl - added 2013-10-02
+afids_PROGRAMS += substr2tcl
+EXTRA_substr2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) substr2tcl.pdf
+EXTRA_DIST+= @srcafids@/substr2tcl/tstsubstr2tcl.pdf
+EXTRA_DIST+= @srcafids@/substr2tcl/expected_test_results
+substr2tcl_SOURCES = @srcafids@/substr2tcl/substr2tcl.c
+substr2tcl_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+substr2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+substr2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+
+# Program tcl2file
+if HAVE_ITCL
+afids_PROGRAMS += tcl2file
+endif
+EXTRA_tcl2file_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tcl2file.pdf
+tcl2file_SOURCES = @srcafids@/tcl2file/tcl2file.c
+tcl2file_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+tcl2file_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tcl2file_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program tcl2tcl
+afids_PROGRAMS += tcl2tcl
+EXTRA_tcl2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tcl2tcl.pdf
+tcl2tcl_SOURCES = @srcafids@/tcl2tcl/tcl2tcl.c
+tcl2tcl_LDADD = $(CARTO_LIBS) $(TCL_LIBS) $(CODE_COVERAGE_LIBS)
+tcl2tcl_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tcl2tcl_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program tclmath - added 2013-9-16
+afids_PROGRAMS += tclmath
+EXTRA_tclmath_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tclmath.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/tclmath/tsttclmath.pdf
+EXTRA_DIST+= @srcafids@/tclmath/expected_test_results
+tclmath_SOURCES = @srcafids@/tclmath/tclmath.F
+tclmath_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+tclmath_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tclmath_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program tclpad
+afids_PROGRAMS += tclpad
+EXTRA_tclpad_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tclpad.pdf
+EXTRA_DIST+= @srcafids@/tclpad/tsttclpad.pdf
+EXTRA_DIST+= @srcafids@/tclpad/expected_test_results
+tclpad_SOURCES = @srcafids@/tclpad/tclpad.c
+tclpad_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+tclpad_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tclpad_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program tfilt - 2016-08-17 - RJB
+afids_PROGRAMS += tfilt
+EXTRA_tfilt_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tfilt.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/tfilt/tsttfilt.pdf
+EXTRA_DIST+= @srcafids@/tfilt/expected_test_results
+tfilt_SOURCES = @srcafids@/tfilt/tfilt.F
+tfilt_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+tfilt_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tfilt_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program tieconv
+afids_PROGRAMS += tieconv
+EXTRA_tieconv_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tieconv.pdf
+tieconv_SOURCES = @srcafids@/tieconv/tieconv.c
+tieconv_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+tieconv_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tieconv_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program tieplot - added 2013-8-23
+afids_PROGRAMS += tieplot
+EXTRA_tieplot_DEPENDENCIES = $(CARTO_BUILD_DEPEND) tieplot.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/tieplot/tsttieplot.pdf
+EXTRA_DIST+= @srcafids@/tieplot/expected_test_results
+tieplot_SOURCES = @srcafids@/tieplot/tieplot.F
+tieplot_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+tieplot_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+tieplot_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program trnscol2
+afids_PROGRAMS += trnscol2
+EXTRA_trnscol2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) trnscol2.pdf
+EXTRA_DIST+= @srcafids@/trnscol2/tsttrnscol2.pdf
+EXTRA_DIST+= @srcafids@/trnscol2/expected_test_results
+trnscol2_SOURCES = @srcafids@/trnscol2/trnscol2.c
+trnscol2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+trnscol2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+trnscol2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program uprep
+afids_PROGRAMS += uprep
+EXTRA_uprep_DEPENDENCIES = $(CARTO_BUILD_DEPEND) uprep.pdf
+uprep_SOURCES = @srcafids@/uprep/uprep.c
+uprep_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+uprep_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+uprep_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program ustats - 2016-08-17 - RJB
+afids_PROGRAMS += ustats
+EXTRA_ustats_DEPENDENCIES = $(CARTO_BUILD_DEPEND) ustats.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/ustats/tstustats.pdf
+EXTRA_DIST+= @srcafids@/ustats/expected_test_results
+ustats_SOURCES = @srcafids@/ustats/ustats.F
+ustats_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+ustats_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+ustats_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program vexlab
+afids_PROGRAMS += vexlab
+EXTRA_vexlab_DEPENDENCIES = $(CARTO_BUILD_DEPEND) vexlab.pdf
+vexlab_SOURCES = @srcafids@/vexlab/vexlab.c
+vexlab_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+vexlab_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+vexlab_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program vic2shp
+afids_PROGRAMS += vic2shp
+EXTRA_vic2shp_DEPENDENCIES = $(CARTO_BUILD_DEPEND) vic2shp.pdf
+vic2shp_SOURCES = @srcafids@/vic2shp/vic2shp.c
+vic2shp_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+vic2shp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+vic2shp_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program vtiff3 - added TIFF_LIBS for MacOSX 10.8.5/fink gcc 4.8.2
+if HAVE_ITCL
+afids_PROGRAMS += vtiff3
+endif
+EXTRA_vtiff3_DEPENDENCIES = $(CARTO_BUILD_DEPEND) vtiff3.pdf
+vtiff3_SOURCES = @srcafids@/vtiff3/vtiff3.c
+vtiff3_SOURCES += @srcafids@/vtiff3/optimal_color2.c
+vtiff3_SOURCES += @srcafids@/vtiff3/uFixedNums.c
+vtiff3_SOURCES += @srcafids@/vtiff3/optimal_color2.h
+vtiff3_SOURCES += @srcafids@/vtiff3/uFixedNums.h
+vtiff3_LDADD = $(GEOTIFF_LIBS) $(PROJ_LIBS) $(TIFF_LIBS) $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+vtiff3_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(GEOTIFF_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+vtiff3_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program wedge - 2013-09-13
+afids_PROGRAMS += wedge
+EXTRA_wedge_DEPENDENCIES = $(CARTO_BUILD_DEPEND) wedge.pdf VICMAIN_FOR
+EXTRA_DIST+= @srcafids@/wedge/tstwedge.pdf
+EXTRA_DIST+= @srcafids@/wedge/expected_test_results
+wedge_SOURCES = @srcafids@/wedge/wedge.F
+wedge_LDADD = $(VICAR_RTL_LIBS) $(CODE_COVERAGE_LIBS)
+wedge_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+wedge_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program wnr2005
+afids_PROGRAMS += wnr2005
+EXTRA_wnr2005_DEPENDENCIES = $(CARTO_BUILD_DEPEND) wnr2005.pdf
+EXTRA_DIST+= @srcafids@/wnr2005/tstwnr2005.pdf
+EXTRA_DIST+= @srcafids@/wnr2005/expected_test_results
+wnr2005_SOURCES = @srcafids@/wnr2005/wnr2005.c
+wnr2005_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+wnr2005_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+wnr2005_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program wnrm2005
+afids_PROGRAMS += wnrm2005
+EXTRA_wnrm2005_DEPENDENCIES = $(CARTO_BUILD_DEPEND) wnrm2005.pdf
+EXTRA_DIST+= @srcafids@/wnrm2005/tstwnrm2005.pdf
+EXTRA_DIST+= @srcafids@/wnrm2005/expected_test_results
+wnrm2005_SOURCES = @srcafids@/wnrm2005/wnrm2005.c
+wnrm2005_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+wnrm2005_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+wnrm2005_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program wv2ref
+afids_PROGRAMS += wv2ref
+EXTRA_wv2ref_DEPENDENCIES = $(CARTO_BUILD_DEPEND) wv2ref.pdf
+wv2ref_SOURCES = @srcafids@/wv2ref/wv2ref.c
+wv2ref_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+wv2ref_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+wv2ref_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program xform - 2016-08-17 - RJB
+afids_PROGRAMS += xform
+EXTRA_xform_DEPENDENCIES = $(CARTO_BUILD_DEPEND) xform.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/xform/tstxform.pdf
+EXTRA_DIST+= @srcafids@/xform/expected_test_results
+xform_SOURCES = @srcafids@/xform/xform.F
+xform_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+xform_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+xform_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program xyzpic2
+afids_PROGRAMS += xyzpic2
+EXTRA_xyzpic2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) xyzpic2.pdf
+EXTRA_DIST+= @srcafids@/xyzpic2/tstxyzpic2.pdf
+EXTRA_DIST+= @srcafids@/xyzpic2/expected_test_results
+xyzpic2_SOURCES = @srcafids@/xyzpic2/xyzpic2.c
+xyzpic2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+xyzpic2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+xyzpic2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program zcircle - 2016-08-17 - RJB
+afids_PROGRAMS += zcircle
+EXTRA_zcircle_DEPENDENCIES = $(CARTO_BUILD_DEPEND) zcircle.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/zcircle/tstzcircle.pdf
+EXTRA_DIST+= @srcafids@/zcircle/expected_test_results
+zcircle_SOURCES = @srcafids@/zcircle/zcircle.F
+zcircle_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+zcircle_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+zcircle_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program zfill - 2016-08-17 - RJB
+afids_PROGRAMS += zfill
+EXTRA_zfill_DEPENDENCIES = $(CARTO_BUILD_DEPEND) zfill.pdf VICMAIN_FOR
+EXTRA_DIST += @srcafids@/zfill/tstzfill.pdf
+EXTRA_DIST+= @srcafids@/zfill/expected_test_results
+zfill_SOURCES = @srcafids@/zfill/zfill.F
+zfill_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+zfill_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+zfill_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS)
+
+# Program zipcol2
+afids_PROGRAMS += zipcol2
+EXTRA_zipcol2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) zipcol2.pdf
+zipcol2_SOURCES = @srcafids@/zipcol2/zipcol2.c
+zipcol2_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
+zipcol2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+zipcol2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program zrelax
+afids_PROGRAMS += zrelax
+EXTRA_zrelax_DEPENDENCIES = $(CARTO_BUILD_DEPEND) zrelax.pdf
+zrelax_SOURCES = @srcafids@/zrelax/zrelax.c
+zrelax_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+zrelax_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+zrelax_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program zrelax2
+afids_PROGRAMS += zrelax2
+EXTRA_zrelax2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) zrelax2.pdf
+zrelax2_SOURCES = @srcafids@/zrelax2/zrelax2.c
+zrelax2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+zrelax2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+zrelax2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# Program vextract
+afids_PROGRAMS += vextract
+EXTRA_vextract_DEPENDENCIES = $(CARTO_BUILD_DEPEND) vextract.pdf
+vextract_SOURCES = @srcafids@/vextract/des.c
+vextract_SOURCES += @srcafids@/vextract/df_read.c
+vextract_SOURCES += @srcafids@/vextract/dfparse.c
+vextract_SOURCES += @srcafids@/vextract/vextract.c
+vextract_SOURCES += @srcafids@/vextract/graphic.c
+vextract_SOURCES += @srcafids@/vextract/image.c
+vextract_SOURCES += @srcafids@/vextract/j_io.c
+vextract_SOURCES += @srcafids@/vextract/j_string.c
+vextract_SOURCES += @srcafids@/vextract/label.c
+vextract_SOURCES += @srcafids@/vextract/md5c.c
+vextract_SOURCES += @srcafids@/vextract/menu.c
+vextract_SOURCES += @srcafids@/vextract/rbd_jpeg.c
+vextract_SOURCES += @srcafids@/vextract/symbol.c
+vextract_SOURCES += @srcafids@/vextract/text.c
+vextract_SOURCES += @srcafids@/vextract/tre.c
+vextract_SOURCES += @srcafids@/vextract/unblock.c
+vextract_SOURCES += @srcafids@/vextract/write_fs.c
+vextract_SOURCES += @srcafids@/vextract/write_text.c
+vextract_SOURCES += @srcafids@/vextract/global.h
+vextract_SOURCES += @srcafids@/vextract/md5.h
+vextract_SOURCES += @srcafids@/vextract/nitf_s20.h
+vextract_SOURCES += @srcafids@/vextract/nitf_s21.h
+vextract_SOURCES += @srcafids@/vextract/vexlab_defines.h
+vextract_SOURCES += @srcafids@/vextract/vextract_defines.h
+vextract_CPPFLAGS = $(AM_CPPFLAGS) -DUSE_MD5 $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+vextract_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+vextract_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+# SECTION 2 - LIST PDF FILES
+#=============================================
+# List of all PDF files. We get this by doing:
+# ls */*.pdf | grep -v "/tst" | grep -v "/dev"
+dist_afids_DATA += @srcafids@/acca/acca.pdf
+dist_afids_DATA += @srcafids@/ascnum/ascnum.pdf
+dist_afids_DATA += @srcafids@/accck/accck.pdf
+dist_afids_DATA += @srcafids@/accck/accckpr.pdf
+dist_afids_DATA += @srcafids@/accck/accovly.pdf
+dist_afids_DATA += @srcafids@/acopin/acopin.pdf
+dist_afids_DATA += @srcafids@/addnoise/addnoise.pdf
+dist_afids_DATA += @srcafids@/adjust/adjust.pdf
+dist_afids_DATA += @srcafids@/adjust/adjust1rs.pdf
+dist_afids_DATA += @srcafids@/adjust/adjust1rsc.pdf
+dist_afids_DATA += @srcafids@/adjust/gtrpfwarp.pdf
+dist_afids_DATA += @srcafids@/adjust/gtrpfwarp2.pdf
+dist_afids_DATA += @srcafids@/aggrg/aggrg.pdf
+dist_afids_DATA += @srcafids@/aggrg2/aggrg2.pdf
+dist_afids_DATA += @srcafids@/alilog/alilog.pdf
+dist_afids_DATA += @srcafids@/aliwarp/alicall2.pdf
+dist_afids_DATA += @srcafids@/aliwarp/align4.pdf
+dist_afids_DATA += @srcafids@/aliwarp/align4p.pdf
+dist_afids_DATA += @srcafids@/aliwarp/aliramp.pdf
+dist_afids_DATA += @srcafids@/aliwarp/aliwarp2.pdf
+dist_afids_DATA += @srcafids@/aliwarp/aliwarpad2.pdf
+dist_afids_DATA += @srcafids@/apodize/apodize.pdf
+dist_afids_DATA += @srcafids@/asc2tcl/asc2tcl.pdf
+dist_afids_DATA += @srcafids@/asmos/asmapgen.pdf
+dist_afids_DATA += @srcafids@/asmos/asmaster.pdf
+dist_afids_DATA += @srcafids@/asmos/asmoslog.pdf
+dist_afids_DATA += @srcafids@/asmos/ingest_a2.pdf
+dist_afids_DATA += @srcafids@/asmos/processxy.pdf
+dist_afids_DATA += @srcafids@/asmos/quadmos_a.pdf
+dist_afids_DATA += @srcafids@/asmos/waris.pdf
+dist_afids_DATA += @srcafids@/asmos/zprocess_a.pdf
+dist_afids_DATA += @srcafids@/asterlog/asterlog.pdf
+dist_afids_DATA += @srcafids@/astroref/astroref.pdf
+dist_afids_DATA += @srcafids@/astrtchr/astrtchr.pdf
+dist_afids_DATA += @srcafids@/astwarp/astcall.pdf
+dist_afids_DATA += @srcafids@/astwarp/astcall2.pdf
+dist_afids_DATA += @srcafids@/astwarp/astwarp.pdf
+dist_afids_DATA += @srcafids@/astwarp/astwarp2.pdf
+dist_afids_DATA += @srcafids@/astwarp/astwarpad.pdf
+dist_afids_DATA += @srcafids@/astwarp/astwarpad2.pdf
+dist_afids_DATA += @srcafids@/average/average.pdf
+dist_afids_DATA += @srcafids@/bowtie/bowtie.pdf
+dist_afids_DATA += @srcafids@/boxflt2/boxflt2.pdf
+dist_afids_DATA += @srcafids@/calfit/calfit.pdf
+dist_afids_DATA += @srcafids@/ccdnoise/ccdnoise.pdf
+dist_afids_DATA += @srcafids@/ccdrecip/ccdrecip.pdf
+dist_afids_DATA += @srcafids@/ccdslope/ccdslope.pdf
+dist_afids_DATA += @srcafids@/ccomp/ccomp.pdf
+dist_afids_DATA += @srcafids@/chipper2/chipper2.pdf
+dist_afids_DATA += @srcafids@/cibcut/cibcut.pdf
+dist_afids_DATA += @srcafids@/cibmos/ciblog.pdf
+dist_afids_DATA += @srcafids@/cibmos/cibmos.pdf
+dist_afids_DATA += @srcafids@/classifier/classifier.pdf
+dist_afids_DATA += @srcafids@/clusterer/clusterer.pdf
+dist_afids_DATA += @srcafids@/cncmp/cncmp.pdf
+dist_afids_DATA += @srcafids@/colort/colort.pdf
+dist_afids_DATA += @srcafids@/compject/compject.pdf
+dist_afids_DATA += @srcafids@/compresschk/compresschk.pdf
+EXTRA_DIST += @srcafids@/compresschk/tstcompresschk.pdf
+EXTRA_DIST += @srcafids@/compresschk/expected_test_results
+dist_afids_DATA += @srcafids@/comprs/comprs.pdf
+dist_afids_DATA += @srcafids@/comptab/comptab.pdf
+dist_afids_DATA += @srcafids@/comptab2/comptab2.pdf
+dist_afids_DATA += @srcafids@/concomp/concomp.pdf
+dist_afids_DATA += @srcafids@/concompi/concompi.pdf
+dist_afids_DATA += @srcafids@/concomp1/concomp1.pdf
+dist_afids_DATA += @srcafids@/createfile/createfile.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/cvdnorm.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detect.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detls1.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detls2.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detls3.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detre1.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detre3.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detre4.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detwv5.pdf
+dist_afids_DATA += @srcafids@/cvdnorm/detwvfb.pdf
+dist_afids_DATA += @srcafids@/detwvpan/detwvpan.pdf
+dist_afids_DATA += @srcafids@/difpic/difpic.pdf
+dist_afids_DATA += @srcafids@/f2multi/f2multi.pdf
+dist_afids_DATA += @srcafids@/f2multi976/f2multi976.pdf
+dist_afids_DATA += @srcafids@/cutquad/cutquad.pdf
+dist_afids_DATA += @srcafids@/demfix/demfix.pdf
+dist_afids_DATA += @srcafids@/deriv/deriv.pdf
+dist_afids_DATA += @srcafids@/destripe/destripe.pdf
+dist_afids_DATA += @srcafids@/detstat/detstat.pdf
+dist_afids_DATA += @srcafids@/difnear/difnear.pdf
+dist_afids_DATA += @srcafids@/difpica/difpica.pdf
+dist_afids_DATA += @srcafids@/dtedlog/dtedlog.pdf
+EXTRA_DIST += @srcafids@/dtedlog/tstdtedlog.pdf
+EXTRA_DIST += @srcafids@/dtedlog/expected_test_results
+dist_afids_DATA += @srcafids@/dtedmos/dtedmos.pdf
+dist_afids_DATA += @srcafids@/dtedmos2/dtedmos2.pdf
+dist_afids_DATA += @srcafids@/dtedmos2/dtedquad.pdf
+dist_afids_DATA += @srcafids@/dtedvlog/dtedvlog.pdf
+dist_afids_DATA += @srcafids@/edibis/edibis.pdf
+dist_afids_DATA += @srcafids@/egm2wgs/egm2wgs.pdf
+dist_afids_DATA += @srcafids@/elvcor/elvcor.pdf
+dist_afids_DATA += @srcafids@/elvcor2/elvcor2.pdf
+dist_afids_DATA += @srcafids@/elvcor2/elvcor3.pdf
+dist_afids_DATA += @srcafids@/ephref/ephref.pdf
+dist_afids_DATA += @srcafids@/f2/f2.pdf
+dist_afids_DATA += @srcafids@/f2comp/f2comp.pdf
+dist_afids_DATA += @srcafids@/f2ratio/f2ratio.pdf
+dist_afids_DATA += @srcafids@/fastmos/fastmos.pdf
+dist_afids_DATA += @srcafids@/featherv/featherv.pdf
+dist_afids_DATA += @srcafids@/featherw/featherw.pdf
+dist_afids_DATA += @srcafids@/feathery/feathery.pdf
+dist_afids_DATA += @srcafids@/filter/filter.pdf
+dist_afids_DATA += @srcafids@/font/font.pdf
+dist_afids_DATA += @srcafids@/fft2005/fft2005.pdf
+dist_afids_DATA += @srcafids@/fftflip/fftflip.pdf
+dist_afids_DATA += @srcafids@/fft11/fft11.pdf
+dist_afids_DATA += @srcafids@/fft22/fft22.pdf
+dist_afids_DATA += @srcafids@/fftmag/fftmag.pdf
+dist_afids_DATA += @srcafids@/fftmagic/fftmagic.pdf
+dist_afids_DATA += @srcafids@/fifor/fifor.pdf
+dist_afids_DATA += @srcafids@/fifow/fifow.pdf
+if HAVE_ITCL
+dist_afids_DATA += @srcafids@/file2tcl/file2tcl.pdf
+dist_afids_DATA += @srcafids@/ftype2tcl/ftype2tcl.pdf
+dist_afids_DATA += @srcafids@/tcl2file/tcl2file.pdf
+endif
+dist_afids_DATA += @srcafids@/tcl2tcl/tcl2tcl.pdf
+dist_afids_DATA += @srcafids@/fitg/fitg.pdf
+dist_afids_DATA += @srcafids@/fitsin/fitsin.pdf
+dist_afids_DATA += @srcafids@/fitsout/fitsout.pdf
+dist_afids_DATA += @srcafids@/flot/flot.pdf
+dist_afids_DATA += @srcafids@/fthmos/fthmos.pdf
+dist_afids_DATA += @srcafids@/fthymos/fthymos.pdf
+dist_afids_DATA += @srcafids@/gausnois/gausnois.pdf
+dist_afids_DATA += @srcafids@/ge1ref/ge1ref.pdf
+dist_afids_DATA += @srcafids@/genealg/genealg.pdf
+dist_afids_DATA += @srcafids@/genealg2/genealg2.pdf
+dist_afids_DATA += @srcafids@/geneplot/geneplot.pdf
+dist_afids_DATA += @srcafids@/geneprep/geneprep.pdf
+dist_afids_DATA += @srcafids@/gengrid/gengrid.pdf
+EXTRA_DIST += @srcafids@/gengrid/tstgengrid.pdf
+EXTRA_DIST += @srcafids@/gengrid/expected_test_results
+dist_afids_DATA += @srcafids@/gengrid2/gengrid2.pdf
+EXTRA_DIST += @srcafids@/gengrid2/tstgengrid2.pdf
+EXTRA_DIST += @srcafids@/gengrid2/expected_test_results
+dist_afids_DATA += @srcafids@/genpc/genpc.pdf
+EXTRA_DIST += @srcafids@/genpc/tstgenpc.pdf
+EXTRA_DIST += @srcafids@/genpc/expected_test_results
+dist_afids_DATA += @srcafids@/genpc/genutm.pdf
+dist_afids_DATA += @srcafids@/genpc/genutm2.pdf
+dist_afids_DATA += @srcafids@/geomv/geomv.pdf
+dist_afids_DATA += @srcafids@/geomv3x3/geomv3x3.pdf
+dist_afids_DATA += @srcafids@/get_elv/get_elv.pdf
+EXTRA_DIST += @srcafids@/get_elv/tstget_elv.pdf
+EXTRA_DIST += @srcafids@/get_elv/expected_test_results
+dist_afids_DATA += @srcafids@/getdelta/getdelta.pdf
+dist_afids_DATA += @srcafids@/getpoint/getpoint.pdf
+EXTRA_DIST += @srcafids@/getpoint/tstgetpoint.pdf
+EXTRA_DIST += @srcafids@/getpoint/expected_test_results
+dist_afids_DATA += @srcafids@/getzval/getzval.pdf
+EXTRA_DIST += @srcafids@/getzval/tstgetzval.pdf
+EXTRA_DIST += @srcafids@/getzval/expected_test_results
+dist_afids_DATA += @srcafids@/goeslog/goeslog.pdf
+dist_afids_DATA += @srcafids@/gowarp/gowarp.pdf
+dist_afids_DATA += @srcafids@/gowarp/gowpcall.pdf
+dist_afids_DATA += @srcafids@/grid3pt/grid3pt.pdf
+dist_afids_DATA += @srcafids@/gridavg/gridavg.pdf
+dist_afids_DATA += @srcafids@/gridck/gridck.pdf
+dist_afids_DATA += @srcafids@/gridcomp/gridcomp.pdf
+dist_afids_DATA += @srcafids@/gt2rpc/gt2rpc.pdf
+dist_afids_DATA += @srcafids@/gt2tcl/gt2tcl.pdf
+EXTRA_DIST += @srcafids@/gt2tcl/tstgt2tcl.pdf
+dist_afids_DATA += @srcafids@/gtappend/gtappend.pdf
+dist_afids_DATA += @srcafids@/gtasterfix/gtasterfix.pdf
+dist_afids_DATA += @srcafids@/gtcomp/gtcomp.pdf
+dist_afids_DATA += @srcafids@/gtcopy/gtcopy.pdf
+dist_afids_DATA += @srcafids@/gtcrop/gtcrop.pdf
+dist_afids_DATA += @srcafids@/gtdel/gtdel.pdf
+dist_afids_DATA += @srcafids@/gtgen/gtgen.pdf
+dist_afids_DATA += @srcafids@/gtgenup/gtgenup.pdf
+dist_afids_DATA += @srcafids@/gtgore/gtgore.pdf
+dist_afids_DATA += @srcafids@/gtlabfix/gtlabfix.pdf
+dist_afids_DATA += @srcafids@/gtlist/gtlist.pdf
+dist_afids_DATA += @srcafids@/gtmove/gtmove.pdf
+
+Test/gtmove.out: gtoffset.pdf
+
+EXTRA_DIST += @srcafids@/gtmove/tstgtmove.pdf
+EXTRA_DIST += @srcafids@/gtmove/expected_test_results
+dist_afids_DATA += @srcafids@/gtmss/gtmss.pdf
+EXTRA_DIST += @srcafids@/gtmss/tstgtmss.pdf
+EXTRA_DIST += @srcafids@/gtmss/expected_test_results
+dist_afids_DATA += @srcafids@/gtoffset/gtoffset.pdf
+EXTRA_DIST += @srcafids@/gtoffset/tstgtoffset.pdf
+EXTRA_DIST += @srcafids@/gtoffset/expected_test_results
+dist_afids_DATA += @srcafids@/gtp/gtp.pdf
+EXTRA_DIST += @srcafids@/gtp/tstgtp.pdf
+EXTRA_DIST += @srcafids@/gtp/expected_test_results
+dist_afids_DATA += @srcafids@/gtproj/gtproj.pdf
+EXTRA_DIST += @srcafids@/gtproj/tstgtproj.pdf
+EXTRA_DIST += @srcafids@/gtproj/expected_test_results
+dist_afids_DATA += @srcafids@/gtpwarp/gtpmwarp.pdf
+dist_afids_DATA += @srcafids@/gtpswarp/gtpswarp.pdf
+dist_afids_DATA += @srcafids@/gtpwarp/gtpwarp.pdf
+dist_afids_DATA += @srcafids@/gtrot/gtrot.pdf
+EXTRA_DIST += @srcafids@/gtrot/tstgtrot.pdf
+EXTRA_DIST += @srcafids@/gtrot/expected_test_results
+dist_afids_DATA += @srcafids@/gtsize/gtsize.pdf
+EXTRA_DIST += @srcafids@/gtsize/tstgtsize.pdf
+EXTRA_DIST += @srcafids@/gtsize/expected_test_results
+dist_afids_DATA += @srcafids@/gtstat/gtstat.pdf
+EXTRA_DIST += @srcafids@/gtstat/tstgtstat.pdf
+EXTRA_DIST += @srcafids@/gtstat/expected_test_results
+dist_afids_DATA += @srcafids@/gtwarp/gtwarp.pdf
+dist_afids_DATA += @srcafids@/gtwarpxd/gtwarpxd.pdf
+dist_afids_DATA += @srcafids@/gtwarpxd/gtwrpsub.pdf
+dist_afids_DATA += @srcafids@/hist/hist.pdf
+dist_afids_DATA += @srcafids@/hyperionlog/hyperionlog.pdf
+dist_afids_DATA += @srcafids@/hywarp/finalwarp.pdf
+dist_afids_DATA += @srcafids@/hywarp/hycall.pdf
+dist_afids_DATA += @srcafids@/hywarp/hycall2.pdf
+dist_afids_DATA += @srcafids@/hywarp/hywarp.pdf
+dist_afids_DATA += @srcafids@/hywarp/hywarp2.pdf
+dist_afids_DATA += @srcafids@/hywarp/hywarpad.pdf
+dist_afids_DATA += @srcafids@/hywarp/hywarpad2.pdf
+dist_afids_DATA += @srcafids@/hywarp/piclsq.pdf
+dist_afids_DATA += @srcafids@/hywarp/piclsqm.pdf
+dist_afids_DATA += @srcafids@/hywarp/piclsqm2.pdf
+dist_afids_DATA += @srcafids@/hywarp/piclsqqd.pdf
+dist_afids_DATA += @srcafids@/ibis2asc/ibis2asc.pdf
+dist_afids_DATA += @srcafids@/ibis2img/ibis2img.pdf
+dist_afids_DATA += @srcafids@/ibis2rpc/ibis2rpc.pdf
+dist_afids_DATA += @srcafids@/ibislsq2/ibislsq2.pdf
+dist_afids_DATA += @srcafids@/ibislsq3/ibislsq3.pdf
+dist_afids_DATA += @srcafids@/ibislsq4/ibislsq4.pdf
+dist_afids_DATA += @srcafids@/ibislsq9/ibislsq9.pdf
+dist_afids_DATA += @srcafids@/ibislsqf/ibislsqf.pdf
+dist_afids_DATA += @srcafids@/ibislsql/ibislsql.pdf
+dist_afids_DATA += @srcafids@/ibisclst/ibisclst.pdf
+dist_afids_DATA += @srcafids@/ibisclst2/ibisclst2.pdf
+dist_afids_DATA += @srcafids@/ibisclst3/ibisclst3.pdf
+dist_afids_DATA += @srcafids@/dig2refl/dig2refl.pdf
+dist_afids_DATA += @srcafids@/ibisnlsq/ibisnlsq.pdf
+dist_afids_DATA += @srcafids@/ibisx/ibisx.pdf
+dist_afids_DATA += @srcafids@/icat/icat.pdf
+dist_afids_DATA += @srcafids@/idgen/idgen.pdf
+dist_afids_DATA += @srcafids@/ifthen/ifthen.pdf
+dist_afids_DATA += @srcafids@/ikonoslog/ikonoslog.pdf
+dist_afids_DATA += @srcafids@/ikref/ikref.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbcall.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbcall2.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbrpcw.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbwarp.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbwarp2.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbwarpad.pdf
+dist_afids_DATA += @srcafids@/ikqbwarp/ikqbwarpad2.pdf
+dist_afids_DATA += @srcafids@/ilist/ilist.pdf
+dist_afids_DATA += @srcafids@/img2ascii/img2ascii.pdf
+dist_afids_DATA += @srcafids@/imcorner/imcorner.pdf
+dist_afids_DATA += @srcafids@/imgstat/imgstat.pdf
+dist_afids_DATA += @srcafids@/sdsems/sdsems.pdf
+dist_afids_DATA += @srcafids@/imgsum/imgsum.pdf
+dist_afids_DATA += @srcafids@/imlog/imlog.pdf
+dist_afids_DATA += @srcafids@/immerge/immerge.pdf
+dist_afids_DATA += @srcafids@/imsplit/imsplit.pdf
+dist_afids_DATA += @srcafids@/indexmerge/indexmerge.pdf
+dist_afids_DATA += @srcafids@/insect/insect.pdf
+dist_afids_DATA += @srcafids@/insert/insert.pdf
+dist_afids_DATA += @srcafids@/interlv/interlv.pdf
+dist_afids_DATA += @srcafids@/lab2asc/lab2asc.pdf
+dist_afids_DATA += @srcafids@/lab2tcl/lab2tcl.pdf
+dist_afids_DATA += @srcafids@/lave/lave.pdf
+dist_afids_DATA += @srcafids@/ldir2tcl/ldir2tcl.pdf
+dist_afids_DATA += @srcafids@/lgeom/lgeom.pdf
+dist_afids_DATA += @srcafids@/linshft/linshft.pdf
+dist_afids_DATA += @srcafids@/llutm/llutm.pdf
+EXTRA_DIST += @srcafids@/llutm/tstllutm.pdf
+EXTRA_DIST += @srcafids@/llutm/expected_test_results
+dist_afids_DATA += @srcafids@/llutm/llutm2.pdf
+dist_afids_DATA += @srcafids@/llutm/llutm3.pdf
+dist_afids_DATA += @srcafids@/longsize/longsize.pdf
+EXTRA_DIST += @srcafids@/longsize/tstlongsize.pdf
+EXTRA_DIST += @srcafids@/longsize/expected_test_results
+dist_afids_DATA += @srcafids@/lsatref/lsatref.pdf
+dist_afids_DATA += @srcafids@/lsatref/multilsatref.pdf
+dist_afids_DATA += @srcafids@/lsatref/lsatstrtch.pdf
+dist_afids_DATA += @srcafids@/ltgen/ltgen.pdf
+dist_afids_DATA += @srcafids@/rpdeyeref/rpdeyeref.pdf
+dist_afids_DATA += @srcafids@/rpcslant/rpcslant.pdf
+dist_afids_DATA += @srcafids@/rpdeyeref/multirpdeyeref.pdf
+dist_afids_DATA += @srcafids@/rpdeyeref/rpdeyestrtch.pdf
+dist_afids_DATA += @srcafids@/medimg/medimg.pdf
+dist_afids_DATA += @srcafids@/lsatglog/lsatglog.pdf
+dist_afids_DATA += @srcafids@/lsatglog/lsatgmos.pdf
+dist_afids_DATA += @srcafids@/lsatglog/lsatgxmos.pdf
+dist_afids_DATA += @srcafids@/lsatlog/lsatlog.pdf
+dist_afids_DATA += @srcafids@/lsatmos/lsatmos.pdf
+dist_afids_DATA += @srcafids@/lswarp/lscall.pdf
+dist_afids_DATA += @srcafids@/lswarp/lscall2.pdf
+dist_afids_DATA += @srcafids@/lswarp/lswarp.pdf
+dist_afids_DATA += @srcafids@/lswarp/lswarp2.pdf
+dist_afids_DATA += @srcafids@/lswarp/lswarpad.pdf
+dist_afids_DATA += @srcafids@/lswarp/lswarpad2.pdf
+dist_afids_DATA += @srcafids@/maxmin/maxmin.pdf
+dist_afids_DATA += @srcafids@/median/median.pdf
+dist_afids_DATA += @srcafids@/meteolog/meteolog.pdf
+dist_afids_DATA += @srcafids@/mf/mf.pdf
+dist_afids_DATA += @srcafids@/mf3/mf3.pdf
+dist_afids_DATA += @srcafids@/mf4/mf4.pdf
+dist_afids_DATA += @srcafids@/minfilt/minfilt.pdf
+dist_afids_DATA += @srcafids@/modislog_mod021km/modislog_mod021km.pdf
+dist_afids_DATA += @srcafids@/modwarp/modcall.pdf
+dist_afids_DATA += @srcafids@/modwarp/modcall2.pdf
+dist_afids_DATA += @srcafids@/modwarp/modcallb.pdf
+dist_afids_DATA += @srcafids@/modwarp/modcallb2.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwarp.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwarp2.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwarpad.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwarpad2.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwpadb.pdf
+dist_afids_DATA += @srcafids@/modwarp/modwpadb2.pdf
+dist_afids_DATA += @srcafids@/momgen2/momgen2.pdf
+dist_afids_DATA += @srcafids@/moore/moore.pdf
+EXTRA_DIST += @srcafids@/moore/tstmoore.pdf
+EXTRA_DIST += @srcafids@/moore/expected_test_results
+dist_afids_DATA += @srcafids@/mooresc/mooresc.pdf
+dist_afids_DATA += @srcafids@/mooreins/mooreins.pdf
+EXTRA_DIST += @srcafids@/mooreins/tstmooreins.pdf
+EXTRA_DIST += @srcafids@/mooreins/expected_test_results
+dist_afids_DATA += @srcafids@/mosmaster/austst.pdf
+dist_afids_DATA += @srcafids@/mosmaster/bigbcall.pdf
+dist_afids_DATA += @srcafids@/mosmaster/ingest.pdf
+dist_afids_DATA += @srcafids@/mosmaster/lsatlog10x.pdf
+dist_afids_DATA += @srcafids@/mosmaster/lsatlog2.pdf
+dist_afids_DATA += @srcafids@/mosmaster/mosanal.pdf
+dist_afids_DATA += @srcafids@/mosmaster/mosframe.pdf
+dist_afids_DATA += @srcafids@/mosmaster/mosfth.pdf
+dist_afids_DATA += @srcafids@/mosmaster/mosmaster.pdf
+dist_afids_DATA += @srcafids@/mosmaster/mosnorm.pdf
+dist_afids_DATA += @srcafids@/mosmaster/quadmos.pdf
+dist_afids_DATA += @srcafids@/mosmaster/zprcheck.pdf
+dist_afids_DATA += @srcafids@/mosmaster/zprocess.pdf
+dist_afids_DATA += @srcafids@/mosmaster/zprzip.pdf
+dist_afids_DATA += @srcafids@/mosplot/mosplot.pdf
+dist_afids_DATA += @srcafids@/movie/calibapp.pdf
+dist_afids_DATA += @srcafids@/movie/moviemaster.pdf
+dist_afids_DATA += @srcafids@/movie/movierunc.pdf
+dist_afids_DATA += @srcafids@/movie/movieruncbk.pdf
+dist_afids_DATA += @srcafids@/mss/mss.pdf
+dist_afids_DATA += @srcafids@/mvecall/mvecall.pdf
+dist_afids_DATA += @srcafids@/newimd/newimd.pdf
+dist_afids_DATA += @srcafids@/nitflog/nitflog.pdf
+dist_afids_DATA += @srcafids@/norangle/norangle.pdf
+dist_afids_DATA += @srcafids@/nxt/nxt.pdf
+dist_afids_DATA += @srcafids@/otf1/otf1.pdf
+dist_afids_DATA += @srcafids@/paint/paint.pdf
+dist_afids_DATA += @srcafids@/perspec/perspec.pdf
+dist_afids_DATA += @srcafids@/picmtch4/picmtch4.pdf
+dist_afids_DATA += @srcafids@/picoff/picoff.pdf
+dist_afids_DATA += @srcafids@/pixmap/pixmap.pdf
+dist_afids_DATA += @srcafids@/pixstat/pixstat.pdf
+dist_afids_DATA += @srcafids@/plab2tcl/plab2tcl.pdf
+dist_afids_DATA += @srcafids@/pldsref/pldsref.pdf
+dist_afids_DATA += @srcafids@/plotbkrd/plotbkrd.pdf
+dist_afids_DATA += @srcafids@/plotint/plotint.pdf
+dist_afids_DATA += @srcafids@/pltgraf/pltgraf.pdf
+dist_afids_DATA += @srcafids@/polarect/polarect.pdf
+dist_afids_DATA += @srcafids@/polygeov/polygeov.pdf
+dist_afids_DATA += @srcafids@/power/power.pdf
+dist_afids_DATA += @srcafids@/psf/psf.pdf
+dist_afids_DATA += @srcafids@/psrgbish/psrgbish.pdf
+dist_afids_DATA += @srcafids@/qbref/qbref.pdf
+dist_afids_DATA += @srcafids@/qplot/qplot.pdf
+dist_afids_DATA += @srcafids@/qplot2/qplot2.pdf
+dist_afids_DATA += @srcafids@/qsar/qsar.pdf
+dist_afids_DATA += @srcafids@/qchop/qchop.pdf
+dist_afids_DATA += @srcafids@/qkplot/qkplot.pdf
+dist_afids_DATA += @srcafids@/qswp2005/qswp2005.pdf
+dist_afids_DATA += @srcafids@/quickbirdlog/quickbirdlog.pdf
+dist_afids_DATA += @srcafids@/radagen/radagen.pdf
+dist_afids_DATA += @srcafids@/randpixel/randpixel.pdf
+dist_afids_DATA += @srcafids@/rastovec/rastovec.pdf
+dist_afids_DATA += @srcafids@/ratio/ratio.pdf
+dist_afids_DATA += @srcafids@/ratio0/ratio0.pdf
+dist_afids_DATA += @srcafids@/repair/repair.pdf
+dist_afids_DATA += @srcafids@/retrieve/retrieve.pdf
+dist_afids_DATA += @srcafids@/revacc/revacc.pdf
+dist_afids_DATA += @srcafids@/revacc/revacc2.pdf
+dist_afids_DATA += @srcafids@/revacc/revbase.pdf
+dist_afids_DATA += @srcafids@/revacc/revmast.pdf
+dist_afids_DATA += @srcafids@/revacc/revprod.pdf
+dist_afids_DATA += @srcafids@/rgb2ish/rgb2ish.pdf
+dist_afids_DATA += @srcafids@/rotate/rotate.pdf
+dist_afids_DATA += @srcafids@/rotate2/rotate2.pdf
+dist_afids_DATA += @srcafids@/rowop2/rowop2.pdf
+dist_afids_DATA += @srcafids@/rpc2cube/rpc2cube.pdf
+dist_afids_DATA += @srcafids@/rpc2grid/rpc2grid.pdf
+dist_afids_DATA += @srcafids@/rpc2gtlb/rpc2gtlb.pdf
+dist_afids_DATA += @srcafids@/rpc2ibis/rpc2ibis.pdf
+dist_afids_DATA += @srcafids@/rpc2sc/demorpc2sc.pdf
+dist_afids_DATA += @srcafids@/rpc2sc/rpc2sc.pdf
+#dist_afids_DATA += @srcafids@/rpc_fit/rpc_fit.pdf
+dist_afids_DATA += @srcafids@/rpccctr/rpccctr.pdf
+dist_afids_DATA += @srcafids@/rpccctr/rpccctrz.pdf
+dist_afids_DATA += @srcafids@/rpccorn/rpccorn.pdf
+dist_afids_DATA += @srcafids@/rpccwarp/rpccwarp.pdf
+dist_afids_DATA += @srcafids@/rpcfix21/rpcfix21.pdf
+EXTRA_DIST += @srcafids@/rpcfix21/tstrpcfix21.pdf
+EXTRA_DIST += @srcafids@/rpcfix21/expected_test_results
+dist_afids_DATA += @srcafids@/rpcfwd/rpcfwd.pdf
+dist_afids_DATA += @srcafids@/rpcinv/rpcinv.pdf
+dist_afids_DATA += @srcafids@/rpcinv2/rpcinv2.pdf
+dist_afids_DATA += @srcafids@/rpcscale/rpcscale.pdf
+dist_afids_DATA += @srcafids@/rpcsccub/rpcsccub.pdf
+EXTRA_DIST += @srcafids@/rpcsccub/tstrpcsccub.pdf
+EXTRA_DIST += @srcafids@/rpcsccub/expected_test_results
+dist_afids_DATA += @srcafids@/rpcwarp/rpcwarp.pdf
+dist_afids_DATA += @srcafids@/sampler/sampler.pdf
+dist_afids_DATA += @srcafids@/sargonb/sargonb.pdf
+dist_afids_DATA += @srcafids@/sc2rpc/sc2rpc.pdf
+dist_afids_DATA += @srcafids@/scinterp/scinterp.pdf
+dist_afids_DATA += @srcafids@/sclrat/sclrat.pdf
+dist_afids_DATA += @srcafids@/shady/shady.pdf
+dist_afids_DATA += @srcafids@/shady2/shady2.pdf
+dist_afids_DATA += @srcafids@/shp2rast/shp2rast.pdf
+dist_afids_DATA += @srcafids@/shp2vic/shp2vic.pdf
+dist_afids_DATA += @srcafids@/size/size.pdf
+dist_afids_DATA += @srcafids@/sort/sort.pdf
+dist_afids_DATA += @srcafids@/spot/spot.pdf
+#dist_afids_SCRIPTS += @srcafids@/spot2vicar/spot2vicar
+#dist_afids_DATA += @srcafids@/spot2vicar/spot2vicar.pdf
+#dist_afids_SCRIPTS += @srcafids@/spot2ortho/spot2ortho
+#dist_afids_DATA += @srcafids@/spot2ortho/spot2ortho.pdf
+dist_afids_DATA += @srcafids@/spotref/spotref.pdf
+dist_afids_DATA += @srcafids@/starcat3/starcat3.pdf
+dist_afids_DATA += @srcafids@/str2tcl/str2tcl.pdf
+dist_afids_DATA += @srcafids@/stretch/stretch.pdf
+dist_afids_DATA += @srcafids@/subsamp/subsamp.pdf
+dist_afids_DATA += @srcafids@/substr2tcl/substr2tcl.pdf
+dist_afids_DATA += @srcafids@/tclmath/tclmath.pdf
+dist_afids_DATA += @srcafids@/tclpad/tclpad.pdf
+dist_afids_DATA += @srcafids@/tfilt/tfilt.pdf
+dist_afids_DATA += @srcafids@/tieconv/tieconv.pdf
+dist_afids_DATA += @srcafids@/tieplot/tieplot.pdf
+dist_afids_DATA += @srcafids@/trnscol2/testtrnscol2.pdf
+dist_afids_DATA += @srcafids@/trnscol2/trnscol2.pdf
+dist_afids_DATA += @srcafids@/uprep/uprep.pdf
+dist_afids_DATA += @srcafids@/ustats/ustats.pdf
+dist_afids_DATA += @srcafids@/util/util1.pdf
+dist_afids_DATA += @srcafids@/util/util2.pdf
+dist_afids_DATA += @srcafids@/util/util3.pdf
+dist_afids_DATA += @srcafids@/util/util4.pdf
+dist_afids_DATA += @srcafids@/util/util5.pdf
+dist_afids_DATA += @srcafids@/util/util6.pdf
+dist_afids_DATA += @srcafids@/util/util7.pdf
+dist_afids_DATA += @srcafids@/util/util8.pdf
+dist_afids_DATA += @srcafids@/util/util9.pdf
+dist_afids_DATA += @srcafids@/util/utila.pdf
+dist_afids_DATA += @srcafids@/util/utilb.pdf
+dist_afids_DATA += @srcafids@/util/utilc.pdf
+dist_afids_DATA += @srcafids@/util/utild.pdf
+dist_afids_DATA += @srcafids@/util/utile.pdf
+dist_afids_DATA += @srcafids@/util/utilf.pdf
+dist_afids_DATA += @srcafids@/util/utilg.pdf
+dist_afids_DATA += @srcafids@/vexlab/vexlab.pdf
+dist_afids_DATA += @srcafids@/vextract/vextract.pdf
+dist_afids_DATA += @srcafids@/vic2shp/vic2shp.pdf
+if HAVE_ITCL
+dist_afids_DATA += @srcafids@/vtiff3/vtiff3.pdf
+endif
+dist_afids_DATA += @srcafids@/watermask/watermask.pdf
+dist_afids_DATA += @srcafids@/wedge/wedge.pdf
+dist_afids_DATA += @srcafids@/wnr2005/wnr2005.pdf
+dist_afids_DATA += @srcafids@/wnrm2005/wnrm2005.pdf
+dist_afids_DATA += @srcafids@/wv2ref/wv2ref.pdf
+dist_afids_DATA += @srcafids@/xyzpic2/xyzpic2.pdf
+dist_afids_DATA += @srcafids@/xform/xform.pdf
+dist_afids_DATA += @srcafids@/zipcol2/zipcol2.pdf
+dist_afids_DATA += @srcafids@/zrelax/zrelax.pdf
+dist_afids_DATA += @srcafids@/zrelax2/zrelax2.pdf
+#dist_afids_DATA += @srcafids@/rpc_fit/rpc_fit.pdf
+dist_afids_DATA += @srcafids@/nacma/nacma.pdf
+dist_afids_DATA += @srcafids@/gtigeolo/gtigeolo.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/alztop.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/prepz10.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/qbmoslog.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/processxy.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/qbmapgen.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/qbmaster.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/quadmos_q.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/run_band.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/zprocess_q.pdf
+dist_afids_DATA += @srcafids@/qbmosprocs/prepz.pdf
+dist_afids_DATA += @srcafids@/zcircle/zcircle.pdf
+dist_afids_DATA += @srcafids@/zfill/zfill.pdf
+
+#SECTION 3 - List test DIFF files
+#====================================================================
+# We comment out unit tests that currently fail. Maybe we'll fix these
+# someday
+#afids_CHECK += Test/acca.diff
+#afids_CHECK += Test/accck.diff
+afids_CHECK += Test/acopin.diff
+afids_CHECK += Test/addnoise.diff
+afids_CHECK += Test/aggrg2.diff
+afids_CHECK += Test/aggrg.diff
+#afids_CHECK += Test/alilog.diff
+afids_CHECK += Test/apodize.diff
+afids_CHECK += Test/asc2tcl.diff
+afids_CHECK += Test/ascnum.diff
+#afids_CHECK += Test/gtigeolo.diff
+#afids_CHECK += Test/nacma.diff
+afids_CHECK += Test/asterlog.diff
+#afids_CHECK += Test/astroref.diff
+afids_CHECK += Test/average.diff
+#afids_CHECK += Test/bowtie.diff
+afids_CHECK += Test/boxflt2.diff
+afids_CHECK += Test/calfit.diff
+afids_CHECK += Test/ccdnoise.diff
+### MMS - Temporary turn this off
+###afids_CHECK += Test/ccdrecip.diff		### 2013-09-18 - Commented out awaiting delivery of size (NaN) 
+afids_CHECK += Test/ccdslope.diff
+afids_CHECK += Test/ccomp.diff
+#afids_CHECK += Test/chipper2.diff
+#afids_CHECK += Test/cibcut.diff
+#afids_CHECK += Test/cibmos.diff
+afids_CHECK += Test/classifier.diff
+afids_CHECK += Test/clusterer.diff
+#afids_CHECK += Test/cncmp.diff
+afids_CHECK += Test/compject.diff
+afids_CHECK += Test/compresschk.diff
+afids_CHECK += Test/comprs.diff
+afids_CHECK += Test/comptab2.diff
+afids_CHECK += Test/comptab.diff
+afids_CHECK += Test/concompi.diff
+afids_CHECK += Test/concomp.diff
+afids_CHECK += Test/createfile.diff
+#afids_CHECK += Test/cutquad.diff
+afids_CHECK += Test/demfix.diff
+afids_CHECK += Test/deriv.diff
+afids_CHECK += Test/detstat.diff
+afids_CHECK += Test/difnear.diff
+#afids_CHECK += Test/difpica.diff
+afids_CHECK += Test/dtedlog.diff
+#afids_CHECK += Test/dtedmos2.diff
+#afids_CHECK += Test/dtedmos.diff
+afids_CHECK += Test/dtedvlog.diff
+afids_CHECK += Test/edibis.diff
+#afids_CHECK += Test/egm2wgs.diff
+#afids_CHECK += Test/elvcor2.diff
+#afids_CHECK += Test/elvcor.diff
+#afids_CHECK += Test/ephref.diff
+#afids_CHECK += Test/f2comp.diff
+#afids_CHECK += Test/f2ratio.diff
+#afids_CHECK += Test/f2multi.diff
+#afids_CHECK += Test/f2multi976.diff
+# Large dataset needed for test, we don't deliver this with
+# the test data. Only run test if we have the dataset available.
+if HAVE_MASSIVE_DATASET
+# Temporary, comment out while /raid3 is down with work that 
+# Chris is doing
+#afids_CHECK += Test/f2.diff
+endif
+#afids_CHECK += Test/featherv.diff
+#afids_CHECK += Test/feathery.diff
+#afids_CHECK += Test/featherw.diff
+afids_CHECK += Test/fft2005.diff
+afids_CHECK += Test/fftflip.diff
+#afids_CHECK += Test/fifor.diff
+afids_CHECK += Test/fifow.diff
+afids_CHECK += Test/file2tcl.diff
+afids_CHECK += Test/filter.diff
+#afids_CHECK += Test/fitg.diff
+###afids_CHECK += Test/fitsin.diff	###This test commented out due to header differences that need to be ironed out
+###afids_CHECK += Test/fitsout.diff	###This test commented out due to numerous Date Time stamps in Label
+#afids_CHECK += Test/fthmos.diff
+#afids_CHECK += Test/fthymos.diff
+afids_CHECK += Test/ftype2tcl.diff
+#afids_CHECK += Test/ge1ref.diff
+#afids_CHECK += Test/genealg.diff
+#afids_CHECK += Test/genealg2.diff
+#afids_CHECK += Test/geneplot.diff
+#afids_CHECK += Test/geneprep.diff
+afids_CHECK += Test/gengrid2.diff
+afids_CHECK += Test/gengrid.diff
+afids_CHECK += Test/genpc.diff
+#afids_CHECK += Test/genutm2.diff
+#afids_CHECK += Test/genutm.diff
+#afids_CHECK += Test/geomv3x3.diff
+#afids_CHECK += Test/geomv.diff
+#afids_CHECK += Test/getdelta.diff
+afids_CHECK += Test/get_elv.diff
+afids_CHECK += Test/getpoint.diff
+afids_CHECK += Test/getzval.diff
+#afids_CHECK += Test/goeslog.diff
+#afids_CHECK += Test/gowarp.diff
+afids_CHECK += Test/grid3pt.diff
+#afids_CHECK += Test/gridavg.diff
+#afids_CHECK += Test/gridck.diff
+#afids_CHECK += Test/gridcomp.diff
+#afids_CHECK += Test/gt2rpc.diff
+afids_CHECK += Test/gt2tcl.diff
+#afids_CHECK += Test/gt3warp.diff
+afids_CHECK += Test/gtappend.diff
+#afids_CHECK += Test/gtasterfix.diff
+#afids_CHECK += Test/gtcomp.diff
+afids_CHECK += Test/gtcopy.diff
+afids_CHECK += Test/gtcrop.diff
+afids_CHECK += Test/gtdel.diff
+afids_CHECK += Test/gtgen.diff
+#afids_CHECK += Test/gtgenup.diff
+#afids_CHECK += Test/gtgore.diff
+afids_CHECK += Test/gtlabfix.diff
+afids_CHECK += Test/gtlist.diff
+afids_CHECK += Test/gtmove.diff
+afids_CHECK += Test/gtmss.diff
+afids_CHECK += Test/gtoffset.diff
+afids_CHECK += Test/gtproj.diff
+afids_CHECK += Test/gtp.diff
+#afids_CHECK += Test/gtpwarp.diff
+# This depends on gtproj2, which is in afids_python. Can't currently
+# run this, we'll return this this issue in a bit
+#afids_CHECK += Test/gtpswarp.diff
+afids_CHECK += Test/gtrot.diff
+afids_CHECK += Test/gtsize.diff
+afids_CHECK += Test/gtstat.diff
+#afids_CHECK += Test/gtwarp.diff
+#afids_CHECK += Test/gtwarpxd.diff
+#afids_CHECK += Test/hyperionlog.diff
+afids_CHECK += Test/ibis2asc.diff
+afids_CHECK += Test/ibis2img.diff
+#afids_CHECK += Test/ibis2rpc.diff
+#afids_CHECK += Test/ibislsq2.diff
+#afids_CHECK += Test/ibislsq3.diff
+afids_CHECK += Test/ibislsq4.diff
+#afids_CHECK += Test/ibislsq9.diff
+afids_CHECK += Test/ibislsqf.diff
+afids_CHECK += Test/ibislsql.diff
+afids_CHECK += Test/ibisclst2.diff
+afids_CHECK += Test/ibisclst3.diff
+# This depends on data that is local to pistol, so don't run
+#afids_CHECK += Test/dig2refl.diff
+afids_CHECK += Test/ibisnlsq.diff
+#afids_CHECK += Test/ibisx.diff
+afids_CHECK += Test/icat.diff
+#afids_CHECK += Test/idgen.diff
+afids_CHECK += Test/ifthen.diff
+#afids_CHECK += Test/ikonoslog.diff
+#afids_CHECK += Test/ikref.diff
+afids_CHECK += Test/ilist.diff
+afids_CHECK += Test/img2ascii.diff
+afids_CHECK += Test/imcorner.diff
+afids_CHECK += Test/imgstat.diff
+afids_CHECK += Test/sdsems.diff
+afids_CHECK += Test/imgsum.diff
+#afids_CHECK += Test/imlog.diff
+afids_CHECK += Test/immerge.diff
+afids_CHECK += Test/imsplit.diff
+afids_CHECK += Test/indexmerge.diff
+afids_CHECK += Test/insect.diff
+afids_CHECK += Test/interlv.diff
+afids_CHECK += Test/lab2tcl.diff
+afids_CHECK += Test/lave.diff
+afids_CHECK += Test/ldir2tcl.diff
+afids_CHECK += Test/linshft.diff
+afids_CHECK += Test/llutm.diff
+afids_CHECK += Test/longsize.diff
+afids_CHECK += Test/ltgen.diff
+afids_CHECK += Test/maxmin.diff
+afids_CHECK += Test/medimg.diff
+#afids_CHECK += Test/lsatlog.diff
+#afids_CHECK += Test/lsatmos.diff
+afids_CHECK += Test/mf3.diff
+afids_CHECK += Test/mf4.diff
+#afids_CHECK += Test/modislog_mod021km.diff
+afids_CHECK += Test/minfilt.diff
+afids_CHECK += Test/momgen2.diff
+afids_CHECK += Test/mooreins.diff
+afids_CHECK += Test/moore.diff
+#afids_CHECK += Test/mooresc.diff
+# Often succeeds, but sometime randomly fails. Turn off test for
+# now.
+#afids_CHECK += Test/mosplot.diff
+afids_CHECK += Test/mvecall.diff
+# Have to deal with this later
+# Also need to add to afids_CHECK in Makefile.in
+#afids_CHECK += Test/newimd.diff
+afids_CHECK += Test/nitflog.diff
+afids_CHECK += Test/norangle.diff
+afids_CHECK += Test/nxt.diff
+###afids_CHECK += Test/otf1.diff  		##2013-09-18 awaiting polarect delivery for testing      
+#afids_CHECK += Test/paint.diff
+afids_CHECK += Test/perspec.diff
+#afids_CHECK += Test/picmtch4.diff
+#afids_CHECK += Test/picoff.diff
+#afids_CHECK += Test/pixmap.diff
+afids_CHECK += Test/pixstat.diff
+afids_CHECK += Test/plab2tcl.diff
+#afids_CHECK += Test/pldsref.diff
+#afids_CHECK += Test/plotbkrd.diff
+
+# Temporary, these 2 tests don't run on the MAC. This is due to a real
+# problem with the code that Ray will fix, but for now we have these
+# commented out
+if IS_MAC
+###afids_CHECK += Test/plotint.diff
+###afids_CHECK += Test/destripe.diff
+else
+afids_CHECK += Test/plotint.diff
+afids_CHECK += Test/destripe.diff
+endif
+
+afids_CHECK += Test/pltgraf.diff
+afids_CHECK += Test/polygeov.diff
+afids_CHECK += Test/power.diff
+afids_CHECK += Test/psf.diff
+#afids_CHECK += Test/psrgbish.diff
+#afids_CHECK += Test/qbref.diff
+#afids_CHECK += Test/qchop.diff
+#afids_CHECK += Test/qkplot.diff
+afids_CHECK += Test/qplot.diff
+afids_CHECK += Test/qplot2.diff
+afids_CHECK += Test/qsar.diff
+afids_CHECK += Test/qswp2005.diff
+#afids_CHECK += Test/quickbirdlog.diff
+afids_CHECK += Test/randpixel.diff
+#afids_CHECK += Test/rastovec.diff
+#afids_CHECK += Test/retrieve.diff
+#afids_CHECK += Test/rgb2ish.diff
+afids_CHECK += Test/rotate.diff
+afids_CHECK += Test/rotate2.diff
+#afids_CHECK += Test/rowop2.diff
+#afids_CHECK += Test/rpc2cube.diff
+#afids_CHECK += Test/rpc2grid.diff
+#afids_CHECK += Test/rpc2gtlb.diff
+#afids_CHECK += Test/rpc2ibis.diff
+#afids_CHECK += Test/rpc2sc.diff
+#afids_CHECK += Test/rpccctr.diff
+#afids_CHECK += Test/rpccorn.diff
+#afids_CHECK += Test/rpccwarp.diff
+afids_CHECK += Test/rpcfix21.diff
+#afids_CHECK += Test/rpcfwd.diff
+#afids_CHECK += Test/rpcinv2.diff
+#afids_CHECK += Test/rpcinv.diff
+#afids_CHECK += Test/rpcscale.diff
+afids_CHECK += Test/rpcsccub.diff
+#afids_CHECK += Test/rpcwarp.diff
+afids_CHECK += Test/sampler.diff
+afids_CHECK += Test/sargonb.diff
+#afids_CHECK += Test/sc2rpc.diff
+#afids_CHECK += Test/scinterp.diff
+#afids_CHECK += Test/shp2rast.diff
+#afids_CHECK += Test/shp2vic.diff
+afids_CHECK += Test/size.diff
+afids_CHECK += Test/sort.diff
+afids_CHECK += Test/spot.diff
+#afids_CHECK += Test/spot2vicar.diff
+# Take a long time to run, so normally skip this
+#afids_CHECK += Test/spot2ortho.diff
+afids_CHECK += Test/spotref.diff
+afids_CHECK += Test/starcat3.diff
+afids_CHECK += Test/str2tcl.diff
+afids_CHECK += Test/subsamp.diff
+afids_CHECK += Test/substr2tcl.diff
+#afids_CHECK += Test/tcl2file.diff
+# Takes a long time to run, we'll come back to this
+#afids_CHECK += Test/tcl2tcl.diff
+afids_CHECK += Test/tclmath.diff
+afids_CHECK += Test/tclpad.diff
+#afids_CHECK += Test/tieconv.diff
+afids_CHECK += Test/tieplot.diff
+afids_CHECK += Test/trnscol2.diff
+#afids_CHECK += Test/util.diff
+#afids_CHECK += Test/uprep.diff
+#afids_CHECK += Test/vexlab.diff
+#afids_CHECK += Test/vextract.diff
+#afids_CHECK += Test/vic2shp.diff
+#afids_CHECK += Test/egm2wgs.diff
+#afids_CHECK += Test/rpc_fit.diff
+#afids_CHECK += Test/vtiff3.diff
+#afids_CHECK += Test/watermask.diff
+afids_CHECK += Test/wedge.diff
+afids_CHECK += Test/wnr2005.diff
+afids_CHECK += Test/wnrm2005.diff
+#afids_CHECK += Test/wv2ref.diff
+afids_CHECK += Test/xyzpic2.diff
+#afids_CHECK += Test/zipcol2.diff
+#afids_CHECK += Test/zrelax2.diff
+#afids_CHECK += Test/zrelax.diff
+
+#=============================================
+# Test that contain a random element. We can
+# choose to run these or not based on WITH_RANDOM_TEST
+
+if WITH_RANDOM_TEST
+afids_CHECK += Test/gausnois.diff
+endif
+
+#=============================================
+#  Removed 2013-09-01 - now in afids not p2
+# Tests from p2 that we want to run
+# afids_P2_CHECK += Test/rotate.diff
+# EXTRA_DIST += @srcafids@/p2tests/tstrotate.pdf
+# EXTRA_DIST += @srcafids@/p2tests/groundtruth/tstrotate.scr
+
+# We don't support the 
+# include src/vdev/argus/argus.am
+
+if WITH_AFIDS_A
+# Program amtlnfix
+afids_PROGRAMS += amtlnfix
+EXTRA_amtlnfix_DEPENDENCIES = $(CARTO_BUILD_DEPEND) amtlnfix.pdf
+amtlnfix_SOURCES = @srcafids@/amtlnfix/amtlnfix.c
+amtlnfix_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+amtlnfix_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+amtlnfix_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+dist_afids_DATA += @srcafids@/amtlnfix/amtlnfix.pdf
+afids_CHECK += Test/amtlnfix.diff
+
+# Program amtlnfx2
+afids_PROGRAMS += amtlnfx2
+EXTRA_amtlnfx2_DEPENDENCIES = $(CARTO_BUILD_DEPEND) amtlnfx2.pdf
+amtlnfx2_SOURCES = @srcafids@/amtlnfx2/amtlnfx2.c
+amtlnfx2_LDADD = $(CARTO_LIBS)  $(CODE_COVERAGE_LIBS)
+amtlnfx2_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
+amtlnfx2_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
+
+dist_afids_DATA += @srcafids@/amtlnfx2/amtlnfx2.pdf
+afids_CHECK += Test/amtlnfx2.diff
+
+endif
+
+
+
+

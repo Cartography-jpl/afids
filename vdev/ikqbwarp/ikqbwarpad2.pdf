@@ -1,0 +1,465 @@
+procedure help=*
+parm key type=string
+parm fnamein type=(string,128)
+parm rawimg type=(string,128)
+parm rawmeta type=(string,128)
+parm rawhdr type=(string,128) default=""       !not needed?
+parm rawtype string valid=("nitf","tif") default="nitf"
+parm senstype string valid=("i","q","w") default="i"
+parm outimg type=(string,128)
+parm zoomfac type=real default=0.0
+parm nitfbands type=int default=4
+parm band type=int default=1
+parm reuselog string default=""
+parm usebob string default=""
+
+local inloc type=(string,128)
+local outloc type=(string,128)
+!local logname type=(string,128)
+local gridname type=(string,128)
+local logimg type=(string,128)
+local fname type=(string,128)
+local fname3 type=(string,128)
+local fname4 type=(string,128)
+local fname4ref type=(string,128)
+local accplot type=(string,128)
+
+local tempfile1 type=(string,128)
+local tempfile2 type=(string,128)
+local tempfile3 type=(string,128)
+local gridfinal1 type=(string,128)
+local gridfinal2 type=(string,128)
+local gridfinal3 type=(string,128)
+local gridinfo type=(string,128)
+local xxxtxt type=(string,128)
+local rawbase type=(string,128)
+local utmstring type=string
+local xxxlab1 type=(string,128)
+local xxxlab3 type=(string,128)
+local xxxcoord type=(string,128)
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local csl real
+local css real
+local cnl real
+local cns real
+local icsl int
+local icss int
+local icnl int
+local icns int
+local sl int
+local ss int
+local nl int
+local ns int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+local utmzone int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+local nl1 int
+local ns1 int
+local nl2 int
+local ns2 int
+
+local azoom real
+local ip1 int
+local p1 real
+local p2 real
+local bandm1 int
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+
+local rastypstr string
+local interp type=(string,10)
+local rastype type=(string,10)
+local rms type=real
+local file2 type=(string,128)
+local afidsvdevdata type=(string,128)
+local wgs84elv type=(string,128)
+local rexist int
+local gexist int
+
+local dted type=(string,128)
+local cetag type=(string,7)
+local rpctype type=(string,2)
+refgbl $echo
+body
+let $echo="yes"
+
+write "ikqbwarpad2 12/15/11"
+
+!  log the ikonos band
+
+let inloc = "raw&key/"
+let outloc = "final&key/"
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=interp +
+    keyword=interp vtype=0
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=rastype +
+    keyword=rastype vtype=0
+if (interp="-999") let interp = "bilin"
+if (rastype="-999") let rastype = "point"
+
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+if (usebob<>"") 
+  let fname = "&usebob"
+else
+  plab2tcl inp=&fnamein property="COREG_META_DATA" val=fname +
+    keyword=bobdate vtype=0
+end-if
+
+let gridname = fname 
+idgen prefix=bab outvar=logimg
+
+let gridfinal1 = "final&key" // "/&gridname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&gridname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&gridname"  // "gridfinal3"
+write ""
+write "gridname &gridname"
+write "fnamein &fnamein"
+write "A&gridfinal2"
+file2tcl &gridfinal1 val=gexist
+if (gexist=0)
+   let gridfinal1 = "&fnamein"  // ".grid1"
+   let gridfinal2 = "&fnamein"  // ".grid2"
+   let gridfinal3 = "&fnamein"  // ".grid3"
+end-if
+write "B&gridfinal2"
+
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+
+let fname3 = "&inloc" // "&logimg" // ".img"
+let fname4 = "scratch/" // "xxx&key" // ".met"
+let fname4ref = "&inloc" // "&gridname" // ".txt"
+
+! logging here
+
+if (reuselog<>"") 
+   let fname3 = "&reuselog"
+   label-del inp=&fname3 keys="bobdate" +
+         property="COREG_META_DATA"
+   label-add inp=&fname3 items="bobdate=&logimg" +
+         property="COREG_META_DATA"
+else
+  if (rawtype="nitf")
+     let bandm1 = band-1
+     vextract2 &rawimg &fname3 band=&bandm1
+     !!!vextract &rawimg outpre=&fname3r nbands=&nitfbands
+     label-add inp=&fname3 items="bobdate=&logimg" +
+           property="COREG_META_DATA"
+     !!!copy &fname3 &tempfile1 bands=(&band,1)
+     !!!copy &tempfile1 &fname3
+  else
+     vtiff3-tovic &rawimg &fname3
+     label-add inp=&fname3 items="bobdate=&logimg" +
+           property="COREG_META_DATA"
+  end-if
+end-if
+
+! other filenames
+
+let gridinfo = "final&key" // "/&gridname"  // "gridinfo"
+write "gridinfo &gridinfo"
+let rawbase = "final&key" // "/&gridname" // "_map0"
+file2tcl &rawbase val=rexist
+if (rexist=0) let rawbase = "raw&key" // "/&fname" // ".img"
+let xxxlab1 = "scratch/xxxlab1" // "adproc"
+let xxxlab3 = "scratch/xxxlab3" // "adproc"
+let xxxcoord = "scratch/xxxcoord" // "adproc"
+
+! get the parameters from the gridinfo file
+
+#####################just do check for file, if not set to 1,1,0,0,0,0
+
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns v5=t3e v6=t3n +
+   vartype=(0,0,0,0,0,0) ibisloc=(1,7,1,8,1,9,1,10,3,3,3,4)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+if (rawtype="nitf")
+   let csl = 0.0
+   let css = 0.0
+   let icsl = 0
+   let icss = 0
+   let icnl = 0
+   let icns = 0
+else
+   ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+       v5=t2l v6=t2s v7=t2e v8=t2n +
+       v9=t3l v10=t3s +
+       vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+       ibisloc=(1,1,1,2,1,3,1,4, +
+                2,1,2,2,2,3,2,4, +
+                3,1,3,2)
+   ibis2tcl &gridinfo v1=csl v2=css v3=cnl v4=cns +
+      vartype=(0,0,0,0) ibisloc=(1,11,1,12,1,13,1,14)
+   let icsl = $fix(csl)
+   let icss = $fix(css)
+   let icnl = $fix(cnl)
+   let icns = $fix(cns)
+end-if
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from ikqbwarp.pdf
+
+! for compression testing
+compresschk &fname3
+
+write "fname3 &fname3"
+write "fname4 &fname4"
+write "fname4ref &fname4ref"
+
+lab2tcl &fname3 v1=nl1 v2=ns1 keyword=(nl,ns) 'system
+let p1 = $float(nl1)
+write "p1 &p1"
+
+if (senstype="i")
+   asc2tcl &fname4ref keyword="IKONOS_ROWS=" val=p2 vtype=8
+else
+   asc2tcl &fname4ref keyword="QUICKBIRD_ROWS=" val=p2 vtype=8
+end-if
+if (p2<-990.0) 
+   asc2tcl &fname4ref keyword="NITF_NROWS=" val=p2 vtype=8
+end-if
+
+! THERE IS A LOGICAL BUG HERE, ASSUMED THAT NATURAL PIXEL SIZE USED FOR MASTER
+! BUT USER COULD HAVE RESIZED... ZOOMFAC PARM AVAILABLE FOR BATCH RUNS 
+
+! azoom used because of nesting of 4:1 or 1:4, BTW ikonos is area type
+let azoom = p2/p1
+if (zoomfac>0.0) let azoom = zoomfac
+write "azoom &azoom p2 &p2 p1 &p1"
+
+if (rawtype="nitf")
+   translog AFIDS_VDEV_DATA afidsvdevdata
+   let wgs84elv = "&afidsvdevdata/etop02nobath.hlf"
+   rpc2gtlb in=(&fname3,&wgs84elv) rastype="area"
+end-if
+gtlist &fname3
+
+if (azoom>0.9 and azoom<1.1)
+   copy &fname3 &tempfile2
+else-if (azoom>3.9 and azoom<4.1)
+   gtsize &fname3 &tempfile2 azoom=4.0
+else-if (azoom>0.23 and azoom<0.27)
+   gtsize &fname3 &tempfile2 azoom=0.25
+end-if
+
+lab2tcl &tempfile2 v1=nl2 v2=ns2 keyword=(nl,ns) 'system
+write "nl2,ns2 &nl2,&ns2"
+
+! get the utm zone from the ref txt file
+
+if (senstype="i")
+   asc2tcl &fname4ref keyword="IKONOS_UTM_ZONE=" val=utmzone vtype=4
+   write "met utmzone &utmzone"
+   if (utmzone<1)
+      asc2tcl &fname4ref keyword="IKONOS_COORD1_LON=" val=ullon vtype=8
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+   end-if
+else-if (rawtype="nitf")  ! quickbird nitf case
+   asc2tcl &fname4ref keyword="NITF_CORNERLON1=" val=ullon vtype=8
+   let utmzone = $fix(ullon/6.0+31.0)
+   write "ullon &ullon utmzone &utmzone"
+else                 ! quickbird case tif not nitf
+   asc2tcl &fname4ref keyword="QUICKBIRD_MAP_ZONE=" val=utmzone vtype=4
+   write "met utmzone &utmzone"
+   if (utmzone<1)
+      asc2tcl &fname4ref keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+   end-if
+end-if
+if (utmzone<10)
+   let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+else
+   let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+end-if
+write "utmstring &utmstring"
+
+! new procedure here because quickbird color did not align with pan
+
+if (senstype="q")
+   if (rawtype="tif")
+      quickbirdlog &rawmeta &fname4
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LAT=" val=lllat vtype=8
+   else
+      asc2tcl &fname4ref keyword="NITF_CORNERLON1=" val=ullon vtype=8
+      asc2tcl &fname4ref keyword="NITF_CORNERLAT1=" val=ullat vtype=8
+      asc2tcl &fname4ref keyword="NITF_CORNERLON2=" val=urlon vtype=8
+      asc2tcl &fname4ref keyword="NITF_CORNERLAT2=" val=urlat vtype=8
+      asc2tcl &fname4ref keyword="NITF_CORNERLON4=" val=lllon vtype=8
+      asc2tcl &fname4ref keyword="NITF_CORNERLAT4=" val=lllat vtype=8
+   end-if
+   write "csl,css &csl &css"
+   let t1s = 0.0-(css)
+   let t1l = 0.0-(csl)
+   let t2s = $float(ns2)-(css)
+   let t2l = 0.0-(csl)
+   let t3s = 0.0-(css)
+   let t3l = $float(nl2)-(csl)
+   write "ullon &ullon ullat &ullat"
+   
+   ibis-gen &xxxcoord nc=6 nr=3 datacol=(1,2) +
+      format=(DOUB,DOUB,DOUB,DOUB,DOUB,DOUB) +
+      data=(&ullon,&ullat,&urlon,&urlat,&lllon,&lllat)
+   ibis-l &xxxcoord
+   gtgen out=&xxxlab1 +
+      geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+     "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+   gtlist &xxxlab1
+   gtgen out=&xxxlab3 +
+      geotiff=("ProjectedCSTypeGeoKey=&utmstring")
+   gtlist &xxxlab3
+
+   gtproj2 (&xxxcoord,&xxxlab1,&xxxlab3) incol=(1,2,3) outcol=(4,5,6) 'tec
+   ibis2tcl &xxxcoord v1=t1e v2=t1n v3=t2e v4=t2n v5=t3e v6=t3n +
+      vartype=(-1,-1,-1,-1,-1,-1) +
+      ibisloc=(1,4,1,5,2,4,2,5,3,4,3,5)
+   write "t1e &t1e t1n &t1n"
+   write "t2e &t2e t2n &t2n"
+   write "t3e &t3e t3n &t3n"
+   ibis-l &xxxcoord
+end-if
+
+copy &tempfile2 &tempfile1 size=(&icsl,&icss,&icnl,&icns)
+
+if (rawtype<>"nitf")
+  gtgen inp=&tempfile1 'tiecnvrt +
+     geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+    "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+    "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+    "ProjectedCSTypeGeoKey=&utmstring", +
+    "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+    "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+    "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+    "GTRasterTypeGeoKey=&rastypstr")
+end-if
+if (senstype="i")
+   gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+else-if (senstype="q" or senstype="w")
+   gtpwarp &tempfile1 &tempfile3 ref=&rawbase 'coverref nah=200 nav=200 +
+      fftsize=256 magnify=6 toler=1.5 polyfit=linear
+   gtcopy &tempfile3 &tempfile2 size=(&sl,&ss,&nl,&ns)
+   ! really need to integrate this warp with the geomv below by combining grids (alz)
+end-if
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+   out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv) +
+   interp=&interp
+gtsize (&tempfile3,&fnamein) &outimg 'coverref
+
+! accuracy of secondary to primary done for quickbird by gtpwarp
+
+if (senstype="i")
+   plab2tcl &fnamein property=COREG_META_DATA val=rms +
+      keyword=ACCURACY vtype=7
+   plab2tcl &fnamein property=COREG_META_DATA val=file2 +
+      keyword=ACCREF vtype=0
+   label-add inp=&outimg items="accuracy=&rms" +
+        property="COREG_META_DATA"
+   label-add inp=&outimg items="accuracy_unit=pixels" +
+        property="COREG_META_DATA"
+   label-add inp=&outimg items="accref=&file2" +
+        property="COREG_META_DATA"
+end-if
+
+!  put an rpc label in the orthoectified product in case made into nitf
+!  put the nitf corners back on the vicar output for nitf conversion
+
+plab2tcl &fnamein property=Geotiff val=cetag keyword=NITF_CETAG vtype=0
+if (cetag="RPC00B")
+   let rpctype = "B"
+else-if (cetag="RPC00A")
+   let rpctype = "A"
+end-if
+translog AFIDS_VDEV_DATA afidsvdevdata
+let dted = "&afidsvdevdata/etop02nobath.hlf"
+gt2rpc &outimg rpctype=&rpctype
+rpccorn (&outimg,&dted) cornonly=y
+gtlabfix &outimg
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc
+.TITLE
+ikqbwarpad - warp one (or n) additional band(s) of ikonos
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.vari band
+the band symbol
+.END

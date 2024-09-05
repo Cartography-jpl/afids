@@ -1,0 +1,44 @@
+process help=*
+PARM INP         TYPE=(STRING,99) COUNT=(2:3)
+PARM KEY         TYPE=INTEGER
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+EXECUTION:
+
+Example
+
+lpselect A B C D
+
+TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim          26 Apr 2007
+
+.LEVEL1
+.VARIABLE INP
+This variable specifies the
+".slp" file, .dlp file,
+and the file with selected
+keys.  The .slp file
+MUST be specified whereas
+the .dlp file is optional.
+The .slp file MUST be
+specfied before the .dlp
+file.
+
+For example:
+inp=(lake.slp, keyfile)
+inp=(lake.slp,lake.dlp,keyfile)
+.VARIABLE KEY
+This variable specifies
+which column of the key file
+the keys are in.
+
+For example:
+if the key column is the
+first column of the key file -
+key=1
+.END

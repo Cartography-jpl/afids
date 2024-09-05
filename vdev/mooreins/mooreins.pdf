@@ -1,0 +1,29 @@
+procedure
+parm inp string
+parm out string
+parm dmax int default=1000
+parm skiptst int default=1
+
+local qexist int
+local nl int
+local ns int
+body
+
+! HANDYPROC FOR MOORE DISTANCE INSIDE AN IMAGE FOOTPRINT
+
+if (skiptst=1)
+   file2tcl &out val=qexist
+   if (qexist=1) goto theend
+end-if
+
+lab2tcl &inp v1=nl v2=ns keyword=(nl,ns) 'system
+f2 &inp xxxd +
+ fun="(in1==0)*1+(line==1)+(samp==1)+(line==&nl)+(samp==&ns)"
+concomp xxxd (xxxe,xxxw)
+f2 xxxe xxxf fun="(in1==1)*16000" format=half
+moore xxxf xxxg dmax=&dmax
+f2 xxxg &out fun="(in1<16000)*in1"
+
+theend>
+end-proc
+

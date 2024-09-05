@@ -1,0 +1,6 @@
+$ vpack median.com -mixed -
+	-s median.f -
+	-i median.imake -
+	-p median.pdf -
+	-t tstmedian.pdf tstmedian.log
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack destripe.com -mixed -
+	-s destripe.f -
+	-i destripe.imake -
+	-p destripe.pdf -
+	-t tstdestripe.pdf tstdestripe.log
+$ Exit

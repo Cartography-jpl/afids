@@ -1,0 +1,118 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /raid1/afids64oc/vdev
+Disabling interrupts ...
+
+let set     = "set2"
+let path    = "/raid1/clouds/nacma/dataset/"//"set2"
+let outpath = "/raid1/clouds/nacma/dataset/set2"//"/output"
+let band1   = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_1.img"
+let band2   = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_2.img"
+let band3   = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_3N.img"
+let band4   = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_4.img"
+let band5   = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_5.img"
+let band13  = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_13.img"
+let band14  = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_14.img"
+let meta    = "/raid1/clouds/nacma/dataset/set2"//"/"//"set2"//"_VNIR.txt"
+let filt1   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt1"
+let filt2   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt2"
+let filt3   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt3"
+let filt4   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt4"
+let filt5   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt5"
+let filt6   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt6"
+let filt7   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt7"
+let filt8   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt8"
+let filt9   = "/raid1/clouds/nacma/dataset/set2/output"//"/filt9"
+let rad1    = "/raid1/clouds/nacma/dataset/set2/output"//"/rad1"
+let rad2    = "/raid1/clouds/nacma/dataset/set2/output"//"/rad2"
+let rad3    = "/raid1/clouds/nacma/dataset/set2/output"//"/rad3"
+let rad4    = "/raid1/clouds/nacma/dataset/set2/output"//"/rad4"
+let rad5    = "/raid1/clouds/nacma/dataset/set2/output"//"/rad5"
+let rad13   = "/raid1/clouds/nacma/dataset/set2/output"//"/rad13"
+let rad14   = "/raid1/clouds/nacma/dataset/set2/output"//"/rad14"
+let ref1    = "/raid1/clouds/nacma/dataset/set2/output"//"/ref1"
+let ref2    = "/raid1/clouds/nacma/dataset/set2/output"//"/ref2"
+let ref3    = "/raid1/clouds/nacma/dataset/set2/output"//"/ref3"
+let ref4    = "/raid1/clouds/nacma/dataset/set2/output"//"/ref4"
+let ref5    = "/raid1/clouds/nacma/dataset/set2/output"//"/ref5"
+let tmpout  = "/raid1/clouds/nacma/dataset/set2/output"//"/klvn"
+let bcomp   = "/raid1/clouds/nacma/dataset/set2/output"//"/bcomp"
+let tb13out = "/raid1/clouds/nacma/dataset/set2/output"//"/tb13"
+let tb14out = "/raid1/clouds/nacma/dataset/set2/output"//"/tb14"
+let cmvalid = "/raid1/clouds/nacma/dataset/set2/output"//"/validmask"
+let cmambig = "/raid1/clouds/nacma/dataset/set2/output"//"/ambigmask"
+let final   = "/raid1/clouds/nacma/dataset/set2/output"//"/finalout"
+nacma inp=("/raid1/clouds/nacma/dataset/set2/set2_1.img", "/raid1/clouds/nacma/datas+
+et/set2/set2_2.img", "/raid1/clouds/nacma/dataset/set2/set2_3N.img"+
+, "/raid1/clouds/nacma/dataset/set2/set2_4.img", "/raid1/clouds/nac+
+ma/dataset/set2/set2_5.img", "/raid1/clouds/nac+
+ma/dataset/set2/set2_13.img", "/raid1/clouds/nacma/data+
+set/set2/set2_14.img")        filter1out="/raid1/clouds/nacm+
+a/dataset/set2/output/filt1" filter2out="/raid1/clouds/nacma/dataset/se+
+t2/output/filt2" filter3out="/raid1/clouds/nacma/dataset/set2/output/fil+
+t3"        filter4out="/raid1/clouds/nacma/dataset/set2/output/f+
+ilt4" filter5out="/raid1/clouds/nacma/dataset/set2/output/filt5" filter6out="/raid1/clouds/nacma/dataset/set2/output/filt6"        +
+filter7out="/raid1/clouds/nacma/dataset/set2/output/filt7" filter8out="/raid1/clouds/nacma/dataset/set2/output/filt8"        ref1ou+
+t="/raid1/clouds/nacma/dataset/set2/output/ref1" ref2out="/raid1/clouds/nacma/dataset/set2/output/ref2" ref3out="/raid1/clouds/nacm+
+a/dataset/set2/output/ref3"        ref4out="/raid1/clouds/nacma/dataset/set2/output/ref4" ref5out="/raid1/clouds/nacma/dataset/set2+
+/output/ref5" tempcompout="/raid1/clouds/nacma/dataset/set2/output/bcomp"        rad1out="/raid1/clouds/nacma/dataset/set2/output/r+
+ad1" rad2out="/raid1/clouds/nacma/dataset/set2/output/rad2" rad3out="/raid1/clouds/nacma/dataset/set2/output/rad3" rad4out="/raid1/+
+clouds/nacma/dataset/set2/output/rad4"        rad5out="/raid1/clouds/nacma/dataset/set2/output/rad5" rad13out="/raid1/clouds/nacma/+
+dataset/set2/output/rad13" rad14out="/raid1/clouds/nacma/dataset/set2/output/rad14" out="/raid1/clouds/nacma/dataset/set2/output/fi+
+nalout"        meta="/raid1/clouds/nacma/dataset/set2/set2_VNIR.txt" btemp13out="/raid1/clouds/nacma/dataset/set2/output/tb13" btem+
+p14out="/raid1/clouds/nacma/dataset/set2/output/tb14"        maskvalid="/raid1/clouds/nacma/dataset/set2/output/validmask"
+Beginning VICAR task nacma
+
+Extracted from metafile.
+========================
+Calendar date: 2005 3 3
+Elevation:     41.991448
+Gain 1: 0
+Gain 2: 0
+Gain 3: 1
+Gain 4: 1
+Gain 5: 1
+Gain 6: 1
+Gain 7: 1
+Gain 8: 1
+Gain 9: 1
+Gain 10: 1
+Gain 11: 1
+Gain 12: 1
+Gain 13: 1
+Gain 14: 1
+Gain 15: 1
+day of year: 62
+Earth Sun Dist: 0.990744
+Acquired data from metafile...
+snow count: 375619
+desratio: 0.002755 snowper: 78.484015
+only cold clouds are clouds, reanalyzing warm clouds
+negative skew
+warm: 292.091406 cold: 274.657694
+cold clouds are added to pass1
+END-PROC

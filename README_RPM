@@ -1,0 +1,10 @@
+To make a RPM for installing as a redhat package, we can do the following:
+
+1. Do a configure using the configure found in this file.
+2. make distcheck.
+3. cp afids-1.01.tar.gz ~/rpmbuild/SOURCES/
+4. rpmbuild -ba <srcdir>/afids-xvd.spec
+
+We then have the RPMs ~/rpmbuild/RPMS/x86_64/afids-1.01-1.x86_64.rpm and
+~/rpmbuild/SRPMS/afids-1.01-1.src.rpm which can be copied to a repository.
+

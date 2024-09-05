@@ -1,0 +1,44 @@
+procedure
+refgbl $echo
+parm version string def="ibis-1"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+! null case, area
+
+gen xxxim1 nl=5 ns=5 ival=204 linc=0 sinc=0 'half
+
+! Case 2 (Yellowknife Monument 7285):
+! http://cddis.nasa.gov/sgp_sitecat/yell_home.html
+! Scroll down to "MONUMENT INFORMATION", where the elevations for
+! Monument 7285 are given.
+!  Yellowknife #7285: 62.47935N 114.472384W
+! Geoid: 203.923m
+! Separation: Not Given
+! Ellipsoid: 176.843m         Ellipsoid height is Lower
+
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,-114.472385,62.47936,0.0)", +
+      "ModelTiePointTag=(5,0,0,-114.472383,62.47936,0.0)", +
+      "ModelTiePointTag=(0,5,0,-114.472385,62.47934,0.0)", +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtlist xxxim2
+
+egm2wgs xxxim2 xxxim3
+
+gtlist xxxim3
+
+list xxxim2
+write "above numbers for geoid, should be higher"
+
+list xxxim3
+write "above numbers for ellipsoid, should be lower"
+
+theend>
+end-proc

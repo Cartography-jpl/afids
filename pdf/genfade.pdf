@@ -1,0 +1,47 @@
+procedure
+
+parm subdir type=string def="IZ1_10SEP09_10SEP14"
+parm outimg type=string def="IZ1_10SEP09_10SEP14.img"
+
+body
+
+write "gedfade version Sat May  7 2011"
+write "subdir &subdir"
+write "outimg &outimg"
+
+ibis-copy outtab outtab22 nc=22
+
+! ignore class 6
+rowop2 outtab22 fadetab keycol=11 range=(6,6) 'delete
+
+!Let's set cols:
+!12 BV (outimg)
+!13 BG (nxdifbg)
+!14 NDVI (nxdifndvi)
+!15 B1_BV (nxdif1)
+!16 B2_BV (nxdif2)
+!17 B3_BV (nxdif3)
+!18 B4_BV (nxdif4)
+!19 B5_BV (nxdif5)
+
+getzval (&subdir/&outimg, fadetab) cols=(3,4,12) 'NOIN
+!getzval (nxdifbg, fadetab) cols=(3,4,13) 'NOIN
+!getzval (nxdifndvi, fadetab) cols=(3,4,14) 'NOIN
+getzval (&subdir/dif1, fadetab) cols=(3,4,15) 'NOIN
+getzval (&subdir/dif2, fadetab) cols=(3,4,16) 'NOIN
+getzval (&subdir/dif3, fadetab) cols=(3,4,17) 'NOIN
+getzval (&subdir/dif4, fadetab) cols=(3,4,18) 'NOIN
+getzval (&subdir/dif5, fadetab) cols=(3,4,19) 'NOIN
+getzval (&subdir/dif6, fadetab) cols=(3,4,20) 'NOIN
+getzval (&subdir/dif7, fadetab) cols=(3,4,21) 'NOIN
+getzval (&subdir/dif8, fadetab) cols=(3,4,22) 'NOIN
+
+ibis-l fadetab cols=(9,10) +
+   'noheader 'nocol outfile=outfadecoords +
+   cfor="%15.8f %14.8f"
+
+ibis-l fadetab cols=(12,15,16,17,18,19,20,21,22) +
+   'noheader 'nocol outfile=outfade +
+   cfor="%7.0f %7.0f %7.0f %7.0f %7.0f %7.0f %7.0f %7.0f %7.0f"
+
+end-proc

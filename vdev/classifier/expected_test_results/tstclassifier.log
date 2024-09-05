@@ -1,0 +1,10 @@
+tstclassifier
+classifier inp=(sp/spot6_blu.hlf, sp/spot6_grn.hlf, sp/spot6_nir.hlf, sp/spot6_red.hlf) classibis=sp/subclusters.ibis out=(classifi+
+edResult.img, classifiedResultDist.img)
+Beginning VICAR task classifier
+classifier - 10-17-2019 - rjb - 64-bit:
+isExpMax: 0
+
+let $echo="no"
+exit
+slogoff

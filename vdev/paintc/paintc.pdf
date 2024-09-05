@@ -1,0 +1,52 @@
+PROCESS      HELP=*
+PARM INP       TYPE=STRING  COUNT=2
+PARM OUT       TYPE=STRING  COUNT=1
+PARM COLS      TYPE=INTEGER COUNT=2 DEFAULT=(1,2)
+PARM BDN       TYPE=INTEGER COUNT=1 DEFAULT=0
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "paintc"
+.HELP
+PURPOSE
+This program recolors the dn in the input
+image with the corresponding color in the
+colormap ibis image.  The columns of the
+colormap must be specified or defaults to
+(1, 2).
+If an inp dn is not specified in the
+colormap, the out dn will default to the
+bdn (background dn).
+
+History 
+    11-10-2018 - p kim
+    10-06-2019 - rjb - removed warnings
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+ Input colormap IBIS file
+
+.VARIABLE OUT
+ Output image file
+
+.VARIABLE COLS
+ Columns of the colormap
+ 1st column is input dn
+ 2nd column is output dn
+
+.VARIABLE BDN
+ Background color
+
+.END
+
+
+
+
+
+
+
+
+
+
+

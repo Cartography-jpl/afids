@@ -1,0 +1,10 @@
+$ vpack vextract.com -mixed -
+	-s vextract.c des.c df_read.c dfparse.c graphic.c image.c j_io.c -
+	   j_string.c label.c md5c.c menu.c rbd_jpeg.c symbol.c text.c tre.c -
+	   unblock.c write_fs.c write_text.c vextract_defines.h global.h -
+	   vexlab_defines.h md5.h nitf_s20.h nitf_s21.h rpc00a.dff rpc00b.dff -
+	   stdidc.dff use00a.dff use26a.dff main20.dff main21.dff mpd26a.dff -
+	   vextract.make -
+	-p vextract.pdf -
+	-t tstvextract.pdf devvextract.pdf
+$ Exit

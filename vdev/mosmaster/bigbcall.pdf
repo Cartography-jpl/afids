@@ -1,0 +1,46 @@
+procedure
+parm key string
+parm path string
+parm infile string
+parm band string
+parm hdrtype string default="early"
+
+local master string
+local parfile string
+local pathraw string
+local pathlog string
+local actual string
+local export string init="/export/"
+local net string init="/net/"
+local found int
+
+body
+
+let parfile = "&key" // "_params"
+let master = "&key" // "_master"
+
+asc2tcl &parfile keyword="pathraw=" val=pathraw vtype=0
+asc2tcl &parfile keyword="pathin=" val=pathlog vtype=0
+
+file2tcl dir_location val=found
+if (found=1) ush rm -f dir_location
+ush ls -l &pathraw&path > dir_location
+asc2tcl dir_location keyword="/export/" val=actual vtype=0
+
+if (actual="-999")
+  asc2tcl dir_location keyword="/net/" val=actual vtype=0
+  ush rm dir_location
+  write " "
+  write "Processing &infile ..."
+  write " "
+  lsatlog2 &net&actual &pathlog &infile &band pc &hdrtype &master
+else
+  ush rm dir_location
+  write " "
+  write "Processing &infile ..."
+  write " "
+  lsatlog2 &export&actual &pathlog &infile &band pc &hdrtype &master
+end-if
+
+end-proc
+

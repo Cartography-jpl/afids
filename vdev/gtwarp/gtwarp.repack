@@ -1,0 +1,4 @@
+$ vpack gtwarp.com -mixed -
+	-p gtwarp.pdf -
+	-t tstgtwarp.pdf
+$ Exit

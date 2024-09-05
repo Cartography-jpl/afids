@@ -1,0 +1,127 @@
+tstpolarect
+spot a nl=100 ns=100
+Beginning VICAR task spot
+SPOT version 04-Nov-2010 - RJB - 64bit
+****GAUSSIAN PATTERN GENERATED
+polarect a b (1 1 100 50) 'AUTO XCEN=50 YCEN=50
+Beginning VICAR task polarect
+POLARECT version - 16 Jul 2016 (64-bit) - rjb
+IGOT =     997952
+plrect: igot = ibfsiz =     997952
+WORK CORE AVAILABLE= 997952 BYTES
+ INPUT IMAGE STATISTICS FOR XCEN=   50.00, YCEN=   50.00
+  SIZE: NL= 100 NS= 100
+  ANGULAR RANGE: PHIMIN=  0.0000, PHIMAX=360.0000
+  RADIAL RANGE: RMIN=   0.000, RMAX=  70.711
+  OPTIMAL ANGULAR RESOLUTION= 0.81023 YIELDS  445 LINES
+  OPTIMAL RADIAL SCALE=   1.000 YIELDS   72  SAMPLE
+OUTPUT IMAGE STATISTICS
+  SIZE: NL= 100 NS=  50
+  ANGULAR RANGE: PHIMIN=  0.0000, PHIMAX=360.0000
+  RADIAL RANGE: RMIN=   0.000, RMAX=  70.711
+          ANGULAR RESOLUTION= 3.63636
+          RADIAL SCALE= 1.44308
+VICAR HISTORY LABEL WRITTEN:
+         PHIMIN=   0.00000 AT LINE 1, PHIMAX= 360.00000 AT LINE 100
+         RMIN=   0.00000 AT SAMP 1, RMAX=  70.71068 AT SAMP  50
+         CENTER OF TRANSFORMATION XCEN=   50.000, YCEN=   50.000
+ 100 INPUT LINES COMPLETE
+label-li b
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File b ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                100 lines per band
+                50 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: SPOT -- User: rjb -- Wed Jul 27 01:07:59 2016 ----
+---- Task: POLARECT -- User: rjb -- Wed Jul 27 01:07:59 2016 ----
+PHIMIN=0.0
+PHIMAX=6.28318
+RMIN=0.0
+RMAX=70.7107
+XCEN=50.0
+YCEN=50.0
+RESO=0.0634665
+RSCALE=1.44308
+ 
+************************************************************
+polarect b c (1 1 100 100) 'INVERSE
+Beginning VICAR task polarect
+POLARECT version - 16 Jul 2016 (64-bit) - rjb
+IGOT =     997952
+plrect: igot = ibfsiz =     997952
+WORK CORE AVAILABLE= 997952 BYTES
+INVERSE MODE SPECIFIED
+ VICAR HISTORY LABEL READ:
+ PHIMIN =    0.00000
+ PHIMAX =    6.28318
+ RMIN =    0.00000
+ RMAX =   70.71070
+ XCEN =   50.00000
+ YCEN =   50.00000
+ RESO =    0.06347
+ SCALE =    1.44308
+ 100 INPUT LINES COMPLETE
+label-li c
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File c ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                100 lines per band
+                100 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: SPOT -- User: rjb -- Wed Jul 27 01:07:59 2016 ----
+---- Task: POLARECT -- User: rjb -- Wed Jul 27 01:07:59 2016 ----
+PHIMIN=0.0
+PHIMAX=6.28318
+RMIN=0.0
+RMAX=70.7107
+XCEN=50.0
+YCEN=50.0
+RESO=0.0634665
+RSCALE=1.44308
+---- Task: POLARECT -- User: rjb -- Wed Jul 27 01:07:59 2016 ----
+ 
+************************************************************
+difpic (a,c) d
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  1.11560
+ NUMBER OF POS DIFF= 718
+ AVE VAL OF NEG DIFFS= -1.13232
+ NUMBER OF NEG DIFFS= 990
+ TOTAL NUMBER OF DIFFERENT PIXELS=1708
+ AVE VAL OF DIFFS=-0.320000E-01
+ % DIFF PIXELS=  17.0800
+list d (30,50,10,10)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:SPOT      User:rjb       Date_Time:Wed Jul 27 01:07:59 2016
+ Task:DIFPIC    User:rjb       Date_Time:Wed Jul 27 01:07:59 2016
+     Samp    50      52      54      56      58
+   Line
+     30       0   1   0   1   0   0   0   0   0   0
+     31       0   0   0   0   0   0   0   1   1   0
+     32       0   0   0   1   1   0   0   0   1   0
+     33       0   0   0   0   0   0   0   0   1   0
+     34       0   0   0   0   0   2   1   0   0   0
+     35       0   0   1   1   0   0   0   0   1   0
+     36       1   0   0   0   2   0   0   0   0   0
+     37       0   1   1   0   0   2   0   0   1   0
+     38       0   0   0   1   1   3   0   1   0   0
+     39       1   0   2   0   1   0   2   1   0   1
+let $echo="no"
+exit
+slogoff

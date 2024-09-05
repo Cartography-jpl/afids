@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+spotref inp=(../test_data/spot6_blu.hlf, ../test_data/spot6_grn.hlf, ../test_data/spot6_red.hlf, ../test_data/spot6_nir.hlf, ../test_data/spot6_pan.hlf) multimeta=../test_data/spot6_multi_meta.xml panmeta=../test_data/spot6_pan_meta.xml out=(blu1.img, grn2.img, red3.img, nir4.img, pan.img)
+
+END-PROC
+
+
+
+
+
+
+
+
+

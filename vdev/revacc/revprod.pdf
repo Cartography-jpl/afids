@@ -1,0 +1,8 @@
+procedure
+parm file1 type=(string,99)
+
+body
+
+xvd &file1
+
+end-proc

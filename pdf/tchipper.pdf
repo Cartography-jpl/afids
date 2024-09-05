@@ -1,0 +1,174 @@
+! VICAR Proc: tchipper.pdf version-1 18MAR05
+! Purpose:    Extract sub-images of constant nl/ns size
+!             out of a single larger image, with an overlap between tiles. 
+!             Individual chips covering a single target sample/line (x/y) 
+!             can be output if target coordinates are supplied in 
+!             a text File (x,y) or if Individually entered.
+!
+! NOTE:       The text File can only contain two columns of numeric (real or
+!             integer) x and y points. No letters or extra columns are permitted!
+!     
+! NOTE:       Tile size can be varied in the lines (Y) and samples (X)
+!             directions, but the overlap 'number of pixels' is the same
+!             for both.
+!
+procedure
+parm     inname  string   !dir and full filename of input vicar gt image 
+parm     outname string   !Output filename; "_&K_&M.tif" will be appended
+parm     elev    string   !Input elevation DEM file covering input image
+parm     txtname string   def="none" !Input text file with x,y or lat/long coordinates
+parm     sl      integer  def=1   !start line of "single input" for subsetting
+parm     ss      integer  def=1   !start sample of "single input" for subsetting
+parm     nl      integer  def=0   !num of lines in input picture
+parm     ns      integer  def=0   !num of samps in input picture
+parm     outl    integer  def=1024  !num of output lines
+parm     outs    integer  def=1024  !num of output samps
+parm     olap    integer  def=128   !amount of overlap for both lines and samples
+parm     tsamp   integer  def=0     !target sample (target mode); X
+parm     tline   integer  def=0     !target line (target mode); Y
+local    num     integer  !Counter
+local    I       integer  !Line increment index
+local    J       integer  !Samp increment index
+local    K       integer  !Starting line with overlap offset
+local    M       integer  !Starting samp with overlap offset
+local    K2      integer  !Reset k
+local    M2      integer  !Reset m
+local    offl    integer  !Offset, outl - olap
+local    offs    integer  !Offset, outs - olap
+local    pol     integer  !parent offset line
+local    pos     integer  !parent offset samp
+local    format  string   !parent pixel format
+local    clen    integer  !target file column length
+local    mode    integer  !0 = File Mode; any other number = Individual Mode
+local    found   integer  !1=found; 0=not found
+
+body
+
+!Get image nl ns dimensions
+if ((sl > 1 or ss > 1) and (nl < 1 or ns < 1))
+    form &"inname" format nl ns
+    let nl = (nl - sl) + 1
+    let ns = (ns - ss) + 1
+else
+    if (nl < 1 or ns < 1)  form &"inname" format nl ns
+end-if
+write "sl= &sl"
+write "ss= &ss"
+write "nl= &nl"
+write "ns= &ns"
+
+!Create rpc chip grid
+rpc2grid (&"inname",&elev) out=xxchip2grid nah=500 nav=500 ncol=8
+
+let       mode = tline
+
+!Prepare variables for either File Mode or Individual Mode
+if       (mode = 0) goto next1  !0 = File Mode
+let       clen = 1
+goto      next2
+next1>
+vquic     inp=&txtname out=xxxa ncol=3 cols=(1,2)
+mf3       xxxa func="c3=@index"
+ibis-l    xxxa
+ibis2tcl  xxxa vclen=clen
+write    "vclen = &clen"
+next2>
+let       I = 0
+
+
+!Loop once for Individual Mode, Loop 'clen' times for File Mode
+loop
+let      I = I + 1 
+write   "I = &I"
+   if   (I > clen) break
+   if   (mode = 0) 
+         ibis2tcl xxxa tsamp tline ibisloc=(&I,1,&I,2) varty=(3,3)
+   else
+   end-if
+
+let      offl = outl - olap
+let      offs = outs - olap
+let      K    = ((tline/offl)*offl)+1
+let      M    = ((tsamp/offs)*offs)+1
+let      K2   = K
+let      M2   = M
+
+!Check to see if the chip already exists...if so, skip it
+file2tcl &"outname"_&"K"_&"M".tif val=found
+   if (found=1)
+       write "Chip &"outname"_&"K"_&"M".tif already exists....skipping"
+       goto next7
+   else
+       write "Making Chip &"outname"_&"K"_&"M".tif"
+   end-if
+gtcopy   &"inname" xxxb size=(&K,&M,&outl,&outs)
+let      pol = K - 1
+let      pos = M - 1 
+label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+rpccorn  (xxxb,&elev)
+vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!gtcopy    xxxb &"outname"_&"K"_&"M".hlf
+write "Output Chip  sl= &K  ss= &M"
+
+if      (tline < (K+olap))
+   let      K = K - offl
+   if      (K < 1) goto next3
+   gtcopy   &"inname" xxxb size=(&K,&M,&outl,&outs)
+   let      pol = K - 1
+   let      pos = M - 1 
+   label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+   label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+   rpccorn  (xxxb,&elev)
+   vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!   gtcopy    xxxb &"outname"_&"K"_&"M".hlf 
+   write "Output Chip  sl= &K  ss= &M"
+   next3>
+   let      K = K2
+else
+end-if
+
+if      (tsamp < (M+olap))
+   let      M = M - offs
+   if      (M < 1) goto next4
+   gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+   let      pol = K - 1
+   let      pos = M - 1
+   label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+   label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+   rpccorn  (xxxb,&elev)
+   vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!   gtcopy    xxxb &"outname"_&"K"_&"M".hlf 
+   write "Output Chip  sl= &K  ss= &M"
+   next4> 
+   let      M = M2
+else
+end-if
+
+if     ((tsamp < (M+olap)) and (tline < (K+olap))) 
+    let     M = M - offs
+    let     K = K - offl
+    if    ((K < 1) or (M < 1)) goto next5
+    gtcopy  &"inname" xxxb size=(&K,&M,&outl,&outs)
+    let     pol = K - 1
+    let     pos = M - 1 
+    label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+    label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF" 
+    rpccorn  (xxxb,&elev)
+    vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!    gtcopy    xxxb &"outname"_&"K"_&"M".hlf
+    write  "Output Chip  sl= &K  ss= &M"
+    next5> 
+else
+end-if
+next7>
+end-loop
+
+gen  xxxa  !not created in Individual Mode
+gen  xxxb  !not created in Individual Mode
+ush  rm   xxxa
+ush  rm   xxxb
+
+write "MSG: CHIPPING COMPLETE"
+
+end-proc

@@ -1,0 +1,21 @@
+procedure
+body
+
+!run_band band=2 ll_lat=33.020 ll_lon=43.910 num_qlat=1.428 +
+!   num_qlon=1.668 pixdeg=108000.0 mpix=1.0
+
+run_band band=11 ll_lat=33.020 ll_lon=43.910 num_qlat=1.428 +
+   num_qlon=1.668 pixdeg=108000.0 mpix=1.0
+
+run_band band=12 ll_lat=33.020 ll_lon=43.910 num_qlat=1.428 +
+   num_qlon=1.668 pixdeg=108000.0 mpix=1.0
+
+run_band band=13 ll_lat=33.020 ll_lon=43.910 num_qlat=1.428 +
+   num_qlon=1.668 pixdeg=108000.0 mpix=1.0
+
+run_band band=14 ll_lat=33.020 ll_lon=43.910 num_qlat=1.428 +
+   num_qlon=1.668 pixdeg=108000.0 mpix=1.0
+
+
+theend>
+end-proc

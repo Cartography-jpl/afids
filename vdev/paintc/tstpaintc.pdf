@@ -1,0 +1,43 @@
+procedure
+refgbl $echo
+refgbl $autousage
+
+! test script for paintc
+! 10-06-2019 - rjb
+!
+! vicar programs
+!       gen ibis-gem difpic
+!
+!   external programs
+!       <none>
+!
+body
+let $autousage="none"
+let $echo="yes"
+let _onfail= "stop"
+
+gen x
+ibis-gen x1 nr=10 data=(1,2,3,4)
+gen cx1 linc=2 sinc=2
+
+paintc inp=(x,x1) out=cx1 
+paintc inp=(cx1,x1) out=uncx1 
+difpic inp=(x, cx1)
+difpic inp=(x, uncx1)
+difpic inp=(cx1, uncx1)
+
+let $echo="no"
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

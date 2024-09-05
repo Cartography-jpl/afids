@@ -1,0 +1,174 @@
+procedure help=*
+parm gridfile type=string
+parm image1 type=string
+parm image2 type=string
+parm gridout type=string
+parm fcorfail type=string
+parm seq type=string default="qq"
+
+parm search int default=128
+parm fftsize int default=128
+parm minsrch int default=128
+parm fitmin real default=0.04
+
+parm lsq1 type=real
+parm lsq2 type=real
+parm lsq3 type=real
+
+parm lsqthresh type=int
+parm magnif type=real default=1.0
+parm thr_res type=real default=10.0
+
+local corfail int
+local xxxxlsq1 string
+local xxxxlsq2 string
+local xxxxlsq3 string
+local gridoutlen type=int
+local fitmin2 real
+
+body
+
+
+DO NOT USE UNTIL PICMTCH5 AUTOMATION ADDED , SEE PICLSQQD
+let _onfail="continue"
+
+let corfail = 1
+let xxxxlsq1 = "xxxxlsq1" // "&seq"
+let xxxxlsq2 = "xxxxlsq2" // "&seq"
+let xxxxlsq3 = "xxxxlsq3" // "&seq"
+let fitmin2 = fitmin*0.5
+
+mf3 &gridfile f="c11=@rand"
+sort &gridfile sortcol=11
+
+picmtch5 (&image1,&image2,&gridfile) SEARCH=&search  fftsize=&fftsize +
+       minsrch=&minsrch zrej=255 fitmin=&fitmin +
+       pred=linear autofit=12 redo=40 thr_res=&thr_res +
+       magnif=(&magnif,&magnif)
+ibis-l &gridfile cols=(5,8,9,10,11)
+
+!  lsq linear approach for eliminating bad match points.
+!  need more columns
+ibis-gen   xxxxlsq3 version="ibis-2" org=column nc=15 nr=1 deffmt=DOUB
+ibis-copy  &gridfile xxxxlsq3 nc=15
+!  remove -9999 points from file (failed matches)
+rowop2      xxxxlsq3 xxxxlsq1 keycol=9 range=(-10000.0,&fitmin2) 'delete 
+mf3        xxxxlsq1 func="c12=1.0"
+
+!lsq1
+ibislsq2 xxxxlsq1 indcol=(1,2,12)  depcol=6 rescol=13
+ibislsq2 xxxxlsq1 indcol=(1,2,12)  depcol=7 rescol=14
+mf3       xxxxlsq1 func="c15=@sqrt(c13*c13+c14*c14)"
+!ibis-l    xxxxlsq1 cols=(1,2,6,7,10,11,13,14,15)
+!  tolerance value set to 14 for lsq1, but can be changed
+rowop2     xxxxlsq1 xxxxlsq2 keycol=15 range=(0.0,&lsq1) 'select
+ibis-list  xxxxlsq2 cols=(1,2,6,7,10,11,13,14,15)
+
+!lsq2
+ibislsq2 xxxxlsq2 indcol=(1,2,12)  depcol=6 rescol=13
+ibislsq2 xxxxlsq2 indcol=(1,2,12)  depcol=7 rescol=14
+mf3        xxxxlsq2 func="c15=@sqrt(c13*c13+c14*c14)"
+!ibis-l     xxxxlsq2 cols=(1,2,6,7,10,11,13,14,15)
+!  tolerance value set to 7 for lsq1, but can be changed
+rowop2      xxxxlsq2 xxxxlsq3 keycol=15 range=(0.0,&lsq2) 'select
+ibis-list  xxxxlsq3 cols=(1,2,6,7,10,11,13,14,15)
+
+!lsq3
+ibislsq2 xxxxlsq3 indcol=(1,2,12)  depcol=6 rescol=13
+ibislsq2 xxxxlsq3 indcol=(1,2,12)  depcol=7 rescol=14
+mf3        xxxxlsq3 func="c15=@sqrt(c13*c13+c14*c14)"
+!ibis-l     xxxxlsq3 cols=(1,2,6,7,10,11,13,14,15)
+!  tolerance value set to 3 for lsq1, but can be changed
+rowop2      xxxxlsq3 &gridout keycol=15 range=(0.0,&lsq3) 'select
+ibis-list  &gridout cols=(1,2,6,7,9,10,11,13,14,15)
+
+pixmap (&gridout,&image2) mapcol=(3,4) pixcol=(6,7) 'pixtomap
+
+ibis2tcl &gridout vclen=gridoutlen vartype=1
+if (gridoutlen>lsqthresh) let corfail = 0
+write "gridoutlen lsqthresh corfail &gridoutlen &lsqthresh &corfail"
+save-variable file=&fcorfail variable=(corfail)
+
+end-proc
+.TITLE
+piclsq - picmtch5 and apply lsq to remove bad matches
+.HELP
+PURPOSE
+     
+	   
+CALL
+
+sample code from avwarp.pdf:
+
+
+
+gengrid out=&xxe ncol=11 nah=5 nav=4 hbase=400.0 hsize = 700.0 +
+                                    vbase=170.0 vsize = 240.0
+
+
+piclsq &xxe &xxxB3out1 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 fitmin=0.0 +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=16
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone
+
+piclsq &xxe &xxxB3out1 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 fitmin=0.0 +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=10
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone
+
+write "none of the correlations worked, clock step"
+ibis-l corrnotwork
+
+cordone>
+
+
+
+another sample case from that proc:
+
+
+
+gengrid out=&xxe ncol=11 nah=8 nav=6 hbase=600.0 hsize = 180.0 +
+                                    vbase=110.0 vsize = 180.0
+
+
+piclsq &xxe &xxxB3out3 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 fitmin=0.0 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=35
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone2
+
+piclsq &xxe &xxxB3out3 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 fitmin=0.0 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=25
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone2
+
+write "none of the correlations worked, final step"
+ibis-l corrnotwork
+
+cordone2>
+
+
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 21 Jan, 2002
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 21 Jan, 2002
+
+.LEVEL1
+
+.END

@@ -1,0 +1,6 @@
+$ vpack rpdeyeref.com -mixed -
+	-s rpdeyeref.c rpdeyestrtch.c ImageUtils.c ImageUtils.h RapidEyeManager.c RapidEyeManager.h -
+	-i rpdeyeref.imake -
+	-p rpdeyeref.pdf rpdeyestrtch.pdf multirpdeyeref.pdf -
+	-t tstrpdeyeref.pdf
+$ Exit

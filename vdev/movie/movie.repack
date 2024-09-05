@@ -1,0 +1,3 @@
+$ vpack movie.com -mixed -
+	-p moviemaster.pdf movierunc.pdf movieruncbk.pdf calibapp.pdf
+$ Exit

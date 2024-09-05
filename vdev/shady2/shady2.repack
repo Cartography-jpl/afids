@@ -1,0 +1,6 @@
+$ vpack shady2.com -mixed -
+	-s shady2.f -
+	-i shady2.imake -
+	-p shady2.pdf -
+	-t tstshady2.pdf tstshady2.log
+$ Exit

@@ -1,0 +1,8 @@
+procedure
+parm     pipname  string  def="pipe1"
+local    message  string
+body
+
+fifor    pipename=&"pipname" strvar=message
+write    "File &message processed"
+end-proc

@@ -1,0 +1,4 @@
+$ vpack gtp.com -mixed -
+	-p gtp.pdf -
+	-t tstgtp.pdf
+$ Exit

@@ -1,0 +1,70 @@
+procedure
+parm inp type=(string,99)
+parm out type=(string,99)
+parm ref type=(string,99)
+parm xvd string valid=("n","y") default="n"
+
+parm typref type=keyword count=(0:1) valid=(coverref,coverinp) +
+     default=coverref
+parm interp type=keyword count=(0:1) valid=(noin,bilin) +
+     default=bilin
+parm nah type=int count=1 default=100
+parm nav type=int count=1 default=100
+parm gorewid type=int count=1 default=2
+parm fftsize type=int count=1 default=64 valid=32:1024
+parm magnify type=real count=1 default=1.0 valid=(0.0:5000.0)
+parm toler type=real count=1 default=3.0 valid=(0.0:20.0)
+parm polyfit type=string count=(0:1) default="" +
+   VALID=("","LINEAR","KEYSTONE","QUAD","CUBIC")
+
+local master type=(string,99)
+local vinp type=(string,99)
+local temp type=(string,99)
+local accplot type=(string,99)
+local temp1 type=(string,99)
+local fmt1 string
+local fmt2 string
+body
+
+! utility to process correlation correction GeoTIFF to GeoTIFF
+
+let master = "&out" // "vref"
+let vinp = "&out" // "vinp"
+let temp = "&out" // ".vic"
+let temp1 = "&out" // "temp1"
+let accplot = "&out" // ".accplot"
+
+vtiff3-tovic &inp &vinp
+vtiff3-tovic &ref &master
+
+gtpwarp &vinp +
+   &temp +
+   ref=&master +
+   typref=&typref interp=&interp +
+   nah=&nah nav=&nav gorewid=&gorewid fftsize=&fftsize +
+   magnify=&magnify toler=&toler polyfit="&polyfit" +
+   accplot=&accplot
+gtlist &temp
+
+if (xvd="y")
+   lab2tcl &temp v1=fmt1 keyword=format 'system
+   lab2tcl &master v1=fmt2 keyword=format 'system
+   if (fmt1=fmt2)
+      xvd (&temp,&master,&master)
+   else-if (fmt1="BYTE")
+      f2 &master +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp,&temp1,&temp1)
+   else-if (fmt2="BYTE")
+      f2 &temp +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp1,&master,&master)
+   end-if
+end-if
+
+vtiff3-fromvic &temp &out
+
+if (xvd="n") ush /bin/rm -f &master &vinp
+end-proc

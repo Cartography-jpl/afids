@@ -1,0 +1,6 @@
+$ vpack mosplot.com -mixed -
+	-s mosplot.f -
+	-i mosplot.imake -
+	-p mosplot.pdf -
+	-t tstmosplot.pdf tstmosplot.log
+$ Exit

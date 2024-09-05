@@ -1,0 +1,23 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+ibisx xx1
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

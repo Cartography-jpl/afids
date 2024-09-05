@@ -1,0 +1,6 @@
+$ vpack f2ratio.com -mixed -
+	-s f2ratio.c -
+	-i f2ratio.imake -
+	-p f2ratio.pdf -
+	-t tstf2ratio.pdf
+$ Exit

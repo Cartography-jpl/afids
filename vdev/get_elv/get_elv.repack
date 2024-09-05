@@ -1,0 +1,4 @@
+g $ vpack get_elv.com -mixed -
+	-p get_elv.pdf -
+	-t tstget_elv.pdf
+$ Exit

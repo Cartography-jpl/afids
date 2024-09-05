@@ -1,0 +1,6 @@
+$ vpack f2comp.com -mixed -
+	-s f2comp.c -
+	-i f2comp.imake -
+	-p f2comp.pdf -
+	-t tstf2comp.pdf
+$ Exit

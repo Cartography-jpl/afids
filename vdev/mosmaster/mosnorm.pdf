@@ -1,0 +1,50 @@
+procedure
+parm in string
+parm out string
+parm peakval real default=0.0
+
+local x1 string
+local x2 string
+body
+
+let x1 = "scratch/xxxmntemp1"
+let x2 = "scratch/xxxmntemp2"
+
+!goto curr
+
+gtsize &in &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize &x1 &x2 pzoom=0.8
+gtsize &x2 &x1 pzoom=0.8
+
+gtsize (&x1,&in) &x2 'coverref
+hist &x1
+if (peakval<0.001) goto theend
+
+curr>
+f2 inp=(&x2,&in) out=&out +
+ func="(((in2*&peakval)/in1-&peakval)*2.0+128)*0.3+in2*0.7"
+
+theend>
+end-proc

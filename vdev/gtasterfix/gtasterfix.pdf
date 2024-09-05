@@ -1,0 +1,45 @@
+process help=*
+PARM INP TYPE=STRING COUNT=1
+
+END-PROC
+.TITLE
+gtasterfix - modify the geotiff label in ASTER images for
+             compatibility with programs like gtgen, gtwarp, etc...
+.HELP
+PURPOSE:
+When asterlog changes the HDF ASTER files into VICAR files, the
+label is not compatible to be used with VDEV programs such as
+gtwarp and gtcopy.  "gtasterfix" changes and updates the labels
+so that the image can be input into VDEV programs.
+
+EXECUTION:
+
+Example
+
+gtasterfix A  -- where A is the input file.
+                               
+OPERATION:
+
+Opens the VICAR file.
+Acquires the MODELTIEPOINTTAG labels and their values.
+Performs least squares fitting on 3 corner points.
+Deletes the MODELTIEPOINTTAG labels.
+Adds MODELTRANSFORMATIONTAG into the labels.
+Closes the VICAR file.
+
+TIMING: 
+
+Look at OPERATION documentation.  As fast as the machine
+can perform those operations.
+
+ ORIGINAL PROGRAMMER:    P. Kim          30 Dec 2008
+ COGNIZANT PROGRAMMER:   P. Kim          30 Dec 2008
+ 
+ REVISION HISTORY
+  30-DEC-08    PKIM   Initial version
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image files
+
+.END

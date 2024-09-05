@@ -1,0 +1,4239 @@
+genpc xxximg1 lon=-118 lat=36 mpix=1
+let ilon = $fix(-1.180000000000e+02)
+let mlon = $float(ilon)
+let ilat = $fix(3.600000000000e+01)
+let mlat = $float(ilat)
+let eastp1 = mlon+1.0
+let northm1 = mlat-1.0
+let mpixdeg = pixdeg
+if (mpix<>30.0)
+   let mpixdeg = 108000.0/1.000000000000e+00
+   write "resetting pixdeg 1.080000000000e+05"
+resetting pixdeg 1.080000000000e+05
+end-if
+if (aspect = "square")
+else
+    let mpixhoriz = mpixdeg
+end-if
+gtgen out=xxximg1 'tiecnvrt 'rectfi+
+t     geotiff=("ModelTiePointTag=(0,0,0,-1.180000000000e++
+02,3.600000000000e+01,0.0)",     "ModelTiePointTag=(0,1.08+
+0000000000e+05,0,-1.180000000000e+02,3.500000000000e+01,0.0+
+)",     "ModelTiePointTag=(1.080000000000e+05,0,+
+0,-1.170000000000e+02,3.600000000000e+01,0.0)",    +
+ "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+    "GeogAngularUnitsGeoKey=9102(Angu+
+lar_Degree)",     "GeographicTypeGeoKey=4326(GCS_WGS_84)",     "GTRasterTypeGeoKey=1(RasterPixelIsArea)",     "GeogEllipsoidGeoKey=+
+7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gen xxximg2 nl=1000 ns=1000 ival=1 linc=1 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgenup (xxximg2,xxximg1)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+gtlist xxximg2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtcopy xxximg2 xxximg2a size=(-400,-400,1800,1800)
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+f2 xxximg2a out=xxximg3 func="0.05*abs(10*line-8*samp+855)" format=HALF
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 3240000 TIMES
+list xxximg2 linc=100 sinc=100
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp     1     201     401     601     801
+   Line
+      1       1 101 201  45 145 245  89 189  33 133
+    101     101 201  45 145 245  89 189  33 133 233
+    201     201  45 145 245  89 189  33 133 233  77
+    301      45 145 245  89 189  33 133 233  77 177
+    401     145 245  89 189  33 133 233  77 177  21
+    501     245  89 189  33 133 233  77 177  21 121
+    601      89 189  33 133 233  77 177  21 121 221
+    701     189  33 133 233  77 177  21 121 221  65
+    801      33 133 233  77 177  21 121 221  65 165
+    901     133 233  77 177  21 121 221  65 165   9
+list xxximg3 linc=300 sinc=300
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:F2        User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1   301   601   901  1201  1501
+   Line
+      1        43    77   197   317   437   557
+    301       193    73    47   167   287   407
+    601       343   223   103    17   137   257
+    901       493   373   253   133    13   107
+   1201       643   523   403   283   163    43
+   1501       793   673   553   433   313   193
+gtlist xxximg3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+rpccorn inp=(xxximg2,xxximg3) cornonly=y
+write "rpccorn 12/14/08"
+rpccorn 12/14/08
+let rpcfile = inp(1)
+let dted = inp(2)
+let drad = 180.0/3.1415926536
+lab2tcl xxximg2 v1=nl v2=ns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let rnl = $float(nl)+0.5
+let rns = $float(ns)+0.5
+plab2tcl xxximg2 property=Geotiff val=modeltype   +
+  keyword=gtmodeltypegeokey vtype=4
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+if (grid<>"") goto havegrid
+ibis-gen xxxcrfile3 nc=9 nr=4 deffmt=DOUB datacol=(4,5)  +
+  data=(0.5,0.5,0.5,1.000500000000e+03,1.000500000000e+03,1.000500000000e+03,1.000500000000e+03,0.5)
+Beginning VICAR task ibis
+if (cornonly="n")
+else
+   pixmap (xxxcrfile3,xxximg2) pixcol=(4,5) mapcol=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+   if (modeltype=1)
+   end-if
+   pixmap (xxxcrfile3,xxximg3) pixcol=(6,7) mapcol=(1,2) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+   getzval (xxximg3,xxxcrfile3) cols=(6,7,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+end-if
+ibis2tcl xxxcrfile3 v1=lon1 v2=lat1 v3=elv1 vartype=(-1,-1,-1)  +
+   ibisloc=(1,1,1,2,1,3)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgenup xxximg2   +
+  geotiff=("NITF_CORNERLON1=-1.180000000000e+02","NITF_CORNERL+
+AT1=3.600000000000e+01",     "NITF_CORNERELV1=8.275000000070e+01")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+ibis2tcl xxxcrfile3 v1=lon2 v2=lat2 v3=elv2 vartype=(-1,-1,-1)  +
+   ibisloc=(2,1,2,2,2,3)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgenup xxximg2   +
+  geotiff=("NITF_CORNERLON2=-1.179907407407e+02","NITF_CORNERL+
+AT2=3.600000000000e+01",     "NITF_CORNERELV2=3.172500000002e+02")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+ibis2tcl xxxcrfile3 v1=lon3 v2=lat3 v3=elv3 vartype=(-1,-1,-1)  +
+   ibisloc=(3,1,3,2,3,3)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgenup xxximg2   +
+  geotiff=("NITF_CORNERLON3=-1.179907407407e+02","NITF_CORNERL+
+AT3=3.599074074070e+01",     "NITF_CORNERELV3=1.827500000009e+02")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+ibis2tcl xxxcrfile3 v1=lon4 v2=lat4 v3=elv4 vartype=(-1,-1,-1)  +
+   ibisloc=(4,1,4,2,4,3)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgenup xxximg2   +
+  geotiff=("NITF_CORNERLON4=-1.180000000000e+02","NITF_CORNERL+
+AT4=3.599074074070e+01",     "NITF_CORNERELV4=5.827500000019e+02")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+goto nogrid
+mf3 xxxcrfile3 f="@avg(c1)$@avg(c2)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxxcrfile3,xxximg3) mapcol=(1,2) pixcol=(6,7) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+getzval (xxximg3,xxxcrfile3) cols=(6,7,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+if (cornonly="n")
+else
+   pixmap (xxxcrfile3,xxximg2) pixcol=(4,5) mapcol=(1,2) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+end-if
+ibis2tcl xxxcrfile3 v1=lon v2=lat v3=elv vartype=(-1,-1,-1)  +
+   ibisloc=(1,1,1,2,1,3)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgenup xxximg2   +
+  geotiff=("NITF_CENTERLON=-1.179953703704e+02","NITF_CENT+
+ERLAT=3.599537037035e+01",     "NITF_CENTERELV=1.327500000016e+02")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+if (cornonly="y") goto theend
+ goto theend
+end-proc
+label-list xxximg2
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxximg2 ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-1.180000000000e+02,3.600000000000e+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GEOGANGULARUNITSGEOKEY='9102(Angular_Degree)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RasterPixelIsArea)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+NITF_CORNERLON1='-1.180000000000e+02'
+NITF_CORNERLAT1='3.600000000000e+01'
+NITF_CORNERELV1='8.275000000070e+01'
+NITF_CORNERLON2='-1.179907407407e+02'
+NITF_CORNERLAT2='3.600000000000e+01'
+NITF_CORNERELV2='3.172500000002e+02'
+NITF_CORNERLON3='-1.179907407407e+02'
+NITF_CORNERLAT3='3.599074074070e+01'
+NITF_CORNERELV3='1.827500000009e+02'
+NITF_CORNERLON4='-1.180000000000e+02'
+NITF_CORNERLAT4='3.599074074070e+01'
+NITF_CORNERELV4='5.827500000019e+02'
+NITF_CENTERLON='-1.179953703704e+02'
+NITF_CENTERLAT='3.599537037035e+01'
+NITF_CENTERELV='1.327500000016e+02'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+rpcslant "abc" xxximg2  xxximg3  +
+   out1=xxximg11 out2=xxximg12  ang_n=0.0 ang_e=10.0 rot=8.0  +
+   shift_n=0.0008 shift_e=0.0003  +
+   ref=""
+let $echo="yes"
+write "rpcslant version June 27 2014"
+rpcslant version June 27 2014
+let inpcopy = "xxx" // "abc" // "inpcopy"
+gtcopy xxximg2 xxxabcinpcopy
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+label-list xxximg2
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxximg2 ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-1.180000000000e+02,3.600000000000e+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GEOGANGULARUNITSGEOKEY='9102(Angular_Degree)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RasterPixelIsArea)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+NITF_CORNERLON1='-1.180000000000e+02'
+NITF_CORNERLAT1='3.600000000000e+01'
+NITF_CORNERELV1='8.275000000070e+01'
+NITF_CORNERLON2='-1.179907407407e+02'
+NITF_CORNERLAT2='3.600000000000e+01'
+NITF_CORNERELV2='3.172500000002e+02'
+NITF_CORNERLON3='-1.179907407407e+02'
+NITF_CORNERLAT3='3.599074074070e+01'
+NITF_CORNERELV3='1.827500000009e+02'
+NITF_CORNERLON4='-1.180000000000e+02'
+NITF_CORNERLAT4='3.599074074070e+01'
+NITF_CORNERELV4='5.827500000019e+02'
+NITF_CENTERLON='-1.179953703704e+02'
+NITF_CENTERLAT='3.599537037035e+01'
+NITF_CENTERELV='1.327500000016e+02'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+gt2rpc xxxabcinpcopy
+plab2tcl xxxabcinpcopy property=Geotiff val=mo+
+deltype     keyword=gtmodeltypegeokey vtype=4
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+lab2tcl xxxabcinpcopy v1=nl v2=ns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = nl/3
+let nl3 = 2*nl2
+let ns2 = ns/3
+let ns3 = 2*ns2
+ibis-gen xxxgtrpc433 nc=35 nr=16 deffmt=DOUB datacols=(1,2)  +
+   data=(1,1,1,333,1,666,1,1000,   +
+       333,1,333,333,333,666,333,1000,        +
+  666,1,666,333,666,666,666,1000,          100+
+0,1,1000,333,1000,666,1000,1000)
+Beginning VICAR task ibis
+pixmap (xxxgtrpc433,xxxabcinpcopy) mapcols=(33,34) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+translog AFIDS_VDEV_DATA afidsvdevdata
+let ref = "/opt/afids/data/vdev/etop02nobath.hlf"
+gtproj (xxxgtrpc433,xxxabcinpcop+
+y,/opt/afids/data/vdev/etop02nobath.hlf) incol=(33,34) outcol=(3,4) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+mf3 xxxgtrpc433 f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c5=c1$c6=c2$c7=c1$c8=c2$@vmin(c5)$@vmin(c6)$@vmax(c7)$@vmax(c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c9=(c7-c5)/2$c10=c5+c9$c11=(c8-c6)/2$c12=c6+c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c9=@int(c9)$c10=@int(c10)$c11=@int(c11)$c12=@int(c12)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c13=(c1-c10)/c9$c14=(c2-c12)/c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c15=c3$c16=c4$c17=c3$c18=c4$@vmin(c15)$@vmin(c16)$@vmax(c17)$@vmax(c18)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c19=(c17-c15)/2$c20=c15+c19$c21=(c18-c16)/2$c22=c16+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f=("c19=(@int(c19*10000))/10000$c20=(@int(c20*10000))/10000$",  +
+      "c21=(@int(c21*10000))/10000$c22=(@int(c22*10000))/10000")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433  +
+   f="c23=(c3-c20)/c19$c24=(c4-c22)/c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxgtrpc433 f="c25=1"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibislsq2 xxxgtrpc433 indcol=(25,23,24) depcol=13 coeffcol=(26,27,28) rescol=32
+Beginning VICAR task ibislsq2
+ibislsq2 version Thu Jan  3 2008
+ibislsq2 xxxgtrpc433 indcol=(25,23,24) depcol=14 coeffcol=(29,30,31) rescol=33
+Beginning VICAR task ibislsq2
+ibislsq2 version Thu Jan  3 2008
+let rpcval = 0
+if (rpctype="B") let rpcval=1
+ibis2tcl xxxgtrpc433 v1=loff v2=soff v3=lonoff v4=latoff  +
+   v5=lscl v6=sscl v7=lonscl v8=latscl  +
+   vartype=(-1,-1,-1,-1,-1,-1,-1,-1)  +
+   ibisloc=(1,10,1,12,1,20,1,22,1,9,1,11,1,19,1,21)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtrpc433 v1=lc v2=lx v3=ly v4=sc v5=sx v6=sy  +
+   vartype=(-1,-1,-1,-1,-1,-1)  +
+   ibisloc=(1,26,1,27,1,28,1,29,1,30,1,31)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis-gen xxxgtrpc433b1 nc=1 nr=15 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxgtrpc433b1  +
+   f=("c1=(@index==1)*(0)+(@index==3)*1+(@index==6)*(5.000000000000e+0+
+2)+",        "(@index==7)*(5.000000000000e+02)+(@index==8)*(3.599530000000e+
++01)+(@index==9)*(-1.179953000000e+02)+",        "(@index==11)*(4.9900000000+
+00e+02)+(@index==12)*(4.990000000000e+02)+(@index==13)*(4.600000000000e-03)+",        "(@index==14)*(4.600000000000e-03)+(@index==1+
+5)*1")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-gen xxxgtrpc433b2 nc=5 nr=80 deffmt=DOUB datacols=1  +
+   data=(101,102,103,104,105)
+Beginning VICAR task ibis
+mf3 xxxgtrpc433b2  +
+   f=("c1=(@index==1)*(1.523045644579e-02)+(@index==2)*(1.8698705083+
+87e-16)+(@index==3)*(-9.955911779840e-01)+",        "(@index==41)*(1+
+.523045644195e-02)+(@index==42)*(9.955911779844e-01)+(@index==43)*(3.949153853982e-17)+",        "(@index==21)*1+(@index==61)*1")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+icat (xxxgtrpc433b1,xxxgtrpc433b2) xxxgtrpc433b 'h
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+if (modeltype=1)
+else
+   mf3 xxxgtrpc433b f="c6=c2"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+ibis2rpc xxxgtrpc433b xxxgtrpc433c ccol=6 scol=1
+Beginning VICAR task ibis2rpc
+ibis2rpc version Fri Jan 11 2008
+gtgenup (xxxabcinpcopy,xxxgtrpc433c)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+end-proc
+label-list xxxabcinpcopy
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabcinpcopy ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD6='35.995300'
+RPC_FIELD7='-117.995300'
+RPC_FIELD8='0.000000'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD13='1.000000'
+RPC_FIELD141='+0.01523045644579'
+RPC_FIELD142='+0.00000000000000'
+RPC_FIELD143='-0.99559117798400'
+RPC_FIELD144='+0.00000000000000'
+RPC_FIELD145='+0.00000000000000'
+RPC_FIELD146='+0.00000000000000'
+RPC_FIELD147='+0.00000000000000'
+RPC_FIELD148='+0.00000000000000'
+RPC_FIELD149='+0.00000000000000'
+RPC_FIELD1410='+0.00000000000000'
+RPC_FIELD1411='+0.00000000000000'
+RPC_FIELD1412='+0.00000000000000'
+RPC_FIELD1413='+0.00000000000000'
+RPC_FIELD1414='+0.00000000000000'
+RPC_FIELD1415='+0.00000000000000'
+RPC_FIELD1416='+0.00000000000000'
+RPC_FIELD1417='+0.00000000000000'
+RPC_FIELD1418='+0.00000000000000'
+RPC_FIELD1419='+0.00000000000000'
+RPC_FIELD1420='+0.00000000000000'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000000'
+RPC_FIELD153='+0.00000000000000'
+RPC_FIELD154='+0.00000000000000'
+RPC_FIELD155='+0.00000000000000'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='+0.00000000000000'
+RPC_FIELD158='+0.00000000000000'
+RPC_FIELD159='+0.00000000000000'
+RPC_FIELD1510='+0.00000000000000'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='+0.00000000000000'
+RPC_FIELD1513='+0.00000000000000'
+RPC_FIELD1514='+0.00000000000000'
+RPC_FIELD1515='+0.00000000000000'
+RPC_FIELD1516='+0.00000000000000'
+RPC_FIELD1517='+0.00000000000000'
+RPC_FIELD1518='+0.00000000000000'
+RPC_FIELD1519='+0.00000000000000'
+RPC_FIELD1520='+0.00000000000000'
+RPC_FIELD161='+0.01523045644195'
+RPC_FIELD162='+0.99559117798440'
+RPC_FIELD163='+0.00000000000000'
+RPC_FIELD164='+0.00000000000000'
+RPC_FIELD165='+0.00000000000000'
+RPC_FIELD166='+0.00000000000000'
+RPC_FIELD167='+0.00000000000000'
+RPC_FIELD168='+0.00000000000000'
+RPC_FIELD169='+0.00000000000000'
+RPC_FIELD1610='+0.00000000000000'
+RPC_FIELD1611='+0.00000000000000'
+RPC_FIELD1612='+0.00000000000000'
+RPC_FIELD1613='+0.00000000000000'
+RPC_FIELD1614='+0.00000000000000'
+RPC_FIELD1615='+0.00000000000000'
+RPC_FIELD1616='+0.00000000000000'
+RPC_FIELD1617='+0.00000000000000'
+RPC_FIELD1618='+0.00000000000000'
+RPC_FIELD1619='+0.00000000000000'
+RPC_FIELD1620='+0.00000000000000'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000000'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000000'
+RPC_FIELD175='+0.00000000000000'
+RPC_FIELD176='+0.00000000000000'
+RPC_FIELD177='+0.00000000000000'
+RPC_FIELD178='+0.00000000000000'
+RPC_FIELD179='+0.00000000000000'
+RPC_FIELD1710='+0.00000000000000'
+RPC_FIELD1711='+0.00000000000000'
+RPC_FIELD1712='+0.00000000000000'
+RPC_FIELD1713='+0.00000000000000'
+RPC_FIELD1714='+0.00000000000000'
+RPC_FIELD1715='+0.00000000000000'
+RPC_FIELD1716='+0.00000000000000'
+RPC_FIELD1717='+0.00000000000000'
+RPC_FIELD1718='+0.00000000000000'
+RPC_FIELD1719='+0.00000000000000'
+RPC_FIELD1720='+0.00000000000000'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+let grid0 = "xxx" // "abc" // "grid0"
+let cube0 = "xxx" // "abc" // "cube0"
+let cube1 = "xxx" // "abc" // "cube1"
+let xxrpc = "xxx" // "abc" // "xxrpc"
+let xxrpc2 = "xxx" // "abc" // "xxrpc2"
+let tmp = "xxx" // "abc" // "tmp"
+if (ref="")
+   let refname = "xxx" // "abc" // "ref"
+   gtcopy xxxabcinpcopy xxxabcref
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+else
+end-if
+let degrad = 3.1415926536/180.0
+let erad = 6378137.0
+let sdang_e = ang_e+dang_e
+let sdang_n = ang_n+dang_n
+let sdrot = rot+drot
+let sdshift_e = shift_e+dshift_e
+let sdshift_n = shift_n+dshift_n
+if ("xxximg11"<>"" and ""<>"")
+end-if
+if ("xxximg11"<>"" and (dang_e<>0.0 or dang_n<>0.0 or drot<>0.0 or dshift_e<>0.0 or dshift_n<>0.0))
+end-if
+if ("xxximg11"<>"")
+   let tout1 = "xxximg11"
+else
+end-if
+gtwarp inp=xxximg3 out=xxxabctmp ref=xxxabcinpcopy 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 08-jun-10"
+gtwarp version 08-jun-10
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl xxximg3 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxabcinpcopy v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)"
+geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=10201 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/101)/100)*1000+(1-0.5)$",      +
+        "c2=(@mod(@index+100,101)/100)*1000+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqgrid2qq,xxxabcinpcopy) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+gtproj (xxqqgrid2qq,xxxabcinpcopy,xxximg3) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2qq,xxximg3) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+geomv INP=(xxximg3,xxqqgrid2qq,xxxabcinpcopy) OUT=xxxabctmp size=(+
+1,1,1000,1000)         cols=(1,2,7,8) interp="bilin" znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+end-proc
+hist xxxabctmp mean=avelv
+Beginning VICAR task hist
+*** HIST Nov 26, 2012 (64-bit) -  RJB ***
+
+Bin Width =        4.0
+          0       4757 ******************
+          4      12684 **************************************************  1
+          8      12684 **************************************************  2
+         12      12684 **************************************************
+         16      12684 **************************************************
+         20      12684 **************************************************
+         24      12684 **************************************************
+         28      12684 **************************************************
+         32      12684 **************************************************
+         36      12684 **************************************************
+         40      12684 **************************************************
+         44      12684 **************************************************
+         48      12684 **************************************************
+         52      12684 **************************************************
+         56      12684 **************************************************
+         60      12684 **************************************************
+         64      12684 **************************************************
+         68      12684 **************************************************
+         72      12684 **************************************************
+         76      12684 **************************************************
+         80      12684 **************************************************
+         84      12667 *************************************************
+         88      12592 *************************************************
+         92      12512 *************************************************
+         96      12432 *************************************************
+        100      12352 ************************************************
+        104      12272 ************************************************
+        108      12192 ************************************************
+        112      12112 ***********************************************
+        116      12032 ***********************************************
+        120      11952 ***********************************************
+        124      11872 **********************************************
+        128      11792 **********************************************
+        132      11712 **********************************************
+        136      11632 *********************************************
+        140      11552 *********************************************
+        144      11472 *********************************************
+        148      11392 ********************************************
+        152      11312 ********************************************
+        156      11232 ********************************************
+        160      11152 *******************************************
+        164      11072 *******************************************
+        168      10992 *******************************************
+        172      10912 *******************************************
+        176      10832 ******************************************
+        180      10752 ******************************************
+        184      10655 ******************************************
+        188      10500 *****************************************
+        192      10340 ****************************************
+        196      10180 ****************************************
+        200      10020 ***************************************
+        204       9860 **************************************
+        208       9700 **************************************
+        212       9540 *************************************
+        216       9380 ************************************
+        220       9220 ************************************
+        224       9060 ***********************************
+        228       8900 ***********************************
+        232       8740 **********************************
+        236       8580 *********************************
+        240       8420 *********************************
+        244       8260 ********************************
+        248       8100 *******************************
+        252       7940 *******************************
+        256       7780 ******************************
+        260       7620 ******************************
+        264       7460 *****************************
+        268       7300 ****************************
+        272       7140 ****************************
+        276       6980 ***************************
+        280       6820 **************************
+        284       6660 **************************
+        288       6500 *************************
+        292       6340 ************************
+        296       6180 ************************
+        300       6020 ***********************
+        304       5860 ***********************
+        308       5700 **********************
+        312       5540 *********************
+        316       5380 *********************
+        320       5268 ********************
+        324       5188 ********************
+        328       5108 ********************
+        332       5028 *******************
+        336       4948 *******************
+        340       4868 *******************
+        344       4788 ******************
+        348       4708 ******************
+        352       4628 ******************
+        356       4548 *****************
+        360       4468 *****************
+        364       4388 *****************
+        368       4308 ****************
+        372       4228 ****************
+        376       4148 ****************
+        380       4068 ****************
+        384       3988 ***************
+        388       3908 ***************
+        392       3828 ***************
+        396       3748 **************
+        400       3668 **************
+        404       3588 **************
+        408       3508 *************
+        412       3428 *************
+        416       3348 *************
+        420       3268 ************
+        424       3188 ************
+        428       3108 ************
+        432       3028 ***********
+        436       2948 ***********
+        440       2868 ***********
+        444       2788 **********
+        448       2708 **********
+        452       2628 **********
+        456       2548 **********
+        460       2468 *********
+        464       2388 *********
+        468       2308 *********
+        472       2228 ********
+        476       2148 ********
+        480       2068 ********
+        484       1988 *******
+        488       1908 *******
+        492       1828 *******
+        496       1748 ******
+        500       1668 ******
+        504       1588 ******
+        508       1508 *****
+        512       1428 *****
+        516       1348 *****
+        520       1268 ****
+        524       1188 ****
+        528       1108 ****
+        532       1028 ****
+        536        948 ***
+        540        868 ***
+        544        788 ***
+        548        708 **
+        552        628 **
+        556        548 **
+        560        468 *
+        564        388 *
+        568        308 *
+        572        228
+        576        148
+        580         68
+        584          5
+
+AVERAGE GRAY LEVEL=186.0417
+STANDARD DEVIATION=131.2158
+NUMBER ELEMENTS=   100000
+MIN. DN=         0
+MAX. DN=       582
+
+write "avelv 1.860417175293e+02"
+avelv 1.860417175293e+02
+let avelv = avelv+20
+label-replace inp=xxxabcinpcopy property="GEOTI+
+FF"     items="RPC_FIELD8='2.060417175293e+02',RPC_FIELD13='20.0'"
+Beginning VICAR task label
+Keyword RPC_FIELD8 replaced
+Keyword RPC_FIELD13 replaced
+plab2tcl xxxabcinpcopy property=Geotiff val=cetag keyword=NITF_CETAG vtype=0
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+if (cetag="RPC00B")
+else-if (cetag="RPC00A")
+   let rpctype = "A"
+else
+end-if
+lab2tcl xxxabcinpcopy v1=nl v2=ns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+gengrid out=xxxabcgrid0 ncol=23 nah=6 nav=6 hbase=1.0 hsize=+
+1000             vbase=1.0 vsize=1000
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxxabcgrid0 version="ibis-2" org="column" nc=+
+23       nr=49 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxabcgrid0 func=("c1=(@int((@index-1)/7)/6)*1.000000000000e+03+(1+
+.000000000000e+00)$",      "c2=(@mod(@index+6,7)/6)*1.000000000000e+03+(1.000000000000e+00)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-proc
+pixmap (xxxabcgrid0,xxxabcinpcopy) mapcols=(4,5) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+write "ang_e 1.000000000000e+01"
+ang_e 1.000000000000e+01
+mf3 xxxabcgrid0 f="c16=@tan((1.000000000000e+01)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c17=@tan((0.000000000000e+00)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c18=@max(@abs(@atan2(@sqrt(c16*c16+c17*c17),1)),0.0001)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c19=@cos(c18)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c20=((6.378137000000e+06)+1000.0*7.700000000000e+02)/@sin(1.745329252000e-02*180.0-c18)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c21=@asin((6.378137000000e+06)/c20)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c22=c18-c21$c23=@sin(c22)*c20"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-l xxxabcgrid0 cols=(16,17,18,19) sr=1 nr=1 cfor="%17.14f %17.14f %17.14f %17.14f"
+Beginning VICAR task ibis
+ 
+Number of Rows:49  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------------+-----------------+-----------------+----------------
+              C:16              C:17              C:18             C:19
++-----------------+-----------------+-----------------+----------------
+ 0.17632698070905  0.00000000000000  0.17453292520000  0.98480775301211
+ibis-l xxxabcgrid0 cols=(20,21,22,23) sr=1 nr=1 cfor="%17.14f %17.14f %17.14f %17.14f"
+Beginning VICAR task ibis
+ 
+Number of Rows:49  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------------+-----------------+-----------------+----------------
+              C:20              C:21              C:22             C:23
++-----------------+-----------------+-----------------+----------------
+41164480.367317378 0.15556948381022  0.01896344138978 780573.4248807976
+ibis2tcl xxxabcgrid0 v1=satdist vartype=(-1) ibisloc=(1,23)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+write "satelv 7.700000000000e+02 satdist 7.805734248808e+05"
+satelv 7.700000000000e+02 satdist 7.805734248808e+05
+mf3 xxxabcgrid0 f="c20=c4$@avg(c20)$c21=c5$@avg(c21)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c3=2.060417175293e+02-20$c22=1.0-10.0/(7.805734248808e+05*1000)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-copy xxxabcgrid0 xxxabccube0
+Beginning VICAR task ibis
+mf3 xxxabcgrid0 f="c3=c3+10.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c4=(c4-c20)*c22+c20$c5=(c5-c21)*c22+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+icat (xxxabccube0,xxxabcgrid0) xxxabccube1
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+mf3 xxxabcgrid0 f="c3=c3+10.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c4=(c4-c20)*c22+c20$c5=(c5-c21)*c22+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+icat (xxxabccube1,xxxabcgrid0) xxxabccube0
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+mf3 xxxabcgrid0 f="c3=c3+10.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c4=(c4-c20)*c22+c20$c5=(c5-c21)*c22+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+icat (xxxabccube0,xxxabcgrid0) xxxabccube1
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+mf3 xxxabcgrid0 f="c3=c3+10.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabcgrid0 f="c4=(c4-c20)*c22+c20$c5=(c5-c21)*c22+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+icat (xxxabccube1,xxxabcgrid0) xxxabccube0
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+ibis-copy xxxabccube0 xxxabccube1
+Beginning VICAR task ibis
+write "satdist 7.805734248808e+05"
+satdist 7.805734248808e+05
+ibis-l xxxabccube0 nr=2
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+        1.00        1.00      186.04     -118.00       36.00        0.00
+        1.00      167.67      186.04     -118.00       36.00        0.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17        C:18
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.18        0.00        0.17
+        0.00        0.00        0.00        0.18        0.00        0.17
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------
+        C:19        C:20        C:21        C:22        C:23
++-----------+-----------+-----------+-----------+-----------
+        0.98     -118.00       36.00        1.00   780573.42
+        0.98     -118.00       36.00        1.00   780573.42
+ibis-l xxxabccube0 nr=245 sr=1 nr=1 cols=(22) cfor="%20.14f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-------------------
+                C:22
++-------------------
+    0.99999998718891
+ibis2tcl xxxabccube0 v1=gc1 v2=gc2 v3 = gc3 v4 = +
+gc4     vartype=(-1,-1,-1,+
+-1)     ibisloc=(1,4,7,4,197,4,203,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+let gcb1 = gc2-gc1
+let gcb2 = gc4-gc3
+let gcdel = gcb1-gcb2
+let gcdnum = gcb1/gcdel
+let gcsat = gcdnum*40.0
+write "gc1 -1.179999953704e+02 gc2 -1.179907361111e+02 gc3 -1.179999953701e+02 gc4 -1.179907361113e+02"
+gc1 -1.179999953704e+02 gc2 -1.179907361111e+02 gc3 -1.179999953701e+02 gc4 -1.179907361113e+02
+write "gcb1 9.259259299995e-03 gcb2 9.259258825466e-03 gcdel 4.745288606500e-10"
+gcb1 9.259259299995e-03 gcb2 9.259258825466e-03 gcdel 4.745288606500e-10
+write "gcdnum 1.951253141339e+07"
+gcdnum 1.951253141339e+07
+write "gcsat 7.805012565357e+08"
+gcsat 7.805012565357e+08
+mf3 xxxabccube0 f="c9=(c3-2.060417175293e+02)*@tan((1.000000000000e+01)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c6=c4+0.01$c7=c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="@dist(c4,c5,c6,c7,c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c10=c8"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c6=c4$c4=c4+0.01*c9/c10"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c9=(c3-2.060417175293e+02)*@tan((0.000000000000e+00)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c6=c4$c7=c5+0.01"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="@dist(c4,c5,c6,c7,c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c11=c8"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c7=c5$c5=c5+0.01*c9/c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-l xxxabccube0 cols=(1,2,3,4,5,6+
+,7)     csiz=(10,10,10,10,10,10,10) nr+
+=50     cfor=" %10.5f %10.5f %10.5f %10.5f %10.5f %10.4f %10.5f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+    1.00000    1.00000  186.04172 -118.00003   36.00000  -118.0000   36.00000
+    1.00000  167.66667  186.04172 -117.99849   36.00000  -117.9985   36.00000
+    1.00000  334.33333  186.04172 -117.99695   36.00000  -117.9969   36.00000
+    1.00000  501.00000  186.04172 -117.99540   36.00000  -117.9954   36.00000
+    1.00000  667.66667  186.04172 -117.99386   36.00000  -117.9939   36.00000
+    1.00000  834.33333  186.04172 -117.99232   36.00000  -117.9923   36.00000
+    1.00000 1001.00000  186.04172 -117.99078   36.00000  -117.9908   36.00000
+  167.66667    1.00000  186.04172 -118.00003   35.99845  -118.0000   35.99845
+  167.66667  167.66667  186.04172 -117.99849   35.99845  -117.9985   35.99845
+  167.66667  334.33333  186.04172 -117.99695   35.99845  -117.9969   35.99845
+  167.66667  501.00000  186.04172 -117.99540   35.99845  -117.9954   35.99845
+  167.66667  667.66667  186.04172 -117.99386   35.99845  -117.9939   35.99845
+  167.66667  834.33333  186.04172 -117.99232   35.99845  -117.9923   35.99845
+  167.66667 1001.00000  186.04172 -117.99078   35.99845  -117.9908   35.99845
+  334.33333    1.00000  186.04172 -118.00003   35.99691  -118.0000   35.99691
+  334.33333  167.66667  186.04172 -117.99849   35.99691  -117.9985   35.99691
+  334.33333  334.33333  186.04172 -117.99695   35.99691  -117.9969   35.99691
+  334.33333  501.00000  186.04172 -117.99540   35.99691  -117.9954   35.99691
+  334.33333  667.66667  186.04172 -117.99386   35.99691  -117.9939   35.99691
+  334.33333  834.33333  186.04172 -117.99232   35.99691  -117.9923   35.99691
+  334.33333 1001.00000  186.04172 -117.99078   35.99691  -117.9908   35.99691
+  501.00000    1.00000  186.04172 -118.00003   35.99537  -118.0000   35.99537
+  501.00000  167.66667  186.04172 -117.99849   35.99537  -117.9985   35.99537
+  501.00000  334.33333  186.04172 -117.99695   35.99537  -117.9969   35.99537
+  501.00000  501.00000  186.04172 -117.99540   35.99537  -117.9954   35.99537
+  501.00000  667.66667  186.04172 -117.99386   35.99537  -117.9939   35.99537
+  501.00000  834.33333  186.04172 -117.99232   35.99537  -117.9923   35.99537
+  501.00000 1001.00000  186.04172 -117.99078   35.99537  -117.9908   35.99537
+  667.66667    1.00000  186.04172 -118.00003   35.99382  -118.0000   35.99382
+  667.66667  167.66667  186.04172 -117.99849   35.99382  -117.9985   35.99382
+ 
+Rows: 31:50
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  667.66667  334.33333  186.04172 -117.99695   35.99382  -117.9969   35.99382
+  667.66667  501.00000  186.04172 -117.99540   35.99382  -117.9954   35.99382
+  667.66667  667.66667  186.04172 -117.99386   35.99382  -117.9939   35.99382
+  667.66667  834.33333  186.04172 -117.99232   35.99382  -117.9923   35.99382
+  667.66667 1001.00000  186.04172 -117.99078   35.99382  -117.9908   35.99382
+  834.33333    1.00000  186.04172 -118.00003   35.99228  -118.0000   35.99228
+  834.33333  167.66667  186.04172 -117.99849   35.99228  -117.9985   35.99228
+  834.33333  334.33333  186.04172 -117.99695   35.99228  -117.9969   35.99228
+  834.33333  501.00000  186.04172 -117.99540   35.99228  -117.9954   35.99228
+  834.33333  667.66667  186.04172 -117.99386   35.99228  -117.9939   35.99228
+  834.33333  834.33333  186.04172 -117.99232   35.99228  -117.9923   35.99228
+  834.33333 1001.00000  186.04172 -117.99078   35.99228  -117.9908   35.99228
+ 1001.00000    1.00000  186.04172 -118.00003   35.99074  -118.0000   35.99074
+ 1001.00000  167.66667  186.04172 -117.99849   35.99074  -117.9985   35.99074
+ 1001.00000  334.33333  186.04172 -117.99695   35.99074  -117.9969   35.99074
+ 1001.00000  501.00000  186.04172 -117.99540   35.99074  -117.9954   35.99074
+ 1001.00000  667.66667  186.04172 -117.99386   35.99074  -117.9939   35.99074
+ 1001.00000  834.33333  186.04172 -117.99232   35.99074  -117.9923   35.99074
+ 1001.00000 1001.00000  186.04172 -117.99078   35.99074  -117.9908   35.99074
+    1.00000    1.00000  196.04172 -118.00001   36.00000  -118.0000   36.00000
+mf3 xxxabccube0 f="c12=c4$@csum(c12,c3)$c12=c12/49"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c13=c5$@csum(c13,c3)$c13=c13/49"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="@dist(c4,c5,c12,c5,c14)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c14=c14*(c4>=c12)-c14*(c4<c12)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="@dist(c4,c5,c4,c13,c15)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c15=c15*(c5>=c13)-c15*(c5<c13)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c16=@sqrt(c14*c14+c15*c15)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c17=@atan2(c15,c14)-(8.000000000000e+00)*(1.745329252000e-02)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c18=c16*@cos(c17)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c19=c16*@sin(c17)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c20=0.01*c18/c10"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c21=0.01*c19/c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c6=c4$c7=c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube0 f="c4=c12+c20$c5=c13+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-l xxxabccube0 cols=(1,2,3,4,5,6+
+,7)     csiz=(10,10,10,10,10,10,1+
+0)      cfor=" %10.5f %10.5f %10.5f %10.5f %10.5f %10.4f %10.5f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+    1.00000    1.00000  186.04172 -117.99920   36.00048  -118.0000   36.00000
+    1.00000  167.66667  186.04172 -117.99767   36.00030  -117.9985   36.00000
+    1.00000  334.33333  186.04172 -117.99614   36.00013  -117.9969   36.00000
+    1.00000  501.00000  186.04172 -117.99461   35.99995  -117.9954   36.00000
+    1.00000  667.66667  186.04172 -117.99309   35.99978  -117.9939   36.00000
+    1.00000  834.33333  186.04172 -117.99156   35.99960  -117.9923   36.00000
+    1.00000 1001.00000  186.04172 -117.99003   35.99943  -117.9908   36.00000
+  167.66667    1.00000  186.04172 -117.99946   35.99895  -118.0000   35.99845
+  167.66667  167.66667  186.04172 -117.99793   35.99877  -117.9985   35.99845
+  167.66667  334.33333  186.04172 -117.99641   35.99860  -117.9969   35.99845
+  167.66667  501.00000  186.04172 -117.99488   35.99842  -117.9954   35.99845
+  167.66667  667.66667  186.04172 -117.99335   35.99825  -117.9939   35.99845
+  167.66667  834.33333  186.04172 -117.99182   35.99807  -117.9923   35.99845
+  167.66667 1001.00000  186.04172 -117.99029   35.99790  -117.9908   35.99845
+  334.33333    1.00000  186.04172 -117.99973   35.99742  -118.0000   35.99691
+  334.33333  167.66667  186.04172 -117.99820   35.99724  -117.9985   35.99691
+  334.33333  334.33333  186.04172 -117.99667   35.99707  -117.9969   35.99691
+  334.33333  501.00000  186.04172 -117.99514   35.99689  -117.9954   35.99691
+  334.33333  667.66667  186.04172 -117.99361   35.99672  -117.9939   35.99691
+  334.33333  834.33333  186.04172 -117.99208   35.99654  -117.9923   35.99691
+  334.33333 1001.00000  186.04172 -117.99056   35.99637  -117.9908   35.99691
+  501.00000    1.00000  186.04172 -117.99999   35.99589  -118.0000   35.99537
+  501.00000  167.66667  186.04172 -117.99846   35.99572  -117.9985   35.99537
+  501.00000  334.33333  186.04172 -117.99693   35.99554  -117.9969   35.99537
+  501.00000  501.00000  186.04172 -117.99540   35.99537  -117.9954   35.99537
+  501.00000  667.66667  186.04172 -117.99388   35.99519  -117.9939   35.99537
+  501.00000  834.33333  186.04172 -117.99235   35.99502  -117.9923   35.99537
+  501.00000 1001.00000  186.04172 -117.99082   35.99484  -117.9908   35.99537
+  667.66667    1.00000  186.04172 -118.00025   35.99436  -118.0000   35.99382
+  667.66667  167.66667  186.04172 -117.99872   35.99419  -117.9985   35.99382
+ 
+Rows: 31:60
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  667.66667  334.33333  186.04172 -117.99720   35.99401  -117.9969   35.99382
+  667.66667  501.00000  186.04172 -117.99567   35.99384  -117.9954   35.99382
+  667.66667  667.66667  186.04172 -117.99414   35.99366  -117.9939   35.99382
+  667.66667  834.33333  186.04172 -117.99261   35.99349  -117.9923   35.99382
+  667.66667 1001.00000  186.04172 -117.99108   35.99331  -117.9908   35.99382
+  834.33333    1.00000  186.04172 -118.00052   35.99283  -118.0000   35.99228
+  834.33333  167.66667  186.04172 -117.99899   35.99266  -117.9985   35.99228
+  834.33333  334.33333  186.04172 -117.99746   35.99248  -117.9969   35.99228
+  834.33333  501.00000  186.04172 -117.99593   35.99231  -117.9954   35.99228
+  834.33333  667.66667  186.04172 -117.99440   35.99213  -117.9939   35.99228
+  834.33333  834.33333  186.04172 -117.99288   35.99196  -117.9923   35.99228
+  834.33333 1001.00000  186.04172 -117.99135   35.99178  -117.9908   35.99228
+ 1001.00000    1.00000  186.04172 -118.00078   35.99131  -118.0000   35.99074
+ 1001.00000  167.66667  186.04172 -117.99925   35.99113  -117.9985   35.99074
+ 1001.00000  334.33333  186.04172 -117.99772   35.99096  -117.9969   35.99074
+ 1001.00000  501.00000  186.04172 -117.99620   35.99078  -117.9954   35.99074
+ 1001.00000  667.66667  186.04172 -117.99467   35.99061  -117.9939   35.99074
+ 1001.00000  834.33333  186.04172 -117.99314   35.99043  -117.9923   35.99074
+ 1001.00000 1001.00000  186.04172 -117.99161   35.99026  -117.9908   35.99074
+    1.00000    1.00000  196.04172 -117.99918   36.00048  -118.0000   36.00000
+    1.00000  167.66667  196.04172 -117.99765   36.00030  -117.9985   36.00000
+    1.00000  334.33333  196.04172 -117.99612   36.00013  -117.9969   36.00000
+    1.00000  501.00000  196.04172 -117.99459   35.99995  -117.9954   36.00000
+    1.00000  667.66667  196.04172 -117.99307   35.99978  -117.9938   36.00000
+    1.00000  834.33333  196.04172 -117.99154   35.99960  -117.9923   36.00000
+    1.00000 1001.00000  196.04172 -117.99001   35.99943  -117.9908   36.00000
+  167.66667    1.00000  196.04172 -117.99944   35.99895  -118.0000   35.99845
+  167.66667  167.66667  196.04172 -117.99791   35.99877  -117.9985   35.99845
+  167.66667  334.33333  196.04172 -117.99639   35.99860  -117.9969   35.99845
+  167.66667  501.00000  196.04172 -117.99486   35.99842  -117.9954   35.99845
+ 
+Rows: 61:90
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  167.66667  667.66667  196.04172 -117.99333   35.99825  -117.9938   35.99845
+  167.66667  834.33333  196.04172 -117.99180   35.99807  -117.9923   35.99845
+  167.66667 1001.00000  196.04172 -117.99027   35.99790  -117.9908   35.99845
+  334.33333    1.00000  196.04172 -117.99971   35.99742  -118.0000   35.99691
+  334.33333  167.66667  196.04172 -117.99818   35.99724  -117.9985   35.99691
+  334.33333  334.33333  196.04172 -117.99665   35.99707  -117.9969   35.99691
+  334.33333  501.00000  196.04172 -117.99512   35.99689  -117.9954   35.99691
+  334.33333  667.66667  196.04172 -117.99359   35.99672  -117.9938   35.99691
+  334.33333  834.33333  196.04172 -117.99207   35.99654  -117.9923   35.99691
+  334.33333 1001.00000  196.04172 -117.99054   35.99637  -117.9908   35.99691
+  501.00000    1.00000  196.04172 -117.99997   35.99589  -118.0000   35.99537
+  501.00000  167.66667  196.04172 -117.99844   35.99572  -117.9985   35.99537
+  501.00000  334.33333  196.04172 -117.99691   35.99554  -117.9969   35.99537
+  501.00000  501.00000  196.04172 -117.99539   35.99537  -117.9954   35.99537
+  501.00000  667.66667  196.04172 -117.99386   35.99519  -117.9938   35.99537
+  501.00000  834.33333  196.04172 -117.99233   35.99502  -117.9923   35.99537
+  501.00000 1001.00000  196.04172 -117.99080   35.99484  -117.9908   35.99537
+  667.66667    1.00000  196.04172 -118.00023   35.99436  -118.0000   35.99382
+  667.66667  167.66667  196.04172 -117.99871   35.99419  -117.9985   35.99382
+  667.66667  334.33333  196.04172 -117.99718   35.99401  -117.9969   35.99382
+  667.66667  501.00000  196.04172 -117.99565   35.99384  -117.9954   35.99382
+  667.66667  667.66667  196.04172 -117.99412   35.99366  -117.9938   35.99382
+  667.66667  834.33333  196.04172 -117.99259   35.99349  -117.9923   35.99382
+  667.66667 1001.00000  196.04172 -117.99106   35.99331  -117.9908   35.99382
+  834.33333    1.00000  196.04172 -118.00050   35.99283  -118.0000   35.99228
+  834.33333  167.66667  196.04172 -117.99897   35.99266  -117.9985   35.99228
+  834.33333  334.33333  196.04172 -117.99744   35.99248  -117.9969   35.99228
+  834.33333  501.00000  196.04172 -117.99591   35.99231  -117.9954   35.99228
+  834.33333  667.66667  196.04172 -117.99438   35.99213  -117.9938   35.99228
+  834.33333  834.33333  196.04172 -117.99286   35.99196  -117.9923   35.99228
+ 
+Rows: 91:120
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  834.33333 1001.00000  196.04172 -117.99133   35.99178  -117.9908   35.99228
+ 1001.00000    1.00000  196.04172 -118.00076   35.99131  -118.0000   35.99074
+ 1001.00000  167.66667  196.04172 -117.99923   35.99113  -117.9985   35.99074
+ 1001.00000  334.33333  196.04172 -117.99770   35.99096  -117.9969   35.99074
+ 1001.00000  501.00000  196.04172 -117.99618   35.99078  -117.9954   35.99074
+ 1001.00000  667.66667  196.04172 -117.99465   35.99061  -117.9938   35.99074
+ 1001.00000  834.33333  196.04172 -117.99312   35.99043  -117.9923   35.99074
+ 1001.00000 1001.00000  196.04172 -117.99159   35.99026  -117.9908   35.99074
+    1.00000    1.00000  206.04172 -117.99916   36.00048  -118.0000   36.00000
+    1.00000  167.66667  206.04172 -117.99763   36.00030  -117.9985   36.00000
+    1.00000  334.33333  206.04172 -117.99610   36.00013  -117.9969   36.00000
+    1.00000  501.00000  206.04172 -117.99457   35.99995  -117.9954   36.00000
+    1.00000  667.66667  206.04172 -117.99305   35.99978  -117.9938   36.00000
+    1.00000  834.33333  206.04172 -117.99152   35.99960  -117.9923   36.00000
+    1.00000 1001.00000  206.04172 -117.98999   35.99943  -117.9907   36.00000
+  167.66667    1.00000  206.04172 -117.99942   35.99895  -118.0000   35.99845
+  167.66667  167.66667  206.04172 -117.99789   35.99877  -117.9985   35.99845
+  167.66667  334.33333  206.04172 -117.99637   35.99860  -117.9969   35.99845
+  167.66667  501.00000  206.04172 -117.99484   35.99842  -117.9954   35.99845
+  167.66667  667.66667  206.04172 -117.99331   35.99825  -117.9938   35.99845
+  167.66667  834.33333  206.04172 -117.99178   35.99807  -117.9923   35.99845
+  167.66667 1001.00000  206.04172 -117.99025   35.99790  -117.9907   35.99845
+  334.33333    1.00000  206.04172 -117.99969   35.99742  -118.0000   35.99691
+  334.33333  167.66667  206.04172 -117.99816   35.99724  -117.9985   35.99691
+  334.33333  334.33333  206.04172 -117.99663   35.99707  -117.9969   35.99691
+  334.33333  501.00000  206.04172 -117.99510   35.99689  -117.9954   35.99691
+  334.33333  667.66667  206.04172 -117.99357   35.99672  -117.9938   35.99691
+  334.33333  834.33333  206.04172 -117.99205   35.99654  -117.9923   35.99691
+  334.33333 1001.00000  206.04172 -117.99052   35.99637  -117.9907   35.99691
+  501.00000    1.00000  206.04172 -117.99995   35.99589  -118.0000   35.99537
+ 
+Rows: 121:150
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  501.00000  167.66667  206.04172 -117.99842   35.99572  -117.9985   35.99537
+  501.00000  334.33333  206.04172 -117.99689   35.99554  -117.9969   35.99537
+  501.00000  501.00000  206.04172 -117.99537   35.99537  -117.9954   35.99537
+  501.00000  667.66667  206.04172 -117.99384   35.99519  -117.9938   35.99537
+  501.00000  834.33333  206.04172 -117.99231   35.99502  -117.9923   35.99537
+  501.00000 1001.00000  206.04172 -117.99078   35.99484  -117.9907   35.99537
+  667.66667    1.00000  206.04172 -118.00021   35.99436  -118.0000   35.99382
+  667.66667  167.66667  206.04172 -117.99869   35.99419  -117.9985   35.99382
+  667.66667  334.33333  206.04172 -117.99716   35.99401  -117.9969   35.99382
+  667.66667  501.00000  206.04172 -117.99563   35.99384  -117.9954   35.99382
+  667.66667  667.66667  206.04172 -117.99410   35.99366  -117.9938   35.99382
+  667.66667  834.33333  206.04172 -117.99257   35.99349  -117.9923   35.99382
+  667.66667 1001.00000  206.04172 -117.99104   35.99331  -117.9907   35.99382
+  834.33333    1.00000  206.04172 -118.00048   35.99283  -118.0000   35.99228
+  834.33333  167.66667  206.04172 -117.99895   35.99266  -117.9985   35.99228
+  834.33333  334.33333  206.04172 -117.99742   35.99248  -117.9969   35.99228
+  834.33333  501.00000  206.04172 -117.99589   35.99231  -117.9954   35.99228
+  834.33333  667.66667  206.04172 -117.99436   35.99213  -117.9938   35.99228
+  834.33333  834.33333  206.04172 -117.99284   35.99196  -117.9923   35.99228
+  834.33333 1001.00000  206.04172 -117.99131   35.99178  -117.9907   35.99228
+ 1001.00000    1.00000  206.04172 -118.00074   35.99131  -118.0000   35.99074
+ 1001.00000  167.66667  206.04172 -117.99921   35.99113  -117.9985   35.99074
+ 1001.00000  334.33333  206.04172 -117.99768   35.99096  -117.9969   35.99074
+ 1001.00000  501.00000  206.04172 -117.99616   35.99078  -117.9954   35.99074
+ 1001.00000  667.66667  206.04172 -117.99463   35.99061  -117.9938   35.99074
+ 1001.00000  834.33333  206.04172 -117.99310   35.99043  -117.9923   35.99074
+ 1001.00000 1001.00000  206.04172 -117.99157   35.99026  -117.9907   35.99074
+    1.00000    1.00000  216.04172 -117.99914   36.00048  -118.0000   36.00000
+    1.00000  167.66667  216.04172 -117.99761   36.00030  -117.9984   36.00000
+    1.00000  334.33333  216.04172 -117.99608   36.00013  -117.9969   36.00000
+ 
+Rows: 151:180
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+    1.00000  501.00000  216.04172 -117.99456   35.99995  -117.9953   36.00000
+    1.00000  667.66667  216.04172 -117.99303   35.99978  -117.9938   36.00000
+    1.00000  834.33333  216.04172 -117.99150   35.99960  -117.9923   36.00000
+    1.00000 1001.00000  216.04172 -117.98997   35.99943  -117.9907   36.00000
+  167.66667    1.00000  216.04172 -117.99940   35.99895  -118.0000   35.99845
+  167.66667  167.66667  216.04172 -117.99788   35.99877  -117.9984   35.99845
+  167.66667  334.33333  216.04172 -117.99635   35.99860  -117.9969   35.99845
+  167.66667  501.00000  216.04172 -117.99482   35.99842  -117.9953   35.99845
+  167.66667  667.66667  216.04172 -117.99329   35.99825  -117.9938   35.99845
+  167.66667  834.33333  216.04172 -117.99176   35.99807  -117.9923   35.99845
+  167.66667 1001.00000  216.04172 -117.99023   35.99790  -117.9907   35.99845
+  334.33333    1.00000  216.04172 -117.99967   35.99742  -118.0000   35.99691
+  334.33333  167.66667  216.04172 -117.99814   35.99724  -117.9984   35.99691
+  334.33333  334.33333  216.04172 -117.99661   35.99707  -117.9969   35.99691
+  334.33333  501.00000  216.04172 -117.99508   35.99689  -117.9953   35.99691
+  334.33333  667.66667  216.04172 -117.99355   35.99672  -117.9938   35.99691
+  334.33333  834.33333  216.04172 -117.99203   35.99654  -117.9923   35.99691
+  334.33333 1001.00000  216.04172 -117.99050   35.99637  -117.9907   35.99691
+  501.00000    1.00000  216.04172 -117.99993   35.99589  -118.0000   35.99537
+  501.00000  167.66667  216.04172 -117.99840   35.99572  -117.9984   35.99537
+  501.00000  334.33333  216.04172 -117.99687   35.99554  -117.9969   35.99537
+  501.00000  501.00000  216.04172 -117.99535   35.99537  -117.9953   35.99537
+  501.00000  667.66667  216.04172 -117.99382   35.99519  -117.9938   35.99537
+  501.00000  834.33333  216.04172 -117.99229   35.99502  -117.9923   35.99537
+  501.00000 1001.00000  216.04172 -117.99076   35.99484  -117.9907   35.99537
+  667.66667    1.00000  216.04172 -118.00019   35.99436  -118.0000   35.99382
+  667.66667  167.66667  216.04172 -117.99867   35.99419  -117.9984   35.99382
+  667.66667  334.33333  216.04172 -117.99714   35.99401  -117.9969   35.99382
+  667.66667  501.00000  216.04172 -117.99561   35.99384  -117.9953   35.99382
+  667.66667  667.66667  216.04172 -117.99408   35.99366  -117.9938   35.99382
+ 
+Rows: 181:210
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  667.66667  834.33333  216.04172 -117.99255   35.99349  -117.9923   35.99382
+  667.66667 1001.00000  216.04172 -117.99103   35.99331  -117.9907   35.99382
+  834.33333    1.00000  216.04172 -118.00046   35.99283  -118.0000   35.99228
+  834.33333  167.66667  216.04172 -117.99893   35.99266  -117.9984   35.99228
+  834.33333  334.33333  216.04172 -117.99740   35.99248  -117.9969   35.99228
+  834.33333  501.00000  216.04172 -117.99587   35.99231  -117.9953   35.99228
+  834.33333  667.66667  216.04172 -117.99435   35.99213  -117.9938   35.99228
+  834.33333  834.33333  216.04172 -117.99282   35.99196  -117.9923   35.99228
+  834.33333 1001.00000  216.04172 -117.99129   35.99178  -117.9907   35.99228
+ 1001.00000    1.00000  216.04172 -118.00072   35.99131  -118.0000   35.99074
+ 1001.00000  167.66667  216.04172 -117.99919   35.99113  -117.9984   35.99074
+ 1001.00000  334.33333  216.04172 -117.99767   35.99096  -117.9969   35.99074
+ 1001.00000  501.00000  216.04172 -117.99614   35.99078  -117.9953   35.99074
+ 1001.00000  667.66667  216.04172 -117.99461   35.99061  -117.9938   35.99074
+ 1001.00000  834.33333  216.04172 -117.99308   35.99043  -117.9923   35.99074
+ 1001.00000 1001.00000  216.04172 -117.99155   35.99026  -117.9907   35.99074
+    1.00000    1.00000  226.04172 -117.99912   36.00048  -118.0000   36.00000
+    1.00000  167.66667  226.04172 -117.99759   36.00030  -117.9984   36.00000
+    1.00000  334.33333  226.04172 -117.99606   36.00013  -117.9969   36.00000
+    1.00000  501.00000  226.04172 -117.99454   35.99995  -117.9953   36.00000
+    1.00000  667.66667  226.04172 -117.99301   35.99978  -117.9938   36.00000
+    1.00000  834.33333  226.04172 -117.99148   35.99960  -117.9922   36.00000
+    1.00000 1001.00000  226.04172 -117.98995   35.99943  -117.9907   36.00000
+  167.66667    1.00000  226.04172 -117.99938   35.99895  -118.0000   35.99845
+  167.66667  167.66667  226.04172 -117.99786   35.99877  -117.9984   35.99845
+  167.66667  334.33333  226.04172 -117.99633   35.99860  -117.9969   35.99845
+  167.66667  501.00000  226.04172 -117.99480   35.99842  -117.9953   35.99845
+  167.66667  667.66667  226.04172 -117.99327   35.99825  -117.9938   35.99845
+  167.66667  834.33333  226.04172 -117.99174   35.99807  -117.9922   35.99845
+  167.66667 1001.00000  226.04172 -117.99021   35.99790  -117.9907   35.99845
+ 
+Rows: 211:240
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+  334.33333    1.00000  226.04172 -117.99965   35.99742  -118.0000   35.99691
+  334.33333  167.66667  226.04172 -117.99812   35.99724  -117.9984   35.99691
+  334.33333  334.33333  226.04172 -117.99659   35.99707  -117.9969   35.99691
+  334.33333  501.00000  226.04172 -117.99506   35.99689  -117.9953   35.99691
+  334.33333  667.66667  226.04172 -117.99353   35.99672  -117.9938   35.99691
+  334.33333  834.33333  226.04172 -117.99201   35.99654  -117.9922   35.99691
+  334.33333 1001.00000  226.04172 -117.99048   35.99637  -117.9907   35.99691
+  501.00000    1.00000  226.04172 -117.99991   35.99589  -118.0000   35.99537
+  501.00000  167.66667  226.04172 -117.99838   35.99572  -117.9984   35.99537
+  501.00000  334.33333  226.04172 -117.99685   35.99554  -117.9969   35.99537
+  501.00000  501.00000  226.04172 -117.99533   35.99537  -117.9953   35.99537
+  501.00000  667.66667  226.04172 -117.99380   35.99519  -117.9938   35.99537
+  501.00000  834.33333  226.04172 -117.99227   35.99502  -117.9922   35.99537
+  501.00000 1001.00000  226.04172 -117.99074   35.99484  -117.9907   35.99537
+  667.66667    1.00000  226.04172 -118.00017   35.99436  -118.0000   35.99382
+  667.66667  167.66667  226.04172 -117.99865   35.99419  -117.9984   35.99382
+  667.66667  334.33333  226.04172 -117.99712   35.99401  -117.9969   35.99382
+  667.66667  501.00000  226.04172 -117.99559   35.99384  -117.9953   35.99382
+  667.66667  667.66667  226.04172 -117.99406   35.99366  -117.9938   35.99382
+  667.66667  834.33333  226.04172 -117.99253   35.99349  -117.9922   35.99382
+  667.66667 1001.00000  226.04172 -117.99101   35.99331  -117.9907   35.99382
+  834.33333    1.00000  226.04172 -118.00044   35.99283  -118.0000   35.99228
+  834.33333  167.66667  226.04172 -117.99891   35.99266  -117.9984   35.99228
+  834.33333  334.33333  226.04172 -117.99738   35.99248  -117.9969   35.99228
+  834.33333  501.00000  226.04172 -117.99585   35.99231  -117.9953   35.99228
+  834.33333  667.66667  226.04172 -117.99433   35.99213  -117.9938   35.99228
+  834.33333  834.33333  226.04172 -117.99280   35.99196  -117.9922   35.99228
+  834.33333 1001.00000  226.04172 -117.99127   35.99178  -117.9907   35.99228
+ 1001.00000    1.00000  226.04172 -118.00070   35.99131  -118.0000   35.99074
+ 1001.00000  167.66667  226.04172 -117.99917   35.99113  -117.9984   35.99074
+ 
+Rows: 241:245
++-----------+----------+----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4        C:5        C:6       C:7
++-----------+----------+----------+----------+----------+----------+---------
+ 1001.00000  334.33333  226.04172 -117.99765   35.99096  -117.9969   35.99074
+ 1001.00000  501.00000  226.04172 -117.99612   35.99078  -117.9953   35.99074
+ 1001.00000  667.66667  226.04172 -117.99459   35.99061  -117.9938   35.99074
+ 1001.00000  834.33333  226.04172 -117.99306   35.99043  -117.9922   35.99074
+ 1001.00000 1001.00000  226.04172 -117.99153   35.99026  -117.9907   35.99074
+ibis-l xxxabccube0 cols=(11,12,13,14,15,16,+
+17)     csiz=(10,10,10,10,10,10,10) nr+
+=50     cfor=" %10.5f %10.5f %10.5f %10.5f %10.5f %10.4f %10.5f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+----------+----------+----------+----------+----------+---------
+        C:11       C:12       C:13       C:14       C:15       C:16      C:17
++-----------+----------+----------+----------+----------+----------+---------
+ 1105.30046 -117.99540   35.99537 -416.77494  511.71318   659.9634    2.11467
+ 1105.30046 -117.99540   35.99537 -277.85003  511.71318   582.2809    1.92861
+ 1105.30046 -117.99540   35.99537 -138.92512  511.71318   530.2363    1.69627
+ 1105.30046 -117.99540   35.99537   -0.00021  511.71318   511.7132    1.43117
+ 1105.30046 -117.99540   35.99537  138.92470  511.71318   530.2362    1.16607
+ 1105.30046 -117.99540   35.99537  277.84961  511.71318   582.2807    0.93373
+ 1105.30046 -117.99540   35.99537  416.77452  511.71318   659.9632    0.74767
+ 1105.30046 -117.99540   35.99537 -416.78302  341.14212   538.5964    2.31604
+ 1105.30046 -117.99540   35.99537 -277.85540  341.14212   439.9791    2.11468
+ 1105.30046 -117.99540   35.99537 -138.92777  341.14212   368.3461    1.81790
+ 1105.30046 -117.99540   35.99537   -0.00014  341.14212   341.1421    1.43117
+ 1105.30046 -117.99540   35.99537  138.92749  341.14212   368.3460    1.04444
+ 1105.30046 -117.99540   35.99537  277.85512  341.14212   439.9789    0.74766
+ 1105.30046 -117.99540   35.99537  416.78275  341.14212   538.5961    0.54630
+ 1105.30046 -117.99540   35.99537 -416.79111  170.57106   450.3436    2.61351
+ 1105.30046 -117.99540   35.99537 -277.86076  170.57106   326.0385    2.45141
+ 1105.30046 -117.99540   35.99537 -138.93042  170.57106   219.9912    2.11469
+ 1105.30046 -117.99540   35.99537   -0.00007  170.57106   170.5711    1.43117
+ 1105.30046 -117.99540   35.99537  138.93028  170.57106   219.9912    0.74765
+ 1105.30046 -117.99540   35.99537  277.86063  170.57106   326.0384    0.41093
+ 1105.30046 -117.99540   35.99537  416.79097  170.57106   450.3434    0.24883
+ 1105.30046 -117.99540   35.99537 -416.79920   -0.00000   416.7992   -3.28122
+ 1105.30046 -117.99540   35.99537 -277.86613   -0.00000   277.8661   -3.28122
+ 1105.30046 -117.99540   35.99537 -138.93307   -0.00000   138.9331   -3.28122
+ 1105.30046 -117.99540   35.99537    0.00000   -0.00000     0.0000   -0.21621
+ 1105.30046 -117.99540   35.99537  138.93307   -0.00000   138.9331   -0.13963
+ 1105.30046 -117.99540   35.99537  277.86613   -0.00000   277.8661   -0.13963
+ 1105.30046 -117.99540   35.99537  416.79920   -0.00000   416.7992   -0.13963
+ 1105.30046 -117.99540   35.99537 -416.80728 -170.57106   450.3585   -2.89278
+ 1105.30046 -117.99540   35.99537 -277.87150 -170.57106   326.0476   -2.73068
+ 
+Rows: 31:50
++-----------+----------+----------+----------+----------+----------+---------
+        C:11       C:12       C:13       C:14       C:15       C:16      C:17
++-----------+----------+----------+----------+----------+----------+---------
+ 1105.30046 -117.99540   35.99537 -138.93571 -170.57106   219.9946   -2.39396
+ 1105.30046 -117.99540   35.99537    0.00007 -170.57106   170.5711   -1.71042
+ 1105.30046 -117.99540   35.99537  138.93585 -170.57106   219.9947   -1.02688
+ 1105.30046 -117.99540   35.99537  277.87164 -170.57106   326.0477   -0.69017
+ 1105.30046 -117.99540   35.99537  416.80742 -170.57106   450.3586   -0.52807
+ 1105.30046 -117.99540   35.99537 -416.81537 -341.14212   538.6214   -2.59533
+ 1105.30046 -117.99540   35.99537 -277.87687 -341.14212   439.9926   -2.39397
+ 1105.30046 -117.99540   35.99537 -138.93836 -341.14212   368.3501   -2.09718
+ 1105.30046 -117.99540   35.99537    0.00014 -341.14212   341.1421   -1.71042
+ 1105.30046 -117.99540   35.99537  138.93864 -341.14212   368.3502   -1.32366
+ 1105.30046 -117.99540   35.99537  277.87714 -341.14212   439.9928   -1.02687
+ 1105.30046 -117.99540   35.99537  416.81564 -341.14212   538.6216   -0.82552
+ 1105.30046 -117.99540   35.99537 -416.82345 -511.71318   659.9941   -2.39398
+ 1105.30046 -117.99540   35.99537 -277.88223 -511.71318   582.2962   -2.20791
+ 1105.30046 -117.99540   35.99537 -138.94101 -511.71318   530.2405   -1.97555
+ 1105.30046 -117.99540   35.99537    0.00021 -511.71318   511.7132   -1.71042
+ 1105.30046 -117.99540   35.99537  138.94143 -511.71318   530.2406   -1.44529
+ 1105.30046 -117.99540   35.99537  277.88265 -511.71318   582.2964   -1.21294
+ 1105.30046 -117.99540   35.99537  416.82387 -511.71318   659.9943   -1.02686
+ 1105.30046 -117.99539   35.99537 -416.77483  511.71317   659.9634    2.11467
+ibis-l xxxabccube0 cols=(10,18,19,20,21,4+
+,5)     csiz=(10,10,10,10,10,10,10) nr+
+=50     cfor=" %10.5f %10.5f %10.5f %10.5f %10.5f %10.4f %10.5f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+----------+----------+----------+----------+----------+---------
+        C:10       C:18       C:19       C:20       C:21        C:4       C:5
++-----------+----------+----------+----------+----------+----------+---------
+  900.23342 -341.50220  564.73708   -0.00379    0.00511  -117.9992   36.00048
+  900.23342 -203.92930  545.40247   -0.00227    0.00493  -117.9977   36.00030
+  900.23342  -66.35640  526.06786   -0.00074    0.00476  -117.9961   36.00013
+  900.23342   71.21650  506.73325    0.00079    0.00458  -117.9946   35.99995
+  900.23342  208.78941  487.39864    0.00232    0.00441  -117.9931   35.99978
+  900.23342  346.36231  468.06403    0.00385    0.00423  -117.9916   35.99960
+  900.23342  483.93521  448.72942    0.00538    0.00406  -117.9900   35.99943
+  900.25103 -365.24911  395.82713   -0.00406    0.00358  -117.9995   35.99895
+  900.25103 -227.67352  376.49214   -0.00253    0.00341  -117.9979   35.99877
+  900.25103  -90.09792  357.15716   -0.00100    0.00323  -117.9964   35.99860
+  900.25103   47.47767  337.82217    0.00053    0.00306  -117.9949   35.99842
+  900.25103  185.05326  318.48718    0.00206    0.00288  -117.9933   35.99825
+  900.25103  322.62886  299.15219    0.00358    0.00271  -117.9918   35.99807
+  900.25103  460.20445  279.81720    0.00511    0.00253  -117.9903   35.99790
+  900.26865 -388.99603  226.91719   -0.00432    0.00205  -117.9997   35.99742
+  900.26865 -251.41774  207.58182   -0.00279    0.00188  -117.9982   35.99724
+  900.26865 -113.83945  188.24645   -0.00126    0.00170  -117.9967   35.99707
+  900.26865   23.73883  168.91108    0.00026    0.00153  -117.9951   35.99689
+  900.26865  161.31712  149.57572    0.00179    0.00135  -117.9936   35.99672
+  900.26865  298.89541  130.24035    0.00332    0.00118  -117.9921   35.99654
+  900.26865  436.47370  110.90498    0.00485    0.00100  -117.9906   35.99637
+  900.28626 -412.74294   58.00724   -0.00458    0.00052  -118.0000   35.99589
+  900.28626 -275.16196   38.67149   -0.00306    0.00035  -117.9985   35.99572
+  900.28626 -137.58098   19.33575   -0.00153    0.00017  -117.9969   35.99554
+  900.28626    0.00000   -0.00000    0.00000   -0.00000  -117.9954   35.99537
+  900.28626  137.58098  -19.33575    0.00153   -0.00017  -117.9939   35.99519
+  900.28626  275.16196  -38.67149    0.00306   -0.00035  -117.9923   35.99502
+  900.28626  412.74294  -58.00724    0.00458   -0.00052  -117.9908   35.99484
+  900.30388 -436.48985 -110.90271   -0.00485   -0.00100  -118.0003   35.99436
+  900.30388 -298.90618 -130.23884   -0.00332   -0.00118  -117.9987   35.99419
+ 
+Rows: 31:50
++-----------+----------+----------+----------+----------+----------+---------
+        C:10       C:18       C:19       C:20       C:21        C:4       C:5
++-----------+----------+----------+----------+----------+----------+---------
+  900.30388 -161.32251 -149.57496   -0.00179   -0.00135  -117.9972   35.99401
+  900.30388  -23.73883 -168.91108   -0.00026   -0.00153  -117.9957   35.99384
+  900.30388  113.84484 -188.24721    0.00126   -0.00170  -117.9941   35.99366
+  900.30388  251.42851 -207.58333    0.00279   -0.00188  -117.9926   35.99349
+  900.30388  389.01218 -226.91945    0.00432   -0.00205  -117.9911   35.99331
+  900.32149 -460.23676 -279.81266   -0.00511   -0.00253  -118.0005   35.99283
+  900.32149 -322.65039 -299.14916   -0.00358   -0.00271  -117.9990   35.99266
+  900.32149 -185.06403 -318.48566   -0.00206   -0.00288  -117.9975   35.99248
+  900.32149  -47.47767 -337.82217   -0.00053   -0.00306  -117.9959   35.99231
+  900.32149   90.10869 -357.15867    0.00100   -0.00323  -117.9944   35.99213
+  900.32149  227.69505 -376.49517    0.00253   -0.00341  -117.9929   35.99196
+  900.32149  365.28142 -395.83167    0.00406   -0.00358  -117.9913   35.99178
+  900.33910 -483.98367 -448.72261   -0.00538   -0.00406  -118.0008   35.99131
+  900.33910 -346.39461 -468.05949   -0.00385   -0.00423  -117.9993   35.99113
+  900.33910 -208.80556 -487.39637   -0.00232   -0.00441  -117.9977   35.99096
+  900.33910  -71.21650 -506.73325   -0.00079   -0.00458  -117.9962   35.99078
+  900.33910   66.37255 -526.07013    0.00074   -0.00476  -117.9947   35.99061
+  900.33910  203.96160 -545.40701    0.00227   -0.00493  -117.9931   35.99043
+  900.33910  341.55066 -564.74389    0.00379   -0.00511  -117.9916   35.99026
+  900.23342 -341.50210  564.73706   -0.00379    0.00511  -117.9992   36.00048
+mf3 xxxabccube1 f="c9=-(c3-2.060417175293e+02)*@tan((1.000000000000e+01)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c6=c4+0.01$c7=c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="@dist(c4,c5,c6,c7,c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c10=c8"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c6=c4$c4=c4+0.01*c9/c10"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c9=-(c3-2.060417175293e+02)*@tan((0.000000000000e+00)*(1.745329252000e-02))"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c6=c4$c7=c5+0.01"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="@dist(c4,c5,c6,c7,c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c11=c8"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c7=c5$c5=c5+0.01*c9/c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c12=c4$@csum(c12,c3)$c12=c12/49"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c13=c5$@csum(c13,c3)$c13=c13/49"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="@dist(c4,c5,c12,c5,c14)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c14=c14*(c4>=c12)-c14*(c4<c12)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="@dist(c4,c5,c4,c13,c15)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c15=c15*(c5>=c13)-c15*(c5<c13)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c16=@sqrt(c14*c14+c15*c15)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c17=@atan2(c15,c14)+(8.000000000000e+00)*(1.745329252000e-02)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c18=c16*@cos(c17)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c19=c16*@sin(c17)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c20=0.01*c18/c10"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c21=0.01*c19/c11"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c6=c4$c7=c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxabccube1 f="c4=c12+c20$c5=c13+c21"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-l xxxabccube0 nr=8 cols=(1,2,3,4+
+,5)        cfor="%8.2f %8.2f %8.2f %16.12f %16.12f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:8
++--------+--------+--------+----------------+---------------
+      C:1      C:2      C:3              C:4             C:5
++--------+--------+--------+----------------+---------------
+    1.00     1.00   186.04 -117.999198397118 36.000475094255
+    1.00   167.67   186.04 -117.997670205647 36.000300167968
+    1.00   334.33   186.04 -117.996142014176 36.000125241681
+    1.00   501.00   186.04 -117.994613822705 35.999950315393
+    1.00   667.67   186.04 -117.993085631234 35.999775389106
+    1.00   834.33   186.04 -117.991557439763 35.999600462819
+    1.00  1001.00   186.04 -117.990029248293 35.999425536532
+  167.67     1.00   186.04 -117.999462103881 35.998946912966
+ibis-l xxxabccube0 nr=9 sr=196 cols=(1,2,3,4+
+,5)        cfor="%8.2f %8.2f %8.2f %16.12f %16.12f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 196:204
++--------+--------+--------+----------------+---------------
+      C:1      C:2      C:3              C:4             C:5
++--------+--------+--------+----------------+---------------
+ 1001.00  1001.00   216.04 -117.991552580679 35.990256326165
+    1.00     1.00   226.04 -117.999120049740 36.000475093472
+    1.00   167.67   226.04 -117.997591858348 36.000300167193
+    1.00   334.33   226.04 -117.996063666955 36.000125240915
+    1.00   501.00   226.04 -117.994535475563 35.999950314637
+    1.00   667.67   226.04 -117.993007284170 35.999775388359
+    1.00   834.33   226.04 -117.991479092778 35.999600462081
+    1.00  1001.00   226.04 -117.989950901385 35.999425535803
+  167.67     1.00   226.04 -117.999383758008 35.998946912435
+ibis2tcl xxxabccube0 v1=gc1 v2=gc2 v3 = gc3 v4 = +
+gc4     vartype=(-1,-1,-1,+
+-1)     ibisloc=(1,4,7,4,197,4,203,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+let gcb1 = gc2-gc1
+let gcb2 = gc4-gc3
+let gcdel = gcb1-gcb2
+let gcdnum = gcb1/gcdel
+let gcsat = gcdnum*40.0
+write "gc1 -1.179991983971e+02 gc2 -1.179900292483e+02 gc3 -1.179991200497e+02 gc4 -1.179899509014e+02"
+gc1 -1.179991983971e+02 gc2 -1.179900292483e+02 gc3 -1.179991200497e+02 gc4 -1.179899509014e+02
+write "gcb1 9.169148824995e-03 gcb2 9.169148355042e-03 gcdel 4.699529654317e-10"
+gcb1 9.169148824995e-03 gcb2 9.169148355042e-03 gcdel 4.699529654317e-10
+write "gcdnum 1.951077980021e+07"
+gcdnum 1.951077980021e+07
+write "gcsat 7.804311920085e+08"
+gcsat 7.804311920085e+08
+ibis-gen xxxabcxxrpc nr=80 nc=10 deffmt=DOUB
+Beginning VICAR task ibis
+rpc2ibis (xxxabcinpcopy,xxxabcxxrpc) cols=(1,2)
+Beginning VICAR task rpc2ibis
+rpc2ibis version Wed Jan  2 2008
+ibis-l xxxabcxxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.015230  0.000000  0.000000  0.000000
+ 0.000000 1041.00000 0.000000  0.000000
+-0.995591  1.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 500.000000 0.000000  0.000000
+ 0.000000 500.000000 0.000000  0.000000
+ 0.000000 35.995300  0.000000  0.000000
+ 0.000000 -117.99530 0.000000  0.000000
+ 0.000000 206.041718 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000 20.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 1.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.000000  0.000000  0.000000
+ 0.995591  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 1.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+rpcscale (xxxabcxxrpc,xxxabccube0) rpccol=2 cols=(4,5,3,1,2) 'scale
+Beginning VICAR task rpcscale
+rpcscale version Thu Jan  3 2008
+ibis-l xxxabcxxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.015230  0.000000  0.000000  0.000000
+ 0.000000 1041.00000 0.000000  0.000000
+-0.995591  1.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 500.000000 0.000000  0.000000
+ 0.000000 500.000000 0.000000  0.000000
+ 0.000000 35.995300  0.000000  0.000000
+ 0.000000 -117.99530 0.000000  0.000000
+ 0.000000 206.041718 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000 20.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 1.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.000000  0.000000  0.000000
+ 0.995591  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 1.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+label-list xxxabcinpcopy
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabcinpcopy ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD6='35.995300'
+RPC_FIELD7='-117.995300'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD141='+0.01523045644579'
+RPC_FIELD142='+0.00000000000000'
+RPC_FIELD143='-0.99559117798400'
+RPC_FIELD144='+0.00000000000000'
+RPC_FIELD145='+0.00000000000000'
+RPC_FIELD146='+0.00000000000000'
+RPC_FIELD147='+0.00000000000000'
+RPC_FIELD148='+0.00000000000000'
+RPC_FIELD149='+0.00000000000000'
+RPC_FIELD1410='+0.00000000000000'
+RPC_FIELD1411='+0.00000000000000'
+RPC_FIELD1412='+0.00000000000000'
+RPC_FIELD1413='+0.00000000000000'
+RPC_FIELD1414='+0.00000000000000'
+RPC_FIELD1415='+0.00000000000000'
+RPC_FIELD1416='+0.00000000000000'
+RPC_FIELD1417='+0.00000000000000'
+RPC_FIELD1418='+0.00000000000000'
+RPC_FIELD1419='+0.00000000000000'
+RPC_FIELD1420='+0.00000000000000'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000000'
+RPC_FIELD153='+0.00000000000000'
+RPC_FIELD154='+0.00000000000000'
+RPC_FIELD155='+0.00000000000000'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='+0.00000000000000'
+RPC_FIELD158='+0.00000000000000'
+RPC_FIELD159='+0.00000000000000'
+RPC_FIELD1510='+0.00000000000000'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='+0.00000000000000'
+RPC_FIELD1513='+0.00000000000000'
+RPC_FIELD1514='+0.00000000000000'
+RPC_FIELD1515='+0.00000000000000'
+RPC_FIELD1516='+0.00000000000000'
+RPC_FIELD1517='+0.00000000000000'
+RPC_FIELD1518='+0.00000000000000'
+RPC_FIELD1519='+0.00000000000000'
+RPC_FIELD1520='+0.00000000000000'
+RPC_FIELD161='+0.01523045644195'
+RPC_FIELD162='+0.99559117798440'
+RPC_FIELD163='+0.00000000000000'
+RPC_FIELD164='+0.00000000000000'
+RPC_FIELD165='+0.00000000000000'
+RPC_FIELD166='+0.00000000000000'
+RPC_FIELD167='+0.00000000000000'
+RPC_FIELD168='+0.00000000000000'
+RPC_FIELD169='+0.00000000000000'
+RPC_FIELD1610='+0.00000000000000'
+RPC_FIELD1611='+0.00000000000000'
+RPC_FIELD1612='+0.00000000000000'
+RPC_FIELD1613='+0.00000000000000'
+RPC_FIELD1614='+0.00000000000000'
+RPC_FIELD1615='+0.00000000000000'
+RPC_FIELD1616='+0.00000000000000'
+RPC_FIELD1617='+0.00000000000000'
+RPC_FIELD1618='+0.00000000000000'
+RPC_FIELD1619='+0.00000000000000'
+RPC_FIELD1620='+0.00000000000000'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000000'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000000'
+RPC_FIELD175='+0.00000000000000'
+RPC_FIELD176='+0.00000000000000'
+RPC_FIELD177='+0.00000000000000'
+RPC_FIELD178='+0.00000000000000'
+RPC_FIELD179='+0.00000000000000'
+RPC_FIELD1710='+0.00000000000000'
+RPC_FIELD1711='+0.00000000000000'
+RPC_FIELD1712='+0.00000000000000'
+RPC_FIELD1713='+0.00000000000000'
+RPC_FIELD1714='+0.00000000000000'
+RPC_FIELD1715='+0.00000000000000'
+RPC_FIELD1716='+0.00000000000000'
+RPC_FIELD1717='+0.00000000000000'
+RPC_FIELD1718='+0.00000000000000'
+RPC_FIELD1719='+0.00000000000000'
+RPC_FIELD1720='+0.00000000000000'
+RPC_FIELD8='2.060417175293e+02'
+RPC_FIELD13='20.0'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+ibis-l xxxabccube0 cols=(1,2,3,4+
+,5)     csiz=(10,10,10,10,1+
+0)      cfor=" %10.5f %10.5f %10.5f %10.5f %10.5f"
+Beginning VICAR task ibis
+ 
+Number of Rows:245  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+   -1.00100   -1.00100   -1.00000   -0.84748    1.12502
+   -1.00100   -0.66700   -1.00000   -0.51526    1.08699
+   -1.00100   -0.33300   -1.00000   -0.18305    1.04897
+   -1.00100    0.00100   -1.00000    0.14917    1.01094
+   -1.00100    0.33500   -1.00000    0.48138    0.97291
+   -1.00100    0.66900   -1.00000    0.81360    0.93488
+   -1.00100    1.00301   -1.00000    1.14582    0.89686
+   -0.66700   -1.00100   -1.00000   -0.90481    0.79281
+   -0.66700   -0.66700   -1.00000   -0.57259    0.75478
+   -0.66700   -0.33300   -1.00000   -0.24037    0.71675
+   -0.66700    0.00100   -1.00000    0.09184    0.67872
+   -0.66700    0.33500   -1.00000    0.42406    0.64069
+   -0.66700    0.66900   -1.00000    0.75627    0.60267
+   -0.66700    1.00301   -1.00000    1.08849    0.56464
+   -0.33300   -1.00100   -1.00000   -0.96213    0.46059
+   -0.33300   -0.66700   -1.00000   -0.62991    0.42256
+   -0.33300   -0.33300   -1.00000   -0.29770    0.38454
+   -0.33300    0.00100   -1.00000    0.03452    0.34651
+   -0.33300    0.33500   -1.00000    0.36673    0.30848
+   -0.33300    0.66900   -1.00000    0.69895    0.27045
+   -0.33300    1.00301   -1.00000    1.03116    0.23242
+    0.00100   -1.00100   -1.00000   -1.01945    0.12838
+    0.00100   -0.66700   -1.00000   -0.68724    0.09035
+    0.00100   -0.33300   -1.00000   -0.35502    0.05232
+    0.00100    0.00100   -1.00000   -0.02281    0.01429
+    0.00100    0.33500   -1.00000    0.30941   -0.02374
+    0.00100    0.66900   -1.00000    0.64162   -0.06177
+    0.00100    1.00301   -1.00000    0.97384   -0.09980
+    0.33500   -1.00100   -1.00000   -1.07677   -0.20383
+    0.33500   -0.66700   -1.00000   -0.74456   -0.24186
+ 
+Rows: 31:60
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+    0.33500   -0.33300   -1.00000   -0.41234   -0.27989
+    0.33500    0.00100   -1.00000   -0.08013   -0.31792
+    0.33500    0.33500   -1.00000    0.25209   -0.35595
+    0.33500    0.66900   -1.00000    0.58430   -0.39398
+    0.33500    1.00301   -1.00000    0.91652   -0.43202
+    0.66900   -1.00100   -1.00000   -1.13409   -0.53605
+    0.66900   -0.66700   -1.00000   -0.80188   -0.57408
+    0.66900   -0.33300   -1.00000   -0.46966   -0.61211
+    0.66900    0.00100   -1.00000   -0.13745   -0.65014
+    0.66900    0.33500   -1.00000    0.19477   -0.68817
+    0.66900    0.66900   -1.00000    0.52698   -0.72620
+    0.66900    1.00301   -1.00000    0.85920   -0.76423
+    1.00301   -1.00100   -1.00000   -1.19141   -0.86826
+    1.00301   -0.66700   -1.00000   -0.85919   -0.90629
+    1.00301   -0.33300   -1.00000   -0.52698   -0.94432
+    1.00301    0.00100   -1.00000   -0.19476   -0.98236
+    1.00301    0.33500   -1.00000    0.13745   -1.02039
+    1.00301    0.66900   -1.00000    0.46967   -1.05842
+    1.00301    1.00301   -1.00000    0.80188   -1.09645
+   -1.00100   -1.00100   -0.50000   -0.84322    1.12502
+   -1.00100   -0.66700   -0.50000   -0.51100    1.08699
+   -1.00100   -0.33300   -0.50000   -0.17879    1.04897
+   -1.00100    0.00100   -0.50000    0.15343    1.01094
+   -1.00100    0.33500   -0.50000    0.48564    0.97291
+   -1.00100    0.66900   -0.50000    0.81786    0.93488
+   -1.00100    1.00301   -0.50000    1.15007    0.89686
+   -0.66700   -1.00100   -0.50000   -0.90055    0.79281
+   -0.66700   -0.66700   -0.50000   -0.56833    0.75478
+   -0.66700   -0.33300   -0.50000   -0.23612    0.71675
+   -0.66700    0.00100   -0.50000    0.09610    0.67872
+ 
+Rows: 61:90
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+   -0.66700    0.33500   -0.50000    0.42831    0.64069
+   -0.66700    0.66900   -0.50000    0.76053    0.60267
+   -0.66700    1.00301   -0.50000    1.09275    0.56464
+   -0.33300   -1.00100   -0.50000   -0.95787    0.46059
+   -0.33300   -0.66700   -0.50000   -0.62566    0.42256
+   -0.33300   -0.33300   -0.50000   -0.29344    0.38454
+   -0.33300    0.00100   -0.50000    0.03877    0.34651
+   -0.33300    0.33500   -0.50000    0.37099    0.30848
+   -0.33300    0.66900   -0.50000    0.70321    0.27045
+   -0.33300    1.00301   -0.50000    1.03542    0.23242
+    0.00100   -1.00100   -0.50000   -1.01520    0.12838
+    0.00100   -0.66700   -0.50000   -0.68298    0.09035
+    0.00100   -0.33300   -0.50000   -0.35076    0.05232
+    0.00100    0.00100   -0.50000   -0.01855    0.01429
+    0.00100    0.33500   -0.50000    0.31367   -0.02374
+    0.00100    0.66900   -0.50000    0.64588   -0.06177
+    0.00100    1.00301   -0.50000    0.97810   -0.09980
+    0.33500   -1.00100   -0.50000   -1.07252   -0.20383
+    0.33500   -0.66700   -0.50000   -0.74030   -0.24186
+    0.33500   -0.33300   -0.50000   -0.40809   -0.27989
+    0.33500    0.00100   -0.50000   -0.07587   -0.31792
+    0.33500    0.33500   -0.50000    0.25635   -0.35595
+    0.33500    0.66900   -0.50000    0.58856   -0.39398
+    0.33500    1.00301   -0.50000    0.92078   -0.43202
+    0.66900   -1.00100   -0.50000   -1.12984   -0.53605
+    0.66900   -0.66700   -0.50000   -0.79762   -0.57408
+    0.66900   -0.33300   -0.50000   -0.46540   -0.61211
+    0.66900    0.00100   -0.50000   -0.13319   -0.65014
+    0.66900    0.33500   -0.50000    0.19903   -0.68817
+    0.66900    0.66900   -0.50000    0.53124   -0.72620
+ 
+Rows: 91:120
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+    0.66900    1.00301   -0.50000    0.86346   -0.76423
+    1.00301   -1.00100   -0.50000   -1.18715   -0.86826
+    1.00301   -0.66700   -0.50000   -0.85494   -0.90629
+    1.00301   -0.33300   -0.50000   -0.52272   -0.94432
+    1.00301    0.00100   -0.50000   -0.19051   -0.98236
+    1.00301    0.33500   -0.50000    0.14171   -1.02039
+    1.00301    0.66900   -0.50000    0.47393   -1.05842
+    1.00301    1.00301   -0.50000    0.80614   -1.09645
+   -1.00100   -1.00100    0.00000   -0.83896    1.12502
+   -1.00100   -0.66700    0.00000   -0.50675    1.08699
+   -1.00100   -0.33300    0.00000   -0.17453    1.04897
+   -1.00100    0.00100    0.00000    0.15768    1.01094
+   -1.00100    0.33500    0.00000    0.48990    0.97291
+   -1.00100    0.66900    0.00000    0.82212    0.93488
+   -1.00100    1.00301    0.00000    1.15433    0.89686
+   -0.66700   -1.00100    0.00000   -0.89629    0.79281
+   -0.66700   -0.66700    0.00000   -0.56407    0.75478
+   -0.66700   -0.33300    0.00000   -0.23186    0.71675
+   -0.66700    0.00100    0.00000    0.10036    0.67872
+   -0.66700    0.33500    0.00000    0.43257    0.64069
+   -0.66700    0.66900    0.00000    0.76479    0.60267
+   -0.66700    1.00301    0.00000    1.09700    0.56464
+   -0.33300   -1.00100    0.00000   -0.95361    0.46059
+   -0.33300   -0.66700    0.00000   -0.62140    0.42256
+   -0.33300   -0.33300    0.00000   -0.28918    0.38454
+   -0.33300    0.00100    0.00000    0.04303    0.34651
+   -0.33300    0.33500    0.00000    0.37525    0.30848
+   -0.33300    0.66900    0.00000    0.70746    0.27045
+   -0.33300    1.00301    0.00000    1.03968    0.23242
+    0.00100   -1.00100    0.00000   -1.01094    0.12838
+ 
+Rows: 121:150
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+    0.00100   -0.66700    0.00000   -0.67872    0.09035
+    0.00100   -0.33300    0.00000   -0.34651    0.05232
+    0.00100    0.00100    0.00000   -0.01429    0.01429
+    0.00100    0.33500    0.00000    0.31792   -0.02374
+    0.00100    0.66900    0.00000    0.65014   -0.06177
+    0.00100    1.00301    0.00000    0.98236   -0.09980
+    0.33500   -1.00100    0.00000   -1.06826   -0.20383
+    0.33500   -0.66700    0.00000   -0.73604   -0.24186
+    0.33500   -0.33300    0.00000   -0.40383   -0.27989
+    0.33500    0.00100    0.00000   -0.07161   -0.31792
+    0.33500    0.33500    0.00000    0.26060   -0.35595
+    0.33500    0.66900    0.00000    0.59282   -0.39398
+    0.33500    1.00301    0.00000    0.92503   -0.43202
+    0.66900   -1.00100    0.00000   -1.12558   -0.53605
+    0.66900   -0.66700    0.00000   -0.79336   -0.57408
+    0.66900   -0.33300    0.00000   -0.46115   -0.61211
+    0.66900    0.00100    0.00000   -0.12893   -0.65014
+    0.66900    0.33500    0.00000    0.20328   -0.68817
+    0.66900    0.66900    0.00000    0.53550   -0.72620
+    0.66900    1.00301    0.00000    0.86772   -0.76423
+    1.00301   -1.00100    0.00000   -1.18289   -0.86826
+    1.00301   -0.66700    0.00000   -0.85068   -0.90629
+    1.00301   -0.33300    0.00000   -0.51846   -0.94432
+    1.00301    0.00100    0.00000   -0.18625   -0.98236
+    1.00301    0.33500    0.00000    0.14597   -1.02039
+    1.00301    0.66900    0.00000    0.47818   -1.05842
+    1.00301    1.00301    0.00000    0.81040   -1.09645
+   -1.00100   -1.00100    0.50000   -0.83470    1.12502
+   -1.00100   -0.66700    0.50000   -0.50249    1.08699
+   -1.00100   -0.33300    0.50000   -0.17027    1.04897
+ 
+Rows: 151:180
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+   -1.00100    0.00100    0.50000    0.16194    1.01094
+   -1.00100    0.33500    0.50000    0.49416    0.97291
+   -1.00100    0.66900    0.50000    0.82637    0.93488
+   -1.00100    1.00301    0.50000    1.15859    0.89686
+   -0.66700   -1.00100    0.50000   -0.89203    0.79281
+   -0.66700   -0.66700    0.50000   -0.55982    0.75478
+   -0.66700   -0.33300    0.50000   -0.22760    0.71675
+   -0.66700    0.00100    0.50000    0.10462    0.67872
+   -0.66700    0.33500    0.50000    0.43683    0.64069
+   -0.66700    0.66900    0.50000    0.76905    0.60267
+   -0.66700    1.00301    0.50000    1.10126    0.56464
+   -0.33300   -1.00100    0.50000   -0.94936    0.46059
+   -0.33300   -0.66700    0.50000   -0.61714    0.42256
+   -0.33300   -0.33300    0.50000   -0.28493    0.38454
+   -0.33300    0.00100    0.50000    0.04729    0.34651
+   -0.33300    0.33500    0.50000    0.37951    0.30848
+   -0.33300    0.66900    0.50000    0.71172    0.27045
+   -0.33300    1.00301    0.50000    1.04394    0.23242
+    0.00100   -1.00100    0.50000   -1.00668    0.12838
+    0.00100   -0.66700    0.50000   -0.67446    0.09035
+    0.00100   -0.33300    0.50000   -0.34225    0.05232
+    0.00100    0.00100    0.50000   -0.01003    0.01429
+    0.00100    0.33500    0.50000    0.32218   -0.02374
+    0.00100    0.66900    0.50000    0.65440   -0.06177
+    0.00100    1.00301    0.50000    0.98661   -0.09980
+    0.33500   -1.00100    0.50000   -1.06400   -0.20383
+    0.33500   -0.66700    0.50000   -0.73179   -0.24186
+    0.33500   -0.33300    0.50000   -0.39957   -0.27989
+    0.33500    0.00100    0.50000   -0.06735   -0.31792
+    0.33500    0.33500    0.50000    0.26486   -0.35595
+ 
+Rows: 181:210
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+    0.33500    0.66900    0.50000    0.59708   -0.39398
+    0.33500    1.00301    0.50000    0.92929   -0.43202
+    0.66900   -1.00100    0.50000   -1.12132   -0.53605
+    0.66900   -0.66700    0.50000   -0.78910   -0.57408
+    0.66900   -0.33300    0.50000   -0.45689   -0.61211
+    0.66900    0.00100    0.50000   -0.12467   -0.65014
+    0.66900    0.33500    0.50000    0.20754   -0.68817
+    0.66900    0.66900    0.50000    0.53976   -0.72620
+    0.66900    1.00301    0.50000    0.87197   -0.76423
+    1.00301   -1.00100    0.50000   -1.17864   -0.86826
+    1.00301   -0.66700    0.50000   -0.84642   -0.90629
+    1.00301   -0.33300    0.50000   -0.51421   -0.94432
+    1.00301    0.00100    0.50000   -0.18199   -0.98236
+    1.00301    0.33500    0.50000    0.15023   -1.02039
+    1.00301    0.66900    0.50000    0.48244   -1.05842
+    1.00301    1.00301    0.50000    0.81466   -1.09645
+   -1.00100   -1.00100    1.00000   -0.83045    1.12502
+   -1.00100   -0.66700    1.00000   -0.49823    1.08699
+   -1.00100   -0.33300    1.00000   -0.16601    1.04897
+   -1.00100    0.00100    1.00000    0.16620    1.01094
+   -1.00100    0.33500    1.00000    0.49842    0.97291
+   -1.00100    0.66900    1.00000    0.83063    0.93488
+   -1.00100    1.00301    1.00000    1.16285    0.89686
+   -0.66700   -1.00100    1.00000   -0.88777    0.79281
+   -0.66700   -0.66700    1.00000   -0.55556    0.75478
+   -0.66700   -0.33300    1.00000   -0.22334    0.71675
+   -0.66700    0.00100    1.00000    0.10887    0.67872
+   -0.66700    0.33500    1.00000    0.44109    0.64069
+   -0.66700    0.66900    1.00000    0.77330    0.60267
+   -0.66700    1.00301    1.00000    1.10552    0.56464
+ 
+Rows: 211:240
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+   -0.33300   -1.00100    1.00000   -0.94510    0.46059
+   -0.33300   -0.66700    1.00000   -0.61288    0.42256
+   -0.33300   -0.33300    1.00000   -0.28067    0.38454
+   -0.33300    0.00100    1.00000    0.05155    0.34651
+   -0.33300    0.33500    1.00000    0.38376    0.30848
+   -0.33300    0.66900    1.00000    0.71598    0.27045
+   -0.33300    1.00301    1.00000    1.04819    0.23242
+    0.00100   -1.00100    1.00000   -1.00242    0.12838
+    0.00100   -0.66700    1.00000   -0.67021    0.09035
+    0.00100   -0.33300    1.00000   -0.33799    0.05232
+    0.00100    0.00100    1.00000   -0.00578    0.01429
+    0.00100    0.33500    1.00000    0.32644   -0.02374
+    0.00100    0.66900    1.00000    0.65866   -0.06177
+    0.00100    1.00301    1.00000    0.99087   -0.09980
+    0.33500   -1.00100    1.00000   -1.05974   -0.20383
+    0.33500   -0.66700    1.00000   -0.72753   -0.24186
+    0.33500   -0.33300    1.00000   -0.39531   -0.27989
+    0.33500    0.00100    1.00000   -0.06310   -0.31792
+    0.33500    0.33500    1.00000    0.26912   -0.35595
+    0.33500    0.66900    1.00000    0.60133   -0.39398
+    0.33500    1.00301    1.00000    0.93355   -0.43202
+    0.66900   -1.00100    1.00000   -1.11706   -0.53605
+    0.66900   -0.66700    1.00000   -0.78485   -0.57408
+    0.66900   -0.33300    1.00000   -0.45263   -0.61211
+    0.66900    0.00100    1.00000   -0.12042   -0.65014
+    0.66900    0.33500    1.00000    0.21180   -0.68817
+    0.66900    0.66900    1.00000    0.54402   -0.72620
+    0.66900    1.00301    1.00000    0.87623   -0.76423
+    1.00301   -1.00100    1.00000   -1.17438   -0.86826
+    1.00301   -0.66700    1.00000   -0.84216   -0.90629
+ 
+Rows: 241:245
++-----------+----------+----------+----------+---------
+         C:1        C:2        C:3        C:4       C:5
++-----------+----------+----------+----------+---------
+    1.00301   -0.33300    1.00000   -0.50995   -0.94432
+    1.00301    0.00100    1.00000   -0.17773   -0.98236
+    1.00301    0.33500    1.00000    0.15448   -1.02039
+    1.00301    0.66900    1.00000    0.48670   -1.05842
+    1.00301    1.00301    1.00000    0.81891   -1.09645
+ibislsqf (xxxabccube0,xxxabcxxrpc) func=RPCN20  datacol=(4,5,3) +
+depcol=1      rescol=10 solcol=(1,3) rpctype=A rpcls=L
+Beginning VICAR task ibislsqf
+ibislsqf version Fri Dec 28 2007
+ibis-l xxxabcxxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.015230  0.000000  0.013479  0.000000
+ 0.000000 1041.00000-0.112859  0.000000
+-0.995591  1.000000 -0.985902  0.000000
+ 0.000000  0.000000  0.000961  0.000000
+ 0.000000  0.000000  0.000007  0.000000
+ 0.000000 500.000000-0.000000  0.000000
+ 0.000000 500.000000-0.000000  0.000000
+ 0.000000 35.995300 -0.000000  0.000000
+ 0.000000 -117.99530 0.000001  0.000000
+ 0.000000 206.041718 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000 499.000000-0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000  0.004600 -0.000000  0.000000
+ 0.000000 20.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000  0.000000
+ 0.000000  0.000000 -0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000  0.000000
+ 1.000000  0.000000  1.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.000000  0.015230  0.000000
+ 0.995591  0.000000  0.995591  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 1.000000  0.000000  1.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ibisnlsq (xxxabccube0,xxxabcxxrpc) func=RPCD19  datacol=(4,5,3) +
+depcol=1      rescol=10 solcol=(3,4) rpctype=A rpcls=L
+Beginning VICAR task ibisnlsq
+ibisnlsq version Fri Dec 28 2007
+ibis-l xxxabcxxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.015230  0.000000  0.013479  0.013479
+ 0.000000 1041.00000-0.112859 -0.112859
+-0.995591  1.000000 -0.985902 -0.985902
+ 0.000000  0.000000  0.000961  0.000961
+ 0.000000  0.000000  0.000007  0.000007
+ 0.000000 500.000000-0.000000 -0.000000
+ 0.000000 500.000000-0.000000 -0.000000
+ 0.000000 35.995300 -0.000000 -0.000000
+ 0.000000 -117.99530 0.000001  0.000001
+ 0.000000 206.041718 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000 499.000000-0.000000 -0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000  0.004600 -0.000000 -0.000000
+ 0.000000 20.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 1.000000  0.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.000000  0.015230  0.015230
+ 0.995591  0.000000  0.995591  0.995591
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 1.000000  0.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ibislsqf (xxxabccube0,xxxabcxxrpc) func=RPCN20  datacol=(4,5,3) +
+depcol=2      rescol=11 solcol=(4,5) rpctype=A rpcls=S
+Beginning VICAR task ibislsqf
+ibislsqf version Fri Dec 28 2007
+ibisnlsq (xxxabccube0,xxxabcxxrpc) func=RPCD19  datacol=(4,5,3) +
+depcol=2      rescol=11 solcol=(5,6) rpctype=A rpcls=S
+Beginning VICAR task ibisnlsq
+ibisnlsq version Fri Dec 28 2007
+ibis-l xxxabcxxrpc cols=(1,4,5,6) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 0.015230  0.013479  0.013479  0.013479
+ 0.000000 -0.112859 -0.112859 -0.112859
+-0.995591 -0.985902 -0.985902 -0.985902
+ 0.000000  0.000961  0.000961  0.000961
+ 0.000000  0.000007  0.000007  0.000007
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000001  0.000001  0.000001
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 1.000000  1.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.015230  0.017523  0.017523
+ 0.995591  0.995591  0.985902  0.985902
+ 0.000000  0.000000 -0.170112 -0.170112
+ 0.000000  0.000000 -0.008395 -0.008395
+ 0.000000  0.000000 -0.000001 -0.000001
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000010 -0.000010
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 1.000000  1.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+mf3 xxxabcxxrpc f="c10=c6"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+gtcopy xxxabcinpcopy xxxabctmp
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+ibis2rpc xxxabcxxrpc xxxabcxxrpc2 ccol=10 scol=2
+Beginning VICAR task ibis2rpc
+ibis2rpc version Fri Jan 11 2008
+write "compare labels for tmp xxxabctmp"
+compare labels for tmp xxxabctmp
+label-list xxxabcxxrpc2
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabcxxrpc2 ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1 lines per band
+                1 samples per line
+                0 lines of binary header of type IBIS
+                0 bytes of binary prefix per line
+---- Property: IBIS ----
+---- Property: GEOTIFF ----
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD6='35.995300'
+RPC_FIELD7='-117.995300'
+RPC_FIELD8='206.041718'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD13='20.000000'
+RPC_FIELD141='+0.01347906372439'
+RPC_FIELD142='-0.11285918318472'
+RPC_FIELD143='-0.98590208518747'
+RPC_FIELD144='+0.00096105304957'
+RPC_FIELD145='+0.00000651795201'
+RPC_FIELD146='-0.00000001559909'
+RPC_FIELD147='-0.00000008076408'
+RPC_FIELD148='-0.00000000000037'
+RPC_FIELD149='+0.00000074612961'
+RPC_FIELD1410='+0.00000000000445'
+RPC_FIELD1411='+0.00000000007980'
+RPC_FIELD1412='-0.00000000000020'
+RPC_FIELD1413='+0.00000000003860'
+RPC_FIELD1414='-0.00000000000015'
+RPC_FIELD1415='+0.00000000035670'
+RPC_FIELD1416='-0.00000000000022'
+RPC_FIELD1417='-0.00000000000295'
+RPC_FIELD1418='+0.00000000000002'
+RPC_FIELD1419='+0.00000000000027'
+RPC_FIELD1420='-0.00000000000057'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000018'
+RPC_FIELD153='+0.00000000000073'
+RPC_FIELD154='-0.00000000000047'
+RPC_FIELD155='+0.00000000000001'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='-0.00000000000000'
+RPC_FIELD158='-0.00000000000001'
+RPC_FIELD159='-0.00000000000001'
+RPC_FIELD1510='+0.00000000000002'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='-0.00000000000010'
+RPC_FIELD1513='+0.00000000000002'
+RPC_FIELD1514='+0.00000000000006'
+RPC_FIELD1515='-0.00000000000033'
+RPC_FIELD1516='-0.00000000000071'
+RPC_FIELD1517='+0.00000000000001'
+RPC_FIELD1518='+0.00000000000006'
+RPC_FIELD1519='-0.00000000000016'
+RPC_FIELD1520='+0.00000000000052'
+RPC_FIELD161='+0.01752314004930'
+RPC_FIELD162='+0.98590219440504'
+RPC_FIELD163='-0.17011217888515'
+RPC_FIELD164='-0.00839544658900'
+RPC_FIELD165='-0.00000112463619'
+RPC_FIELD166='-0.00000003078730'
+RPC_FIELD167='-0.00000048440860'
+RPC_FIELD168='-0.00000000000975'
+RPC_FIELD169='+0.00000000000018'
+RPC_FIELD1610='-0.00000982447299'
+RPC_FIELD1611='+0.00000000026293'
+RPC_FIELD1612='+0.00000000000969'
+RPC_FIELD1613='-0.00000000001279'
+RPC_FIELD1614='-0.00000000000106'
+RPC_FIELD1615='-0.00000000018718'
+RPC_FIELD1616='-0.00000000110496'
+RPC_FIELD1617='-0.00000000005408'
+RPC_FIELD1618='+0.00000000000021'
+RPC_FIELD1619='+0.00000000000070'
+RPC_FIELD1620='-0.00000000000002'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000649'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000949'
+RPC_FIELD175='+0.00000000000006'
+RPC_FIELD176='-0.00000000000037'
+RPC_FIELD177='+0.00000000000010'
+RPC_FIELD178='+0.00000000000347'
+RPC_FIELD179='-0.00000000000023'
+RPC_FIELD1710='+0.00000000000004'
+RPC_FIELD1711='+0.00000000000001'
+RPC_FIELD1712='-0.00000000000634'
+RPC_FIELD1713='+0.00000000000242'
+RPC_FIELD1714='-0.00000000001110'
+RPC_FIELD1715='-0.00000000000036'
+RPC_FIELD1716='-0.00000000000040'
+RPC_FIELD1717='-0.00000000000162'
+RPC_FIELD1718='-0.00000000000099'
+RPC_FIELD1719='-0.00000000000004'
+RPC_FIELD1720='+0.00000000000010'
+---- Task: IBIS -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: IBIS2RPC -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+label-list xxxabctmp
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabctmp ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500'
+RPC_FIELD5='500'
+RPC_FIELD6='35.995300'
+RPC_FIELD7='-117.995300'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD141='+0.01523045644579'
+RPC_FIELD142='+0.00000000000000'
+RPC_FIELD143='-0.99559117798400'
+RPC_FIELD144='+0.00000000000000'
+RPC_FIELD145='+0.00000000000000'
+RPC_FIELD146='+0.00000000000000'
+RPC_FIELD147='+0.00000000000000'
+RPC_FIELD148='+0.00000000000000'
+RPC_FIELD149='+0.00000000000000'
+RPC_FIELD1410='+0.00000000000000'
+RPC_FIELD1411='+0.00000000000000'
+RPC_FIELD1412='+0.00000000000000'
+RPC_FIELD1413='+0.00000000000000'
+RPC_FIELD1414='+0.00000000000000'
+RPC_FIELD1415='+0.00000000000000'
+RPC_FIELD1416='+0.00000000000000'
+RPC_FIELD1417='+0.00000000000000'
+RPC_FIELD1418='+0.00000000000000'
+RPC_FIELD1419='+0.00000000000000'
+RPC_FIELD1420='+0.00000000000000'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000000'
+RPC_FIELD153='+0.00000000000000'
+RPC_FIELD154='+0.00000000000000'
+RPC_FIELD155='+0.00000000000000'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='+0.00000000000000'
+RPC_FIELD158='+0.00000000000000'
+RPC_FIELD159='+0.00000000000000'
+RPC_FIELD1510='+0.00000000000000'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='+0.00000000000000'
+RPC_FIELD1513='+0.00000000000000'
+RPC_FIELD1514='+0.00000000000000'
+RPC_FIELD1515='+0.00000000000000'
+RPC_FIELD1516='+0.00000000000000'
+RPC_FIELD1517='+0.00000000000000'
+RPC_FIELD1518='+0.00000000000000'
+RPC_FIELD1519='+0.00000000000000'
+RPC_FIELD1520='+0.00000000000000'
+RPC_FIELD161='+0.01523045644195'
+RPC_FIELD162='+0.99559117798440'
+RPC_FIELD163='+0.00000000000000'
+RPC_FIELD164='+0.00000000000000'
+RPC_FIELD165='+0.00000000000000'
+RPC_FIELD166='+0.00000000000000'
+RPC_FIELD167='+0.00000000000000'
+RPC_FIELD168='+0.00000000000000'
+RPC_FIELD169='+0.00000000000000'
+RPC_FIELD1610='+0.00000000000000'
+RPC_FIELD1611='+0.00000000000000'
+RPC_FIELD1612='+0.00000000000000'
+RPC_FIELD1613='+0.00000000000000'
+RPC_FIELD1614='+0.00000000000000'
+RPC_FIELD1615='+0.00000000000000'
+RPC_FIELD1616='+0.00000000000000'
+RPC_FIELD1617='+0.00000000000000'
+RPC_FIELD1618='+0.00000000000000'
+RPC_FIELD1619='+0.00000000000000'
+RPC_FIELD1620='+0.00000000000000'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000000'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000000'
+RPC_FIELD175='+0.00000000000000'
+RPC_FIELD176='+0.00000000000000'
+RPC_FIELD177='+0.00000000000000'
+RPC_FIELD178='+0.00000000000000'
+RPC_FIELD179='+0.00000000000000'
+RPC_FIELD1710='+0.00000000000000'
+RPC_FIELD1711='+0.00000000000000'
+RPC_FIELD1712='+0.00000000000000'
+RPC_FIELD1713='+0.00000000000000'
+RPC_FIELD1714='+0.00000000000000'
+RPC_FIELD1715='+0.00000000000000'
+RPC_FIELD1716='+0.00000000000000'
+RPC_FIELD1717='+0.00000000000000'
+RPC_FIELD1718='+0.00000000000000'
+RPC_FIELD1719='+0.00000000000000'
+RPC_FIELD1720='+0.00000000000000'
+RPC_FIELD8='2.060417175293E+02'
+RPC_FIELD13='20.0'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+gtgenup (xxxabctmp,xxxabcxxrpc2)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+label-list xxxabctmp
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabctmp ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD6='35.995300'
+RPC_FIELD7='-117.995300'
+RPC_FIELD8='206.041718'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD13='20.000000'
+RPC_FIELD141='+0.01347906372439'
+RPC_FIELD142='-0.11285918318472'
+RPC_FIELD143='-0.98590208518747'
+RPC_FIELD144='+0.00096105304957'
+RPC_FIELD145='+0.00000651795201'
+RPC_FIELD146='-0.00000001559909'
+RPC_FIELD147='-0.00000008076408'
+RPC_FIELD148='-0.00000000000037'
+RPC_FIELD149='+0.00000074612961'
+RPC_FIELD1410='+0.00000000000445'
+RPC_FIELD1411='+0.00000000007980'
+RPC_FIELD1412='-0.00000000000020'
+RPC_FIELD1413='+0.00000000003860'
+RPC_FIELD1414='-0.00000000000015'
+RPC_FIELD1415='+0.00000000035670'
+RPC_FIELD1416='-0.00000000000022'
+RPC_FIELD1417='-0.00000000000295'
+RPC_FIELD1418='+0.00000000000002'
+RPC_FIELD1419='+0.00000000000027'
+RPC_FIELD1420='-0.00000000000057'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000018'
+RPC_FIELD153='+0.00000000000073'
+RPC_FIELD154='-0.00000000000047'
+RPC_FIELD155='+0.00000000000001'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='-0.00000000000000'
+RPC_FIELD158='-0.00000000000001'
+RPC_FIELD159='-0.00000000000001'
+RPC_FIELD1510='+0.00000000000002'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='-0.00000000000010'
+RPC_FIELD1513='+0.00000000000002'
+RPC_FIELD1514='+0.00000000000006'
+RPC_FIELD1515='-0.00000000000033'
+RPC_FIELD1516='-0.00000000000071'
+RPC_FIELD1517='+0.00000000000001'
+RPC_FIELD1518='+0.00000000000006'
+RPC_FIELD1519='-0.00000000000016'
+RPC_FIELD1520='+0.00000000000052'
+RPC_FIELD161='+0.01752314004930'
+RPC_FIELD162='+0.98590219440504'
+RPC_FIELD163='-0.17011217888515'
+RPC_FIELD164='-0.00839544658900'
+RPC_FIELD165='-0.00000112463619'
+RPC_FIELD166='-0.00000003078730'
+RPC_FIELD167='-0.00000048440860'
+RPC_FIELD168='-0.00000000000975'
+RPC_FIELD169='+0.00000000000018'
+RPC_FIELD1610='-0.00000982447299'
+RPC_FIELD1611='+0.00000000026293'
+RPC_FIELD1612='+0.00000000000969'
+RPC_FIELD1613='-0.00000000001279'
+RPC_FIELD1614='-0.00000000000106'
+RPC_FIELD1615='-0.00000000018718'
+RPC_FIELD1616='-0.00000000110496'
+RPC_FIELD1617='-0.00000000005408'
+RPC_FIELD1618='+0.00000000000021'
+RPC_FIELD1619='+0.00000000000070'
+RPC_FIELD1620='-0.00000000000002'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000649'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000949'
+RPC_FIELD175='+0.00000000000006'
+RPC_FIELD176='-0.00000000000037'
+RPC_FIELD177='+0.00000000000010'
+RPC_FIELD178='+0.00000000000347'
+RPC_FIELD179='-0.00000000000023'
+RPC_FIELD1710='+0.00000000000004'
+RPC_FIELD1711='+0.00000000000001'
+RPC_FIELD1712='-0.00000000000634'
+RPC_FIELD1713='+0.00000000000242'
+RPC_FIELD1714='-0.00000000001110'
+RPC_FIELD1715='-0.00000000000036'
+RPC_FIELD1716='-0.00000000000040'
+RPC_FIELD1717='-0.00000000000162'
+RPC_FIELD1718='-0.00000000000099'
+RPC_FIELD1719='-0.00000000000004'
+RPC_FIELD1720='+0.00000000000010'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+plab2tcl xxxabctmp property=Geotiff val=dlat keyword=RPC_FIELD6 vtype=7
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+plab2tcl xxxabctmp property=Geotiff val=dlon keyword=RPC_FIELD7 vtype=7
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+let dlat = dlat+sdshift_n
+let dlon = dlon+sdshift_e
+write "dlat 3.599610000000e+01 dlon -1.179950000000e+02"
+dlat 3.599610000000e+01 dlon -1.179950000000e+02
+gtgenup xxxabctmp geotiff="RPC_FIELD6=3.599610000000e+01"
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+gtgenup xxxabctmp geotiff="RPC_FIELD7=-1.179950000000e+02"
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+label-list xxxabctmp
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxxabctmp ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD8='206.041718'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD13='20.000000'
+RPC_FIELD141='+0.01347906372439'
+RPC_FIELD142='-0.11285918318472'
+RPC_FIELD143='-0.98590208518747'
+RPC_FIELD144='+0.00096105304957'
+RPC_FIELD145='+0.00000651795201'
+RPC_FIELD146='-0.00000001559909'
+RPC_FIELD147='-0.00000008076408'
+RPC_FIELD148='-0.00000000000037'
+RPC_FIELD149='+0.00000074612961'
+RPC_FIELD1410='+0.00000000000445'
+RPC_FIELD1411='+0.00000000007980'
+RPC_FIELD1412='-0.00000000000020'
+RPC_FIELD1413='+0.00000000003860'
+RPC_FIELD1414='-0.00000000000015'
+RPC_FIELD1415='+0.00000000035670'
+RPC_FIELD1416='-0.00000000000022'
+RPC_FIELD1417='-0.00000000000295'
+RPC_FIELD1418='+0.00000000000002'
+RPC_FIELD1419='+0.00000000000027'
+RPC_FIELD1420='-0.00000000000057'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='+0.00000000000018'
+RPC_FIELD153='+0.00000000000073'
+RPC_FIELD154='-0.00000000000047'
+RPC_FIELD155='+0.00000000000001'
+RPC_FIELD156='+0.00000000000000'
+RPC_FIELD157='-0.00000000000000'
+RPC_FIELD158='-0.00000000000001'
+RPC_FIELD159='-0.00000000000001'
+RPC_FIELD1510='+0.00000000000002'
+RPC_FIELD1511='+0.00000000000000'
+RPC_FIELD1512='-0.00000000000010'
+RPC_FIELD1513='+0.00000000000002'
+RPC_FIELD1514='+0.00000000000006'
+RPC_FIELD1515='-0.00000000000033'
+RPC_FIELD1516='-0.00000000000071'
+RPC_FIELD1517='+0.00000000000001'
+RPC_FIELD1518='+0.00000000000006'
+RPC_FIELD1519='-0.00000000000016'
+RPC_FIELD1520='+0.00000000000052'
+RPC_FIELD161='+0.01752314004930'
+RPC_FIELD162='+0.98590219440504'
+RPC_FIELD163='-0.17011217888515'
+RPC_FIELD164='-0.00839544658900'
+RPC_FIELD165='-0.00000112463619'
+RPC_FIELD166='-0.00000003078730'
+RPC_FIELD167='-0.00000048440860'
+RPC_FIELD168='-0.00000000000975'
+RPC_FIELD169='+0.00000000000018'
+RPC_FIELD1610='-0.00000982447299'
+RPC_FIELD1611='+0.00000000026293'
+RPC_FIELD1612='+0.00000000000969'
+RPC_FIELD1613='-0.00000000001279'
+RPC_FIELD1614='-0.00000000000106'
+RPC_FIELD1615='-0.00000000018718'
+RPC_FIELD1616='-0.00000000110496'
+RPC_FIELD1617='-0.00000000005408'
+RPC_FIELD1618='+0.00000000000021'
+RPC_FIELD1619='+0.00000000000070'
+RPC_FIELD1620='-0.00000000000002'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000649'
+RPC_FIELD173='+0.00000000000000'
+RPC_FIELD174='+0.00000000000949'
+RPC_FIELD175='+0.00000000000006'
+RPC_FIELD176='-0.00000000000037'
+RPC_FIELD177='+0.00000000000010'
+RPC_FIELD178='+0.00000000000347'
+RPC_FIELD179='-0.00000000000023'
+RPC_FIELD1710='+0.00000000000004'
+RPC_FIELD1711='+0.00000000000001'
+RPC_FIELD1712='-0.00000000000634'
+RPC_FIELD1713='+0.00000000000242'
+RPC_FIELD1714='-0.00000000001110'
+RPC_FIELD1715='-0.00000000000036'
+RPC_FIELD1716='-0.00000000000040'
+RPC_FIELD1717='-0.00000000000162'
+RPC_FIELD1718='-0.00000000000099'
+RPC_FIELD1719='-0.00000000000004'
+RPC_FIELD1720='+0.00000000000010'
+RPC_FIELD6='3.599610000000e+01'
+RPC_FIELD7='-1.179950000000e+02'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+write "refnameq xxxabcref"
+refnameq xxxabcref
+rpcwarp (xxxabctmp,xxximg3) out=xxximg11 ref=xxxabcref 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "rpcwarp 04/26/07"
+rpcwarp 04/26/07
+let rpcimg = inp(1)
+let dted = inp(2)
+gt2tcl xxxabctmp val=tstring1 keyword="MODELPIXELSCALETAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+gt2tcl xxxabctmp val=tstring2 keyword="MODELTRANSFORMATIONTAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (tstring1="-999" and tstring2="-999")
+end-if
+if (savegrid<>"")
+else
+   let finalgrid = "xxqqgrid31"
+end-if
+lab2tcl xxxabctmp v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxabcref v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)"
+geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)
+gtgen out=xxqqgrid4 'tiecnvrt  +
+  geotiff=("ModelTiePointTag=(0,0,0,-110.,34.,0.0)",  +
+  "ModelTiePointTag=(0,100,0,-110.,33.,0.0)",  +
+  "ModelTiePointTag=(100,0,0,-109.,34.,0.0)",  +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+rpc2grid inp=(xxxabctmp,xxximg3) out=xxqqgrid2 nah=1000 nav=1000 ncol=13
+let $echo="yes"
+write "rpc2grid 04/27/11"
+rpc2grid 04/27/11
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl xxxabctmp val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clon3 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clat3 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clon4 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxabctmp val=clat4 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+end-if
+ibis-gen xxxrpc2grid78 nc=11 nr=4 deffmt=DOUB datacols=(1,2)  +
+   data=(-1.180000000000e+02,3.600000000000e+01,-1.179907407407e+02,3.600000000000e+01,-1.179907407407e+02,3.599074074070e+01,-1.18+
+0000000000e+02,3.599074074070e+01)
+Beginning VICAR task ibis
+mf3 xxxrpc2grid78 f="c3=c1$c4=c2$@average(c3)$@average(c4)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c5=c3-c1$c6=c4-c2$c7=@atan2(c5,c6)+3.14159265"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c8=c7$@diff(c8)$c8=c8*180.0/3.14159265$c9=@abs(c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c10=c1+0.04*(c1-c3)$c11=c2+0.04*(c2-c4)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxrpc2grid78 v1=angle34 v2=angle34abs  +
+   vartype=(-1,-1) ibisloc=(4,8,4,9)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+if ((angle34abs<180.0 and angle34<0.0) or (angle34abs>180.0 and angle34>0.0))
+else
+   ibis2tcl xxxrpc2grid78 v1=clon1 v2=clat1 v3=clon2 v4=clat2  +
+      v5=clon3 v6=clat3 v7=clon4 v8=clat4  +
+      vartype=(-1,-1,-1,-1,-1,-1,-1,-1)  +
+      ibisloc=(1,10,1,11,2,10,2,11,3,10,3,11,4,10,4,11)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+end-if
+gengrid2 out=xxqqgrid2 ncol=13 nah=1000 nav=1000+
+    l1=-1.180001852417e+02 s1=3.60001851654+
+1e+01 l2=-1.179905526733e+02 s2=3.600018516541e+01    l3=-1.180001852417e+02 s3=3.599055656433e+01 l4=-1.179905526733e+02 s4=3.5990+
+55656433e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2 version="ibis-2" org="column" nc=13+
+       nr=1002001 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2 func="c3=@int((@index-1)/1001)/1000"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c4=@mod(@index+1000,1001)/1000"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c5=c3*(-1.180001852417e+02-(-1.180001852417e+02))+(-1.180001852417e+02)$c6=c3*(-1.179905526733e+02-(-1.17990552+
+6733e+02))+(-1.179905526733e+02)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c7=c4*(3.600018516541e+01-(3.600018516541e+01))+(3.600018516541e+01)$c8=c4*(3.599055656433e+01-(3.599055656433e+
++01))+(3.599055656433e+01)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-proc
+pixmap (xxqqgrid2,xxximg3) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+getzval (xxximg3,xxqqgrid2) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxqqgrid2,xxxabctmp)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+end-proc
+gtproj (xxqqgrid2,xxqqgrid4,xxxabcref) incol=(1,2) outcol=(6,7)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2,xxxabcref) mapcols=(6,7) pixcols=(8,9) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+let maxl = sl+nl
+let maxs = ss+ns
+tieconv xxqqgrid2 out=xxqqgrid31 cols=(8,9,4,5)  +
+  nah=1000 nav=1000 minl=1 mins=1 maxl=1001 maxs=1001 'geomv
+Beginning VICAR task tieconv
+tieconv version Tue Mar 01 2011
+geomv INP=(xxxabctmp,xxqqgrid31,xxxabcref) OUT=xxximg11 size=(1,1,100+
+0,1000)         cols=(1,2,3,4) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+if (savegrid<>"")
+end-if
+end-proc
+gtwarp xxxabcinpcopy xxximg12 ref=xxxabcref 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 08-jun-10"
+gtwarp version 08-jun-10
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl xxxabcinpcopy v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxabcref v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)"
+geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=10201 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/101)/100)*1000+(1-0.5)$",      +
+        "c2=(@mod(@index+100,101)/100)*1000+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqgrid2qq,xxxabcref) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+gtproj (xxqqgrid2qq,xxxabcref,xxxabcinpcopy) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2qq,xxxabcinpcopy) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+geomv INP=(xxxabcinpcopy,xxqqgrid2qq,xxxabcref) OUT=xxximg12 size=+
+(1,1,1000,1000)         cols=(1,2,7,8) interp="bilin" znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+end-proc
+ibis-gen xxxabcxxrpc nr=80 nc=10 deffmt=DOUB
+Beginning VICAR task ibis
+rpc2ibis (xxxabcinpcopy,xxxabcxxrpc) cols=(1,2)
+Beginning VICAR task rpc2ibis
+rpc2ibis version Wed Jan  2 2008
+rpcscale (xxxabcxxrpc,xxxabccube1) rpccol=2 cols=(4,5,3,1,2) 'scale
+Beginning VICAR task rpcscale
+rpcscale version Thu Jan  3 2008
+ibis-l xxxabcxxrpc
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.02        0.00        0.00        0.00        0.00        0.00
+        0.00     1041.00        0.00        0.00        0.00        0.00
+       -1.00        1.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00      500.00        0.00        0.00        0.00        0.00
+        0.00      500.00        0.00        0.00        0.00        0.00
+        0.00       36.00        0.00        0.00        0.00        0.00
+        0.00     -118.00        0.00        0.00        0.00        0.00
+        0.00      206.04        0.00        0.00        0.00        0.00
+        0.00      499.00        0.00        0.00        0.00        0.00
+        0.00      499.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00       20.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        1.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 31:60
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.02        0.00        0.00        0.00        0.00        0.00
+        1.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 61:80
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+        1.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:30
++-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10
++-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+ 
+Rows: 31:60
++-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10
++-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+ 
+Rows: 61:80
++-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10
++-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00
+ibislsqf (xxxabccube1,xxxabcxxrpc) func=RPCN20  datacol=(4,5,3) +
+depcol=1      rescol=10 solcol=(1,3) rpctype=A rpcls=L
+Beginning VICAR task ibislsqf
+ibislsqf version Fri Dec 28 2007
+ibisnlsq (xxxabccube1,xxxabcxxrpc) func=RPCD19  datacol=(4,5,3) +
+depcol=1      rescol=10 solcol=(3,4) rpctype=A rpcls=L
+Beginning VICAR task ibisnlsq
+ibisnlsq version Fri Dec 28 2007
+ibis-l xxxabcxxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.015230  0.000000  0.016705  0.016705
+ 0.000000 1041.00000 0.112859  0.112859
+-0.995591  1.000000 -0.985902 -0.985902
+ 0.000000  0.000000  0.000961  0.000961
+ 0.000000  0.000000 -0.000007 -0.000007
+ 0.000000 500.000000 0.000000  0.000000
+ 0.000000 500.000000-0.000000 -0.000000
+ 0.000000 35.995300  0.000000  0.000000
+ 0.000000 -117.99530 0.000001  0.000001
+ 0.000000 206.041718-0.000000 -0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000 499.000000 0.000000  0.000000
+ 0.000000  0.004600  0.000000  0.000000
+ 0.000000  0.004600 -0.000000 -0.000000
+ 0.000000 20.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 1.000000  0.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.000000  0.015230  0.015230
+ 0.995591  0.000000  0.995591  0.995591
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:2       C:3      C:4
++---------+---------+---------+--------
+ 1.000000  0.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ibislsqf (xxxabccube1,xxxabcxxrpc) func=RPCN20  datacol=(4,5,3) +
+depcol=2      rescol=11 solcol=(4,5) rpctype=A rpcls=S
+Beginning VICAR task ibislsqf
+ibislsqf version Fri Dec 28 2007
+ibisnlsq (xxxabccube1,xxxabcxxrpc) func=RPCD19  datacol=(4,5,3) +
+depcol=2      rescol=11 solcol=(5,6) rpctype=A rpcls=S
+Beginning VICAR task ibisnlsq
+ibisnlsq version Fri Dec 28 2007
+ibis-l xxxabcxxrpc cols=(1,4,5,6) cfor="%9.6f %9.6f %9.6f %9.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 10      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 0.015230  0.016705  0.016705  0.016705
+ 0.000000  0.112859  0.112859  0.112859
+-0.995591 -0.985902 -0.985902 -0.985902
+ 0.000000  0.000961  0.000961  0.000961
+ 0.000000 -0.000007 -0.000007 -0.000007
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000001  0.000001  0.000001
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 1.000000  1.000000  1.000000  1.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 
+Rows: 31:60
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000 -0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.015230  0.015230  0.012661  0.012661
+ 0.995591  0.995591  0.985902  0.985902
+ 0.000000  0.000000  0.170112  0.170112
+ 0.000000  0.000000  0.008395  0.008395
+ 0.000000  0.000000 -0.000001 -0.000001
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000010  0.000010
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 0.000000  0.000000 -0.000000 -0.000000
+ 
+Rows: 61:80
++---------+---------+---------+--------
+       C:1       C:4       C:5      C:6
++---------+---------+---------+--------
+ 1.000000  1.000000  1.000000  1.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000 -0.000000
+ 0.000000  0.000000  0.000000  0.000000
+ 0.000000  0.000000  0.000000  0.000000
+mf3 xxxabcxxrpc f="c10=c6"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2rpc xxxabcxxrpc xxxabcxxrpc2 ccol=10 scol=2
+Beginning VICAR task ibis2rpc
+ibis2rpc version Fri Jan 11 2008
+gtgenup (xxximg11,xxxabcxxrpc2)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+plab2tcl xxximg11 property=Geotiff val=dlat keyword=RPC_FIELD6 vtype=7
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+plab2tcl xxximg11 property=Geotiff val=dlon keyword=RPC_FIELD7 vtype=7
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+let dlat = dlat-shift_n
+let dlon = dlon-shift_e
+write "dlat 3.599450000000e+01 dlon -1.179956000000e+02"
+dlat 3.599450000000e+01 dlon -1.179956000000e+02
+gtgenup xxximg11 geotiff="RPC_FIELD6=3.599450000000e+01"
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+gtgenup xxximg11 geotiff="RPC_FIELD7=-1.179956000000e+02"
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+label-list xxximg11
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxximg11 ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                1000 lines per band
+                1000 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG=
+'(-0.0000000018626,0.0,0,-1.180000000000E+02,3.600000000000E+01,0.0)'
+MODELPIXELSCALETAG='(0.0000092592593,0.0000092592593,0.0)'
+GTMODELTYPEGEOKEY='2(MODELTYPEGEOGRAPHIC)'
+GEOGANGULARUNITSGEOKEY='9102(ANGULAR_DEGREE)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='1(RASTERPIXELISAREA)'
+GEOGELLIPSOIDGEOKEY='7030(ELLIPSE_WGS84)'
+NITF_CORNERLON1='-1.180000000000E+02'
+NITF_CORNERLAT1='3.600000000000E+01'
+NITF_CORNERELV1='8.275000000070E+01'
+NITF_CORNERLON2='-1.179907407407E+02'
+NITF_CORNERLAT2='3.600000000000E+01'
+NITF_CORNERELV2='3.172500000002E+02'
+NITF_CORNERLON3='-1.179907407407E+02'
+NITF_CORNERLAT3='3.599074074070E+01'
+NITF_CORNERELV3='1.827500000009E+02'
+NITF_CORNERLON4='-1.180000000000E+02'
+NITF_CORNERLAT4='3.599074074070E+01'
+NITF_CORNERELV4='5.827500000019E+02'
+NITF_CENTERLON='-1.179953703704E+02'
+NITF_CENTERLAT='3.599537037035E+01'
+NITF_CENTERELV='1.327500000016E+02'
+NITF_CETAG='RPC00A'
+RPC_FIELD1='1'
+RPC_FIELD2='0.000000'
+RPC_FIELD3='0.000000'
+RPC_FIELD4='500.000000'
+RPC_FIELD5='500.000000'
+RPC_FIELD8='206.041718'
+RPC_FIELD9='499.000000'
+RPC_FIELD10='499.000000'
+RPC_FIELD11='0.004600'
+RPC_FIELD12='0.004600'
+RPC_FIELD13='20.000000'
+RPC_FIELD141='+0.01670490955176'
+RPC_FIELD142='+0.11285922583783'
+RPC_FIELD143='-0.98590227148939'
+RPC_FIELD144='+0.00096105349262'
+RPC_FIELD145='-0.00000651794976'
+RPC_FIELD146='+0.00000001559908'
+RPC_FIELD147='-0.00000008076411'
+RPC_FIELD148='+0.00000000000040'
+RPC_FIELD149='+0.00000074612937'
+RPC_FIELD1410='-0.00000000000575'
+RPC_FIELD1411='+0.00000000007889'
+RPC_FIELD1412='+0.00000000000016'
+RPC_FIELD1413='+0.00000000003862'
+RPC_FIELD1414='-0.00000000000010'
+RPC_FIELD1415='-0.00000000035665'
+RPC_FIELD1416='-0.00000000000045'
+RPC_FIELD1417='-0.00000000000292'
+RPC_FIELD1418='+0.00000000000005'
+RPC_FIELD1419='+0.00000000000026'
+RPC_FIELD1420='+0.00000000000204'
+RPC_FIELD151='+1.00000000000000'
+RPC_FIELD152='-0.00000000000006'
+RPC_FIELD153='+0.00000000000032'
+RPC_FIELD154='-0.00000000000043'
+RPC_FIELD155='-0.00000000000001'
+RPC_FIELD156='-0.00000000000000'
+RPC_FIELD157='-0.00000000000000'
+RPC_FIELD158='-0.00000000000003'
+RPC_FIELD159='-0.00000000000000'
+RPC_FIELD1510='+0.00000000000001'
+RPC_FIELD1511='-0.00000000000000'
+RPC_FIELD1512='-0.00000000000009'
+RPC_FIELD1513='-0.00000000000020'
+RPC_FIELD1514='-0.00000000000002'
+RPC_FIELD1515='+0.00000000000025'
+RPC_FIELD1516='-0.00000000000026'
+RPC_FIELD1517='+0.00000000000000'
+RPC_FIELD1518='-0.00000000000011'
+RPC_FIELD1519='-0.00000000000005'
+RPC_FIELD1520='+0.00000000000052'
+RPC_FIELD161='+0.01266083337439'
+RPC_FIELD162='+0.98590219440441'
+RPC_FIELD163='+0.17011214673916'
+RPC_FIELD164='+0.00839544571424'
+RPC_FIELD165='-0.00000112463569'
+RPC_FIELD166='-0.00000003078718'
+RPC_FIELD167='+0.00000048440844'
+RPC_FIELD168='-0.00000000000901'
+RPC_FIELD169='-0.00000000000013'
+RPC_FIELD1610='+0.00000982446723'
+RPC_FIELD1611='-0.00000000026250'
+RPC_FIELD1612='+0.00000000001033'
+RPC_FIELD1613='+0.00000000001258'
+RPC_FIELD1614='+0.00000000000030'
+RPC_FIELD1615='-0.00000000018757'
+RPC_FIELD1616='+0.00000000110575'
+RPC_FIELD1617='+0.00000000005388'
+RPC_FIELD1618='+0.00000000000040'
+RPC_FIELD1619='-0.00000000000019'
+RPC_FIELD1620='-0.00000000000521'
+RPC_FIELD171='+1.00000000000000'
+RPC_FIELD172='+0.00000000000574'
+RPC_FIELD173='-0.00000000000044'
+RPC_FIELD174='+0.00000000000879'
+RPC_FIELD175='-0.00000000000002'
+RPC_FIELD176='-0.00000000000027'
+RPC_FIELD177='-0.00000000000009'
+RPC_FIELD178='-0.00000000000450'
+RPC_FIELD179='-0.00000000000014'
+RPC_FIELD1710='+0.00000000000001'
+RPC_FIELD1711='+0.00000000000000'
+RPC_FIELD1712='-0.00000000000562'
+RPC_FIELD1713='-0.00000000000175'
+RPC_FIELD1714='-0.00000000001190'
+RPC_FIELD1715='-0.00000000000024'
+RPC_FIELD1716='+0.00000000000029'
+RPC_FIELD1717='+0.00000000000079'
+RPC_FIELD1718='-0.00000000000119'
+RPC_FIELD1719='+0.00000000000034'
+RPC_FIELD1720='+0.00000000000021'
+RPC_FIELD6='3.599450000000e+01'
+RPC_FIELD7='-1.179956000000e+02'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=1.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: GTCOPY -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: GEOMV -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+end-proc
+list xxximg11 linc=100 sinc=100
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:GEOMV     User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp     1     201     401     601     801
+   Line
+      1       0 172  11  92 173 253  77 157 238  62
+    101       0  23 118 213  42 122 203  27 107 187
+    201       0 129 225  64 159 248  72 152 232  57
+    301       0 236  75 171  10 105 197  22 102 182
+    401       0  87 182  21 117 212  51 146 227  51
+    501       0 194  33 128 223  62 158 253  92 177
+    601       0  45 140 235  74 169   8 104 199  38
+    701       0 152 247  86 181  20 115 210  49 145
+    801       0   3  98 193  32 127 222  61 156 251
+    901       0   0   0   0   0 234  73 168   7 102
+list xxximg12 linc=100 sinc=100
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:GEOMV     User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp     1     201     401     601     801
+   Line
+      1       1 101 201  45 145 245  89 189  33 133
+    101     101 201  45 145 245  89 189  33 133 233
+    201     201  45 145 245  89 189  33 133 233  77
+    301      45 145 245  89 189  33 133 233  77 177
+    401     145 245  89 189  33 133 233  77 177  21
+    501     245  89 189  33 133 233  77 177  21 121
+    601      89 189  33 133 233  77 177  21 121 221
+    701     189  33 133 233  77 177  21 121 221  65
+    801      33 133 233  77 177  21 121 221  65 165
+    901     133 233  77 177  21 121 221  65 165   9
+rpcwarp (xxximg11,xxximg3) out=xxximg13 ref=xxximg12 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "rpcwarp 04/26/07"
+rpcwarp 04/26/07
+let rpcimg = inp(1)
+let dted = inp(2)
+gt2tcl xxximg11 val=tstring1 keyword="MODELPIXELSCALETAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+gt2tcl xxximg11 val=tstring2 keyword="MODELTRANSFORMATIONTAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (tstring1="-999" and tstring2="-999")
+end-if
+if (savegrid<>"")
+else
+   let finalgrid = "xxqqgrid31"
+end-if
+lab2tcl xxximg11 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxximg12 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)"
+geomv parameter (sl,ss,nl,ns) = (1,1,1000,1000)
+gtgen out=xxqqgrid4 'tiecnvrt  +
+  geotiff=("ModelTiePointTag=(0,0,0,-110.,34.,0.0)",  +
+  "ModelTiePointTag=(0,100,0,-110.,33.,0.0)",  +
+  "ModelTiePointTag=(100,0,0,-109.,34.,0.0)",  +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+rpc2grid inp=(xxximg11,xxximg3) out=xxqqgrid2 nah=1000 nav=1000 ncol=13
+let $echo="yes"
+write "rpc2grid 04/27/11"
+rpc2grid 04/27/11
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl xxximg11 val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clon3 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clat3 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clon4 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxximg11 val=clat4 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+end-if
+ibis-gen xxxrpc2grid78 nc=11 nr=4 deffmt=DOUB datacols=(1,2)  +
+   data=(-1.180000000000e+02,3.600000000000e+01,-1.179907407407e+02,3.600000000000e+01,-1.179907407407e+02,3.599074074070e+01,-1.18+
+0000000000e+02,3.599074074070e+01)
+Beginning VICAR task ibis
+mf3 xxxrpc2grid78 f="c3=c1$c4=c2$@average(c3)$@average(c4)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c5=c3-c1$c6=c4-c2$c7=@atan2(c5,c6)+3.14159265"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c8=c7$@diff(c8)$c8=c8*180.0/3.14159265$c9=@abs(c8)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxrpc2grid78 f="c10=c1+0.04*(c1-c3)$c11=c2+0.04*(c2-c4)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxrpc2grid78 v1=angle34 v2=angle34abs  +
+   vartype=(-1,-1) ibisloc=(4,8,4,9)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+if ((angle34abs<180.0 and angle34<0.0) or (angle34abs>180.0 and angle34>0.0))
+else
+   ibis2tcl xxxrpc2grid78 v1=clon1 v2=clat1 v3=clon2 v4=clat2  +
+      v5=clon3 v6=clat3 v7=clon4 v8=clat4  +
+      vartype=(-1,-1,-1,-1,-1,-1,-1,-1)  +
+      ibisloc=(1,10,1,11,2,10,2,11,3,10,3,11,4,10,4,11)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+end-if
+gengrid2 out=xxqqgrid2 ncol=13 nah=1000 nav=1000+
+    l1=-1.180001852417e+02 s1=3.60001851654+
+1e+01 l2=-1.179905526733e+02 s2=3.600018516541e+01    l3=-1.180001852417e+02 s3=3.599055656433e+01 l4=-1.179905526733e+02 s4=3.5990+
+55656433e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2 version="ibis-2" org="column" nc=13+
+       nr=1002001 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2 func="c3=@int((@index-1)/1001)/1000"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c4=@mod(@index+1000,1001)/1000"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c5=c3*(-1.180001852417e+02-(-1.180001852417e+02))+(-1.180001852417e+02)$c6=c3*(-1.179905526733e+02-(-1.17990552+
+6733e+02))+(-1.179905526733e+02)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c7=c4*(3.600018516541e+01-(3.600018516541e+01))+(3.600018516541e+01)$c8=c4*(3.599055656433e+01-(3.599055656433e+
++01))+(3.599055656433e+01)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxqqgrid2 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-proc
+pixmap (xxqqgrid2,xxximg3) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+getzval (xxximg3,xxqqgrid2) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxqqgrid2,xxximg11)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+end-proc
+gtproj (xxqqgrid2,xxqqgrid4,xxximg12) incol=(1,2) outcol=(6,7)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2,xxximg12) mapcols=(6,7) pixcols=(8,9) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+let maxl = sl+nl
+let maxs = ss+ns
+tieconv xxqqgrid2 out=xxqqgrid31 cols=(8,9,4,5)  +
+  nah=1000 nav=1000 minl=1 mins=1 maxl=1001 maxs=1001 'geomv
+Beginning VICAR task tieconv
+tieconv version Tue Mar 01 2011
+geomv INP=(xxximg11,xxqqgrid31,xxximg12) OUT=xxximg13 size=(1,1,1000,+
+1000)         cols=(1,2,3,4) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+if (savegrid<>"")
+end-if
+end-proc
+f2 (xxximg12,xxximg13) out=xxximg14 func="abs(in1-in2)"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 using byte table lookup
+FUNCTION EVALUATED 65536 TIMES
+list xxximg14 linc=100 sinc=100 zeroes=zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:F2        User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp     1     201     401     601     801
+   Line
+      1       1 101 201  45 145 245  89 189  33 133
+    101     101 201  45 145   1   1   2   4   5 233
+    201      37  35  32 233   8   1   3   4   6   7
+    301      38  36 223  30  28  15   3   5   6   8
+    401      39 220  33  30  28  25  20   6   7   8
+    501     216  37  34  32  29 230  23  21  13   9
+    601      40  37  35  32 227  26  25  22  19  16
+    701      41  38  36 223  30  28  25  22  19  17
+    801      42  40 219  34  31  29  26  23  21  18
+    901      43 216  37  34  32  29  26  23  21  18
+goto theend
+end-proc
+disable-log

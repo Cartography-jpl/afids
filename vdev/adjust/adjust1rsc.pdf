@@ -1,0 +1,273 @@
+procedure help=*
+parm inp type=(string,99)
+parm raw type=(string,99)
+parm out type=(string,99)
+parm ref type=(string,99)
+parm xvd string valid=("n","y") default="n"
+
+parm rpfnx type=real count=15
+parm rpfny type=real count=15
+parm rpfdx type=real count=15
+parm rpfdy type=real count=15
+
+parm typref type=keyword count=(0:1) valid=(coverref,coverinp) +
+     default=coverref
+parm interp type=keyword count=(0:1) valid=(noin,bilin) +
+     default=bilin
+parm nah type=int count=1 default=200
+parm nav type=int count=1 default=200
+parm gorewid type=int count=1 default=2
+parm fftsize type=int count=1 default=64 valid=32:1024
+parm magnify type=real count=1 default=1.0 valid=(0.0:5000.0)
+parm toler type=real count=1 default=3.0 valid=(0.0:20.0)
+parm polyfit type=string count=(0:1) default="" +
+   VALID=("","LINEAR","KEYSTONE","QUAD","CUBIC")
+
+local master type=(string,99)
+local vinp type=(string,99)
+local vraw type=(string,99)
+local temp type=(string,99)
+local accplot type=(string,99)
+local temp1 type=(string,99)
+local fmt1 string
+local fmt2 string
+body
+
+let master = "&out" // "vref"
+let vinp = "&out" // "vinp"
+let vraw = "&out" // "vraw"
+let temp = "&out" // ".vic"
+let temp1 = "&out" // "temp1"
+let accplot = "&out" // ".accplot"
+
+vtiff3-tovic &inp &vinp
+vtiff3-tovic &raw &vraw
+vtiff3-tovic &ref &master
+
+gtrpfwarp2 inp=&vinp +
+   raw=&vraw +
+   out=&temp +
+   ref=&master +
+   rpfnx=&rpfnx +
+   rpfny=&rpfny +
+   rpfdx=&rpfdx +
+   rpfdy=&rpfdy +
+   typref=&typref interp=&interp +
+   nah=&nah nav=&nav gorewid=&gorewid fftsize=&fftsize +
+   magnify=&magnify toler=&toler polyfit="&polyfit" +
+   accplot=&accplot
+gtlist &temp
+
+if (xvd="y")
+   lab2tcl &temp v1=fmt1 keyword=format 'system
+   lab2tcl &master v1=fmt2 keyword=format 'system
+   if (fmt1=fmt2)
+      xvd (&temp,&master,&master)
+   else-if (fmt1="BYTE")
+      f2 &master +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp,&temp1,&temp1)
+   else-if (fmt2="BYTE")
+      f2 &temp +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp1,&master,&master)
+   end-if
+end-if
+
+vtiff3-fromvic &temp &out
+
+if (xvd="n") ush /bin/rm -f &master &vinp
+end-proc
+.TITLE
+ADJUST1RSC - Register GeoTIFF to GeoTIFF incorporating RPF, generated intermed
+.HELP
+PURPOSE
+     Similar to util4.pdf (see AFIDS Document) except for the addition
+     of two parameters (raw image and the RPF Coefficients that converted
+     the raw to the intermediate file that is the input to util4).
+     
+     The purpose of this is to achieve single resampling.
+     
+     The output can be remapped.  That is, the input/raw can be one
+     map reference, such as UTM, and the output can be another, such as
+     CIB Platte Carree.
+
+     The difference between this proc and adjust1rc is that an intermediate
+     file is generated from the raw using the RPF for purposes of Fourier
+     correlation.
+  
+OPERATION
+
+     calls a special version of GTPWARP that incorporates the RPF.
+
+.PAGE
+Restrictions
+------------
+
+The input, raw and reference images must have GeoTIFF labels.
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 24 Oct, 2004
+Current Cognizant Programmer: A. L. Zobrist
+.LEVEL1
+.VARI INP
+Input file name with GeoTIFF
+label
+.VARI RAW
+Raw file with GeoTIFF label that
+RPF converts to INP
+.VARI RPFNX
+Numerator coeff of x; quartic
+in canonical order (help 2)
+.VARI RPFNY
+Numerator coeff of y; quartic
+in canonical order
+.VARI RPFDX
+Denominator coeff of x; quartic
+in canonical order
+.VARI RPFDY
+Denominator coeff of y; quartic
+in canonical order
+.VARI OUT
+Output file name
+.VARI REF
+Reference file name with GeoTIFF
+label
+.VARI TYPREF
+'COVERINP - output minimally
+  covers the input data
+'COVERREF - output matches the
+  ref image exactly
+.VARI NAH
+Number of grid cells horiz.
+.VARI NAV
+Number of grid cells vert.
+.VARI INTERP
+interpolation options
+Valid: NOIN,ZNOIN,BILIN
+.VARI GOREWID
+Added width of gores for
+'coverinp case only
+.VARI FFTSIZE
+FFT window size
+.VARI MAGNIFY
+enlarge footprint of fft
+window by this factor
+.VARI POLYFIT
+if given, overrides triangu-
+lation surface fit with poly-
+nomial fit (see tieconv)
+.VARI ACCPLOT 
+if given, the accuracy plot
+image will have this name, 
+otherwise it will have a
+name="xxxaccplottemp"
+.VARI XVD
+set "y" to automatically display
+.LEVEL2
+.VARI INP
+Input file name.  This parameter is input as:
+     INP=innam
+where "innam" is the input file name.
+.VARI OUT
+Output file name. This parameter is input as:
+     OUT=outnam
+where:
+"outnam" is the output file name.VARI OUT
+.VARI REF
+reference file name. This parameter is input as:
+     REF=refnam
+where:
+"refnam" is the reference file name.
+
+This is a VICAR image that has a GeoTIFF label to specify a mapping.
+It could be an image of a geographic area, or it could be a single 
+pixel image that serves as the holder of the GeoTIFF mapping information
+only.  In the latter case only the 'coverinp case would make sense.
+.VARI INTERP
+This parameter has three valid keyword values: NOIN and BILIN.
+
+NOIN means no interpolation.   The default method (used when neither keyword 
+is specified) for computing the
+DN values of the output picture is to use a bi-linear interpolation
+on the four nearest neighbors in the input picture.  With NOIN, the
+value of the nearest point is simply used.
+For example, say a point in the output picture was determined
+to have come from point (R,P) in the input picture.  Since R and P
+are real values, we must somehow calculate a DN value for that
+point.  Take IR and IP as the truncated values.  We then have
+          VAL1                                 VAL2
+           *                                    *
+         (IR,IP)                              (IR,IP+1)
+                     POINT
+                       *
+                     (R,P)
+          VAL3                                 VAL4
+           *                                    *
+         (IR+1,IP)                           (IR+1,IP+1)
+Here, POINT is the result of a bilinear interpolation using
+VAL1, VAL2, VAL3, and VAL4.
+If NOIN is specified, then POINT would be VAL1, the nearest
+neighbor.
+
+ZNOIN specifies that a four-point interpolation is done except
+when one or more of the points used has a value equal to zero. 
+In that case the nearest method is used.
+This allows preparation of sharp edges (no interpolation rolloff)
+for mosaicking.
+
+.VARI TYPREF
+     1.  The keyword 'coverinp causes the procedure to map all of the
+     input image to an output image that will just contain it.   The
+     keyword gorewid allows the user to specify a zero-filled margin
+     to make the output a little larger (or negative trims smaller).
+	
+     2.  The keyword 'coverref causes the procedure to map the input
+     image to an output image that exactly matches the "reference" image.
+     Some parts of the input can be lost, or huge areas of zero-fill
+     could be added to make the images match.  The gorewid keyword has
+     no effect in this case.
+	   
+.VARI GOREWID
+Added width of gores for 'coverinp case only.  This number of pixel
+columns or rows is added to all four sides.  Zero fill is used.
+.VARI FFTSIZE
+The size of the FFT used in PICMTCH4.  See that program.
+.VARI POLYFIT
+Use this if both inputs are "smooth" and a polynomial surface fit
+will improve over the finite element fit.  Another good reason for 
+using a polynomial is that the picmatch points are sometimes in
+error and this will tend to ignore the errors in favor of the
+general trend.
+.VARI RPFNX
+The canonical order of coefficients of a quartic are (numbers below are
+superscripts)
+
+  ax4+bx3y+cx2y2+dxy3+ey4+fx3+gx2y+hxy2+iy3+jx2+kxy+ly2+mx+ny+0
+  
+The variables a-0 are the values input to this parameter in order.
+.VARI RPFNY
+The canonical order of coefficients of a quartic are (numbers below are
+superscripts)
+
+  ax4+bx3y+cx2y2+dxy3+ey4+fx3+gx2y+hxy2+iy3+jx2+kxy+ly2+mx+ny+0
+  
+The variables a-0 are the values input to this parameter in order.
+.VARI RPFDX
+The canonical order of coefficients of a quartic are (numbers below are
+superscripts)
+
+  ax4+bx3y+cx2y2+dxy3+ey4+fx3+gx2y+hxy2+iy3+jx2+kxy+ly2+mx+ny+0
+  
+The variables a-0 are the values input to this parameter in order.
+.VARI RPFDY
+The canonical order of coefficients of a quartic are (numbers below are
+superscripts)
+
+  ax4+bx3y+cx2y2+dxy3+ey4+fx3+gx2y+hxy2+iy3+jx2+kxy+ly2+mx+ny+0
+  
+The variables a-0 are the values input to this parameter in order.
+.END

@@ -1,0 +1,6 @@
+$ vpack ge1ref.com -mixed -
+	-s ge1ref.c -
+	-i ge1ref.imake -
+	-p ge1ref.pdf -
+	-t tstge1ref.pdf
+$ Exit

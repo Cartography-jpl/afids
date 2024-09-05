@@ -1,0 +1,6 @@
+$ vpack lplist.com -mixed -
+	-s lplist.c -
+	-i lplist.imake -
+	-p lplist.pdf -
+	-t tstlplist.pdf
+$ Exit

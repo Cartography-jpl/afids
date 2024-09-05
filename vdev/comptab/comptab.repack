@@ -1,0 +1,6 @@
+$ vpack comptab.com -mixed -
+	-s comptab.c -
+	-i comptab.imake -
+	-p comptab.pdf -
+	-t tstcomptab.pdf
+$ Exit

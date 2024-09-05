@@ -1,0 +1,68 @@
+process help=*
+PARM INP         TYPE=(STRING,99) COUNT=(2:4)
+PARM OUT         TYPE=(STRING,99) COUNT=(1:2)
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+EXECUTION:
+
+Example
+
+lpcat inp=(A, B) out=C
+
+TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim          26 Apr 2007
+
+.LEVEL1
+.VARIABLE INP
+This variable specifies
+the files to concatenate.
+There must be 2 .slp files
+to concatenate whereas
+the 2 .dlp files are
+optional.  The .slp files
+must be listed before the
+".dlp" files.
+
+.VARIABLE OUT
+This variable specifies
+the output files.
+If only the .slp files
+were specified in the
+input, then only the
+".slp" output file needs
+to be specified.  If both
+".slp" and .dlp files were
+specified in the input
+variable then both .slp 
+and .dlp output files 
+should be specified. The 
+".slp" file must be specified 
+before the .dlp file.
+
+.LEVEL2
+.VARIABLE INP
+For example:
+to concatenate lake1.slp
+and lake2.slp - 
+inp=(lake1.slp, lake2.slp)
+to concatenate their
+corresponding .dlp files
+inp=(lake1.slp, lake2.slp,
+lake1.dlp, lake2.dlp)
+
+.VARIABLE OUT
+For example:
+if only .slp files were
+specified in inp, then -
+out=(output.slp)
+if both .slp and .dlp
+files were specified
+in inp, then -
+out=(output.slp, output.dlp)
+
+.END

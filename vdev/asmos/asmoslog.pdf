@@ -1,0 +1,170 @@
+procedure
+parm key string
+parm band string
+parm loopstart int default=0
+
+local parfile string
+local rawfileix string
+local rawfile string
+local outfile string
+local loginfile string
+local primaryfile string
+local pathraw string
+local pathxy string
+local shortname string
+local dted string
+local lsat string
+local bobgrid string
+local map0save string
+
+local iloop int
+local numimg int
+local loopkey string
+local mkstring string
+local lnstring string
+local nah int
+local nav int
+
+local lu integer
+local ll integer
+local sl integer
+local sr integer
+local lsp string
+local lslsp string
+local btype string
+
+refgbl $echo
+body
+let $echo="yes"
+
+if ("&band"="1" or "&band"="2" or "&band"="3N")
+   let btype = "VNIR"
+else
+   let btype = "SWIR"
+end-if
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="numimg=" val=numimg vtype=4
+asc2tcl &parfile keyword="nah=" val=nah vtype=4
+asc2tcl &parfile keyword="nav=" val=nav vtype=4
+asc2tcl &parfile keyword="dted=" val=dted vtype=0
+asc2tcl &parfile keyword="lsat=" val=lsat vtype=0
+asc2tcl &parfile keyword="pathraw=" val=pathraw vtype=0
+asc2tcl &parfile keyword="pathxy=" val=pathxy vtype=0
+write "numimg &numimg nah &nah nav &nav"
+write "dted &dted ."
+write "lsat &lsat ."
+write "pathraw &pathraw ."
+
+if (loopstart=0)
+   let iloop = 0
+else
+   let iloop = loopstart-1
+end-if
+
+loop
+let iloop = iloop+1
+if (iloop>numimg) goto endiloop
+
+   let rawfileix = "raw&iloop" // "="
+   asc2tcl &parfile keyword="&rawfileix" val=rawfile vtype=0
+   write "rawfile &rawfile"
+   let shortname = "z&iloop"
+   
+   let loopkey = "&key" // "k&iloop"
+   let mkstring = "rm -fr final&loopkey"
+   ush &mkstring
+   let mkstring = "mkdir final&loopkey"
+   ush &mkstring
+   let mkstring = "rm -fr raw&loopkey"
+   ush &mkstring
+   let mkstring = "mkdir raw&loopkey"
+   ush &mkstring
+   let mkstring = "rm -f raw&loopkey" // "/&rawfile" // ".met"
+   ush &mkstring
+   let lnstring = "ln -s &pathraw" // "/&rawfile" // ".met " // +
+         "raw&loopkey" // "/&rawfile" // ".met"
+   ush &lnstring
+   let mkstring = "rm -f raw&loopkey" // "/&rawfile" // ".raw"
+   ush &mkstring
+   let lnstring = "ln -s &pathraw" // "/&rawfile" // ".raw " // +
+         "raw&loopkey" // "/&rawfile" // ".raw"
+   ush &lnstring
+   let loginfile = "raw&loopkey" // "/&rawfile" // + ".raw" 
+   let outfile = "final&loopkey" // "/&rawfile" // + "&btype" // "_map4.&band" 
+    
+   asc2tcl &parfile keyword="raw&"iloop"lu=" val=lu vtype=4
+   asc2tcl &parfile keyword="raw&"iloop"ll=" val=ll vtype=4
+   asc2tcl &parfile keyword="raw&"iloop"sl=" val=sl vtype=4
+   asc2tcl &parfile keyword="raw&"iloop"sr=" val=sr vtype=4
+   asc2tcl &parfile keyword="raw&"iloop"lsp=" val=lsp vtype=0
+   asc2tcl &parfile keyword="raw&"iloop"lslsp=" val=lslsp vtype=0
+
+  write "raw&"iloop"lu= &lu"
+  write "raw&"iloop"ll= &ll"
+  write "raw&"iloop"sl= &sl"
+  write "raw&"iloop"sr= &sr" 
+  write "raw&"iloop"lsp= &lsp"
+  write "raw&"iloop"lslsp= &lslsp"
+
+   if ("&band"="2")
+      astcall2 key="&loopkey" rawimg="&loginfile" +
+         outimg="&outfile" +
+         nah=&nah nav=&nav rtype=master +
+         dted=&dted +
+         lsat=&lsat +
+         maptype=pc xvdonly=n +
+         line_upper="&lu" line_lower="&ll" samp_left="&sl" samp_right="&sr" +
+         linesamp=&lsp +
+         lsatls=&lslsp
+
+   else
+      let primaryfile = "&pathxy" // "/&rawfile" // + "&btype" // "_map4.2"
+      write "primaryfile &primaryfile loginfile &loginfile"
+      write "outfile &outfile"
+      plab2tcl inp=&primaryfile property="COREG_META_DATA" val=bobgrid +
+         keyword=bobdate vtype=0
+      let lnstring = "ln -s &pathxy" // "/&bobgrid" // "grid* final&loopkey" // "/."
+      write "lnstring=&lnstring"
+      ush &lnstring
+      let map0save = "final&loopkey" // "/&bobgrid" // + "&btype" // "_map0.&band"
+      astwarpad2 key="&loopkey" +
+         fnamein="&primaryfile" +
+         rawaster="&loginfile" +
+         outimg="&outfile" +
+         btype="&btype" band=&band +
+         map0save=&map0save
+   end-if
+   
+   let mkstring = "rm -f &shortname"
+   ush &mkstring
+   let lnstring = "ln -s final&loopkey" // "/&rawfile" // +
+             "&btype" // "_map4.&band &shortname"
+   ush &lnstring
+   
+   ingest_a2 &key &loopkey &rawfile &band &shortname &iloop
+   
+   let mkstring = "rm -f raw&loopkey" // "/*"
+   ush &mkstring
+   if ("&band"<>"2")
+      let mkstring = "rm -f final&loopkey" // "/*grid*"
+      ush &mkstring
+   end-if
+   let mkstring = "mv -f final&loopkey" // "/* &pathxy" // "/."
+   ush &mkstring
+   let mkstring = "rmdir raw&loopkey"
+   ush &mkstring
+   let mkstring = "rmdir final&loopkey"
+   ush &mkstring
+   
+   let mkstring = "rm -f &shortname"
+   ush &mkstring
+   let lnstring = "ln -s &pathxy" // "/&rawfile" // +
+             "&btype" // "_map4.&band &shortname"
+   ush &lnstring
+
+end-loop
+endiloop>
+
+theend>
+end-proc

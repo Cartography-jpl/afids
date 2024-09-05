@@ -1,0 +1,6 @@
+$ vpack lpselect.com -mixed -
+	-s lpselect.c -
+	-i lpselect.imake -
+	-p lpselect.pdf -
+	-t tstlpselect.pdf
+$ Exit

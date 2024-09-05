@@ -1,0 +1,6 @@
+$ vpack goeslog.com -mixed -
+	-s goeslog.c -
+	-i goeslog.imake -
+	-p goeslog.pdf -
+	-t tstgoeslog.pdf devgoeslog.pdf
+$ Exit

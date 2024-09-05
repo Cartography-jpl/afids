@@ -1,0 +1,4 @@
+$ vpack watermask.com -mixed -
+	-p watermask.pdf -
+	-t tstwatermask.pdf
+$ Exit

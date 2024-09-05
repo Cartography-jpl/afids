@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $echo="yes"
+let $autousage="none"
+
+shp2lp inp=testShapes out=(lpxxx9.slp, lpxxx9.dlp) fmt=8
+
+ibis-list lpxxx9.slp
+ibis-list lpxxx9.dlp
+
+theend>
+end-proc

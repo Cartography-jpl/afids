@@ -1,0 +1,80 @@
+procedure  ! gen_5classes
+
+!
+! usage gen_5classes L71169037_03720090308
+!
+parm file string
+
+local found integer
+local ndvi string init="_ndvi"
+local bfrac string init="_bfrac"
+local bg string init="_bg"
+local bg53 string init="_bg53"
+local cm string init=".cm"
+local mtl string init="_MTL.txt"
+
+local b1 string init="_B10.img"
+local b2 string init="_B20.img"
+local b3 string init="_B30.img"
+local b4 string init="_B40.img"
+local b5 string init="_B50.img"
+local b6 string init="_B60.img"
+local b7 string init="_B70.img"
+
+local img string init=".img"
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+let _onfail="continue"
+
+write "Generating ndvi, cloud mask, bg and bfrac for scene &file ..."
+write " "
+
+!       NDVI (Vegetated pixels ID): bands 4 and 3
+let $echo="yes"
+f2  inp=(&file&b4,&file&b3) +
+        out=&file&ndvi&img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+
+! goto theend	! we are skipping the cloud mask and not using the BG and BFRAC
+
+!	Stop here if there is no Band 5
+file2tcl &file&b5 val=found
+if (found=0) 
+  goto theend
+end-if
+
+!	Stop here if there is no Band 6
+file2tcl &file&b6 val=found
+if (found=1)
+  goto skip_b60
+end-if
+let b6="_B61.img"
+file2tcl &file&b6 val=found
+if (found=0)
+  goto theend
+end-if
+skip_b60>
+
+!	Generate a cloud mask
+acca (&file&b2,&file&b3,&file&b4,&file&b5,&file&b6) +
+	meta=&file&mtl out=&file&cm
+
+!       BG (bare ground ID): bands 3 and 5
+f2  inp=(&file&b3,&file&b5) +
+        out=&file&bg&img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+
+!       BG53 (bare ground ID): bands 5 and 3
+f2  inp=(&file&b5,&file&b3) +
+        out=&file&bg53&img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+        
+!       BFRAC (bg and ndvi)
+f2  inp=(&file&bg&img,&file&ndvi&img) out=&file&bfrac&img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+
+theend>    
+end-proc

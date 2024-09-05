@@ -1,0 +1,47 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = hist
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+# other possible CFLAGS that are not included in -Wall are:
+# CPFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wunreachable-code -Wsign-compare
+CPPFLAGS += -I$(AFIDSTOP)/include/carto -I../sub -I.
+
+#-Wno-globals - removes reports of 
+#Argument #2 of `xvp' is one type at (2) but is some other type at (1) [info -f g77 M GLOBALS]
+#Argument #2 of `xvwrit' is one precision at (2) but is some other precision at (1) [info -f g77 M GLOBALS]
+
+#FFLAGS += -Wunused -Wuninitialized -Wsurprising -Wno-globals
+FFLAGS += -Wunused -Wuninitialized -Wsurprising 
+
+CFLAGS += -Wmissing-prototypes -Wstrict-prototypes
+CFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wsign-compare
+#CFLAGS += -Wunreachable-code - gives bogus error messages in splot.c
+
+# IGNORE the warnings of the type:
+#hist.F:223.30:
+#
+#         call tab2(iunit,ilim,buf,ihist,hist,mm,sum,sum2,nzeroes,
+#                              1
+#Warning: Type mismatch in argument 'buf' at (1); passed INTEGER(1) to INTEGER(2)
+#hist.F:226.35:
+#
+#        call tab4(iunit,ilim,ibins,buf,hist,mm,sum,sum2,nzeroes,
+#                                   1
+#Warning: Type mismatch in argument 'buf' at (1); passed INTEGER(1) to INTEGER(4)
+
+#  buf is defined in subroutine work and called by stacka. stacka allocates
+#  buf in terms of bytes and a multiplier accomdates BYTE,HALF,FULL,REAL, and DOUB
+#
+#==============================================================
+# Extra files hist depends on
+#2016-06-22 eliminated splot (Regis/VAX graphics)
+#hist: splot.o ../sub/stacka_big.o
+hist: ../sub/stacka_big.o
+

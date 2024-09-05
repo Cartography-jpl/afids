@@ -1,0 +1,6 @@
+$ vpack gridcomp.com -mixed -
+	-s gridcomp.c -
+	-i gridcomp.imake -
+	-p gridcomp.pdf -
+	-t tstgridcomp.pdf
+$ Exit

@@ -1,0 +1,54 @@
+gen x
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+comprs x cx1 compress="BASIC"
+Beginning VICAR task comprs
+comprs x cx2 compress="BASIC2"
+Beginning VICAR task comprs
+comprs cx1 uncx1 compress="NONE"
+Beginning VICAR task comprs
+comprs cx2 uncx2 compress="NONE"
+Beginning VICAR task comprs
+difpic inp=(x, cx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(x, cx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(x, uncx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(x, uncx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(cx1, cx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(cx1, uncx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(cx1, uncx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(cx2, uncx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(cx2, uncx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+difpic inp=(uncx1, uncx2)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+END-PROC
+disable-log

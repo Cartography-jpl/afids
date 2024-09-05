@@ -1,0 +1,84 @@
+procedure	! wv2pansharp.pdf
+
+parm subdir type=string def="IZ1_10SEP09_10SEP14"
+parm fname  type=string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm pan    type=string def="nxprepan.img"
+
+local img string init=".img"
+local uu string init="_"
+local slash string init="/"
+local b1 string init="_b1"
+local b2 string init="_b2"
+local b3 string init="_b3"
+local b33 string init="_b33"
+local b4 string init="_b4"
+local b5 string init="_b5"
+local b6 string init="_b6"
+local b7 string init="_b7"
+local b8 string init="_b8"
+local nx1 string init=".n1"
+local nx2 string init=".n2"
+local nx3 string init=".n3"
+local nx4 string init=".n4"
+local nx5 string init=".n5"
+local nx6 string init=".n6"
+local nx7 string init=".n7"
+local nx8 string init=".n8"
+
+local P001 string init="_01_P001"
+local star string init="*"
+local missing string init="_missing"
+local found integer
+local nl integer
+local ns integer
+local lat real
+local long real
+local ilat integer
+local ilong integer
+local path string init="./"
+local source string
+local ps string init="_pan_sharp"
+local panfile
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+
+tcl2tcl script=("set i [string first P1B &"fname"]; ", +
+        "string replace &"fname" $i [expr $i+2] M1B") strvar=fname
+
+let subdir="&subdir&slash"
+let source="&subdir&fname"
+let panfile="&subdir&pan"
+
+gtwarp &source&nx1 b1 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx2 b2 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx3 b3 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx4 b4 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx5 b5 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx6 b6 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx7 b7 +
+  ref=&panfile 'coverref nav=250 nah=250
+gtwarp &source&nx8 b8 +
+  ref=&panfile 'coverref nav=250 nah=250
+
+psrgbish pan=&panfile +
+ inp=(b1,b2,b3,b4,b5,b6,b7,b8) +
+ out=(&subdir&fname&ps&b1&img,+
+  &subdir&fname&ps&b2&img,+
+  &subdir&fname&ps&b3&img,+
+  &subdir&fname&ps&b4&img,+
+  &subdir&fname&ps&b5&img,+
+  &subdir&fname&ps&b6&img,+
+  &subdir&fname&ps&b7&img,+
+  &subdir&fname&ps&b8&img)
+
+theend>
+end-proc

@@ -1,0 +1,6 @@
+$ vpack trnscol2.com -mixed -
+	-s trnscol2.c -
+	-i trnscol2.imake -
+	-p trnscol2.pdf -
+	-t tsttrnscol2.pdf testtrnscol2.pdf
+$ Exit

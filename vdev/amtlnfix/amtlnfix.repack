@@ -1,0 +1,6 @@
+$ vpack amtlnfix.com -mixed -
+	-s amtlnfix.c -
+	-i amtlnfix.imake -
+	-p amtlnfix.pdf -
+	-t tstamtlnfix.pdf
+$ Exit

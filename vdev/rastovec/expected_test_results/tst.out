@@ -1,0 +1,125 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+Beginning VICAR task GEN
+GEN Version 6
+GEN task completed
+Beginning VICAR task QSAR
+QSAR version 08-SEP-03
+Beginning VICAR task HIST
+HIST version 15-NOV-05
+
+          0    7571    **************************************************  1
+         40*     25
+        100*    800    ****************************
+        175*    200    *******
+        225*   1400    **************************************************  2
+        250*      4
+
+AVERAGE GRAY LEVEL=43.20000
+STANDARD DEVIATION=81.62573
+NUMBER ELEMENTS=   10000
+MIN. DN=         0
+MAX. DN=       250
+
+Beginning VICAR task RASTOVEC
+RASTOVEC version 12-15-03
+Input image size is  100 X   100
+Ouput image size is  100 X   100
+MAXPOLY=       3000
+MAXVERT=      10000
+MAXSIZE=       6000
+Step 1: REGION LABELING
+Total bytes of memory requested=      48800
+ Line=  100
+Begin second pass of region labeling
+ Line=  100
+Writing polygon description file
+ Number of polygon regions=          7
+Step 2:  COMPUTE SEGMENTS
+Total bytes of memory requested=      40816
+ Line=  100
+ Number of segments=         33
+ Number of vertices=         32
+ Number of high order vertices=          2
+Step 3: POLYGON CYCLING
+Total bytes of memory requested=      73168
+ Begin loop thru         7 polygon regions...
+MAX_IVCNT=         33
+Beginning VICAR task LABEL
+************************************************************
+ 
+        ************  File b.int ************
+                3 dimensional TABULAR file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                0 lines per band
+                512 samples per line
+                1 lines of binary header of type IBIS
+                0 bytes of binary prefix per line
+---- Property: IBIS ----
+NR=7
+NC=2
+ORG='ROW'
+FMT_DEFAULT='REAL'
+FMT_FULL=(1, 2)
+SEGMENT=8
+BLOCKSIZE=512
+COFFSET=(0, 4)
+---- Task: GEN -- User: pkim -- Tue Mar 25 17:49:04 2008 ----
+IVAL=0.0
+SINC=0.0
+LINC=0.0
+BINC=1.0
+MODULO=0.0
+---- Task: QSAR -- User: pkim -- Tue Mar 25 17:49:04 2008 ----
+---- Task: RASTOVEC -- User: pkim -- Tue Mar 25 17:49:04 2008 ----
+ 
+************************************************************
+Beginning VICAR task IBIS
+ 
+Number of Rows:7  Number of Columns: 2       
+File Version:IBIS-2  Organization:ROW  SubType:NONE
+ 
+Rows: 1:7
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+           0        7471
+         250           4
+         100         800
+          40          25
+         175         200
+         225        1400
+           0         100
+Beginning VICAR task MF
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstrastovec', line 26
+

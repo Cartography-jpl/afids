@@ -1,0 +1,6 @@
+$ vpack zrelax.com -mixed -
+	-s zrelax.c -
+	-i zrelax.imake -
+	-p zrelax.pdf -
+	-t tstzrelax.pdf
+$ Exit

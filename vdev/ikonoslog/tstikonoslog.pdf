@@ -1,0 +1,24 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR IKONOSLOG
+
+! TIFF
+ikonoslog imgin=po_77829_pan_0010000.tif hdrin=po_77829_pan_0010000.hdr txtin=po_77829_metadata.txt txtout=po_77829_pan_0010000.txt
+ikonoslog imgin=po_77829_pan_0010000.tif hdrin=alhdrin.hdr txtin=altxtin.met txtout=altxtout.txt
+ikonoslog imgin=po_77829_blu_0000000.tif hdrin=po_77829_blu_0000000.hdr txtin=po_77829_metadata.txt txtout=po_77829_blu_0000000.txt
+
+! NITF
+ikonoslog imgin=po_120894_pan_0000000.ntf hdrin=po_120894_pan_0000000.hdr txtin=po_120894_metadata.txt txtout=po_120894_pan_0000000.txt
+ikonoslog imgin=po_120898_blu_0000000.ntf hdrin=po_120898_blu_0000000.hdr txtin=po_120898_metadata.txt txtout=po_120898_blu_0000000.txt
+ikonoslog imgin=po_120908_pan_0010000000.ntf hdrin=po_120908_pan_0010000000.hdr txtin=po_120908_metadata.txt txtout=po_120908_pan_0010000000.txt
+
+end-proc
+

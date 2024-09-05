@@ -1,0 +1,6 @@
+$ vpack mf.com -
+	-s mf.c -
+	-i mf.imake -
+	-p mf.pdf -
+	-t tstmf.pdf new_session.log
+$ Exit

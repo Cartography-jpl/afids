@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR ALILOG
+
+alilog inp=(aliSample) +
+	out=(xxxAliImage_1,xxxAliImage_2,xxxAliImage_3,xxxAliImage_4,xxxAliImage_5,xxxAliIBIS) +
+	sl=500 ss=200 nl=400 ns=400
+
+!ibis-list xxxAliIBIS nr=10
+
+end-proc

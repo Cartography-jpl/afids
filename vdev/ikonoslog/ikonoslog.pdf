@@ -1,0 +1,45 @@
+process help=*
+parm imgin  type=(string,99)
+parm hdrin  type=(string,99)
+parm txtin  type=(string,99)
+parm txtout type=(string,99)
+end-proc
+.title
+VICAR Program ikonoslog - extracts image corners and look angles from Ikonos metadata file
+.help
+PURPOSE
+
+     IKONOSLOG extracts image corners and look angles from Ikonos metadata file
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     ikonoslog IMGIN TXTIN TXTOUT
+     
+     where
+
+	IMGIN is either GeoTIFF or NITF image archive
+	HDRIN is the companion header file
+	TXTIN is the companion metadata file
+	TXTOUT is the metadata file with extracted corners and angles
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch, Fri Jan 16 2004
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, A. Zobrist
+
+REVISIONS: 
+  Mon Oct  6 2003    Initial version
+  Fri Jan 16 2004    Enhanced to work with all known metadata file formats.
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+
+.level1
+.level2
+.end

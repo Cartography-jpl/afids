@@ -1,0 +1,4 @@
+$ vpack mooreins.com -mixed -
+	-p mooreins.pdf -
+	-t tstmooreins.pdf
+$ Exit

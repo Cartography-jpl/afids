@@ -1,0 +1,73 @@
+process help=*
+LOCAL DUMMY   TYPE=INTEGER
+parm inp      type=string
+parm keyword  type=(string,99) default=""
+parm val      type=name
+parm sequence type=int valid=1:999999999 default=1
+parm lineno   type=int valid=0:999999999 default=1
+END-PROC
+.TITLE
+ascnum - get double value from ascii file to TAE TCL variable
+         using a keyword
+.HELP
+PURPOSE:
+!!! ascnum returns a "real" TCL value !!!
+ascnum gets a numeric value and puts it into a TAE TCL
+variable.  It finds the number value after the keyword.
+The number does not have to be in the same line as the
+keyword.
+
+
+EXECUTION:
+
+Examples
+
+ascnum LOCATIONS seq=7 val=latitude keyword=lat
+
+          gets the number value after the 7th occurrence of
+          keyword "lat" and puts it into the TCL variable
+          latitude
+
+ascnum LOCATIONS seq=2 lineno=10 keyword=lat val=latitude
+
+          skips to line 10 in file LOCATIONS, get the number
+          after the 2nd occurrence of keyword lat and puts
+          it into TCL variable latitude
+
+OPERATION:
+ascnum does not use VICAR I/O.  It uses C I/O to parse the
+input per the parameters to find the value to put into the 
+TCL variable.
+ TIMING: 
+
+As fast as C can read the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim              18 Apr 2009
+ COGNIZANT PROGRAMMER:   P. Kim              18 Apr 2009
+ 
+ REVISION HISTORY
+  09-04-18    PK   Initial version
+  
+.LEVEL1
+.variable inp
+Ascii input file name
+.variable sequence
+the occurrence of the keyword
+.variable lineno
+skip to this line before
+counting items to sequence
+.variable keyword
+skip to this text before
+looking for numeric value
+!!! ascnum returns a "real" TCL
+value !!!
+.variable val
+TAE TCL name without &, gets
+the found value
+
+.level2
+.variable sequence
+This is the occurrence of the keyword in the file.  If no keyword
+is specified, sequence is ignored
+
+.END

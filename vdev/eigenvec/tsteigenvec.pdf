@@ -1,0 +1,185 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Oct 10, 2019 - RJB
+! TEST SCRIPT FOR EIGENVEC
+!
+! Vicar Programs:
+!       translog mss 
+!
+! External programs
+!   <none> 
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+LOCAL vgr     TYPE=STRING
+LOCAL UVBIMG  TYPE=STRING
+LOCAL UVHIMG  TYPE=STRING
+LOCAL VIOBIMG TYPE=STRING
+LOCAL VIOHIMG TYPE=STRING
+LOCAL BLUBIMG TYPE=STRING
+LOCAL BLUHIMG TYPE=STRING
+
+  refgbl $echo
+  refgbl $autousage
+
+body
+let _onfail="goto rm"
+let $autousage="none"
+let $echo="yes"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/vgr vgr
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data/mipl/vgr vgr
+    else
+!        ush ln -s $AFIDS_TESTDATA/mipl/vgr vgr
+        ush ln -s /media/sf_raid3/test_data/mipl/vgr vgr
+    end-if
+end-if
+
+let $echo="no"
+let UVBIMG= "vgr/"//"uvb.img"
+let UVHIMG= "vgr/"//"uvh.img"
+let VIOBIMG= "vgr/"//"viob.img"
+let VIOHIMG= "vgr/"//"vioh.img"
+let BLUBIMG= "vgr/"//"blub.img"
+let BLUHIMG= "vgr/"//"bluh.img"
+!
+write " THIS IS A TEST FOR PROGRAM EIGENVEC"
+write " TEST BYTE INPUT"
+write " TEST PARM INC"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) INC=10
+write " TEST PARM LINC"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) LINC=20
+let $echo="no"
+write " TEST PARM AREA"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) +
+ AREA=(20,1,10,20,40,11,10,20)
+let $echo="no"
+write " TEST PARM EXCLUD"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) EXCLUD=11 +
+ AREA=(20,1,10,20,40,11,10,20)
+let $echo="no"
+write " TEST PARM CORR"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) 'CORR INC=50
+let $echo="no"
+write " TEST PARM SIZE"
+let $echo="yes"
+eigenvec INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) SIZE=(11,11,20,20)
+let $echo="no"
+write " TEST HALFWORD DATA"
+write " TEST PARM INC"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) INC=100
+let $echo="no"
+write " TEST PARM LINC"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) LINC=20
+let $echo="no"
+write " TEST PARM AREA"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) AREA=(400,1,10,10)
+let $echo="no"
+write " TEST PARM EXCLUD"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) EXCLUD=12 +
+ AREA=(101,11,10,10,201,11,10,10)
+let $echo="no"
+write " TEST PARM CORR"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) INC=50 'CORR
+let $echo="no"
+write " TEST PARM SIZE"
+let $echo="yes"
+eigenvec INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) SIZE=(100,101,10,100)
+let $echo="no"
+write " TEST PARM DATA"
+let $echo="yes"
+eigenvec NVAR=3 DATA=(1.,33.,179.,991.,127.3,0.,341.0,987.6,99.3,111.,123.,+
+ 50.,333.,15.,999.,1234.,378.,111.1,255.,678.,1911.)
+mss INP=(&UVHIMG,&VIOHIMG,&BLUHIMG) OUT=eigen.msh
+mss INP=(&UVBIMG,&VIOBIMG,&BLUBIMG) OUT=eigen.msb
+let $echo="no"
+write " TEST MSS MODE OF BYTE DATA"
+write " TEST PARM INC"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 INC=100
+let $echo="no"
+write " TEST PARM LINC"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 LINC=20
+let $echo="no"
+write " TEST PARM AREA"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 AREA=(101,1,10,10)
+let $echo="no"
+write " TEST PARM USE"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 USE=(1,3) LINC=100
+let $echo="no"
+write " TEST PARM CORR AND AREA"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 'CORR AREA=(101,1,10,10,201,11,10,10)
+let $echo="no"
+write " TEST PARM EXCLUD AND SIZE"
+let $echo="yes"
+eigenvec  eigen.msb MSS=3 EXCLUD=8 SIZE=(11,11,10,10)
+let $echo="no"
+write " TEST MSS MODE OF HALFWORD DATA"
+write " TEST PARM INC"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 INC=100
+let $echo="no"
+write " TEST PARM LINC"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 LINC=20 
+let $echo="no"
+write " TEST PARM AREA"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 AREA=(101,1,10,10)
+let $echo="no"
+write " TEST PARM USE"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 USE=(1,3) LINC=100
+let $echo="no"
+write " TEST PARM CORR AND AREA"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 'CORR AREA=(101,1,10,10,201,11,10,10)
+let $echo="no"
+write " TEST PARM EXCLUD AND SIZE"
+let $echo="yes"
+eigenvec  eigen.msh MSS=3 EXCLUD=8 SIZE=(11,11,10,10)
+
+rm>
+let $echo="no"
+ush rm vgr
+end-proc

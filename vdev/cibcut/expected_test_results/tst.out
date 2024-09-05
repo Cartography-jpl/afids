@@ -1,0 +1,296 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /raid1/afids64oc/vdev
+Disabling interrupts ...
+
+cibcut jan/04/2009
+Beginning VICAR task ibis
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+1124 and 1 records in, 1124 records out
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)
+1124 records in
+Beginning VICAR task rowop2
+rowop2 version Thu Jan  3 2008
+1124 records in, 1 records out
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+ CB01NI381J1       35.00       46.49       35.51       47.00        2.00
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)
+1124 records in
+Beginning VICAR task rowop2
+rowop2 version Thu Jan  3 2008
+1124 records in, 0 records out
+Beginning VICAR task ibis
+ 
+Number of Rows:0  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)
+1124 records in
+Beginning VICAR task rowop2
+rowop2 version Thu Jan  3 2008
+1124 records in, 1 records out
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01)$c7=(3.532000000000e+01)
+1 records in
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (8,9)
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.700500000000e+01)$c7=(3.531000000000e+01)
+1 records in
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (10,11)
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c10=c10-c8$c11=c11-c9
+1 records in
+Beginning VICAR task ibis
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+1 and 1 records in, 1 records out
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c12=c8$c13=c9$c14=c10$c15=c11
+1 records in
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+[1] 26197
+Beginning VICAR task size
+ SIZE version 06 Feb 2004
+      INPUT AREA=(    1,    1, 1079, 1079)
+     OUTPUT SIZE=     53 X     53
+ Input data format=BYTE  Output data format=BYTE
+ PICTURE SIZE SCALED BY      0.05000*NL,      0.05000*NS
+ SIZE task completed
+Beginning VICAR task stretch
+STRETCH version Oct 17 2002
+*** TABLE STRETCH MODE ***
+Beginning VICAR task hist
+HIST version 15-NOV-05
+
+
+AVERAGE GRAY LEVEL=0.622642       STANDARD DEVIATION=0.484726       NUMBER ELEMENTS=    2809
+MIN. DN=         0
+MAX. DN=         1
+
+pcov 9.975582686125e+01 partial 1.000000000000e+01
+adding alternate cib
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+1473 and 1 records in, 1473 records out
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01>c3)*(4.699500000000e+01<c5)*(3.532000000000e+01>c2)*(3.532000000000e+01<c4)+(4.700500000000e+01>c3)*(4.700500000000e+01<c5)*(3.531000000000e+01>c2)*(3.531000000000e+01<c4)
+1473 records in
+Beginning VICAR task rowop2
+rowop2 version Thu Jan  3 2008
+1473 records in, 1 records out
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+ cb05ni38012       33.97       44.95       36.05       48.06        2.00
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+. cb05ni38012 .
+. /raid12/cib05/basemos/cb05ni38012.img .
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.699500000000e+01)$c7=(3.532000000000e+01)
+1 records in
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (8,9)
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c6=(4.700500000000e+01)$c7=(3.531000000000e+01)
+1 records in
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (10,11)
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c10=c10-c8$c11=c11-c9
+1 records in
+Beginning VICAR task ibis
+Beginning VICAR task icat
+icat version Thu Jan  3 2008
+1 and 1 records in, 1 records out
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c12=c8$c13=c9$c14=c10$c15=c11
+1 records in
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+write "gtwarp version 10-oct-07"
+gtwarp version 10-oct-07
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl xxx5xxxtst v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxx6xxxtst v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,1079,1079)"
+geomv parameter (sl,ss,nl,ns) = (1,1,1079,1079)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=10201 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/101)/100)*1079+(1-0.5)$",      +
+        "c2=(@mod(@index+100,101)/100)*1079+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+function string = c1=(@int((@index-1)/101)/100)*1079+(1-0.5)$c2=(@mod(@index+100,101)/100)*1079+(1-0.5)
+10201 records in
+pixmap (xxqqgrid2qq,xxx6xxxtst) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqgrid2qq,xxx6xxxtst,xxx5xxxtst) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(-54610.291127264,-20240.007112156,0,46.489340101522828,35.507416888746803,0)
+MODELPIXELSCALETAG=(0.0000092592593,0.0000092592593,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC);GK_TYPE=SHORT;GK_KEY=1024
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA);GK_TYPE=SHORT;GK_KEY=1025
+GTCITATIONGEOKEY=EXTRACTED BY OSSIMTCL;GK_KEY=1026
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84);GK_TYPE=SHORT;GK_KEY=2048
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84);GK_TYPE=SHORT;GK_KEY=2056
+GEOGLINEARUNITSGEOKEY=9001(LINEAR_METER);GK_TYPE=SHORT;GK_KEY=2052
+GEOGANGULARUNITSGEOKEY=9102(ANGULAR_DEGREE);GK_TYPE=SHORT;GK_KEY=2054
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(-44077.163850091,6692.7171585334,0,44.954344464000002,35.010207692999998,0)
+MODELPIXELSCALETAG=(0.0000462962965,0.0000462962965,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC);GK_TYPE=SHORT;GK_KEY=1024
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA);GK_TYPE=SHORT;GK_KEY=1025
+GTCITATIONGEOKEY=EXTRACTED BY OSSIMTCL;GK_KEY=1026
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84);GK_TYPE=SHORT;GK_KEY=2048
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84);GK_TYPE=SHORT;GK_KEY=2056
+GEOGLINEARUNITSGEOKEY=9001(LINEAR_METER);GK_TYPE=SHORT;GK_KEY=2052
+GEOGANGULARUNITSGEOKEY=9102(ANGULAR_DEGREE);GK_TYPE=SHORT;GK_KEY=2054
+
+
+inverse not applied
+
+forward not applied
+
+datum shift not applied
+pixmap (xxqqgrid2qq,xxx5xxxtst) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+geomv INP=(xxx5xxxtst,xxqqgrid2qq,xxx6xxxtst) OUT=xxx7xxxtst size=+
+(1,1,1079,1079)         cols=(1,2,7,8) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Wed Oct 07 2008
+Warp grid OK: nah = 100 nav = 100
+requested memory 48841
+end-proc
+   f2 (xxx6xxxtst,xxx7xxxtst) partial.img fun="in1+(in1<0.5)*in2"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 using byte table lookup
+FUNCTION EVALUATED 65536 TIMES
+   if (xvd="y") xvd partial.img
+ xvd partial.img
+local f string
+local files string
+let files = ""
+if ($count(inp) >= 1)
+   let f = inp(1)
+   let files = "partial.img"
+end-if
+if ($count(inp) >= 2)
+end-if
+if ($count(inp) >= 3)
+end-if
+if ($syschar(1) = "UNIX")
+   local afidsroot type=(string,128)
+   translog AFIDS_ROOT afidsroot
+   ush /raid1/afids64oc/vdev/xvd.csh  partial.img &
+[1] 26264
+else
+end-if
+end-proc
+end-if
+end-proc
+goto theend
+end-proc

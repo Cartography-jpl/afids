@@ -1,0 +1,9 @@
+procedure
+body
+
+!   TEST LSATMOS HANDYPROC
+
+lsatmos inp=("p153r36_5t19900803","p154r36_5t19900803") +
+   out=mymos key="russia" band="nn3"
+          
+end-proc

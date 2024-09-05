@@ -1,0 +1,6 @@
+$ vpack tieplot.com -mixed -
+	-s tieplot.f -
+	-i tieplot.imake -
+	-p tieplot.pdf -
+	-t tsttieplot.pdf tsttieplot.log
+$ Exit

@@ -1,0 +1,24 @@
+procedure
+
+local w1 real
+local w2 real
+local w3 real
+local o1 real
+local o2 real
+local o3 real
+body
+
+scinterp peph=(0.0,3722048.0,4126137.9,3955545.4,31556737.5) +
+ patt=(0.06938316945407,0.20331591888905,0.82545247058087, +
+ -0.52199313380038,31556737.5) +
+ seph=(0.0,3722048.0,4126137.9,3955545.4,31556737.5) +
+ satt=(0.06938316945407,0.20331591888905,0.82545247058087, +
+ -0.52199313380038,31556737.5) +
+ imtime=31556737.5 +
+ w_t1=w1 w_t2=w2 w_t3=w3 +
+ w_omega1=o1 w_omega2=o2 w_omega3=o3
+
+write "w &w1 &w2 &w3"
+write "o &o1 &o2 &o3"
+
+end-proc

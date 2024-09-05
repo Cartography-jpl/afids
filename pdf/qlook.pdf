@@ -1,0 +1,22 @@
+procedure
+parm inp string
+parm lower type=int default=136
+parm upper type=int default=141
+parm grow type=int default=7
+parm disp string defaul=""
+
+local l1 int
+local u1 int
+body
+
+let l1 = lower-1
+let u1 = upper+1
+
+stretch &inp xxxqlook23 +
+   table=(0,0,&l1,0,&lower,1,&upper,10,&u1,0,255,0)
+moore xxxqlook23 xxxqlook24 dmax=&grow 'growone
+stretch xxxqlook24 xxxqlook25 +
+   table=(0,0,1,128,10,255)
+if (disp="disp") xvd xxxqlook25
+
+end-proc

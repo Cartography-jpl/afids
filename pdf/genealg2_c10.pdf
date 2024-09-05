@@ -1,0 +1,19 @@
+procedure
+
+local testnum integer
+local val real
+local fname string
+local bkgn string init="_background"
+local int string init=".int"
+
+body
+let $switch=512
+
+ibis2tcl current_id.int fname varcnt=1 vartype=2 ibisloc=(1,1)
+
+genealg2 (&fname&bkgn&int,mat10.int) tempx10
+write "genetic algorithm run"
+
+theend>
+end-proc
+

@@ -1,0 +1,6 @@
+$ vpack gtigeolo.com -mixed -
+	-s gtigeolo.c -
+	-i gtigeolo.imake -
+	-p gtigeolo.pdf -
+	-t tstgtigeolo.pdf
+$ Exit

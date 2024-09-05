@@ -1,0 +1,71 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Oct 14 2019 - RJB
+! TEST SCRIPT FOR GENEALG
+!
+! Vicar Programs:
+!       translog label-list 
+!
+! External programs
+!   <none> 
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+<<<<<<< HEAD
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let _onfail="goto rm"
+let $echo="yes"
+
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+<<<<<<< HEAD
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/mipl/vgr vgr
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data/dugraw dr
+    else
+!        ush ln -s $AFIDS_TESTDATA/dugraw dr
+!        ush ln -s /media/sf_raid3/test_data/dugraw dr
+        ush ln -s /media/sf_raid1/test_data/dugraw dr
+    end-if
+end-if
+
+
+picoff dr/b3test dr/b7test xxxpic
+
+rm>
+
+let $echo="no"
+ush rm dr
+
+let $echo="yes"
+picoff rawdug/b3test rawdug/b7test xxxpic
+let $echo="no"
+rm> 
+ush rm -f rawdug
+end-proc

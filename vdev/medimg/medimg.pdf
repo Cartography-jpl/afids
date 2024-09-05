@@ -1,0 +1,61 @@
+PROCESS      HELP=*
+PARM INP       TYPE=STRING  COUNT=(0:20)
+PARM OUT       TYPE=STRING  COUNT=1
+PARM FUNC      TYPE=KEYWORD COUNT=1      VALID=(MEDIAN, MEAN, SIG, VAR, MIN, MAX) DEFAULT=MEDIAN
+PARM MID       TYPE=KEYWORD COUNT=0:1    VALID=(LOWER,MID,UPPER) DEFAULT=MID
+PARM OUTFMT    TYPE=STRING  COUNT=0:1    VALID=(BYTE, HALF, FULL, REAL, DOUB) DEFAULT=--
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "medimg"
+.HELP
+PURPOSE
+   This program will create an output image consisting
+of pixels that are the median from the input images.
+Other functions are available such as mean, sigma,
+variance, min, and max.  Otherwise specifed, sigma
+and variance will always output as a real image.
+
+   The nl, ns, and formats of the input images should
+be the same and will be used for the output image.
+
+.LEVEL1
+.VARIABLE INP
+ Input image files
+
+.VARIABLE OUT
+ Output image file
+
+.VARIABLE MID
+ If even number of input images
+this allows the user to choose
+the upper or lower index value
+as the median.  If function is
+not median, then null.
+
+.VARIABLE FUNC
+ Specifies which statistical
+function to apply for the
+output image.
+
+.VARIABLE OUTFMT
+ Specifies the output format.
+Ouput format is determined:
+ 1 - outfmt parameter
+ 2 - sig, var will output as
+     real image
+ 3 - default to first input
+     image format
+
+.END
+
+
+
+
+
+
+
+
+
+
+

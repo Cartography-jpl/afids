@@ -1,0 +1,55 @@
+process help=*
+PARM INP TYPE=STRING COUNT=1:48
+PARM OUT TYPE=STRING COUNT=1:48
+PARM FCASE TYPE=INT
+PARM OPTION TYPE=INT DEFAULT=0
+
+END-PROC
+.TITLE
+f2multi976 - apply specific functions to set of images
+.HELP
+PURPOSE:
+f2multi976 combines up to 48 datasets into output datasets, applying hand
+programmed functions.  The goal is speeed of operation. The preprogrammed functions as
+of Aug 16, 2010, are:
+
+fcase=1:  test case only
+fcase=2:  for use by worldview detection function (ALZ)
+fcase=3:  for use by worldview detection function (ALZ)
+
+EXECUTION:
+
+Example
+
+f2multi976 INP=(A,B) OUT=C  FCASE=1    preprogrammed to add two images, just for testing
+
+OPERATION:
+
+the operations are all preprogrammed.  projects can add to the list.
+
+TIMING: 
+
+Faster than using f2.
+
+RESTRICTIONS:
+
+All files must be the same size, and be byte or halfword.  The output will be the same type as the first input.
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          10 Aug 2010
+ COGNIZANT PROGRAMMER:   A. Zobrist          10 Aug 2010
+ 
+ REVISION HISTORY
+  2010-08-10    AZ   Initial version
+  
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE FCASE
+INT - Which preprogrammed case
+.VARIABLE OPTION
+INT - SUBCASES:
+FCASE=2: OPTION=1 WRITES DIF FILES
+.END

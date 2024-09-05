@@ -1,0 +1,27 @@
+process help=*
+parm inp       type=string  count=1:3
+parm swap      type=keyword default=0 count=(0:1) valid=swap default=--
+parm noNullVec type=int     default=1
+parm shape     type=(string,99) default="polygon"
+parm out       type=string
+end-proc
+.title
+VICAR/IBIS Program "vic2shp"
+.help
+PURPOSE
+
+EXECUTION
+
+EXAMPLES
+
+RESTRICTIONS
+
+.level1
+.variable inp
+ Input IBIS interface file
+.variable shape
+Shape type to create. Should be either arc or polygon, defaults to polygon.
+.level2
+.variable inp
+   INP=file           Input IBIS interface file
+.end

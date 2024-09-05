@@ -1,0 +1,12 @@
+procedure
+body
+
+gtlist /home/alz/aliapp/dugwayzoom/dugway2m.img
+gtlist /home/alz/aliapp/dugway/dugway8m.img
+
+sclrat /home/alz/aliapp/dugwayzoom/dugway2m.img +
+       /home/alz/aliapp/dugway/dugway8m.img xxxa
+
+ibis-l xxxa 'format
+
+end-proc

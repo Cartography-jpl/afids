@@ -1,0 +1,282 @@
+procedure help=*
+parm gridfile type=string
+parm image1 type=string
+parm image2 type=string
+parm gridout type=string
+parm fcorfail type=string
+parm seq type=string default="qq"
+
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm regelv type=real
+parm dted type=string
+parm search int default=128
+parm fftsize int default=128
+parm ffthalf int default=0 valid=(0:2)
+parm minsrch int default=128
+parm zrej int default=255
+parm zerolim real default=10.0
+parm zerolim2 real default=10.0
+
+parm lsqt type=real
+
+parm lsqthresh type=int
+parm magnif type=real default=1.0
+parm magmin type=real default=1.0
+parm magshrk type=(string,2) valid=("y","n") default="n"
+
+parm sensE1 type=real
+parm sensN1 type=real
+parm senselv1 type=real
+parm sensE2 type=real
+parm sensN2 type=real
+parm senselv2 type=real
+parm thr_res type=real default=10.0
+
+parm ecor1 type=real default=0.11
+parm ecor2 type=real default=0.00
+parm cloop type=int default=1
+
+local corfail int
+local xxxxlsq1 string
+local xxxxlsq2 string
+local xxxxlsq3 string
+local gridoutlen type=int
+
+local pixdeg type=real
+local dpixdeg type=real
+local dratio type=real
+local fftreal type=real
+local avlat type=real
+local avlat2 type=real
+local coslat type=real
+local meterpix type=real
+local dwinsiz type=int
+local zclen type=int
+
+local redo int
+local usearch int
+local angoff real
+local umag real
+
+body
+
+write "piclsqm 02/05/2008"
+
+!let _onfail="continue"
+
+let corfail = 1
+let xxxxlsq1 = "xxxxlsq1" // "&seq"
+let xxxxlsq2 = "xxxxlsq2" // "&seq"
+let xxxxlsq3 = "xxxxlsq3" // "&seq"
+
+!initially for Landsat, may add aster later
+
+let redo = 40
+let umag = magnif
+let angoff = 0.0
+let usearch = search
+
+if (cloop=2)
+   let redo = 200
+   let umag = 12
+else-if (cloop=3)
+   let redo = 200
+   let umag = 18
+   let usearch = 2*search
+else-if (cloop=4)
+   let redo = 200
+   let angoff = 1.0
+else-if (cloop=5)
+   let redo = 200
+   let angoff = -1.0
+end-if
+
+mf3 &gridfile f="c11=@rand"
+sort &gridfile sortcol=11
+
+picmtch5 (&image1,&image2,&gridfile) SEARCH=&usearch  fftsize=&fftsize +
+       minsrch=&minsrch zrej=&zrej pred=linear autofit=18 redo=&redo +
+       zerolim=&zerolim zerolim2=&zerolim2 ffthalf=&ffthalf thr_res=&thr_res +
+       magnif=(&umag,&umag) magmin=(&magmin,&magmin) magshrk=&magshrk +
+       angoff=&angoff
+ibis-l &gridfile cols=(5,8,9,10,11) nr=8
+
+!  lsq quadratic approach for eliminating bad match points.
+!  need more columns
+ibis-gen   xxxxlsq3 version="ibis-2" org=column nc=50 nr=1 deffmt=DOUB
+ibis-copy  &gridfile xxxxlsq3 nc=50
+!  remove -9999 points from file (failed matches)
+rowop2   xxxxlsq3 xxxxlsq1 keycol=10 range=(-10000.0,-9000.0) 'delete 
+ibis2tcl xxxxlsq1 vclen=zclen vartype=1
+
+if (zclen<lsqthresh)
+   write "piclen lsqthresh corfail &zclen &lsqthresh &corfail"
+   save-variable file=&fcorfail variable=(corfail)
+   return
+end-if
+
+mf3  xxxxlsq1 func="c12=1.0$c16=c1*c1$c17=c1*c2$c18=c2*c2"
+
+!  modelfit moves the points by elevation model
+
+if (modelfit="elvcor" and zclen>10)
+   
+   ! calculate meters per pixel, use power series for cosine
+   ! also calculate window size for dted getzval call
+   
+   write "in modelfit elvcor"
+   gt2tcl &image1 val=pixdeg keyword=MODELPIXELSCALETAG vtype=8 sequence=1
+   write "pixdeg &pixdeg"
+   gt2tcl &dted val=dpixdeg keyword=MODELPIXELSCALETAG vtype=8 sequence=1
+   let dratio = pixdeg/dpixdeg
+   write "pixdeg-1 &pixdeg"
+   let pixdeg = 1.0/pixdeg 
+   write "pixdeg &pixdeg"
+
+   let avlat = (sensN1+sensN2)*0.5
+   let avlat = avlat*3.141592/180.0
+   let avlat2 = avlat*avlat
+   let coslat = 1.0-avlat2/2.0+avlat2*avlat2/24.0
+   let meterpix = 60.0*1852.0*coslat/pixdeg
+   write "pixdeg &pixdeg avlat &avlat coslat &coslat meterpix &meterpix"
+
+   let fftreal = $float(fftsize)
+   let dwinsiz = $fix(fftreal*dratio)
+   if (dwinsiz<2) let dwinsiz = 2
+   write "dratio dwinsiz &dratio &dwinsiz"
+   
+   !  map the first image coord
+
+   pixmap (xxxxlsq1,&image1) mapcol=(25,26) pixcol=(1,2) 'pixtomap
+
+   ! dropping perpendicular from point to track of satellite
+   ! approximation - perpendicular in pixel space not on sphere
+
+   mf3 xxxxlsq1 func=("c23=(&sensE2)-(&sensE1)$c24=(&sensN2)-(&sensN1)$", +
+      "c27=c25-(&sensE1)$c28=c26-(&sensN1)$c29=(c23*c27+c24*c28)/(c23*c23+c24*c24)")
+   mf3 xxxxlsq1 func="c31=c23*c29+(&sensE1)$c32=c24*c29+(&sensN1)$c30=@atan2(c32-c26,c31-c25)"
+   mf3 xxxxlsq1 func="c33=&senselv1+(&senselv2-(&senselv1))*((c32-(&sensN1))/(&sensN2-(&sensN1)))"
+   mf3 xxxxlsq1 func="c38=&regelv"
+
+   ! get the elevation through landsat index image, need to calc window size
+   
+   pixmap (xxxxlsq1,&image2) mapcols=(39,40) pixcols=(6,7) 'pixtomap
+   gtproj (xxxxlsq1,&image2,&dted) incol=(39,40) outcol=(48,49)
+   pixmap (xxxxlsq1,&dted) mapcols=(48,49) pixcols=(44,45) 'maptopix
+   getzval (&dted,xxxxlsq1) cols=(44,45,50) win=&dwinsiz 'dted threj=(-500)
+   rowop2 xxxxlsq1 xxxxlsq2 keycol=50 range=(-10000.0,-9000.0) 'delete
+   ibis-copy xxxxlsq2 xxxxlsq1
+   ! shift calculation, vicar lines opposite direction to geog coord
+   ! note that the final +- signs are opposite to elvcor.pdf
+   mf3 xxxxlsq1 func="c37=c50-c38$@dist(c31,c32,c39,c40,c41)"
+   mf3 xxxxlsq1 func="c46=c41/6371000$c47=@atan2(c41,c33)-c46$c42=c37*@tan(c47)"
+   
+   ibis-list xxxxlsq1 nr=3
+   ibis-list xxxxlsq1 nr=3 cols=(37,38,39,40,46,47) +
+   csiz=(22,22,22,22,22,22) +
+   cfor="%22.15f%22.15f%22.12f%22.12f%22.12f%22.12f"
+   
+   ibis-l xxxxlsq1 cols=(1,2,50,42) nr=6 cfor="%12.5f%12.5f%12.5f%12.5f"
+   
+   mf3 xxxxlsq1 func="c43=1+(&ecor1)+(&ecor2)*(c50-c38)/c38"
+   mf3 xxxxlsq1 func=("c1=c1+c43*c42*@sin(c30)/(&meterpix)$", +
+           "c2=c2-c43*c42*@cos(c30)/(&meterpix)")
+   
+   ibis-l xxxxlsq1 cols=(1,2,30,43) nr=6 cfor="%12.5f%12.5f%12.5f%12.5f"
+
+end-if
+
+ibislsq3 inp=xxxxlsq1 out=&gridout indcol=(1,2,12,16,17,18) +
+   depcol=6 depcol2=7 rescol=13 rescol2=14 'noprint thresh=&lsqt
+mf3       xxxxlsq1 func="c15=@sqrt(c13*c13+c14*c14)"
+ibis-list  &gridout cols=(1,2,6,7,9,10,11,13,14,15) nr=2
+
+pixmap (&gridout,&image2) mapcol=(3,4) pixcol=(6,7) 'pixtomap
+
+ibis2tcl &gridout vclen=gridoutlen vartype=1
+if (gridoutlen>lsqthresh) let corfail = 0
+write "gridoutlen lsqthresh corfail &gridoutlen &lsqthresh &corfail"
+save-variable file=&fcorfail variable=(corfail)
+
+end-proc
+.TITLE
+piclsqqd - picmtch5 and apply lsq to remove bad matches
+.HELP
+PURPOSE
+     
+	   
+CALL
+
+sample code from avwarp.pdf:
+
+
+
+gengrid out=&xxe ncol=11 nah=5 nav=4 hbase=400.0 hsize = 700.0 +
+                                    vbase=170.0 vsize = 240.0
+
+piclsqqd &xxe &xxxB3out1 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128  +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=16
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone
+
+piclsqqd &xxe &xxxB3out1 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=10
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone
+
+write "none of the correlations worked, clock step"
+ibis-l corrnotwork
+
+cordone>
+
+
+
+another sample case from that proc:
+
+
+
+gengrid out=&xxe ncol=11 nah=8 nav=6 hbase=600.0 hsize = 180.0 +
+                                    vbase=110.0 vsize = 180.0
+
+
+piclsqqd &xxe &xxxB3out3 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=35
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone2
+
+piclsqqd &xxe &xxxB3out3 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=25
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone2
+
+write "none of the correlations worked, final step"
+ibis-l corrnotwork
+
+cordone2>
+
+
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 21 Jan, 2002
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 12 May, 2002
+
+.LEVEL1
+
+.END

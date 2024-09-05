@@ -1,0 +1,103 @@
+tstradagen
+ 
+ GENERATE TEST IMAGE 
+fracgen out=terrain.img nl=10 ns=10 format=byte seed=32161267
+Beginning VICAR task fracgen
+FRACGEN  version 1-JULY-1994
+RANGEN::: Random Seed value of 32161267 adjusted to 15384051
+let $echo="no"
+ 
+-----------------------------------
+!! !! !! TEST ALL DEFAULTS !! !! !!
+-----------------------------------
+ 
+radagen inp=terrain.img out=rada.img
+Beginning VICAR task radagen
+** RADAGEN version 27-JUL-2016 - (64bit) - RJB
+
+ OUTPUT RESOLUTION IN METERS/PIXEL          150.00
+ AVG HEIGHT USED: 3129.00     LEFT BORDER OFFSET:   19
+list rada.img
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FRACGEN   User:rjb       Date_Time:Wed Jul 27 01:09:43 2016
+ Task:RADAGEN   User:rjb       Date_Time:Wed Jul 27 01:09:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1      77   7  14  22  29  37  44  52  59  67
+      2     189 174 158 142 126 111  95  79  63  47
+      3     192  10  14  18  22  26  30  34  38  42
+      4     181 165 148 131 115  98  81  65  48  31
+      5     160 139 118  97  75  54  33  11  19  27
+      6     135  76  16  14  11  24  37  51  34  17
+      7     254 175  96  17 254 205 156 107  58   9
+      8     254 197 140  82  70  57  44  32  19   6
+      9      90  33   0   0   0   0   0   0   0   0
+     10       5   1   1   1   1   1   8   1   0   0
+let $echo="no"
+ 
+------------------------------------------------------------
+!1 !! !! TEST MAGELLAN BACKSCATTER MODEL
+                    AND 
+         INTERNAL RECTIFICATION ADDITIONS !! !! !! 
+------------------------------------------------------------
+ 
+radagen inp=terrain.img out=radb.img 'mgn 'rectify 'log 'fill 'half
+Beginning VICAR task radagen
+** RADAGEN version 27-JUL-2016 - (64bit) - RJB
+
+ OUTPUT RESOLUTION IN METERS/PIXEL          150.00
+ AVG HEIGHT USED: 3129.00     LEFT BORDER OFFSET:   19
+list radb.img
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FRACGEN   User:rjb       Date_Time:Wed Jul 27 01:09:43 2016
+ Task:RADAGEN   User:rjb       Date_Time:Wed Jul 27 01:09:44 2016
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1     13136 13136 13136 13136 13136 13136 13136 13136 13136 13136
+      2     14630  3914  3338 14630 14630 14630 14630 14630 14630 14630
+      3     14669  3338  4676 14669 14669 14669 14669 14669 14669 14669
+      4     14308  3338  3338 14308 14308 14308 14308 14308 14308 14308
+      5     14029  3338 14029 14029 14029 14029 14029 14029 14029 14029
+      6     14786  3338 14786 14786 14786 14786 14786 14786 14786 14786
+      7     16383 16383 16383 16383 16383 16383 16383 16383 16383 16383
+      8     16383 16383 16383 16383 16383 16383 16383 16383 16383 16383
+      9     12466 12466 12466 12466 12466 12466 12466 12466 12466 12466
+     10      3338  3338  3338  3338  3338  3338  3338  3338  5291  5291
+let $echo="no"
+ 
+---------------------------------------
+!! !! !! TEST SAMPLE EXECUTION !! !! !!
+---------------------------------------
+ 
+radagen inp=terrain.img out=radd.img height=229. sscale=98.4252  +
+            lscale=98.4252 toff=0 zscale=3.280840 el=15.
+Beginning VICAR task radagen
+** RADAGEN version 27-JUL-2016 - (64bit) - RJB
+
+ OUTPUT RESOLUTION IN METERS/PIXEL           19.69
+ AVG HEIGHT USED:    0.00     LEFT BORDER OFFSET:    0
+list radd.img
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FRACGEN   User:rjb       Date_Time:Wed Jul 27 01:09:43 2016
+ Task:RADAGEN   User:rjb       Date_Time:Wed Jul 27 01:09:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1      65  65  65  65  65  65  65  65  65 254
+      2     254 254 254 254 254 254 254 254 254 254
+      3     254 254 254 254 254 254 254 254 254 254
+      4     254 254 254 254 254 254 254 254 254 254
+      5     254 254 254 254 254 254 254 254 254 254
+      6     254 254 254 254 254 254 254 254 254 254
+      7     254 254 254 254 254 254 254 254 254 254
+      8     254 254 254 254 254 254 254 254 254 254
+      9     254 254 254 254 254 254 254 254 254 254
+     10       1   1   1   1   1   1   1   1 101 201
+let $echo="no"
+exit
+slogoff

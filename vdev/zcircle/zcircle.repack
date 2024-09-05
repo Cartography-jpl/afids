@@ -1,0 +1,6 @@
+$ vpack zcircle.com -mixed -
+	-s zcircle.f -
+	-i zcircle.imake -
+	-p zcircle.pdf -
+	-t tstzcircle.pdf tstzcircle.log
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack sc2rpc.com -mixed -
+	-s sc2rpc.c -
+	-i sc2rpc.imake -
+	-p sc2rpc.pdf -
+	-t tstsc2rpc.pdf devsc2rpc.pdf
+$ Exit

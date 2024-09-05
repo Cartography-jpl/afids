@@ -1,0 +1,70 @@
+PROCESS      HELP=*
+
+PARM INP       TYPE=STRING COUNT=0:1
+PARM BAND      TYPE=INTEGER COUNT=0:1 DEFAULT=0 VALID=(0:9)
+PARM OUT       TYPE=STRING COUNT=0:1
+PARM KER       TYPE=STRING COUNT=0:1
+PARM ABSCAL    TYPE=REAL COUNT=0:1 DEFAULT=5.678345e-02
+PARM EFFBW     TYPE=REAL COUNT=0:1 DEFAULT=2.846000e-01
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "newimd"
+.HELP
+PURPOSE
+ This creates a text .IMD file 
+ based on metedata from a nitf
+ image. Uses gdalinfo to
+ get the input file's metadata. 
+ This .IMD file is created for 
+ use as an input to wv2ref.
+ The .IMD shopuld be the same 
+ base filename as the nitf 
+ input file.
+ 
+.LEVEL1
+.VARIABLE INP
+ Input nitf image.
+
+.VARIABLE OUT
+ Output imd file name
+
+.VARIABLE KER
+ Input SPICE kernel file name
+ 
+.VARIABLE BAND
+ Specifies which band the 
+ input image is. Ignored if 
+ all 9 bands are input.
+
+.VARIABLE ABSCAL
+ Specifies absCalFactor. 
+ Default value is
+ 5.678345e-02
+ This is the WV2 value.
+ Useful to allow a 
+ program to use a different
+ absCalFactor.
+
+.VARIABLE EFFBW
+ Specifies effectiveBandwidth. 
+ Deafult value is
+ 2.846000e-01
+ This is the WV2 value.
+ Useful to allow a program 
+ to use a different 
+ effectiveBandwidth. 
+   
+.END
+
+
+
+
+
+
+
+
+
+
+

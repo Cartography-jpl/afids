@@ -1,0 +1,22 @@
+procedure
+
+! inp must be a signed 16-bit headerless image
+! out is the nitf file to be generated
+! nl is height of the input image
+! ns is width of the input image
+
+parm inp type=(string,250)
+parm out type=(string,250)
+parm nl  type=int
+parm ns  type=int
+
+body
+
+write "raw2ntf.pdf version Sun Jul 17 2005"
+
+tcl2tcl script=("load ossimTcl.so ; ossim::rawToNitf", +
+   " &inp", +
+   " &out", +
+   " &nl &ns")
+
+end-proc

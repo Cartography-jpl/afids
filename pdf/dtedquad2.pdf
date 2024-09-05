@@ -1,0 +1,111 @@
+procedure
+parm key type=string default="q"
+parm qlon type=string count=2
+parm qlat type=string count=2
+parm out type=string
+parm diskimg type=string default="/cdrom/cdrom0"
+parm level type=int default=1 valid=(1:2)
+
+local dtedtemp type=string
+local mostemp type=string
+local outfile string
+
+local lon1 string
+local lat1 string
+local lon2 string
+local lat2 string
+
+local sl int
+local ss int
+local nl int
+local ns int
+
+local fsl real
+local fss real
+local fnl real
+local fns real
+local minlon int
+local minlat int
+local maxlon int
+local maxlat int
+local dellon int
+local dellat int
+
+local hemi1 string
+local hemi2 string
+
+body
+
+let dtedtemp = "&key" // "/dtedtemp"
+let mostemp = "&key" // "/fmostemp"
+let outfile = "&out"
+
+!  calculate the degree quads that contains the desired quad
+
+let lon1 = qlon(1)
+let lon2 = qlon(2)
+let lat1 = qlat(1)
+let lat2 = qlat(2)
+
+ibis-gen &mostemp nr=2 nc=4 format=("DOUB","DOUB","DOUB","DOUB") +
+   datacol=(1,2) data=(&lon1,&lat1,&lon2,&lat2)
+ibis-l &mostemp 'format
+ibis2tcl &mostemp v1=fsl v2=fns v3=fnl v4=fss vartype=(-1,-1,-1,-1) +
+   ibisloc=(1,1,1,2,2,1,2,2)
+let minlon = $fix(fsl+360.0)-360
+let maxlon = $fix(fnl+359.999)-360
+let maxlat = $fix(fss+359.999)-360
+let minlat = $fix(fns+360.0)-360
+
+let dellon = maxlon-minlon+1
+let dellat = maxlat-minlat+1
+
+write "******dellon &dellon"
+write "******dellat &dellat"
+write "******minlon &minlon"
+write "******maxlon &maxlon"
+write "******minlat &minlat"
+write "******maxlat &maxlat"
+
+let hemi1 = "e"
+let hemi2 = "n"
+if (minlon<0)
+   let hemi1 = "w"
+   let minlon = -minlon
+end-if
+if (minlat<0)
+   let hemi2 = "s"
+   let minlat = -minlat
+end-if
+
+dtedmos2 hemi1=&hemi1 lons=&minlon lonct=&dellon +
+        hemi2=&hemi2 lats=&minlat latct=&dellat +
+        out=&dtedtemp diskimg=&diskimg level=&level
+
+! cut the quadrangle from the whole degrees
+
+pixmap (&mostemp,&dtedtemp) mapcols=(1,2) pixcols=(3,4) 'maptopix
+ibis-l &mostemp
+! these map to the corner of vicar pixels
+ibis2tcl &mostemp v1=fnl v2=fss v3=fsl v4=fns vartype=(-1,-1,-1,-1) +
+   ibisloc=(1,3,1,4,2,3,2,4)
+write "fsl,fss &fsl,&fss"
+write "fnl,fns &fnl,&fns"
+let sl = $fix(fsl+50000.5)-50000
+let ss = $fix(fss+50000.5)-50000
+let nl = $fix(fnl+50000.5)-50000
+let ns = $fix(fns+50000.5)-50000
+let nl = nl-sl+1
+let ns = ns-ss+1
+
+gtcopy &dtedtemp &"outfile"_dem.img size=(&sl,&ss,&nl,&ns)
+gtlist &"outfile"_dem.img
+
+write "MSG: PROCESSING COMPLETED"
+goto theend
+
+failend>
+write "ERROR: PROCESSING FAILED"
+
+theend>
+end-proc

@@ -1,0 +1,65 @@
+process help=*
+parm    inp     type=string     count=1
+parm    out     type=string     count=2
+parm    orient  type=keyword    count=(0:1) valid=(HORIZ,VERT) default=HORIZ
+local   dummy   type=integer    count=1
+parm    posinfl type=name       default=dummy
+parm    neginfl type=name       default=dummy
+
+end-proc
+.title
+vicar program deriv
+.help
+PURPOSE
+    A vicar application program to provide the first derivative of an
+image.
+
+OPERATION
+
+    This program takes an input data set and converts it to its first derivative
+in either the Horizontal (sample) orientation or the Vertical (line) orientation.
+The second output is the inflection map, where 0 is no inflection, +1 is inflection
+going from pos to negative and -1 is inflection going from negative to postive,
+
+The parmeter orient gives the orientation of the derivative.
+
+The return parameters give the numnber of positive and negative inflection points
+in the map
+
+RESTRICTIONS
+
+    1) This program does not preserve Map Projection label geometry.
+    2) This program does not work on multiband images
+
+PROGRAM HISTORY:
+
+Written by: Ray Bambery, 13 November 2010
+Cognizant programmer: Ray Bambery
+Revision history:
+
+    13 Nov 2010 - R. J. Bambery - initial release
+    05 Dec 2010 - R. J. Bambery - add inflection map
+    02 May 2011 - R. J. Bambery - fix warning messages from gcc 4.4 compiler
+    05 Mar 2019 - MMS - Change arrays to be allocatable, stack size was being exceeded on conda
+
+.LEVEL1
+.VARI INP
+Input image.
+.VARI OUT
+1) Output image.
+2) Output inflection map
+.VARI ORIENT
+Direction to produce
+1st derivative
+HORIZ is in line direction.
+VERT is in sample direction.
+.vari  POSINFL
+Number of positive inflection
+points in the output map
+.vari  NEGINFL
+Number of negative inflection
+points in  the output map
+
+
+.END
+

@@ -1,0 +1,41 @@
+process help=*
+parm imdin  type=(string,99)
+parm txtout type=(string,99)
+end-proc
+.title
+VICAR Program quickbirdlog - extracts image corners and look angles from Quickbird metadata file
+.help
+PURPOSE
+
+     QUICKBIRDLOG extracts image corners and look angles from Quickbird metadata file
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     quickbirdlog TXTIN TXTOUT
+     
+     where
+
+	IMDIN is the companion metadata file
+	TXTOUT is the metadata file with extracted corners and angles
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch, Wed Oct  8 2003
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, A. Zobrist
+
+REVISIONS: 
+  Mon Oct  8 2003
+    Initial version
+  Sat Dec 29 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.level1
+.level2
+.end

@@ -1,0 +1,69 @@
+PROCESS       HELP=*
+PARM INP      TYPE=(STRING,99) COUNT=2
+PARM COLS     TYPE=INT COUNT=5 DEFAULT=(1,2,3,4,5)
+PARM MODE     TYPE=KEYWORD VALID=(MISSELV,REQELV)  DEFAULT=REQELV
+END-PROC
+.TITLE
+VICAR Program rpcfwd
+.HELP
+PURPOSE
+
+     RPCFWD applies an RPC stored in an image label to (lon,lat,elev)
+     stored in an ibis file to produce (line,sample) in the ibis file.
+     The columns are chosen with a single paranmeter that names the
+     (lon,lat,elev,line,sample) columns.  The longitudes greater than
+     180.0 degrees are trimmed to negative longitudes to conform with
+     NITF standards by subtracting 360.0.  Elevation is in meters.
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     rpcfwd INP=(A,B) COLS=(C1,C2,C3,C4,C5)
+     
+     where
+
+     A           is an IBIS file 
+     B		 is a VICAR image with a GeoTIFF label with RPC or a
+                      standalone ascii GeoTIFF label with RPC
+     COLS        are the IBIS file columns (integers) contain-
+                      ing the (lon,lat,elev) and to contain the
+                      (line,sample) 
+.PAGE
+OPERATION
+   The GeoTIFF label is accessed and the RPC's are read.  The (lon,lat,elv)
+   columns of the ibis file are read, then plugged into the RPF's to yield
+   the (line,samp) columns.
+   
+.PAGE
+
+TIMING
+
+     Should be able to map millions if IBIS records in less than
+     a minute on a sparc2.
+     
+RESTRICTIONS
+
+   The maximum number of coordinate points is limited by IBIS table
+   size (currently about 10 million?).  Internal to the program,
+   dynamic memory allocation is used.
+
+
+.PAGE
+WRITTEN BY:            A. L. Zobrist, 01 March 2005
+
+COGNIZANT PROGRAMMER:  A. L. Zobrist
+
+REVISIONS: 
+  Fri Dec 28 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.LEVEL1
+.VARIABLE INP
+Input/output IBIS table and
+GeoTIFF reference with RPC's
+.VARIABLE COLS
+Map columns in IBIS file for
+(lon,lat,elev,line,sample)
+.VARIABLE MODE
+REQELV - abort on missing elv
+MISSELV - missing elv OK
+.END

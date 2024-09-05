@@ -1,0 +1,4 @@
+$ vpack qkplot.com -mixed -
+	-p qkplot.pdf -
+	-t tstqkplot.pdf devqkplot.pdf
+$ Exit

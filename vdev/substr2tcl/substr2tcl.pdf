@@ -1,0 +1,56 @@
+process help=*
+parm instring     type=string
+parm stchar       type=int
+parm numchar      type=int 
+local dumstr        type=string 
+parm substr       type=name default=dumstr 
+END-PROC
+.TITLE
+substr2tcl - get a substring from string input to TAE TCL variable
+when knowing the starting position and the number of characters
+.HELP
+PURPOSE:
+substr2tcl extracts ia substring from an input string when
+you know the position of the starting character. 
+
+
+EXECUTION:
+
+
+str2tcl parses the characters in inval to ensure that the
+characters are part of a number. If they are not then  it
+returns -999 if types 2 or 4 are specified or 
+-9.990000000000e+02 if typrs 7 or 8 are specified.
+
+
+
+EXAMPLES:
+
+substr2tcl inval="This is a string test" stchar=11 numchar=7 substr
+
+          extracts the string "string" into the substring given
+          the TCL variable substr
+
+RESTRICTIONS:
+
+
+REVISION HISTORY:
+
+ ORIGINAL PROGRAMMER:    R. Bambery          02 Oct 2013
+ COGNIZANT PROGRAMMER:   R. Bambery          02 Oct 2013
+ 
+  Oct 02, 2013  Ray Bambery -  Initial version
+
+  
+.LEVEL1
+.variable instring
+A string that contains the desired substring
+.variable stchar
+TAE TCL name without &, gets
+the found value or -999
+.variable vtype
+2 - integer
+4 - integer
+7 - double
+8 - double
+.END

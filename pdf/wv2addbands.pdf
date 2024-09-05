@@ -1,0 +1,142 @@
+procedure	! run_bands
+
+parm fname string
+parm refimg string
+parm elevdata string
+
+local ntf string init=".NTF"
+local imd string init=".IMD"
+local b1 string init="_b1.img"
+local b2 string init="_b2.img"
+local b3 string init="_b3.img"
+local b4 string init="_b4.img"
+local b5 string init="_b5.img"
+local b6 string init="_b6.img"
+local b7 string init="_b7.img"
+local b8 string init="_b8.img"
+local img string init=".img"
+local suf string init="_2mm"
+local found integer
+local failed string init=".failed"
+local paname string
+
+local afidsvdevdata string
+!local elevdata string
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+!let _onfail="continue"
+
+write "wv2addbands version Sat May  7 2011"
+
+write "fname &fname"
+write "refimg &refimg"
+write "elevdata &elevdata"
+
+let paname=refimg
+
+if (paname="")
+  let paname=fname
+end-if
+
+!translog AFIDS_VDEV_DATA afidsvdevdata
+!let elevdata = "&afidsvdevdata/middle_east_elv.hlf"
+
+tcl2tcl script=("set i [string first P1B &"fname"]; ", +
+        "string replace &"fname" $i [expr $i+2] M1B") strvar=fname
+
+file2tcl &fname&b1 val=found
+if (found=1)
+  goto do_bands
+else
+  write "&fname&b1"
+end-if
+
+ikqbcall2 key=tst +
+     rawimg=&fname&ntf +
+     rawmeta="" rawhdr="" +
+     outimg=&fname&b1 +
+     refimg=&paname&suf&img +
+     nah=950 nav=950 rtype=secondary +
+     dted="&elevdata" +
+     base="" rawtype=nitf senstype=q +
+     mpix=2.0 mpixf=4.0 maptype=pc xvdonly=n +
+     outrpc="" outrpctp="ntf" +
+     linesamp=(-999.0,-999.0,-999.0,-999.0,,) +
+     lsatls=(-999.0,-999.0,-999.0,-999.0,,) +
+     usermapref="" interp=bilin rastype=area +
+     siteref="" siteout="" +
+     line_upper="" line_lower="" samp_left="" samp_right=""
+
+do_bands>
+
+file2tcl &fname&b1 val=found
+if (found=0)
+  ush date > &fname&failed
+  goto theend
+end-if
+
+file2tcl &fname&failed val=found	! Check to see if this image failed in the past
+if (found=1) ush rm &fname&failed	! Since we are had success ... delete the old 'failed' file
+
+file2tcl &fname&b2 val=found
+if (found=1)
+  goto theend
+else
+  write "coregistering bands 2-8"
+end-if
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=2 +
+     outimg= &fname&b2
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=3 +
+     outimg= &fname&b3
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=4 +
+     outimg= &fname&b4
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=5 +
+     outimg= &fname&b5
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=6 +
+     outimg= &fname&b6
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=7 +
+     outimg= &fname&b7
+
+ikqbwarpad2 key=tst +
+     fnamein="&fname&b1" +
+     rawimg="&fname&ntf" +
+     rawmeta="&fname&imd" +
+     senstype="q" rawtype="nitf" nitfband=8 band=8 +
+     outimg= &fname&b8
+
+theend>
+!ush rm scratch/*	! Cleanup ...
+end-proc

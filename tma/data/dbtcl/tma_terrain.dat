@@ -1,0 +1,68 @@
+pdc FLAT         {Speed change factor due to slope of +/-2.5% (Flat)} {}      SLOPE  {}
+pdc UP_1         {Speed reduction factor due to uphill slope of 2.5-5.0%} {}  SLOPE  {}
+pdc UP_2         {Speed reduction factor due to uphill slope of 6-10%} {}     SLOPE  {}
+pdc UP_3         {Speed reduction factor due to uphill slope of 11-20%} {}    SLOPE  {}
+pdc UP_4         {Speed reduction factor due to uphill slope of 21-30%} {}    SLOPE  {}
+pdc UP_5         {Speed reduction factor due to uphill slope of 31-45%} {}    SLOPE  {}
+pdc UP_6         {Speed reduction factor due to uphill slope of 45+%} {}      SLOPE  {}
+pdc DOWN_1       {Speed increase factor due to downhill slope of 2.5-5.0%} {} SLOPE  {}
+pdc DOWN_2       {Speed increase factor due to downhill slope of 6-10%} {}    SLOPE  {}
+pdc DOWN_3       {Speed increase factor due to downhill slope of 11-20%} {}   SLOPE  {}
+pdc DOWN_4       {Speed increase factor due to downhill slope of 21-30%} {}   SLOPE  {}
+pdc DOWN_5       {Speed increase factor due to downhill slope of 31-45%} {}   SLOPE  {}
+pdc DOWN_6       {Speed increase factor due to downhill slope of 45+%} {}     SLOPE  {}
+pdc WATER        {Movement speed off-road across water} {km/hr}               RASTER 8
+pdc WETLANDS     {Movement speed off-road across wetlands} {km/hr}            RASTER 7
+pdc ICE_SNOW     {Movement speed off-road across ice/snow} {km/hr}            RASTER 6
+pdc URBAN        {Movement speed through urban/built-up} {km/hr}              RASTER 5
+pdc FOREST       {Movement speed off-road through forests & orchards} {km/hr} RASTER 4
+pdc SHRUB        {Movement speed off-road across scrub/shrub} {km/hr}         RASTER 3
+pdc AGRICULTURE  {Movement speed off-road across agriculture} {km/hr}         RASTER 2
+pdc GRASSLAND    {Movement speed off-road across grassland} {km/hr}           RASTER 1
+pdc BARREN       {Movement speed off-road across barren/sparse} {km/hr}       RASTER 0
+pdc ROADS        {Movement speed along roads} {km/hr}                         VSPEED {}
+pdc OTHER_ROADS  {Movement speed along other roads} {km/hr}                   VSPEED {}
+pdc TRAILS       {Movement speed along trails} {km/hr}                        VSPEED {}
+pdc DRAINAGE     {Time delay crossing/fording drainages} {minutes}            VDELAY {}
+pdc DUST         {Speed reduction factor due to dust or smoke} {}             WEATHER {}
+pdc FOG          {Speed reduction factor due to fog or haze} {}               WEATHER {}
+pdc LIT_RAIN     {Speed reduction factor due to light rain} {}                WEATHER {}
+pdc MED_RAIN     {Speed reduction factor due to medium rain} {}               WEATHER {}
+pdc HVY_RAIN     {Speed reduction factor due to heavy rain} {}                WEATHER {}
+mil FLAT         {Speed change factor due to slope of +/-2.5% (Flat)} {}      SLOPE  {}
+mil UP_1         {Speed reduction factor due to uphill slope of 2.5-5.0%} {}  SLOPE  {}
+mil UP_2         {Speed reduction factor due to uphill slope of 6-10%} {}     SLOPE  {}
+mil UP_3         {Speed reduction factor due to uphill slope of 11-20%} {}    SLOPE  {}
+mil UP_4         {Speed reduction factor due to uphill slope of 21-30%} {}    SLOPE  {}
+mil UP_5         {Speed reduction factor due to uphill slope of 31-45%} {}    SLOPE  {}
+mil UP_6         {Speed reduction factor due to uphill slope of 45+%} {}      SLOPE  {}
+mil DOWN_1       {Speed increase factor due to downhill slope of 2.5-5.0%} {} SLOPE  {}
+mil DOWN_2       {Speed increase factor due to downhill slope of 6-10%} {}    SLOPE  {}
+mil DOWN_3       {Speed increase factor due to downhill slope of 11-20%} {}   SLOPE  {}
+mil DOWN_4       {Speed increase factor due to downhill slope of 21-30%} {}   SLOPE  {}
+mil DOWN_5       {Speed increase factor due to downhill slope of 31-45%} {}   SLOPE  {}
+mil DOWN_6       {Speed increase factor due to downhill slope of 45+%} {}     SLOPE  {}
+mil WATER        {Movement speed off-road across water} {km/hr}               RASTER 8
+mil WETLANDS     {Movement speed off-road across wetlands} {km/hr}            RASTER 7
+mil ICE_SNOW     {Movement speed off-road across ice/snow} {km/hr}            RASTER 6
+mil URBAN        {Movement speed through urban/built-up} {km/hr}              RASTER 5
+mil FOREST       {Movement speed off-road through forests & orchards} {km/hr} RASTER 4
+mil SHRUB        {Movement speed off-road across scrub/shrub} {km/hr}         RASTER 3
+mil AGRICULTURE  {Movement speed off-road across agriculture} {km/hr}         RASTER 2
+mil GRASSLAND    {Movement speed off-road across grassland} {km/hr}           RASTER 1
+mil BARREN       {Movement speed off-road across barren/sparse} {km/hr}       RASTER 0
+mil ROADS        {Movement speed along roads} {km/hr}                         VSPEED {}
+mil OTHER_ROADS  {Movement speed along other roads} {km/hr}                   VSPEED {}
+mil TRAILS       {Movement speed along trails} {km/hr}                        VSPEED {}
+mil DRAINAGE     {Time delay crossing/fording drainages} {minutes}            VDELAY {}
+mil DUST         {Speed reduction factor due to dust or smoke} {}             WEATHER {}
+mil FOG          {Speed reduction factor due to fog or haze} {}               WEATHER {}
+mil LIT_RAIN     {Speed reduction factor due to light rain} {}                WEATHER {}
+mil MED_RAIN     {Speed reduction factor due to medium rain} {}               WEATHER {}
+mil HVY_RAIN     {Speed reduction factor due to heavy rain} {}                WEATHER {}
+mil LIT_SNOW     {Speed reduction factor due to light snow} {}                WEATHER {}
+mil MED_SNOW     {Speed reduction factor due to medium snow} {}               WEATHER {}
+mil HVY_SNOW     {Speed reduction factor due to heavy snow} {}                WEATHER {}
+
+
+

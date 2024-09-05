@@ -1,0 +1,190 @@
+procedure help=*
+parm key type=string
+parm fname type=string
+parm band type=int
+parm nband type=int default=1
+parm line_upper int def=0
+parm line_lower int def=0
+parm maptype type=string valid=("pc","utm") default="pc"
+
+local iband int
+local topband int
+
+local rawl1r type=string
+local rawacs type=string
+local rawkey type=string
+
+local rawfile type=string
+local tempfile1 type=string
+local tempfile2 type=string
+local tempfile3 type=string
+local gridfinal1 type=string
+local gridfinal2 type=string
+local gridfinal3 type=string
+local gridinfo type=string
+local masterfile type=string
+local outfile type=string
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local sl int
+local ss int
+local nl int
+local ns int
+
+local nlcopy int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+body
+
+
+!  log the hyperion band
+
+let rawl1r = "raw" // "&key" // "/&fname" // "_Hyp.L1R"
+let rawacs = "raw" // "&key" // "/&fname" // "_acs.hdf"
+let rawkey = "raw" // "&key" // "/&fname" // "tempraw"
+
+! iterate over the bands
+
+let iband = band-1
+let topband = band+nband-1
+loop
+   let iband = iband+1
+   if (iband>topband) goto loopdone
+
+hyperionlog inp=&rawl1r acs=&rawacs out=&rawkey sb=&iband nbnd=1
+
+! other filenames
+
+let rawfile = "&rawkey" // "_&iband" // ".img"
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+let gridfinal1 = "final&key" // "/&fname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&fname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&fname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&fname"  // "gridinfo"
+let outfile = "final&key" // "/&fname" // "_map4.&iband"
+
+if (maptype="pc")
+   let masterfile = "final&key" // "/&key" // "master.img"
+else
+   let masterfile = "final&key" // "/&key" // "master.img" // "u"
+end-if
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s v11=t3e v12=t3n +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2,3,3,3,4)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,7,1,8,1,9,1,10)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+! the sl,ss,nl,ns for geom is different
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from hywarp.pdf
+
+let nlcopy = &line_lower-&line_upper+1
+if (nlcopy=1) let nlcopy = 0
+copy &rawfile &tempfile1 sl=&line_upper nl=&nlcopy
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv)
+gtsize (&tempfile3,&masterfile) &outfile 'coverref
+
+end-loop
+loopdone>
+
+theend>
+end-proc
+.TITLE
+hywarp - warp one (or n) additional band(s) of hyperion
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.vari band
+the band number, or start
+band number if nband>1
+.vari nband
+the number of bands desired
+.vari maptype
+"pc"  - output to Platte Caree
+"utm" - output to UTM
+.LEVEL2
+.vari nband
+how many bands to run, starting with the band given in band.
+for example: band=27 nband=10 will run bands 27,28,29,30,31,
+32,33,34,35,36.
+.END

@@ -1,0 +1,6 @@
+$ vpack lppixmap.com -mixed -
+	-s lppixmap.c -
+	-i lppixmap.imake -
+	-p lppixmap.pdf -
+	-t tstlppixmap.pdf
+$ Exit

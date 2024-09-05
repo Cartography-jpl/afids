@@ -1,0 +1,38 @@
+tstdespike2
+despike2 inp=ct/nhiuaxf2010000_031112541992.img out=despike.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+f2 (ct/nhiuaxf2010000_031112541992.img, despike.img) diff.img func=("in1-in2")
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 15727 TIMES
+despike2 inp=despike.img out=despike2.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=despike2.img out=despike3.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=despike3.img out=despike4.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=despike4.img out=despike5.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=despike5.img out=despike6.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=despike6.img out=despike7.img scale=1.5
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+despike2 inp=ct/nhiuaxf2000000_006022055969.img out=despike10.img scale = 1
+Beginning VICAR task despike2
+despike2 - 10-11-2019 - rjb - 64-bit
+f2 (ct/nhiuaxf2000000_006022055969.img, despike10.img) diff2.img func=("in1-in2")
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 19102 TIMES
+let $echo="no"
+exit
+slogoff

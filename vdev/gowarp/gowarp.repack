@@ -1,0 +1,4 @@
+$ vpack gowarp.com -mixed -
+	-p gowarp.pdf gowpcall.pdf -
+	-t tstgowarp.pdf
+$ Exit

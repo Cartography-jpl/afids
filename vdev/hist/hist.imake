@@ -1,0 +1,28 @@
+/***********************************************************************
+
+                     IMAKE FILE FOR PROGRAM hist
+
+   To Create the build file give the command:
+
+		$ vimake hist			(VMS)
+   or
+		% vimake hist			(Unix)
+
+
+************************************************************************/
+
+
+#define PROGRAM	hist
+#define R2LIB
+
+#define MODULE_LIST hist.f
+
+#define MAIN_LANG_FORTRAN
+#define USES_FORTRAN
+#define FTNINC_LIST pgminc
+
+
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB
+/************************* End of Imake file ***************************/

@@ -1,0 +1,99 @@
+procedure
+refgbl $echo
+parm key string
+parm rawimg1 type=(string,99)
+parm rawgeo1 type=(string,99)
+parm rawimg2 type=(string,99) default=""
+parm rawgeo2 type=(string,99) default=""
+parm nah int def=100
+parm nav int def=100
+parm rtype string +
+   valid=("master","secondary","nightmaster","nightsecondary")
+parm dted type=(string,99) default=""
+parm lsat type=(string,99) default=""
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+
+parm maptype type=string valid=("pc","utm","ref") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="noelvcor"
+parm angcor type=string valid=("noangcor","angcor") default="noangcor"
+
+parm corband string default="20"
+parm refimg type=(string,99) default=""
+parm outimg type=(string,99)
+parm xvdonly string valid=("n","y") default="n"
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+local outfile1 type=(string,99)
+local outfile2 type=(string,99)
+local accplot type=(string,99)
+
+body
+let $echo="yes"
+let accplot = "&outimg" // ".accplot"
+
+if (rawimg2="")
+   modcallb2 key=&key rawimg=&rawimg1 +
+      rawgeo=&rawgeo1 +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower interp=&interp +
+      samp_left=&samp_left samp_right=&samp_right rastype=&rastype +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=0 corband=&corband xvdonly=&xvdonly +
+      outimg=&outimg +
+      refimg="&refimg" +
+      accplot=&accplot +
+      usermapref="&usermapref" +
+      siteref="&siteref" +
+      siteout="&siteout"
+else
+   let outfile1 = "scratch/&key" // "xx1"
+   let outfile2 = "scratch/&key" // "xx2"
+   modcallb2 key=&key rawimg=&rawimg1 +
+      rawgeo=&rawgeo1 +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower interp=&interp +
+      samp_left=&samp_left samp_right=&samp_right rastype=&rastype +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=1 corband=&corband xvdonly=&xvdonly +
+      outimg=&outfile1 +
+      refimg="&refimg" +
+      accplot=&accplot +
+      usermapref="&usermapref" +
+      siteref="&siteref" +
+      siteout="&siteout"
+   modcallb2 key=&key rawimg=&rawimg2 +
+      rawgeo=&rawgeo2 +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower interp=&interp +
+      samp_left=&samp_left samp_right=&samp_right rastype=&rastype +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=2 corband=&corband xvdonly=&xvdonly +
+      outimg=&outfile2 +
+      refimg="&refimg" +
+      accplot=&accplot +
+      usermapref="&usermapref" +
+      siteref="&siteref" +
+      siteout="&siteout"
+   fthmos inp1=&outfile1 +
+       inp2=&outfile2 +
+       out=&outimg
+end-if
+
+write "MSG: PROCESSING COMPLETED"
+
+end-proc

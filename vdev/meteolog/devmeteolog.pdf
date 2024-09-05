@@ -1,0 +1,28 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! DEV SCRIPT FOR METEOLOG
+
+meteolog inp=OpenMTP_2005-10-12_24_512345_1_1_1.IR outprefix=foo +
+  nadlon=63
+
+! Whole Disk IR, no navigation data
+!meteolog inp=OpenMTP_2001-12-16_16_145142_1_1_16.IR outprefix=foo1 'nonav
+
+! Whole Disk VIS, no navigation data
+!meteolog inp=OpenMTP_2001-12-16_16_144955_1_1_16.VIS outprefix=foo2 'nonav
+
+! Red Sea IR, with navigation data
+!meteolog inp=OpenMTP_2001-12-16_16_145142_1_1_16.IR outprefix=foo3 +
+!    sl=550 ss=650 nl=400 ns=150 nadLon=63.0 skip=10
+
+end-proc
+
+

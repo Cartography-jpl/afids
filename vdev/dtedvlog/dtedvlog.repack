@@ -1,0 +1,6 @@
+$ vpack dtedvlog.com -mixed -
+	-s dtedvlog.c -
+	-i dtedvlog.imake -
+	-p dtedvlog.pdf -
+	-t tstdtedvlog.pdf
+$ Exit

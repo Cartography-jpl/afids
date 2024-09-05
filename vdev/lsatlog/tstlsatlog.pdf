@@ -1,0 +1,8 @@
+procedure
+body
+
+!   TEST LSATLOG HANDYPROC
+
+lsatlog key="russia" source="p172r20_5t19890618" band="nn3"
+     
+end-proc

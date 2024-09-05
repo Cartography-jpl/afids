@@ -1,0 +1,257 @@
+procedure
+refgbl $echo
+parm key string
+parm rawimg type=(string,99)
+parm rawgeo type=(string,99)
+parm nah int def=100
+parm nav int def=100
+parm rtype string +
+   valid=("master","secondary","nightmaster","nightsecondary")
+parm dted type=(string,99)
+parm lsat type=(string,99) count=(0:1) default=""
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+
+parm maptype type=string valid=("pc","utm","ref") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm angcor type=string valid=("noangcor","angcor") default="noangcor"
+parm modiscase int def=0 valid=0:2
+
+parm corband type=(string,99) default="20"
+parm refimg type=(string,99) default=""
+parm outimg type=(string,99)
+parm xvdonly string valid=("n","y") default="n"
+parm accplot type=(string,99) default="accplot"
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+local fnamein type=(string,99)
+local fname1 type=(string,99)
+local fname3 type=(string,99)
+local fname4 type=(string,99)
+local fname5 type=(string,99)
+local fnamecim type=(string,99)
+
+local inroot type=(string,99)
+local outroot type=(string,99)
+local scratchroot type=(string,99)
+
+local inloc type=(string,99)
+local outloc type=(string,99)
+local masterloc type=(string,99)
+local gridinfoloc type=(string,99)
+local gridfinalloc type=(string,99)
+
+local iblat1 real
+local iblat2 real
+local iblon1 real
+local iblon2 real
+
+local qlat real
+local qlatinc real
+local qlon real
+local qloninc real
+local slat1 real
+local slat2 real
+local slon1 real
+local slon2 real
+
+local xxxrestore type=(string,99)
+local ixclosest int
+local lognl int
+local logns int
+local rlognl real
+local rlogns real
+local rlogns2 real
+local satelv real
+local pixdeg real
+
+local stopat int
+local ixc1 int
+local ixc2 int
+local lnl int
+local lns int
+local ascend int
+
+local ufile type=(string,99)
+
+local xxttemp type=(string,99)
+local nscan int
+local found int
+
+body
+let $echo="yes"
+!date 2008/06/05
+
+let satelv = 704000.0
+
+! may need to be updated for day case to use landsat mosaic alz
+
+if (rtype="nightmaster")
+   let stopat=2
+else
+   let stopat=3
+end-if
+
+! call walt's routine to generate fnamein
+
+idgen prefix=bob outvar=fnamein
+
+let inloc = "raw" // "&key" // "/"
+let outloc = "final" // "&key" // "/"
+
+let fname1 = "&inloc" // "&fnamein" // "_&corband" // ".img"
+let fname3 = "&inloc" // "&fnamein" // ".int"
+let fname4 = "&inloc" // "&fnamein" // ".txt"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+let xxttemp = "scratch/" // "&fnamein" // ".tutemp"
+let fnamecim = "scratch/" // "&fnamein" // ".cimg"
+let xxxrestore = "scratch/" // "&fnamein" // ".restore"
+
+!   now the test, real satellite at &satelv
+
+let inroot = "&inloc" // "&fnamein"
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+let gridinfoloc = "&outloc" // "&fnamein" // "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein" // "gridfinal"
+
+!  log the correlation band, depending on day or night
+
+write "logging &rawimg &rawgeo"
+if ("&corband"="1" or "&corband"="2")
+   modislog_mod02qkm inp=&rawimg geo=&rawgeo out=&inroot +
+      band=&corband lineSkip=1 sampSkip=10 maxLat=40
+   let nscan = 40
+   let pixdeg = 480.0
+else-if ("&corband"="lst")
+   write "MSG: RECOMMEND USE OF BAND 20 FOR CORRELATION"
+else
+   modislog_mod021km inp=&rawimg geo=&rawgeo out=&inroot +
+      band=&corband lineSkip=1 sampSkip=10 maxLat=40
+   let nscan = 10
+   let pixdeg = 120.0
+end-if
+
+! for compression testing
+compresschk &fname1
+
+ibis-copy &fname3 &fname5
+
+!   prepare the correlation image, and flot if ascending
+
+label-add &fname1 item="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+asc2tcl &fname4 keyword="LOG_ASCENDING=" val=ascend vtype=4
+if (ascend=0)
+   copy &fname1 &xxttemp
+else
+   flot &fname1 &xxttemp mode=ROT180
+   lab2tcl &xxttemp v1=lnl v2=lns keyword=(nl,ns) 'system
+   mf3 &fname5 f="c1=(&lnl)+1-c1$c2=(&lns)+1-c2"
+   sort &fname5 sortcol=(1,2)
+   ibis-copy &fname5 scratch/xxxxfname5bak
+end-if
+
+if (xvdonly="y")
+   xvd &xxttemp
+   goto theend
+end-if
+
+! do the bowtie correction
+
+bowtie (&xxttemp,&fname5) &fnamecim cols=(1,2,3,4) nscan=&nscan
+
+if (rtype="nightmaster" or rtype="nightsecondary") 
+   let masterloc = "&outloc" // "&key" // "nightmaster.img"
+else
+   let masterloc = "&outloc" // "&key" // "master.img"
+end-if
+
+! get the quad from the .txt
+
+write "&fname4"
+
+asc2tcl &fname4 keyword="LOG_MIN_LON=" val=iblon1 vtype=8
+asc2tcl &fname4 keyword="LOG_MAX_LON=" val=iblon2 vtype=8
+asc2tcl &fname4 keyword="LOG_MIN_LAT=" val=iblat2 vtype=8
+asc2tcl &fname4 keyword="LOG_MAX_LAT=" val=iblat1 vtype=8
+
+! walt now providing -999 for whole image, have to get from .nav
+
+if (iblon1<-900.0)
+   ibis-copy &fname5 &xxttemp
+   mf3 &xxttemp +
+       func="c1=c3$c2=c4$@vmin(c1)$@vmin(c2)$@vmax(c3)$@vmax(c4)"
+   ibis2tcl &xxttemp v1=iblon1 v2=iblon2 v3=iblat2 v4=iblat1 +
+       vartype=(-1,-1,-1,-1) ibisloc=(1,2,1,4,1,1,1,3)
+end-if
+
+let qlon = iblon1-0.2
+let qloninc = iblon2-iblon1+0.5
+let qlat = iblat1+0.4
+let qlatinc = iblat1-iblat2+0.8
+
+write "iblon1,iblat1 &iblon1,&iblat1"
+write "iblon2,iblat2 &iblon2,&iblat2"
+write "qlon,qlat &qlon,&qlat"
+write "qloninc,qlatinc &qloninc,&qlatinc"
+
+! get the satellite from the .nav
+
+asc2tcl &fname4 keyword="CALC_NL=" val=lognl vtype=4
+asc2tcl &fname4 keyword="CALC_NS=" val=logns vtype=4
+let rlognl = $float(lognl)
+let rlogns = $float(logns)
+let rlogns2 = rlogns*0.5
+getpoint fname=&fname5 seq=t resname=&xxxrestore +
+   xval=1.0 yval=&rlogns2
+restore-variable file=&xxxrestore variable=(ixclosest)
+let ixc1 = ixclosest
+getpoint fname=&fname5 seq=t resname=&xxxrestore +
+   xval=&rlognl yval=&rlogns2
+restore-variable file=&xxxrestore variable=(ixclosest)
+let ixc2 = ixclosest
+
+ibis2tcl &fname5 v1=slon1 v2=slat1 v3=slon2 v4=slat2 +
+    vartype=(-1,-1,-1,-1) +
+    ibisloc=(&ixc1,4,&ixc1,3,&ixc2,4,&ixc2,3)
+
+write "ixc1,slon1,slat1 &ixc1,&slon1,&slat1"
+write "ixc2,slon2,slat2 &ixc2,&slon2,&slat2"
+
+modwarp2 inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted="&dted"  lsat="&lsat" +
+   seq=qq  pixdeg=&pixdeg angcor=&angcor corband=&corband +
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc +
+   quadunit=0 refimg="&refimg" rastype=&rastype +
+   gridinfo=&gridinfoloc +
+   gridfinal=&gridfinalloc loff=0 soff=0 loff2=0 soff2=0 +
+   sensE1=&slon1 sensN1=&slat1 senselv1=&satelv fftsiz=256 +
+   sensE2=&slon2 sensN2=&slat2 senselv2=&satelv sensunit=0 +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype interp=&interp +
+   modelfit=&modelfit maptype=&maptype modiscase=&modiscase +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right accplot=&accplot +
+   usermapref="&usermapref" +
+   siteref="&siteref" +
+   siteout="&siteout"
+
+let ufile = "&outroot" // "_map4.&corband"
+copy &ufile &outimg
+if (maptype<>"pc" and rtype="master")
+   let ufile = "&outroot" // "_map4.&corband" // "pc"
+   let xxttemp = "&outimg" // "pc"
+   copy &ufile &xxttemp
+end-if
+
+theend>
+end-proc

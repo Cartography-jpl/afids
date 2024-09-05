@@ -1,0 +1,6 @@
+$ vpack plab2tcl.com -mixed -
+	-s plab2tcl.c -
+	-i plab2tcl.imake -
+	-p plab2tcl.pdf -
+	-t tstplab2tcl.pdf
+$ Exit

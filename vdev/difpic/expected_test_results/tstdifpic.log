@@ -1,0 +1,1303 @@
+tstdifpic
+ 
+Test on all formats
+ 
+gen difpica 100 100 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc 'mod
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp     1       3       5       7       9      11      13      15      17      19
+   Line
+      1     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      2     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      3     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      4     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      5     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      6     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      7     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      8     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      9     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+     10     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+difpic (difpicb,difpica) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=      10000
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp     1       3       5       7       9      11      13      15      17      19
+   Line
+      1       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      2       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      3       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      4       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      5       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      6       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      7       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      8       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+      9       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+     10       5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5   5
+difpic (difpicb,difpica) size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =  81
+let $echo="no"
+Differences should be 81
+------------------------------------------
+ 
+gen difpica 100 100 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20)
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      2        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      3        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      4        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      5        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      6        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      7        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      8        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+      9        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+     10        -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5    -5
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp      16    17    18    19    20
+   Line
+      1        -5    -5    -5    -5    -5
+      2        -5    -5    -5    -5    -5
+      3        -5    -5    -5    -5    -5
+      4        -5    -5    -5    -5    -5
+      5        -5    -5    -5    -5    -5
+      6        -5    -5    -5    -5    -5
+      7        -5    -5    -5    -5    -5
+      8        -5    -5    -5    -5    -5
+      9        -5    -5    -5    -5    -5
+     10        -5    -5    -5    -5    -5
+difpic (difpicb,difpica) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=      10000
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20)
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      2         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      3         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      4         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      5         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      6         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      7         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      8         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      9         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+     10         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:28 2016
+     Samp      16    17    18    19    20
+   Line
+      1         5     5     5     5     5
+      2         5     5     5     5     5
+      3         5     5     5     5     5
+      4         5     5     5     5     5
+      5         5     5     5     5     5
+      6         5     5     5     5     5
+      7         5     5     5     5     5
+      8         5     5     5     5     5
+      9         5     5     5     5     5
+     10         5     5     5     5     5
+copy difpica difpicd
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+difpic (difpica,difpicd) size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+Differences should be 0
+------------------------------------------
+ 
+gen difpica 10 10 linc=2 sinc=2
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 10 10 ival=6
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc size=(2,3,8,6) 'mod
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  4.05263
+ NUMBER OF POS DIFF=  38
+ AVE VAL OF NEG DIFFS= -1.66667
+ NUMBER OF NEG DIFFS=   6
+ TOTAL NUMBER OF DIFFERENT PIXELS=  44
+ AVE VAL OF DIFFS=  3.00000
+ % DIFF PIXELS=  91.6667
+list difpicc
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:29 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:29 2016
+     Samp     1       3       5
+   Line
+      1     253 254 255   0   1   2
+      2     254 255   0   1   2   3
+      3     255   0   1   2   3   4
+      4       0   1   2   3   4   5
+      5       1   2   3   4   5   6
+      6       2   3   4   5   6   7
+      7       3   4   5   6   7   8
+      8       4   5   6   7   8   9
+difpic (difpica,difpicb) size=(2,3,8,6)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =  44
+let $echo="no"
+Differences should be 44
+------------------------------------------
+ 
+gen difpica 100 100 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:29 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:29 2016
+     Samp            1          2          3          4          5
+   Line
+      1             -5         -5         -5         -5         -5
+      2             -5         -5         -5         -5         -5
+      3             -5         -5         -5         -5         -5
+      4             -5         -5         -5         -5         -5
+      5             -5         -5         -5         -5         -5
+      6             -5         -5         -5         -5         -5
+      7             -5         -5         -5         -5         -5
+      8             -5         -5         -5         -5         -5
+      9             -5         -5         -5         -5         -5
+     10             -5         -5         -5         -5         -5
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:29 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp            1          2          3          4          5
+   Line
+      1              5          5          5          5          5
+      2              5          5          5          5          5
+      3              5          5          5          5          5
+      4              5          5          5          5          5
+      5              5          5          5          5          5
+      6              5          5          5          5          5
+      7              5          5          5          5          5
+      8              5          5          5          5          5
+      9              5          5          5          5          5
+copy difpica difpicd
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+difpic (difpica,difpicd)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+Differences should be 0
+------------------------------------------
+ 
+gen difpica 100 100 'real4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'real4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp             1           2           3           4           5
+   Line
+      1       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      2       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      3       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      4       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      5       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      6       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      7       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      8       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      9       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+copy difpica difpicd
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+difpic (difpica,difpicd)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+Differences should be 0
+------------------------------------------
+ 
+gen difpica 100 100 'real8
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'real8
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   DOUB     samples are interpreted as  REAL*8  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   DOUB     samples are interpreted as  REAL*8  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp             1           2           3           4           5
+   Line
+      1       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      2       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      3       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      4       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      5       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      6       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      7       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      8       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+      9       5.000E+00   5.000E+00   5.000E+00   5.000E+00   5.000E+00
+copy difpica difpicd
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+difpic (difpica,difpicd)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+Differences should be 0
+------------------------------------------
+ 
+gen difpica 100 100 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival=5 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.000E+00  0.000E+00
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -5.000E+00  0.000E+00
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   COMP     samples are interpreted as COMPLEX  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+     Samp                         1                       2                       3                       4                       5
+   Line
+      1      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      2      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      3      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      4      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      5      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      6      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      7      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      8      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      9      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+     10      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.000E+00  0.000E+00
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  5.000E+00  0.000E+00
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   COMP     samples are interpreted as COMPLEX  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:30 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp                         1                       2                       3                       4                       5
+   Line
+      1       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      2       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      3       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      4       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      5       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      6       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      7       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      8       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+      9       5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00   5.000E+00   0.000E+00
+copy difpica difpicd
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+difpic (difpica,difpicd)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+Differences should be 0
+------------------------------------------
+ 
+ Test handling of max and min DNs
+  
+gen difpica 100 100 ival=0 linc=0 sinc=0 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival= 255 linc=0 sinc=0 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -255.000
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -255.000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5) 'zero
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp     1       3       5
+   Line
+      1       0   0   0   0   0
+      2       0   0   0   0   0
+      3       0   0   0   0   0
+      4       0   0   0   0   0
+      5       0   0   0   0   0
+      6       0   0   0   0   0
+      7       0   0   0   0   0
+      8       0   0   0   0   0
+      9       0   0   0   0   0
+     10       0   0   0   0   0
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  255.000
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  255.000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp     1       3       5
+   Line
+      1     255 255 255 255 255
+      2     255 255 255 255 255
+      3     255 255 255 255 255
+      4     255 255 255 255 255
+      5     255 255 255 255 255
+      6     255 255 255 255 255
+      7     255 255 255 255 255
+      8     255 255 255 255 255
+      9     255 255 255 255 255
+let $echo="no"
+Differences should be 81
+------------------------------------------
+ 
+gen difpica 100 100 ival=-32768 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival= 32500 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -65268.0
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS= -65268.0
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp       1     2     3     4     5
+   Line
+      1    -32768-32768-32768-32768-32768
+      2    -32768-32768-32768-32768-32768
+      3    -32768-32768-32768-32768-32768
+      4    -32768-32768-32768-32768-32768
+      5    -32768-32768-32768-32768-32768
+      6    -32768-32768-32768-32768-32768
+      7    -32768-32768-32768-32768-32768
+      8    -32768-32768-32768-32768-32768
+      9    -32768-32768-32768-32768-32768
+     10    -32768-32768-32768-32768-32768
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  65268.0
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS=  65268.0
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp       1     2     3     4     5
+   Line
+      1     32767 32767 32767 32767 32767
+      2     32767 32767 32767 32767 32767
+      3     32767 32767 32767 32767 32767
+      4     32767 32767 32767 32767 32767
+      5     32767 32767 32767 32767 32767
+      6     32767 32767 32767 32767 32767
+      7     32767 32767 32767 32767 32767
+      8     32767 32767 32767 32767 32767
+      9     32767 32767 32767 32767 32767
+let $echo="no"
+Differences should be 81
+------------------------------------------
+ 
+gen difpica 100 100 ival=-2147483648 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 100 100 ival= 2147483000 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list difpica (1,1,10,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp            1          2          3          4          5
+   Line
+      1    -2147483648-2147483647-2147483646-2147483645-2147483644
+      2    -2147483647-2147483646-2147483645-2147483644-2147483643
+      3    -2147483646-2147483645-2147483644-2147483643-2147483642
+      4    -2147483645-2147483644-2147483643-2147483642-2147483641
+      5    -2147483644-2147483643-2147483642-2147483641-2147483640
+      6    -2147483643-2147483642-2147483641-2147483640-2147483639
+      7    -2147483642-2147483641-2147483640-2147483639-2147483638
+      8    -2147483641-2147483640-2147483639-2147483638-2147483637
+      9    -2147483640-2147483639-2147483638-2147483637-2147483636
+     10    -2147483639-2147483638-2147483637-2147483636-2147483635
+list difpicb (1,1,10,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp            1          2          3          4          5
+   Line
+      1     2147483000 2147483001 2147483002 2147483003 2147483004
+      2     2147483001 2147483002 2147483003 2147483004 2147483005
+      3     2147483002 2147483003 2147483004 2147483005 2147483006
+      4     2147483003 2147483004 2147483005 2147483006 2147483007
+      5     2147483004 2147483005 2147483006 2147483007 2147483008
+      6     2147483005 2147483006 2147483007 2147483008 2147483009
+      7     2147483006 2147483007 2147483008 2147483009 2147483010
+      8     2147483007 2147483008 2147483009 2147483010 2147483011
+      9     2147483008 2147483009 2147483010 2147483011 2147483012
+     10     2147483009 2147483010 2147483011 2147483012 2147483013
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS=-0.429497E+10
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS=-0.429497E+10
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+     Samp            1          2          3          4          5
+   Line
+      1    -2147483648-2147483648-2147483648-2147483648-2147483648
+      2    -2147483648-2147483648-2147483648-2147483648-2147483648
+      3    -2147483648-2147483648-2147483648-2147483648-2147483648
+      4    -2147483648-2147483648-2147483648-2147483648-2147483648
+      5    -2147483648-2147483648-2147483648-2147483648-2147483648
+      6    -2147483648-2147483648-2147483648-2147483648-2147483648
+      7    -2147483648-2147483648-2147483648-2147483648-2147483648
+      8    -2147483648-2147483648-2147483648-2147483648-2147483648
+      9    -2147483648-2147483648-2147483648-2147483648-2147483648
+     10    -2147483648-2147483648-2147483648-2147483648-2147483648
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS= 0.429497E+10
+ NUMBER OF POS DIFF=  81
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=  81
+ AVE VAL OF DIFFS= 0.429497E+10
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,9,5)
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:31 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:32 2016
+     Samp            1          2          3          4          5
+   Line
+      1    -2147483648-2147483648-2147483648-2147483648-2147483648
+      2    -2147483648-2147483648-2147483648-2147483648-2147483648
+      3    -2147483648-2147483648-2147483648-2147483648-2147483648
+      4    -2147483648-2147483648-2147483648-2147483648-2147483648
+      5    -2147483648-2147483648-2147483648-2147483648-2147483648
+      6    -2147483648-2147483648-2147483648-2147483648-2147483648
+      7    -2147483648-2147483648-2147483648-2147483648-2147483648
+      8    -2147483648-2147483648-2147483648-2147483648-2147483648
+      9    -2147483648-2147483648-2147483648-2147483648-2147483648
+let $echo="no"
+Differences should be 81
+------------------------------------------
+ 
+Check number of differences in diffpix return
+ 
+difpic (difpica,difpicb) difpicc diffpix=diffpix
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS=-0.429497E+10
+ NUMBER OF NEG DIFFS=      10000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      10000
+ AVE VAL OF DIFFS=-0.429497E+10
+ % DIFF PIXELS=  100.000
+let $echo="no"
+ 
+return value of diffpix = 10000
+                should be 10000
+------------------------------------------
+ 
+Test difpic on multiband images
+ 
+gen a 10 20 30 ORG="BSQ"
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen b 10 20 30 ORG="BSQ" ival=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (a b)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =6000
+let $echo="no"
+Differences should be 6000
+------------------------------------------
+ 
+gen a 10 20 30 ORG="BIL" 'HALF
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen b 10 20 30 ORG="BIL" 'HALF ival=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (a b) NB=15
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =3000
+let $echo="no"
+Differences should be 3000
+------------------------------------------
+ 
+gen a 10 20 30 ORG="BIP" 'REAL
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen b 10 20 30 ORG="BIP" 'REAL ival=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (a b) NB=15
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+??E - BIP files not supported, use TRAN to convert 1st input to BSQ
+ ** ABEND called **
+continue
+let $echo="no"
+Should get error message about BIP files
+------------------------------------------
+ 
+Test difpic on multiband images with output file
+ 
+gen difpica 40 40 10 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc 'mod
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      16000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      16000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20) nb=2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:32 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:32 2016
+ ***********
+ Band =     1
+ ***********
+     Samp     1       3       5       7       9      11      13      15      17      19
+   Line
+      1     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      2     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      3     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      4     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      5     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      6     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      7     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      8     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      9     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+     10     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:32 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:32 2016
+ ***********
+ Band =     2
+ ***********
+     Samp     1       3       5       7       9      11      13      15      17      19
+   Line
+      1     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      2     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      3     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      4     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      5     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      6     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      7     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      8     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+      9     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+     10     251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251 251
+let $echo="no"
+Values should all be 251
+------------------------------------------
+ 
+gen difpica 40 40 10 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpicb,difpica) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ AVE VAL OF POS DIFFS=  5.00000
+ NUMBER OF POS DIFF=      16000
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=      16000
+ AVE VAL OF DIFFS=  5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,20) nb=2
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     1
+ ***********
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      2         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      3         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      4         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      5         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      6         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      7         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      8         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      9         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+     10         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     2
+ ***********
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      2         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      3         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      4         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      5         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      6         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      7         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      8         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+      9         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+     10         5     5     5     5     5     5     5     5     5     5     5     5     5     5     5
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     1
+ ***********
+     Samp      16    17    18    19    20
+   Line
+      1         5     5     5     5     5
+      2         5     5     5     5     5
+      3         5     5     5     5     5
+      4         5     5     5     5     5
+      5         5     5     5     5     5
+      6         5     5     5     5     5
+      7         5     5     5     5     5
+      8         5     5     5     5     5
+      9         5     5     5     5     5
+     10         5     5     5     5     5
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     2
+ ***********
+     Samp      16    17    18    19    20
+   Line
+      1         5     5     5     5     5
+      2         5     5     5     5     5
+      3         5     5     5     5     5
+      4         5     5     5     5     5
+      5         5     5     5     5     5
+      6         5     5     5     5     5
+      7         5     5     5     5     5
+      8         5     5     5     5     5
+      9         5     5     5     5     5
+     10         5     5     5     5     5
+let $echo="no"
+Values should all be 5
+------------------------------------------
+ 
+gen difpica 40 40 10 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'full
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      16000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      16000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5) nb=2
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     1
+ ***********
+     Samp            1          2          3          4          5
+   Line
+      1             -5         -5         -5         -5         -5
+      2             -5         -5         -5         -5         -5
+      3             -5         -5         -5         -5         -5
+      4             -5         -5         -5         -5         -5
+      5             -5         -5         -5         -5         -5
+      6             -5         -5         -5         -5         -5
+      7             -5         -5         -5         -5         -5
+      8             -5         -5         -5         -5         -5
+      9             -5         -5         -5         -5         -5
+     10             -5         -5         -5         -5         -5
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:33 2016
+ ***********
+ Band =     2
+ ***********
+     Samp            1          2          3          4          5
+   Line
+      1             -5         -5         -5         -5         -5
+      2             -5         -5         -5         -5         -5
+      3             -5         -5         -5         -5         -5
+      4             -5         -5         -5         -5         -5
+      5             -5         -5         -5         -5         -5
+      6             -5         -5         -5         -5         -5
+      7             -5         -5         -5         -5         -5
+      8             -5         -5         -5         -5         -5
+      9             -5         -5         -5         -5         -5
+     10             -5         -5         -5         -5         -5
+let $echo="no"
+Values should all be -5
+------------------------------------------
+ 
+gen difpica 40 40 10 'real4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'real4
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc nb=4 sb=3
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=6400
+ TOTAL NUMBER OF DIFFERENT PIXELS=6400
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5) nb=2
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     1
+ ***********
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     2
+ ***********
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+let $echo="no"
+Values should all be -5.000E+00
+------------------------------------------
+ 
+gen difpica 40 40 10 'real8
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'real8
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.00000
+ NUMBER OF NEG DIFFS=      16000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      16000
+ AVE VAL OF DIFFS= -5.00000
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5) nb=2
+Beginning VICAR task list
+
+   DOUB     samples are interpreted as  REAL*8  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     1
+ ***********
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     2
+ ***********
+     Samp             1           2           3           4           5
+   Line
+      1      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      2      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      3      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      4      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      5      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      6      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      7      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      8      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+      9      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+     10      -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00  -5.000E+00
+let $echo="no"
+Values should all be -5.000E+00
+------------------------------------------
+ 
+gen difpica 40 40 10 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 10 ival=5 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ AVE VAL OF NEG DIFFS= -5.000E+00  0.000E+00
+ NUMBER OF NEG DIFFS=      16000
+ TOTAL NUMBER OF DIFFERENT PIXELS=      16000
+ AVE VAL OF DIFFS= -5.000E+00  0.000E+00
+ % DIFF PIXELS=  100.000
+list difpicc (1,1,10,5) nb=2
+Beginning VICAR task list
+
+   COMP     samples are interpreted as COMPLEX  data
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     1
+ ***********
+     Samp                         1                       2                       3                       4                       5
+   Line
+      1      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      2      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      3      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      4      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      5      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      6      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      7      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      8      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      9      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+     10      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+
+
+ Task:GEN       User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ Task:DIFPIC    User:rjb       Date_Time:Tue Jul 26 22:41:34 2016
+ ***********
+ Band =     2
+ ***********
+     Samp                         1                       2                       3                       4                       5
+   Line
+      1      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      2      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      3      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      4      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      5      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      6      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      7      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      8      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+      9      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+     10      -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00  -5.000E+00   0.000E+00
+let $echo="no"
+Values should all be -5.000E+00
+------------------------------------------
+ 
+test that COMPLEX format treated properly
+  
+gen difpica 40 40 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen difpicb 40 40 ival=5 'comp
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+ccomp difpica (cr ci) 'rect 'forw
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+ccomp (cr ci) difpicb 'rect 'inv
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+label-l difpica
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File difpica ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in COMP format from a X86-LINUX host
+                1 bands
+                40 lines per band
+                40 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Tue Jul 26 22:41:34 2016 ----
+IVAL=(0.0, 0.0)
+SINC=(1.0, 1.0)
+LINC=(1.0, 1.0)
+BINC=(1.0, 1.0)
+MODULO=(0.0, 0.0)
+ 
+************************************************************
+label-l difpicb
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File difpicb ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in COMP format from a X86-LINUX host
+                1 bands
+                40 lines per band
+                40 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Tue Jul 26 22:41:34 2016 ----
+IVAL=(0.0, 0.0)
+SINC=(1.0, 1.0)
+LINC=(1.0, 1.0)
+BINC=(1.0, 1.0)
+MODULO=(0.0, 0.0)
+---- Task: CCOMP -- User: rjb -- Tue Jul 26 22:41:34 2016 ----
+---- Task: CCOMP -- User: rjb -- Tue Jul 26 22:41:35 2016 ----
+ 
+************************************************************
+difpic (difpica,difpicb) difpicc
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF POS DIFF=   0
+ NUMBER OF NEG DIFFS=   0
+ TOTAL NUMBER OF DIFFERENT PIXELS=   0
+ AVE VAL OF DIFFS=  0.000E+00  0.000E+00
+ % DIFF PIXELS=  0.00000
+let $echo="no"
+Values should all be -5.000E+00 0.000E+00
+------------------------------------------
+  
+Test difpic on very large images:
+HALF - 32885 lines by 38550 samples
+ 
+difpic (ct/pre_reg.hlf,ct/post_reg.hlf) diffpix=diffpix
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES = 1053044027
+let $echo="no"
+ 
+Return value of diffpix = 1053044027
+ 
+Value should all be 1053044027
+------------------------------------------
+  
+exit
+slogoff

@@ -1,0 +1,4 @@
+$ vpack cibcut.com -mixed -
+	-p cibcut.pdf -
+	-t tstcibcut.pdf
+$ Exit

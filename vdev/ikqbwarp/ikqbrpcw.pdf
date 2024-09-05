@@ -1,0 +1,1090 @@
+procedure help=*
+parm inroot type=(string,99)
+parm outroot type=(string,99)
+parm scratchroot type=(string,99)
+parm dted type=(string,99)
+parm base type=(string,99) default=""
+parm master type=(string,99)
+parm gridinfo type=(string,99)
+parm gridfinal type=(string,99)
+parm outimg type=(string,99)
+
+parm seq type=string def="q"
+
+parm nah type=int default=600
+parm nav type=int default=400
+parm rtype type=string
+parm senstype string valid=("i","q","n","p","s","r","a") default="i"
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+parm maptype type=(string,4) valid=("pc","utm","ref") default="pc"
+parm fftinit type=int default=512
+parm runmode string default="legacy" valid=("legacy","hfit", +
+   "microfit","microfit_h","microfit_k","locfit","jcib")
+
+parm mpix real def=1.0
+parm utmzone type=int default=-999
+parm rawtype type=(string,99)
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+parm outrpc type=(string,99) default=""
+parm outrpctp type=string valid=("ntf","vic","tif") default="ntf"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+parm linesamp type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm lsatls type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm longlat type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+
+parm belist type=(string,99) default=""
+parm beouttype type=(string,4) valid=("rpc","vic","tif") default="vic"
+parm beoutroot type=(string,99) default=""
+parm bepixsize type=real default=1.0
+parm bewinsize type=int valid=(2048:999999) default=4096
+parm berefrpc type=(string,99) default=""
+
+parm magfac real def=1.0
+
+refgbl $echo
+parm version string def="ibis-2"
+parm org string def="column"
+
+local pfftinit int
+local tnl int
+local tns int
+local line_nl int
+local samp_ns int
+local tutmzone int
+local itemp int
+local hfit int
+local afidsvdevdata type=(string,128)
+
+local xxe type=(string,99)
+local xxf type=(string,99)
+local xxf2 type=(string,99)
+local xxf3 type=(string,99)
+local xxf4 type=(string,99)
+local xxf5 type=(string,99)
+local xxrpc2 type=(string,99)
+local xxrpc type=(string,99)
+local xxxlab1 type=(string,99)
+local xxxlab2 type=(string,99)
+local xxxlab3 type=(string,99)
+local xxxlab4 type=(string,99)
+local xxxfinalref type=(string,99)
+local xxxtinp type=(string,99)
+local xxxtifref type=(string,99)
+local xxxbelist type=(string,99)
+local xxxbeoutimg type=(string,99)
+local xxxchip1 type=(string,99)
+local xxxchip2 type=(string,99)
+local xxxchip3 type=(string,99)
+
+local regfile type=(string,99)
+local picfile type=(string,99)
+
+local xxxB2 type=(string,99)
+local xxxB2out1 type=(string,99)
+local xxxB2out3 type=(string,99)
+
+local accplot type=(string,99)
+local gname type=(string,99)
+
+local elvck real
+local regelv real
+local regsig real
+local elvrange real
+local magnif real
+local magmin real
+local accmag real
+local lmove real
+local smove real
+
+local corfail int
+local xxxcorfail type=(string,99)
+local polyfit type=(string,9) count=(5:5)
+local numfit type=string
+local denfit type=string
+local cetag type=(string,7)
+local rpctype type=(string,2)
+local rpc4 type=int
+local rpc5 type=int
+local rpc41 type=(string,30)
+local rpc42 type=(string,30)
+local rpc43 type=(string,30)
+local rpc44 type=(string,30)
+local rpc61 type=(string,30)
+local rpc62 type=(string,30)
+local rpc63 type=(string,30)
+local rpc64 type=(string,30)
+local rpc44org type=(string,30)
+local rpc64org type=(string,30)
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local nlout1 int
+local nsout1 int
+local cloop int
+local bloop int
+local beloop int
+local beline real
+local besamp real
+local belon1 real
+local belat1 real
+local hwin int
+local fwin int
+local hwin1 int
+local celoop int
+local redo int
+local accredo int
+
+local msl type=int
+local mss type=int
+local mnl type=int
+local mns type=int
+
+local rastypstr string
+
+local mlon real
+local mlat real
+local mlon2 real
+local mlat2 real
+local mlon4 real
+local mlat4 real
+local lonc real
+local latc real
+local test2l real
+local test2s real
+local test2lon real
+local test2lat real
+local testbl real
+local testbs real
+local labloff int
+local labsoff int
+local testloff real
+local testsoff real
+local iloff int
+local isoff int
+
+local vicortif type=int
+local inah type=int
+local inav type=int
+local iinterp type=(string,10)
+local irastype type=(string,10)
+local imaptype type=(string,4)
+local iusermapref type=(string,99)
+local savemapref type=(string,99)
+local pmpix type=real
+
+local scale1 real
+local scale2 real
+local insidefac int
+local corpt int
+
+local pointerr real
+local belon real
+local belat real
+local beid type=(string,25)
+local bename type=(string,99)
+local belen int
+local qexist int
+
+local lsq3 real
+local thr_res real
+local lsqfac real
+local ellipsoid int
+local maxdiff real
+
+local onfailsv type=(string,12)
+local locfit type=(string,12)
+
+local watermask1 type=(string,99)
+local afidsroot type=(string,99)
+
+local name01 string
+local name02 string
+
+body
+
+!  RPC PROCESSING BASED ON LON-LAT NOT UTM
+
+!let _onfail="continue"
+let $echo="yes"
+write "ikqbrpcw 1/24/12"
+
+if (siteref<>"")
+   write "MSG: SITE NOT IMPLEMENTED FOR NTM OR NITF FORMAT YET"
+   goto theend 
+end-if
+
+let hfit = 1
+if (runmode="legacy") let hfit = 0
+let accmag = 1.0
+let locfit = ""
+if (runmode="locfit") let locfit = "locfit"
+
+! WGS84 verticaldatum now required for ikqbrpcw.pdf
+
+plab2tcl &dted property=Geotiff val=mlon keyword=NITF_CORNERLON1 vtype=8
+
+if (base="" and rtype="secondary")
+   let base = "&master"
+end-if
+
+if (rtype="secondary")
+   plab2tcl &master property=COREG_META_DATA val=inah keyword=gridnah vtype=4
+   plab2tcl &master property=COREG_META_DATA val=inav keyword=gridnav vtype=4
+   plab2tcl &master property=COREG_META_DATA val=iinterp keyword=interp vtype=0
+   plab2tcl &master property=COREG_META_DATA val=irastype keyword=rastype vtype=0
+   plab2tcl &master property=COREG_META_DATA val=imaptype keyword=maptype vtype=0
+   plab2tcl &master property=COREG_META_DATA val=iusermapref keyword=usermapref vtype=0
+   plab2tcl &master property=COREG_META_DATA val=pmpix keyword=mpix vtype=8
+   if (inah=(-999)) let inah = 900
+   if (inav=(-999)) let inav = 900
+   if (iinterp="-999") let iinterp = "bilin"
+   if (irastype="-999") let irastype = "point"
+   if (imaptype="-999") let imaptype = "pc"
+   if (iusermapref="-999") let iusermapref = ""
+   if (pmpix<0.0) let pmpix = 0.62
+else
+   let inah = nah
+   let inav = nav
+   let iinterp = interp
+   let irastype = rastype
+   let imaptype = maptype
+   let iusermapref = usermapref
+   let pmpix = mpix
+end-if
+
+let xxe = "scratch/xxe" // "&seq"
+let xxf = "scratch/xxf" // "&seq"
+let xxf2 = "scratch/xxf2" // "&seq"
+let xxf3 = "scratch/xxf3" // "&seq"
+let xxf4 = "scratch/xxf4" // "&seq"
+let xxf5 = "scratch/xxf5" // "&seq"
+let xxrpc2 = "scratch/xxrpc2" // "&seq"
+let xxrpc = "scratch/xxrpc" // "&seq"
+let xxxlab1 = "scratch/xxxlab1" // "&seq"
+let xxxlab2 = "scratch/xxxlab2" // "&seq"
+let xxxlab3 = "scratch/xxxlab3" // "&seq"
+let xxxlab4 = "scratch/xxxlab4" // "&seq"
+let xxxtinp = "scratch/xxxttemp" // "&seq"
+let xxxtifref = "scratch/xxxtifref" // "&seq"
+
+let xxxcorfail = "scratch/xxxcorfail" // "&seq"
+
+let xxxB2 = "&inroot" // ".img"    
+
+   let xxxB2out1 = "&scratchroot" // "_map1"
+   let xxxB2out3 = "&scratchroot" // "_map3"
+   
+let savemapref = "&iusermapref"
+let vicortif = 0
+if (iusermapref<>"") file2tcl &iusermapref ftype=vicortif
+if (vicortif>0)
+   file2tcl &iusermapref fsubtype=vicortif
+   if (vicortif<>2 and vicortif<>4)
+      write "MSG: USER MAP REFERENCE NOT VICAR-GEOTIFF OR GEOTIFF"
+      goto theend
+   end-if
+   if (vicortif=2)
+      vtiff3-tovic &iusermapref &xxxtinp
+      gtcopy &xxxtinp &xxxtifref size=(1,1,1,1)
+      let iusermapref = "&xxxtifref"
+   end-if
+end-if
+
+if (irastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+!  improve the label on the input image
+
+plab2tcl &xxxB2 property=Geotiff val=mlon keyword=NITF_CORNERLON1 vtype=8
+plab2tcl &xxxB2 property=Geotiff val=mlat keyword=NITF_CORNERLAT1 vtype=8
+plab2tcl &xxxB2 property=Geotiff val=mlon2 keyword=NITF_CORNERLON2 vtype=8
+plab2tcl &xxxB2 property=Geotiff val=mlat2 keyword=NITF_CORNERLAT2 vtype=8
+plab2tcl &xxxB2 property=Geotiff val=mlon4 keyword=NITF_CORNERLON4 vtype=8
+plab2tcl &xxxB2 property=Geotiff val=mlat4 keyword=NITF_CORNERLAT4 vtype=8
+lab2tcl &xxxB2 v1=tnl v2=tns keyword=(nl,ns) 'system
+
+gtgen out=&xxxlab3 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,&mlon,&mlat,0.0)", +
+   "ModelTiePointTag=(&tns,0,0,&mlon2,&mlat2,0.0)", +
+   "ModelTiePointTag=(0,&tnl,0,&mlon4,&mlat4,0.0)", +
+   "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+   "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+   "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+   "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+   "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtgenup (&xxxB2,&xxxlab3)
+
+let line_nl = 0
+let samp_ns = 0
+if (line_upper<1) let line_upper = 1
+if (line_lower>0) let line_nl = line_lower-line_upper+1
+if (samp_left<1) let samp_left = 1
+if (samp_right>0) let samp_ns = samp_right-samp_left+1
+ibis-gen &gridinfo nc=10 nr=1
+mf3 &gridinfo +
+ f="c7=(&line_upper)$c8=(&samp_left)$c9=(&line_nl)$c10=(&samp_ns)"
+
+! copy speedup for reruns
+file2tcl &xxxB2out3 val=qexist
+if (qexist=0)
+   write "size=(&line_upper,&samp_left,&line_nl,&samp_ns)"
+   gtcopy &xxxB2 &xxxB2out3 size=(&line_upper,&samp_left,&line_nl,&samp_ns)
+end-if
+
+!  reference images
+
+genpc &xxxlab2 lon=&mlon lat=&mlat mpix=&pmpix +
+   rastypstr="&rastypstr"
+
+if (imaptype="utm")
+   if (rtype="secondary")
+      gt2tcl &master key="PROJECTEDCSTYPEGEOKEY" val=tutmzone vtype=4
+      if (tutmzone>32000 and tutmzone<33000)
+         let tutmzone = tutmzone-32600
+      else
+         let tutmzone = -999
+      end-if
+   else
+      let tutmzone = -999
+   end-if
+   genutm2 &xxxlab1 lon=&mlon lat=&mlat mpix=&pmpix +
+      utmzoneoverride=&tutmzone rastypstr="&rastypstr"
+end-if
+
+if (mlat<0.0)
+   write "MSG: SOUTHERN HEMISPHERE CASES NOT AVAILABLE, IKONOS OR QUICKBIRD"
+   goto theend
+end-if
+
+!  establish type of RPC
+
+plab2tcl &xxxB2out3 property=Geotiff val=cetag keyword=NITF_CETAG vtype=0
+if (cetag="RPC00B")
+   let rpctype = "B"
+else-if (cetag="RPC00A")
+   let rpctype = "A"
+else
+   write "MSG: NO CETAG ON THE LOGGED IMAGE"
+   goto theend
+end-if
+
+if (senstype="q")
+   let maxdiff = 1000
+else-if (senstype="s")
+   let maxdiff = 1000
+else-if (senstype="r")
+   let maxdiff = 1000
+else-if (senstype="i")
+   let maxdiff = 1000
+else-if (senstype="n")
+   let maxdiff = 500
+else-if (senstype="p")
+   let maxdiff = 1000
+else-if (senstype="a")
+   let maxdiff = 1000
+end-if
+
+!***********************************************************
+!   the big loop, iterates the RPC solution
+
+let bloop = 0
+loop
+   let bloop = bloop+1
+   if (bloop>2) goto bloopdone
+
+!***********************************************************
+
+!  correction for bad rpc, also correction for sl,ss not upper left corner
+
+if (bloop=1)
+   let test2l = linesamp(1)
+   if (test2l>-900)
+      let test2l = test2l-$float(line_upper)
+      let test2s = linesamp(2)-$float(samp_left)
+      let test2lon = longlat(1)
+      if (test2lon>-900)
+         let test2lat = longlat(2)
+         ibis-gen &xxf2 nc=13 nr=1 deffmt=DOUB datacol=(8,9,1,2) +
+            data=(&test2l,&test2s,&test2lon,&test2lat)
+      else
+         let testbl = lsatls(1)
+         let testbs = lsatls(2)
+         ibis-gen &xxf2 nc=13 nr=1 deffmt=DOUB datacol=(8,9,6,7) +
+            data=(&test2l,&test2s,&testbl,&testbs)
+         pixmap (&xxf2,&base) mapcols=(1,2) pixcols=(6,7) 'pixtomap
+      end-if
+   else
+      let test2l = 1.0-$float(line_upper)
+      let test2s = 1.0-$float(samp_left)
+      ibis-gen &xxf2 nc=13 nr=1 deffmt=DOUB datacol=(8,9,1,2) +
+         data=(&test2l,&test2s,&mlon,&mlat)
+      let lmove = test2l
+      if (lmove<0.0) let lmove = -lmove
+      let smove = test2s
+      if (smove<0.0) let smove = -smove
+      if ((lmove+smove)<0.001) goto nooffset
+   end-if
+   pixmap (&xxf2,&dted) mapcols=(1,2) pixcols=(10,11) 'maptopix
+   getzval (&dted,&xxf2) cols=(10,11,3) win=2
+   rpcfwd (&xxf2,&xxxB2out3)
+   mf3 &xxf2 f="c12=c4-c8$c13=c5-c9"
+   ibis-l &xxf2 nr=1
+   ibis2tcl &xxf2 v1=testloff v2=testsoff vartype=(-1,-1) +
+      ibisloc=(1,12,1,13)
+   plab2tcl &xxxB2out3 property=Geotiff val=labloff +
+      keyword=RPC_FIELD4 vtype=4
+   plab2tcl &xxxB2out3 property=Geotiff val=labsoff +
+      keyword=RPC_FIELD5 vtype=4
+   let iloff = labloff-$fix(testloff)
+   let isoff = labsoff-$fix(testsoff)
+   write "testloff &testloff labloff &labloff iloff &iloff"
+   write "testsoff &testsoff labsoff &labsoff isoff &isoff"
+   gtgenup &xxxB2out3 ("RPC_FIELD4=&iloff","RPC_FIELD5=&isoff")
+   if (base="" and rtype="master") goto bloopdone
+end-if
+ 
+nooffset>
+
+!  end of correction for bad rpc
+!  map the input by its RPC
+
+!  mike smyth's angle correction, always use full image
+
+longsize intvar=itemp
+if (bloop=1 and hfit=1 and itemp=8)
+   label-list &xxxB2
+   plab2tcl &xxxB2 property=Geotiff val=ellipsoid keyword=GEOGELLIPSOIDGEOKEY vtype=4
+   if (ellipsoid<>7030)
+      gtgenup &xxxB2out3 geotiff="GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)"
+   end-if
+   translog AFIDS_VDEV_DATA afidsvdevdata
+   let watermask1 = "&afidsvdevdata/world_30as_lwm.img"
+ if (runmode="hfit")
+   plab2tcl &xxxB2 property=Geotiff val=rpc44org keyword=RPC_FIELD144 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc64org keyword=RPC_FIELD164 vtype=0
+   let onfailsv = "&_onfail"
+   let _onfail = "return"
+   write "onfail &_onfail"
+   
+   rpc_fit inp=(&xxxB2, +
+      &base, +
+      &dted, +
+      &watermask1) +
+      maxdiff=&maxdiff rpc_lnum=(0,1,2,3) rpc_snum=(0,1,2,3) !don't forget label
+   let _onfail = "&onfailsv"
+   !problem here, rpc_fit failing but not triggering _onfail
+   plab2tcl &xxxB2 property=Geotiff val=rpc4 keyword=RPC_FIELD4 vtype=4
+   plab2tcl &xxxB2 property=Geotiff val=rpc5 keyword=RPC_FIELD5 vtype=4
+   plab2tcl &xxxB2 property=Geotiff val=rpc41 keyword=RPC_FIELD141 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc42 keyword=RPC_FIELD142 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc43 keyword=RPC_FIELD143 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc44 keyword=RPC_FIELD144 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc61 keyword=RPC_FIELD161 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc62 keyword=RPC_FIELD162 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc63 keyword=RPC_FIELD163 vtype=0
+   plab2tcl &xxxB2 property=Geotiff val=rpc64 keyword=RPC_FIELD164 vtype=0
+   let rpc4 = rpc4-line_upper+1
+   let rpc5 = rpc5-samp_left+1
+   gtgenup &xxxB2out3 geotiff=("RPC_FIELD141=&rpc41","RPC_FIELD144=&rpc44", +
+      "RPC_FIELD161=&rpc61","RPC_FIELD164=&rpc64","RPC_FIELD4=&rpc4", +
+      "RPC_FIELD5=&rpc5","RPC_FIELD142=&rpc42","RPC_FIELD143=&rpc43", +
+      "RPC_FIELD162=&rpc62","RPC_FIELD163=&rpc63")
+ end-if
+ if (runmode="microfit")
+   if (rpctype="A")
+      rpc_fit inp=(&xxxB2, +
+         &base, +
+         &dted, +
+         &watermask1) +
+         maxdiff=&maxdiff rpc_lnum=(0,1,2,4,8,9,11,12,14,15) +
+         rpc_snum=(0,1,2,4,8,9,11,12,14,15)
+   else
+      rpc_fit inp=(&xxxB2, +
+         &base, +
+         &dted, +
+         &watermask1) +
+         maxdiff=&maxdiff rpc_lnum=(0,1,2,4,7,8,11,12,14,15) +
+         rpc_snum=(0,1,2,4,7,8,11,12,14,15)
+   end-if
+   gtgenup (&xxxB2out3,&xxxB2)
+   goto bloopdone
+ end-if
+ if (runmode="microfit_h")
+   if (rpctype="A")
+      rpc_fit inp=(&xxxB2, +
+         &base, +
+         &dted, +
+         &watermask1) +
+         maxdiff=&maxdiff rpc_lnum=(0,1,2,3,4,8,9,11,12,14,15) +
+         rpc_snum=(0,1,2,3,4,8,9,11,12,14,15)
+   else
+      rpc_fit inp=(&xxxB2, +
+         &base, +
+         &dted, +
+         &watermask1) +
+         maxdiff=&maxdiff rpc_lnum=(0,1,2,3,4,7,8,11,12,14,15) +
+         rpc_snum=(0,1,2,3,4,7,8,11,12,14,15)
+   end-if
+   gtgenup (&xxxB2out3,&xxxB2)
+   goto bloopdone
+ end-if
+ if (runmode="microfit_k")
+   rpc_fit inp=(&xxxB2, +
+      &base, +
+      &dted, +
+      &watermask1) +
+      maxdiff=&maxdiff rpc_lnum=(0,1,2,3,4) +
+      rpc_snum=(0,1,2,3,4)
+   gtgenup (&xxxB2out3,&xxxB2)
+   goto bloopdone
+ end-if
+end-if
+!label-list &xxxB2
+!write "rpc44 &rpc44 rpc44org &rpc44org"
+!write "rpc64 &rpc64 rpc64org &rpc64org"
+!ibis-l bugg7
+
+! end of mike smyth's angle correction
+
+if (bloop=1)
+   rpc2gtlb in=(&xxxB2out3,&dted) rastype="area"
+   rpccorn (&xxxB2out3,&dted)
+end-if
+
+rpcwarp (&xxxB2out3, +
+   &dted) +
+   &xxxB2out1 +
+   ref=&xxxlab2 +
+   'coverinp nah=&inah nav=&inav +
+   savegrid=&gridfinal
+
+if (rtype="master" or bloop=1)
+   let regfile = "&base"
+else
+   let regfile = "&master"
+end-if
+
+! new section for base map correlation
+
+imcorner &xxxB2out1 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=256
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+gengrid2 out=&xxf ncol=50 nah=44 nav=44 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+
+pixmap (&xxf,&xxxB2out1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+gtproj2 (&xxf,&xxxB2out1,&dted) incol=(3,4) outcol=(7,11)
+watermask &xxf &xxf2 cols=(7,11,25,26,27)
+ibis2tcl &xxf2 vclen=corpt vartype=1
+mf3 &xxf2 f="c50=(@rand)*&corpt"
+rowop2 &xxf2 &xxf keycol=50 range=(0.0,1400.0) 'select
+pixmap (&xxf,&dted) mapcols=(7,11) pixcols=(5,6) 'maptopix
+getzval (&dted,&xxf) cols=(5,6,7,11) win=41 'dted threj=(-500)
+mf3 &xxf f="c8=c7$@vmin(c8)"
+ibis2tcl &xxf v1=elvck vartype=-1 ibisloc=(1,8)
+if (elvck<(-9000.0))
+   mf3 &xxf f="c23=c3$c24=c4$@vmin(c3)$@vmin(c4)$@vmax(c23)$@vmax(c24)"
+   ibis2tcl &xxf v1=t1e v2=t2e v3=t1n v4=t2n +
+      ibisloc=(1,3,1,23,1,4,1,24) vartype=(-1,-1,-1,-1)
+   write "ERROR: DTED DOES NOT COVER THE INPUT IMAGE AREA"
+   write "ERROR: PLEASE ENLARGE TO (&t1e,&t1n) (&t2e,&t2n)"
+   goto theend
+end-if
+mf3 &xxf f="c8=c7$c9=c7$@vmin(c8)$@average(c9)$c10=(c8+c9)*0.5$c20=c7-c10"
+mf3 &xxf f="c12=c11$c13=c11$@vmax(c12)$@average(c13)$c14=c12*0.3+c13*0.7"
+ibis2tcl &xxf v1=regelv v2=regsig vartype=(-1,-1) ibisloc=(1,10,1,14)
+write "registration elevation = &regelv, max sig = &regsig"
+let elvrange = 5000.0
+ibis-l &xxf nr=15 cols=(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+rowop2 &xxf &xxe keycol=(20,11) +
+     range=(-&elvrange,&elvrange,0.0001,&regsig) 'select
+
+!sclrat &regfile &xxxB2out1 &xxf    ! use original resolution
+!ibis2tcl &xxf v1=magnif vartype=-1 ibisloc=(2,8)
+let lsqfac = 1.0
+let pfftinit = fftinit
+if (senstype="q")
+   if (bloop=1)
+      let magnif = 12.0
+      let magmin = 2.0
+      let accmag = 1.0
+   else
+      let magnif = 6.0
+      let magmin = 2.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+else-if (senstype="s")
+   if (bloop=1)
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+   else
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+else-if (senstype="r")
+   if (bloop=1)
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+   else
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+else-if (senstype="a")
+   if (bloop=1)
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+   else
+      let magnif = 1.0
+      let magmin = 1.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+else-if (senstype="i")
+   if (bloop=1)
+      let magnif = 12.0
+      let magmin = 2.0
+      let accmag = 1.0
+   else
+      let magnif = 8.0
+      let magmin = 2.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+else-if (senstype="n")
+   if (bloop=1)
+      let magnif = 5.8
+      let magmin = 2.0
+      let accmag = 3.0
+   else
+      let magnif = 3.8
+      let magmin = 2.0
+      let accmag = 3.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 1.5
+      end-if
+   end-if
+   let magnif = magnif*(1.293103/pmpix)
+   let magmin = magmin*(1.0/pmpix)
+   let accmag = accmag*(1.0/pmpix)
+   let pfftinit = 2*fftinit
+else-if (senstype="p")
+   if (bloop=1)
+      let magnif = 12.0
+      let magmin = 2.0
+      let accmag = 1.0
+   else
+      let magnif = 6.0
+      let magmin = 2.0
+      let accmag = 1.0
+      if (rtype="secondary")
+         let magmin = 1.0
+         let lsqfac = 0.5
+      end-if
+   end-if
+end-if
+
+lab2tcl &xxxB2out1 v1=nlout1 v2=nsout1 keyword=(nl,ns) 'system
+let l4 = $float(nlout1)
+let s4 = $float(nsout1)
+if (magnif>l4/800.0) let magnif=l4/800.0
+if (magnif>s4/800.0) let magnif=s4/800.0
+
+ibis-l &xxe nr=15 cols=(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+ibis-copy &xxe &xxf5
+ibis2tcl &xxf5 vclen=corpt vartype=1
+mf3 &xxf5 f="c50=(@rand)*&corpt" seed=2
+rowop2 &xxf5 &xxe keycol=50 range=(0.0,700.0) 'select
+
+let picfile = "&xxxB2out1"
+let cloop = 0
+loop
+   let cloop = cloop+1
+   if (cloop>5) goto cloopdone
+
+if (cloop=2 and senstype="n")
+   ibis-copy &xxf5 &xxe
+end-if
+
+if (cloop=2 and pmpix<0.55 and regfile="&base")
+   let picfile = "&xxf2"
+   gtsize &xxxB2out1 &xxf2 azoom=&pmpix
+   pixmap (&xxe,&xxxB2out1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+   pixmap (&xxe,&picfile) mapcols=(3,4) pixcols=(1,2) 'maptopix
+   let magnif = magnif*pmpix
+   let magmin = magmin*pmpix
+end-if
+
+let lsq3 = 4.0*lsqfac
+let thr_res = lsq3*2.5
+let redo = 50
+let magnif = magnif*&magfac
+if (bloop=1 and magfac>1.5) let redo = 120
+
+if ((senstype="a" or senstype="n") and bloop=1)
+   ush cp &picfile xxxpicfileunmoved
+   gtpswarp inp=&picfile out=&xxf4 ref=&regfile ibistmp=&xxf3
+   ush mv -f &xxf4 &picfile
+end-if
+
+if (senstype="n")        ! More n special values
+   let lsq3 = lsq3*7.5
+   let thr_res = thr_res*2.0
+end-if
+
+piclsqqd &xxe &picfile &regfile &xxf &xxxcorfail &seq +
+  search=&pfftinit  fftsize=&pfftinit minsrch=&pfftinit zrej=5 zerolim=10.0 +
+  lsqt=&lsq3 lsqthresh=55 thr_res=&thr_res +
+  ffthalf=0 magnif=&magnif locfit="&locfit" +
+  magshrk="y" magmin=&magmin seed=&cloop redo=&redo
+
+if ((senstype="a" or senstype="n") and bloop=1) ush mv xxxpicfileunmoved &picfile
+
+ibis-l &xxf nr=10
+!ibis-copy &xxf xxburlf
+!write "picfile &picfile"
+!write "regfile &regfile"
+!goto theend
+
+restore-variable file=&xxxcorfail variable=(corfail)
+write "loop &cloop corfail &corfail"
+if (corfail=0) goto cordone
+
+end-loop
+cloopdone>
+write "MSG: CORRELATION FAILURE"
+goto theend
+cordone>
+
+if (picfile<>"&xxxB2out1")
+   pixmap (&xxf,&xxxB2out1) mapcols=(3,4) pixcols=(1,2) 'maptopix
+end-if
+
+!  cubic smooth the correlation data for better rpc solve
+!  remove cubic smooth so z can be solved, should also be OK for xy only
+
+!!!if (bloop=1)
+!mf3 &xxf f="c8=c6$c9=c7$c10=@index"
+!ibis-copy &xxf &xxf3
+!polygeov (&xxf,&xxf3) cols=(6,7,1,2) dcols=(1,2,6,7) poly=cubic
+!zipcol2 inp=(&xxf,&xxf3) incol=(10) outcol=(6,7) file=(10,6,7)
+!mf3 &xxf f="c8=c8-c6$c9=c9-c7"
+!write "result of cubic smooth"
+!ibis-l &xxf cols=(6,7,8,9) nr=30
+!!!end-if
+
+!  map the correlation points to lon-lat (base) and get elevation
+
+pixmap (&xxf,&regfile) mapcols=(8,9) pixcols=(6,7) 'pixtomap
+pixmap (&xxf,&dted) mapcols=(8,9) pixcols=(10,11) 'maptopix
+getzval (&dted,&xxf) cols=(10,11,12) win=2
+
+!  the rpcwarp file is in gridfinal1 4 cols
+
+let gname = "&gridfinal" // "1"
+ibis-gen &xxf2 nc=4 nr=1 deffmt=DOUB
+icat (&gname,&xxf2) &xxf3 'h
+ibis-l &xxf3 nr=1 'format
+
+pixmap (&xxf3,&xxxlab2) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+pixmap (&xxf3,&xxxB2out1) mapcol=(5,6) pixcol=(7,8) 'maptopix
+polygeov INP=(&xxf3,&xxf) COLS=(3,4,7,8)  DCOLS=(1,2,13,14)
+ibis-l &xxf3 nr=3
+ibis-l &xxf nr=3
+
+ibis-gen &xxrpc nr=80 nc=10 deffmt=DOUB
+rpc2ibis (&xxxB2out3,&xxrpc) cols=(1,2)   ! old error &xxxB2
+rpcscale (&xxrpc,&xxf) rpccol=2 cols=(8,9,12,13,14) 'scale
+
+if (bloop=1)
+   let numfit = "rpcn10"
+   let denfit = "rpcd10"
+else
+   let numfit = "rpcn10"
+   let denfit = "rpcd10"
+end-if
+
+if (bloop=1)
+   ibislsqf (&xxf,&xxrpc) func=RPCN10  datacol=(8,9,12) depcol=13 +
+       rescol=15 solcol=(1,4) rpctype=&rpctype rpcls=L
+   ibis-l &xxrpc cols=(1,2,3,4) cfor="%9.6f %9.6f %9.6f %9.6f"
+else
+   ibislsqf (&xxf,&xxrpc) func=&numfit datacol=(8,9,12) depcol=13 +
+       rescol=15 solcol=(1,4) rpctype=&rpctype rpcls=L
+end-if
+
+if (bloop=1)
+   ibislsqf (&xxf,&xxrpc) func=RPCN10  datacol=(8,9,12) depcol=14 +
+       rescol=16 solcol=(4,6) rpctype=&rpctype rpcls=S
+   ibis-l &xxrpc cols=(1,4,5,6) cfor="%9.6f %9.6f %9.6f %9.6f"
+else
+   ibislsqf (&xxf,&xxrpc) func=&numfit datacol=(8,9,12) depcol=14 +
+       rescol=16 solcol=(4,6) rpctype=&rpctype rpcls=S
+end-if
+
+mf3 &xxrpc f="c10=c6"
+
+rpcfix21 &xxrpc col=10
+ibis2rpc &xxrpc &xxrpc2 ccol=10 scol=2
+gtgenup (&xxxB2out3,&xxrpc2)
+!label-list &xxxB2out3
+
+end-loop
+bloopdone>
+
+!***********************************************************
+!   end of the big loop, iterates the RPC solution
+!***********************************************************
+
+! updating corners and mapping in the raw
+
+rpccorn (&xxxB2out3,&dted)
+
+gtgenup inp=&xxxB2out3 geotiff="AMT_RPC_TYPE=&cetag" +
+   property="GEOTIFF"
+if (outrpc<>"" and outrpctp="ntf") vicar2ntf &xxxB2out3 out=&outrpc
+if (outrpc<>"" and outrpctp="vic") gtcopy &xxxB2out3 &outrpc
+if (outrpc<>"" and outrpctp="tif") vtiff3-fromvic &xxxB2out3 &outrpc
+
+if (imaptype="pc")
+   let xxxfinalref = "&xxxlab2"
+else-if (imaptype="utm")
+   let xxxfinalref = "&xxxlab1"
+else
+   let xxxfinalref = "&iusermapref"
+end-if
+   
+! temporary output as orthorectified, later tif/rpc
+
+if (rtype="master")
+   rpcwarp (&xxxB2out3,&dted) out=&xxxtinp ref=&xxxfinalref +
+       'coverinp nah=&inah nav=&inav savegrid=&gridfinal
+   imcorner &xxxtinp sldat=msl ssdat=mss nldat=mnl nsdat=mns inside=-25
+   gtcopy &xxxtinp &outimg size=(&msl,&mss,&mnl,&mns)
+else
+   rpcwarp (&xxxB2out3,&dted) out=&outimg ref=&master +
+       'coverref nah=&inah nav=&inav savegrid=&gridfinal
+end-if
+
+! special for cib update, save the gridfinal under better name
+
+let name01 = "&gridfinal" // "1"
+let name02 = "&outimg" // ".grid1"
+ush mv &name01 &name02
+let name01 = "&gridfinal" // "2"
+let name02 = "&outimg" // ".grid2"
+ush mv &name01 &name02
+let name01 = "&gridfinal" // "3"
+let name02 = "&outimg" // ".grid3"
+ush mv &name01 &name02
+
+gtgenup inp=&outimg geotiff="gridnah=&inah" +
+     property="COREG_META_DATA"
+gtgenup inp=&outimg geotiff="gridnav=&inav" +
+     property="COREG_META_DATA"
+gtgenup inp=&outimg geotiff="interp=&iinterp" +
+     property="COREG_META_DATA"
+gtgenup inp=&outimg geotiff="rastype=&irastype" +
+     property="COREG_META_DATA"
+gtgenup inp=&outimg geotiff="maptype=&imaptype" +
+     property="COREG_META_DATA"
+gtgenup inp=&outimg geotiff="mpix=&pmpix" +
+     property="COREG_META_DATA"
+if (iusermapref<>"") gtgenup inp=&outimg geotiff="usermapref=&savemapref" +
+        property="COREG_META_DATA"
+if (runmode="hfit" and itemp=8)
+   gtgenup inp=&outimg geotiff="rpc_144_original=&rpc44org" +
+        property="COREG_META_DATA"
+   gtgenup inp=&outimg geotiff="rpc_164_original=&rpc64org" +
+        property="COREG_META_DATA"
+   gtgenup inp=&outimg geotiff="rpc_144_corrected=&rpc44" +
+        property="COREG_META_DATA"
+   gtgenup inp=&outimg geotiff="rpc_164_corrected=&rpc64" +
+        property="COREG_META_DATA"
+end-if
+
+!  put an rpc label in the orthoectified product in case made into nitf
+!  put the nitf corners back on the vicar output for nitf conversion
+
+gt2rpc &outimg rpctype=&rpctype
+rpccorn (&outimg,&dted) cornonly=y
+gtlabfix &outimg
+
+!  accuracy check using correlation of final vs. master
+
+if (base="" and rtype="master") goto theend
+let accplot = "&outimg" // ".accplot"
+if (senstype="n")
+    let accredo = 50
+else
+    let accredo = 30
+end-if
+
+if (rtype="master")
+   accck &outimg &base outfile=&accplot fftsize=256 +
+        outnl=1200 remap="y" magnif=&accmag redo=&accredo
+else
+   accck &outimg &master outfile=&accplot fftsize=256 +
+        outnl=1200 remap="n" magnif=&accmag redo=&accredo
+end-if
+
+!  B.E. LIST PROCESSING
+
+if (belist="") goto theend
+
+let xxxbelist = "scratch/xxxbelist" // "&seq"
+let xxxchip1 = "scratch/xxxchip1" // "&seq"
+let xxxchip2 = "scratch/xxxchip2" // "&seq"
+let xxxchip3 = "scratch/xxxchip3" // "&seq"
+
+ibis-gen &xxxbelist nc=8 nr=1 +
+   format=("FULL","DOUB","DOUB","A10","A30","DOUB","DOUB","DOUB")
+acopin (&belist,&xxxbelist) cols=(2,3,4,5)
+
+mf3 &xxxbelist f="c1=@index"
+pixmap (&xxxbelist,&outimg) mapcols=(2,3) pixcols=(6,7) 'maptopix
+getzval (&outimg,&xxxbelist) cols=(6,7,8) win=9
+rowop2 &xxxbelist &xxf2 keycol=8 range=(0.5,900000.0) 'select
+
+pixmap (&xxf2,&master) mapcols=(2,3) pixcols=(6,7) 'maptopix
+getzval (&master,&xxf2) cols=(6,7,8) win=2
+rowop2 &xxf2 &xxxbelist keycol=8 range=(0.0,900000.0) 'select
+ibis-l &xxxbelist
+
+ibis2tcl &xxxbelist vclen=belen vartype=1
+if (belen=0) write "MSG: No B.E. chip locations in image overlap area"
+
+let beloop = 0
+loop
+   let beloop = beloop+1
+   if (beloop>belen) goto beloopdone
+   
+   ibis2tcl &xxxbelist v1=belon v2=belat v3=beid v4=bename v5=beline v6=besamp +
+      vartype=(-1,-1,2,2,-1,-1) ibisloc=(&beloop,2,&beloop,3, +
+      &beloop,4,&beloop,5,&beloop,6,&beloop,7)
+   write "belon,belat &belon,&belat"
+   write "beid,bename .&beid,&bename."
+   write "beline,besamp .&beline,&besamp."
+   
+   let hwin = 256+bewinsize/2
+   let fwin = 2*hwin
+   let hwin1 = hwin+1
+   let belon1 = belon+bepixsize/108000.0
+   let belat1 = belat-bepixsize/108000.0
+   
+   gen &xxxchip2 nl=&fwin ns=&fwin
+   gtgen in=&xxxchip2 out=&xxxlab4 'tiecnvrt +
+    geotiff=("ModelTiePointTag=(&hwin,&hwin,0,&belon,&belat,0.0)", +
+   "ModelTiePointTag=(&hwin1,&hwin,0,&belon1,&belat,0.0)", +
+   "ModelTiePointTag=(&hwin,&hwin1,0,&belon,&belat1,0.0)", +
+   "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+   "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+   "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+   "GTRasterTypeGeoKey=&rastypstr", +
+   "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+   gtlist &xxxlab4
+   
+   rpcwarp (&master,&dted) out=&xxxchip1 ref=&xxxlab4 +
+          'coverref nah=&inah nav=&inav
+   rpcwarp (&xxxB2out3,&dted) out=&xxxchip2 ref=&xxxlab4 +
+          'coverref nah=&inah nav=&inav
+  
+   ! gtpwarp does an accuracy check
+
+   gtpwarp &xxxchip2 &xxxchip3 ref=&xxxchip1 'coverref nah=200 nav=200 +
+      fftsize=256 magnify=2.5 toler=1.5 polyfit=quad
+
+   ! temporary output as vicar or tif orthorectified, later rpc will be added
+
+   if (beouttype="vic")
+      let xxxbeoutimg = "&beoutroot" // "_&beid" // "_m.img"
+      gtcopy &xxxchip1 &xxxbeoutimg size=(256,256,&bewinsize,&bewinsize)
+      let xxxbeoutimg = "&beoutroot" // "_&beid" // "_s.img"
+      gtcopy &xxxchip3 &xxxbeoutimg size=(256,256,&bewinsize,&bewinsize)
+   else
+      let xxxbeoutimg = "&beoutroot" // "_&beid" // "_m.tif"
+      gtcopy &xxxchip1 &xxxchip2 size=(256,256,&bewinsize,&bewinsize)
+      vtiff3-fromvic &xxxchip2 &xxxbeoutimg
+      let xxxbeoutimg = "&beoutroot" // "_&beid" // "_s.tif"
+      gtcopy &xxxchip3 &xxxchip2 size=(256,256,&bewinsize,&bewinsize)
+      vtiff3-fromvic &xxxchip2 &xxxbeoutimg
+   end-if
+   
+end-loop
+
+beloopdone>
+
+theend>
+end-proc
+.TITLE
+ikqbrpcw - correct ikonas, quickbird or ntm imagery, using rpf model
+.HELP
+PURPOSE
+
+see gui help
+      
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 12 Apr, 2005
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: 
+
+.LEVEL1
+.VARI INROOT
+see gui help
+.END

@@ -1,0 +1,4 @@
+$ vpack lswarp.com -mixed -
+	-p lswarp.pdf lscall.pdf lswarpad.pdf lswarp2.pdf lscall2.pdf -
+	   lswarpad2.pdf
+$ Exit

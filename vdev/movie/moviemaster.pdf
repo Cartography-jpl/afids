@@ -1,0 +1,68 @@
+procedure
+parm caseix type=string default="moviebqx"
+parm prefix type=string default="PaxRiver_19Sept05_2"
+parm rawloc type=string default="/export/data4/amt"
+parm num int default=1500
+
+local vicfilez string
+local vicfilenextz string
+local vicfile string
+local vicfilenext string
+local casedir string
+local mapfile string
+local found int
+local nump1 int
+body
+
+let nump1 = num+1
+let casedir = "&caseix" // "/."
+let vicfilez = "&rawloc" // "/&prefix" // "&num" // ".hlf.Z"
+let vicfilenextz = "&rawloc" // "/&prefix" // "&nump1" // ".hlf.Z"
+let vicfile = "&caseix" // "/&prefix" // "&num" // ".hlf"
+let vicfilenext = "&caseix" // "/&prefix" // "&nump1" // ".hlf"
+let mapfile = "&caseix" // "/&prefix" // "master.img"
+
+file2tcl &vicfile val=found
+if (found=0)
+   ush cp &vicfilez "&casedir"
+   ush uncompress &vicfile
+end-if
+file2tcl &vicfilenext val=found
+if (found=0)
+   ush cp &vicfilenextz "&casedir"
+   ush uncompress &vicfilenext
+end-if
+
+gtgen &vicfile xx0 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0.0,0.0,0,-112.0,35.0,0.0)", +
+  "ModelTiePointTag=(100000.0,0.0,0,-111.0,35.0,0.0)", +
+  "ModelTiePointTag=(0.0,100000.0,0,-112.0,34.0,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtgen &vicfilenext xx1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0.0,0.0,0,-112.0,35.0,0.0)", +
+  "ModelTiePointTag=(100000.0,0.0,0,-111.0,35.0,0.0)", +
+  "ModelTiePointTag=(0.0,100000.0,0,-112.0,34.0,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+! sawtooth correction, use even lines from next raw image
+
+imsplit xx0 +
+   (xx2,xx3)
+imsplit xx1 +
+   (xx4,xx5)
+
+immerge (xx2,xx5) xx0
+calibapp xx0 &mapfile
+gtlist &mapfile
+
+! end of sawtooth correction
+   
+end-proc

@@ -1,0 +1,29 @@
+PROCESS      HELP=*
+PARM INP       TYPE=(STRING) COUNT=1
+PARM OUT       TYPE=(STRING) COUNT=1
+PARM SCALE     TYPE=REAL     COUNT=1 DEFAULT=3.
+PARM TOL       TYPE=REAL     COUNT=1 DEFAULT=3.
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "despike2"
+.HELP
+PURPOSE
+
+
+history
+ 10-11-2019 - Ray Bambery - removed warning  messsages via casts
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+
+.VARIABLE OUT
+ Output ascii file
+
+.VARIABLE SCALE
+Default=3.0
+.VARIABLE TOL
+default=3.0
+.END
+

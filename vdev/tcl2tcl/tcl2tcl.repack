@@ -1,0 +1,6 @@
+$ vpack tcl2tcl.com -mixed -
+	-s tcl2tcl.c simple.tcl -
+	-i tcl2tcl.imake -
+	-p tcl2tcl.pdf -
+	-t tsttcl2tcl.pdf
+$ Exit

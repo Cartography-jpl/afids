@@ -1,0 +1,34 @@
+PROCESS      HELP=*
+PARM INP       TYPE=(STRING) COUNT=1
+PARM OUT       TYPE=(STRING) COUNT=1
+PARM META      TYPE=(STRING) COUNT=1
+PARM BAND      TYPE=INTEGER  COUNT=1 VALID=(1,2,3,4,5)
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "rpdeyeref"
+.HELP
+PURPOSE
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+.VARIABLE OUT
+ Output image file
+.VARIABLE META
+ Metadata file
+.VARIABLE BAND
+ Band to convert
+
+.END
+
+
+
+
+
+
+
+
+
+
+

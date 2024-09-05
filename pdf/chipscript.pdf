@@ -1,0 +1,77 @@
+!chipscript.pdf - Convert an nitf image to a 16-bit geotiff image
+!with full rpc georeferencing.
+!
+!NOTE: The temporary files created by this proc (xxtmp) can be deleted
+!or overwritten after use.
+!
+!NOTE: To run two of these jobs simultaneously, they must be in entirely
+!separate directories.
+
+procedure
+parm        inp       string     !input nitf image
+parm        out       string     !output geotiff file
+parm        elev      string     !elevation file covering the input
+local       found     integer
+local       ullon     real
+local       ullat     real
+local       urlon     real
+local       urlat     real
+local       lllon     real
+local       lllat     real
+local       lrlon     real
+local       lrlat     real
+local       inpnl     integer
+local       inpns     integer
+local       bytes     integer
+local       nl        integer
+local       sl        integer
+local       size      integer
+
+body
+
+vextract    &inp outpre=xxtmp
+
+asc2tcl     xxtmp.txt keyword="NITF_CornerLon1=" val=ullon vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLat1=" val=ullat vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLon2=" val=urlon vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLat2=" val=urlat vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLon3=" val=lrlon vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLat3=" val=lrlat vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLon4=" val=lllon vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_CornerLat4=" val=lllat vtype=8
+asc2tcl     xxtmp.txt keyword="NITF_ROWS=" val=inpnl vtype=4
+asc2tcl     xxtmp.txt keyword="NITF_COLUMNS=" val=inpns vtype=4
+write      "ullon= &ullon"
+write      "ullat= &ullat"
+write      "urlon= &urlon"
+write      "urlat= &urlat"
+write      "lrlon= &lrlon"
+write      "lrlat= &lrlat"
+write      "lllon= &lllon"
+write      "lllat= &lllat"
+write      "inpnl= &inpnl"
+write      "inpns= &inpns"
+
+!Put gt mapping into image file
+
+gtgen       inp=xxtmp.img 'tiecnvrt 'add +
+            geotiff=("ModelTiePointTag=(0,0,0,&ullon,&ullat,0.0)", +
+           "ModelTiePointTag=(0,&inpnl,0,&lllon,&lllat,0.0)", +
+           "ModelTiePointTag=(&inpns,0,0,&urlon,&urlat,0.0)", +
+           "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+           "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+           "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+           "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+           "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+!Apply rpc georeferencing
+rpc2grid   (xxtmp.img,&elev) out=xxchip2grid nah=500 nav=500 ncol=8
+label-add   inp=xxtmp.img items="chip_parent_offs_line=0" property="GEOTIFF"
+label-add   inp=xxtmp.img items="chip_parent_offs_samp=0" property="GEOTIFF"
+rpccorn    (xxtmp.img,&elev) grid=xxchip2grid
+
+!Output GeoTiff file
+vtiff3-fr   xxtmp.img &"out"
+!gtcopy      xxtmp.img &"out".hlf
+write      "MSG: CHIP SCRIPT COMPLETE"
+end-proc

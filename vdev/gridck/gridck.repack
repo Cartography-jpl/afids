@@ -1,0 +1,6 @@
+$ vpack gridck.com -mixed -
+	-s gridck.c -
+	-i gridck.imake -
+	-p gridck.pdf -
+	-t tstgridck.pdf
+$ Exit

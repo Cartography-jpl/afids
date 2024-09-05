@@ -1,0 +1,427 @@
+procedure help=*
+parm key type=string
+parm area string
+parm band type=string
+parm quad type=real count=4
+parm out type=(string,99) count=1
+parm runtype type=string valid=("reduce10","full","noramp")
+parm mooreopt type=real count=(0:1) default=8.0
+
+local cfile string
+local nfile string
+local inpx string
+local inp1 string
+local inp2 string
+local t1file string
+local t2file string
+local mosrec type=string
+local mosfile type=string
+local mosfile2 type=string
+local areafile type=string
+local qfile type=string
+local qfiletmp type=string
+local mostemp type=string
+local testfile type=string
+local testquad type=string
+local parmstr1 type=string
+local parmstr2 type=string
+local parmstr3 type=string
+local parmstr4 type=string
+local parmstr5 type=string
+local parmstr6 type=string
+local parmstr7 type=string
+local parmstr8 type=string
+local master type=string
+local parfile type=string
+local pathin type=string
+local pathout type=string
+local fileout type=string
+local fname type=string
+local pathfname type=string
+local mooreoptval type=real
+local moorestring type=string
+
+local zclen int
+local qclen int
+local nclen int
+local qexist int
+local iloop int
+local filestart int
+local tsl int
+local tss int
+local tnl int
+local tns int
+local inside int
+local frameix int
+local parmswch int
+
+local nbrrt int
+local nbrbot int
+local nbrlft int
+local nbrtop int
+
+local quad1 real
+local quad2 real
+local quad3 real
+local quad4 real
+local zcor real
+local fsl real
+local fss real
+local fnl real
+local fns real
+
+refgbl $echo
+body
+let $echo="yes"
+
+!  QUADMOS HANDYPROC
+
+let cfile = "&key" // "_&band" // "_cfile"
+let nfile = "&key" // "_&band" // "_nfile"
+let qfile = "&key" // "_&band" // "_qfile"
+let qfiletmp = "scratch/&key" // "_&band" // "_qfiletmp"
+let inpx = "scratch/&key" // "&band" // "inpx"
+let inp1 = "scratch/&key" // "&band" // "inp1"
+let inp2 = "scratch/&key" // "&band" // "inp2"
+let t1file = "scratch/&key" // "&band" // "t1file"
+let t2file = "scratch/&key" // "&band" // "t2file"
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="pathout=" val=pathout vtype=0
+let fileout = "&pathout" // "/&out"
+
+if (runtype="full")
+   asc2tcl &parfile keyword="pathin=" val=pathin vtype=0
+else
+   asc2tcl &parfile keyword="pathin10x=" val=pathin vtype=0
+end-if
+
+!  need neighbors for ramp in feather
+
+ibis2tcl &cfile vclen=zclen vartype=1
+ibis-gen &inpx nc=5 nr=1 +
+      format=("REAL","FULL","FULL","FULL","FULL")
+icat (&cfile,&inpx) &inp1 'h
+mf3 &inp1 f=("c31=(c14==c3+1&&c15==c4)*(c14*100+c15)$", +
+             "c32=(c14==c3&&c15==c4+1)*(c14*100+c15)$", +
+             "c33=(c14==c3-1&&c15==c4)*(c14*100+c15)$", +
+             "c34=(c14==c3&&c15==c4-1)*(c14*100+c15)$")
+aggrg2 &inp1 &inp2 agcol=2
+mf3 &inp2 f="c30=c24/c23"
+
+! next section gets "islands" with no neighbors
+
+ibis-copy &nfile &t1file
+ibis2tcl &nfile vclen=nclen vartype=1
+ibis-gen &inpx nc=21 nr=1 format=("FULL","FULL","FULL", +
+  "FULL","REAL","REAL","REAL","REAL","REAL","REAL","REAL","REAL", +
+  "REAL","REAL","REAL","REAL","REAL","FULL","FULL","FULL","FULL")
+icat (&t1file,&inpx) &t2file 'h
+sort &t2file sortcol=2
+sort &inp2 sortcol=2
+zipcol2 (&t2file,&inp2) incol=2 outcol=31 file=(2,5) null=-999
+rowop2 &t2file &t1file key=31 range=(-9999,-1) 'select
+ibis2tcl &t1file vclen=nclen vartype=1
+if (nclen>0)
+   mf3 &t1file f="c30=1.0$c31=0$c32=0$c33=0$c34=0"
+   icat (&inp2,&t1file) &t2file
+   ibis-copy &t2file &inp2
+end-if
+!ibis-l &inp2
+
+!  name some files
+
+let mosrec = "scratch/&key" // "&band" // "fmosrec"
+let mosfile = "scratch/&key" // "&band" // "fmosfile"
+let mosfile2 = "scratch/&key" // "&band" // "fmosfile2"
+let areafile = "scratch/&key" // "&area" // "&band" // "fmosfile"
+let mostemp = "scratch/&key" // "&band" // "fmostemp"
+let testquad = "scratch/&key" // "&band" // "ftestquad"
+if (runtype="full")
+   let master = "&key" // "_master"
+else
+   let master = "&key" // "_master10x"
+end-if
+
+!  make the qfile, once only unless new frames added
+
+file2tcl &qfile val=qexist
+if (qexist=1) goto floopdone
+
+ibis2tcl &inp2 vclen=qclen vartype=1
+let iloop = 0
+let filestart = 0
+loop
+   let iloop = iloop+1
+   if (iloop>qclen) goto floopdone
+
+   ibis2tcl &inp2 v1=fname v2=zcor v3=frameix +
+       v4=nbrrt v5=nbrbot v6=nbrlft v7=nbrtop v8=testfile +
+       vartype=(2,0,1,1,1,1,1,2) +
+       ibisloc=(&iloop,1,&iloop,30,&iloop,5,&iloop,31,&iloop,32 +
+       ,&iloop,33,&iloop,34,&iloop,2)
+   ibis-gen &testquad nr=1 nc=24 format=("DOUB","DOUB","DOUB","DOUB", +
+      "DOUB","DOUB","DOUB","DOUB","DOUB","DOUB","DOUB","DOUB", +
+      "FULL","FULL","FULL","FULL","A30","A3","REAL","FULL","FULL", +
+      "FULL","FULL","FULL")
+   lab2tcl &testfile v1=tnl v2=tns keyword=(nl,ns) 'system
+   mf3 &testquad f=("c5=1$c6=1$c7=(&tnl)$c8=(&tns)$", +
+      "c17=@ljust('&fname',30)$c18=@ljust('&testfile',3)$", +
+      "c19=(&zcor)$c20=(&frameix)$c21=(&nbrrt)$c22=(&nbrbot)$", +
+      "c23=(&nbrlft)$c24=(&nbrtop)")
+   pixmap (&testquad,&testfile) mapcol=(9,10) pixcol=(5,6) 'pixtomap
+   pixmap (&testquad,&testfile) mapcol=(11,12) pixcol=(7,8) 'pixtomap
+   
+   if (filestart=0) 
+      ibis-copy &testquad &qfile
+      let filestart = 1
+   else
+      icat (&qfile,&testquad) &qfiletmp
+      ibis-copy &qfiletmp &qfile
+   end-if
+end-loop
+ibis-l &qfile nr=5 cols=(5,6,7,8,9,10,11,12,17,18)
+floopdone>
+
+!  get the frames touching the quadrangle
+
+let quad1 = quad(1)
+let quad2 = quad(2)
+let quad3 = quad(3)
+let quad4 = quad(4)
+mf3 &qfile f="c1=(&quad1)$c2=(&quad2)$c3=(&quad3)$c4=(&quad4)"
+mf3 &qfile f= +
+   ("c13=((c9>=c1&&c9<=c3)||(c11>=c1&&c11<=c3)||(c1>=c9&&c1<=c11))&&", +
+    "((c10>=c4&&c10<=c2)||(c12>=c4&&c12<=c2)||(c4>=c12&&c4<=c10))")
+rowop2 &qfile &qfiletmp key=(13) range=(0.5,1.5) 'select
+ibis-l &qfiletmp nr=5
+
+!  the main loop builds the parameter string and ibis file
+
+ibis2tcl &qfiletmp vclen=qclen vartype=1
+let iloop = 0
+let filestart = 0
+let parmstr1 = "("
+let parmstr2 = ""
+let parmstr3 = ""
+let parmstr4 = ""
+let parmstr5 = ""
+let parmstr6 = ""
+let parmstr7 = ""
+let parmstr8 = ""
+let parmswch = 1
+loop
+   let iloop = iloop+1
+   if (iloop>qclen) goto iloopdone
+   
+   ibis2tcl &qfiletmp v1=fname v2=testfile v3=zcor v4=frameix +
+       v5=nbrrt v6=nbrbot v7=nbrlft v8=nbrtop +
+       vartype=(2,2,0,1,1,1,1,1) +
+       ibisloc=(&iloop,17,&iloop,18,&iloop,19,&iloop,20,&iloop,21 +
+       ,&iloop,22,&iloop,23,&iloop,24)
+   
+   !  repoint shortname to full/reduce10x data set
+   
+   let pathfname = "&pathin" // "/&fname"
+   ush /bin/rm -f &testfile
+   ush ln -s &pathfname &testfile
+   write "ush ln -s &pathfname &testfile"
+   
+   !  generate the ibis file and parm list
+   
+   ibis-gen &mosrec nr=1 nc=17 +
+      format=("A6","FULL","FULL","FULL","FULL","DOUB","DOUB", +
+      "FULL","FULL","FULL","FULL","FULL","DOUB","DOUB","DOUB","DOUB","DOUB") +
+      data=(&zcor,&frameix,&nbrrt,&nbrbot,&nbrlft,&nbrtop) +
+      datacols=(6,8,9,10,11,12) +
+      string=("&testfile") strcols=(1)
+   
+   if (filestart=0) 
+      ibis-copy &mosrec &mosfile
+      let filestart = 1
+   else
+      icat (&mosfile,&mosrec) &mostemp
+      ibis-copy &mostemp &mosfile
+   end-if
+   
+   if (parmswch=1)
+      let parmstr1 = parmstr1 // "&testfile" // ","
+   else-if (parmswch=2)
+      let parmstr2 = parmstr2 // "&testfile" // ","
+   else-if (parmswch=3)
+      let parmstr3 = parmstr3 // "&testfile" // ","
+   else-if (parmswch=4)
+      let parmstr4 = parmstr4 // "&testfile" // ","
+   else-if (parmswch=5)
+      let parmstr5 = parmstr5 // "&testfile" // ","
+   else-if (parmswch=6)
+      let parmstr6 = parmstr6 // "&testfile" // ","
+   else-if (parmswch=7)
+      let parmstr7 = parmstr7 // "&testfile" // ","
+   else
+      let parmstr8 = parmstr8 // "&testfile" // ","
+   write "parmstr1: &parmstr1"
+   write "parmstr2: &parmstr2"
+   write "parmstr3: &parmstr3"
+   write "parmstr4: &parmstr4"
+   write "parmstr5: &parmstr5"
+   write "parmstr6: &parmstr6"
+   write "parmstr7: &parmstr7"
+   write "parmstr8: &parmstr8"
+   end-if
+   let parmswch = parmswch+1
+   if (parmswch=9) let parmswch = 1
+   
+continloop>
+end-loop
+iloopdone>
+
+ibis-l &mosfile cols=(1,6,8,9,10,11,12)
+
+pixmap (&qfiletmp,&master) mapcol=(1,2) pixcol=(5,6) 'maptopix
+pixmap (&qfiletmp,&master) mapcol=(3,4) pixcol=(7,8) 'maptopix
+ibis2tcl &qfiletmp v1=fsl v2=fss v3=fnl v4=fns vartype=(-1,-1,-1,-1) +
+   ibisloc=(1,5,1,6,1,7,1,8)
+let fnl = fnl-fsl+1
+let fns = fns-fss+1
+let tsl = $fix(fsl+0.5)
+let tss = $fix(fss+0.5)
+let tnl = $fix(fnl+0.5)
+let tns = $fix(fns+0.5)
+
+asc2tcl &parfile keyword="mooreopt=" val=mooreoptval vtype=7
+!! the first case also applies if mooreopt not in _params
+write "mooreoptval &mooreoptval"
+if (mooreoptval<1.001)
+   write "Amooreoptval &mooreoptval"
+   let moorestring = "moorepow=1.0"
+else-if (mooreoptval>8.1)
+   write "Bmooreoptval &mooreoptval"
+   let moorestring = "'mooremax"
+   write "Bmoorestring &moorestring"
+else
+   write "Cmooreoptval &mooreoptval"
+   let moorestring = "moorepow=" // "&mooreoptval"
+end-if
+
+if (runtype="reduce10")
+
+      ! note, there was a temp named featherx for africa case
+
+ featherv +
+  inp=&parmstr1 +
+  &parmstr2 +
+  &parmstr3 +
+  &parmstr4 +
+  &parmstr5 +
+  &parmstr6 +
+  &parmstr7 +
+  &parmstr8 +
+  &mosfile,&master) +
+  out=&fileout sl=&tsl ss=&tss nl=&tnl ns=&tns toler=0.001 +
+  dfeather=600  moorefac=1 'factor 'progress 'ramp 'geotiff +
+  rmoore=5 gorefac=0.85 rdkthr=10 rdiffthr=40 &moorestring
+
+!  out=&fileout sl=&tsl ss=&tss nl=&tnl ns=&tns toler=0.001 +
+!  dfeather=150  moorefac=3 'factor 'progress 'ramp 'geotiff +
+!  rmoore=5 gorefac=0.6 rdkthr=10 rdiffthr=40 &moorestring
+  
+  ibis-copy &mosfile &areafile
+ 
+else-if (runtype="full")
+ sort &mosfile sortcol=1
+ sort &areafile sortcol=1
+ zipcol2 inp=(&mosfile,&areafile) incol=(1) +
+     outcol=(6,8,9,10,11,12,13,14,15,16,17) +
+     file=(1,6,8,9,10,11,12,13,14,15,16,17) 'nonull
+ 
+ featherv +
+  inp=&parmstr1 +
+  &parmstr2 +
+  &parmstr3 +
+  &parmstr4 +
+  &parmstr5 +
+  &parmstr6 +
+  &parmstr7 +
+  &parmstr8 +
+  &mosfile,&master) +
+  out=&fileout sl=&tsl ss=&tss nl=&tnl ns=&tns toler=0.001 +
+  dfeather=1500  moorefac=11 'factor 'progress 'readramp 'geotiff +
+  rmoore=5 gorefac=0.6 rdkthr=10 rdiffthr=40 &moorestring
+
+else-if (runtype="noramp")
+ ibis-copy &mosfile &mosfile2
+ mf3 &mosfile2 f="c13=0$c14=0$c15=0$c16=0$c17=0$"
+ 
+ featherv +
+  inp=&parmstr1 +
+  &parmstr2 +
+  &parmstr3 +
+  &parmstr4 +
+  &parmstr5 +
+  &parmstr6 +
+  &parmstr7 +
+  &parmstr8 +
+  &mosfile2,&master) +
+  out=&fileout sl=&tsl ss=&tss nl=&tnl ns=&tns toler=0.001 +
+  dfeather=150  moorefac=3 'factor 'progress 'noramp 'geotiff +
+  rmoore=5 gorefac=0.6 rdkthr=10 rdiffthr=40 &moorestring
+  
+  ibis-copy &mosfile &areafile
+ 
+end-if
+
+theend>
+end-proc
+.TITLE
+QUADMOS - mosaic a quadrangle from a large set of images
+.HELP
+PURPOSE
+     
+This proc uses an ibis file created by zprocess.pdf.  The user specifies a
+quadrangle and the images are selected from the list in the ibis file and
+are mosaicked with routine featherw (or featherv).
+
+There are two cases, the 10x reduced case and the full resolution case.
+The 10x reduced case does huge areas and saves the brightness equalization
+info in a table.  The ful resolution case is applied to five degree
+quads that lie well within a 10x reduced area (say by two degrees).
+     
+CALL
+
+     QUADMOS inp=I out=Q key=K area=A band="nn3" +
+           quad=(lon1,lat1,lon2,lat2) runtype=reduce10
+     
+     where
+ 
+     QUADMOS inp=I out=Q key=K area=A band="nn3" +
+           quad=(lon1,lat1,lon2,lat2) runtype=full
+     
+     where
+ 
+  
+OPERATION
+
+The IBIS file is scanned for images that affect the quadrangle.  Those
+images are fed to featherv.  Other columns in the IBIS file contribute
+z-value offsets for the images.
+
+PERFORMANCE
+
+
+.PAGE
+
+Restrictions
+------------
+
+You must use the IBIS file prepared by zprocess.pdf
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 07 Aug, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+ 
+.level1
+
+.END

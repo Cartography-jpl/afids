@@ -1,0 +1,107 @@
+procedure
+refgbl $echo
+
+local set     string
+local path    string
+local outpath string
+local band1   string
+local band2   string
+local band3   string
+local band4   string
+local band5   string
+local band13  string
+local band14  string
+local meta    string
+local filt1   string
+local filt2   string
+local filt3   string
+local filt4   string
+local filt5   string
+local filt6   string
+local filt7   string
+local filt8   string
+local filt9   string
+local rad1    string
+local rad2    string
+local rad3    string
+local rad4    string
+local rad5    string
+local rad13   string
+local rad14   string
+local ref1    string
+local ref2    string
+local ref3    string
+local ref4    string
+local ref5    string
+local tmpout  string
+local bcomp   string
+local tb13out string
+local tb14out string
+local cmvalid string
+local cmambig string
+local final   string
+
+body
+let $echo="yes"
+
+!!!!!!! YOU JUST NEED TO CHANGE THE SET NUMBER !!!!!!!
+let set     = "set2"
+let path    = "/raid1/clouds/nacma/dataset/"//"&set"
+let outpath = "&path"//"/output"
+
+!!! DEFINE INPUT FILES !!!
+let band1   = "&path"//"/"//"&set"//"_1.img"
+let band2   = "&path"//"/"//"&set"//"_2.img"
+let band3   = "&path"//"/"//"&set"//"_3N.img"
+let band4   = "&path"//"/"//"&set"//"_4.img"
+let band5   = "&path"//"/"//"&set"//"_5.img"
+let band13  = "&path"//"/"//"&set"//"_13.img"
+let band14  = "&path"//"/"//"&set"//"_14.img"
+let meta    = "&path"//"/"//"&set"//"_VNIR.txt"
+
+!!! DEFINE OUTPUT FILES !!!
+let filt1   = "&outpath"//"/filt1"
+let filt2   = "&outpath"//"/filt2"
+let filt3   = "&outpath"//"/filt3"
+let filt4   = "&outpath"//"/filt4"
+let filt5   = "&outpath"//"/filt5"
+let filt6   = "&outpath"//"/filt6"
+let filt7   = "&outpath"//"/filt7"
+let filt8   = "&outpath"//"/filt8"
+let filt9   = "&outpath"//"/filt9"
+let rad1    = "&outpath"//"/rad1"
+let rad2    = "&outpath"//"/rad2"
+let rad3    = "&outpath"//"/rad3"
+let rad4    = "&outpath"//"/rad4"
+let rad5    = "&outpath"//"/rad5"
+let rad13   = "&outpath"//"/rad13"
+let rad14   = "&outpath"//"/rad14"
+let ref1    = "&outpath"//"/ref1"
+let ref2    = "&outpath"//"/ref2"
+let ref3    = "&outpath"//"/ref3"
+let ref4    = "&outpath"//"/ref4"
+let ref5    = "&outpath"//"/ref5"
+let tmpout  = "&outpath"//"/klvn"
+let bcomp   = "&outpath"//"/bcomp"
+let tb13out = "&outpath"//"/tb13"
+let tb14out = "&outpath"//"/tb14"
+let cmvalid = "&outpath"//"/validmask"
+let cmambig = "&outpath"//"/ambigmask"
+let final   = "&outpath"//"/finalout"
+
+!goto theend
+
+nacma inp=("&band1", "&band2", "&band3", "&band4", "&band5", "&band13", "&band14") +
+      filter1out="&filt1" filter2out="&filt2" filter3out="&filt3" +
+      filter4out="&filt4" filter5out="&filt5" filter6out="&filt6" +
+      filter7out="&filt7" filter8out="&filt8" +
+      ref1out="&ref1" ref2out="&ref2" ref3out="&ref3" +
+      ref4out="&ref4" ref5out="&ref5" tempcompout="&bcomp" +
+      rad1out="&rad1" rad2out="&rad2" rad3out="&rad3" rad4out="&rad4" +
+      rad5out="&rad5" rad13out="&rad13" rad14out="&rad14" out="&final" +
+      meta="&meta" btemp13out="&tb13out" btemp14out="&tb14out" +
+      maskvalid="&cmvalid"
+
+theend>
+
+END-PROC

@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="yes"
+
+vic2shp inp=(vertices.int,featureCodes.int,featureNames.asc) out=test3
+vic2shp inp=(vertices.int,featureCodes.int) out=test2
+vic2shp inp=(vertices.int) out=test1
+
+
+END-PROC

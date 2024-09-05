@@ -1,0 +1,6 @@
+$ vpack gtproj.com -mixed -
+	-s gtproj.c 3_param.dat 7_param.dat ellips.dat -
+	-i gtproj.imake -
+	-p gtproj.pdf -
+	-t tstgtproj.pdf
+$ Exit

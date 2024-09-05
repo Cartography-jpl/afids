@@ -1,0 +1,146 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xxa nl=7 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       2   3   4   5   6
+      4       3   4   5   6   7
+      5       4   5   6   7   8
+      6       5   6   7   8   9
+      7       6   7   8   9  10
+imlog xxa xxb lead_rm=330 nl=7 ns=5
+Beginning VICAR task imlog
+imlog version Wed Jan  2 2008
+label-list xxb
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxb ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                7 lines per band
+                5 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: pkim -- Tue Apr  8 14:04:43 2008 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: IMLOG -- User: pkim -- Tue Apr  8 14:04:43 2008 ----
+ 
+************************************************************
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+ Task:IMLOG     User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       2   3   4   5   6
+      4       3   4   5   6   7
+      5       4   5   6   7   8
+      6       5   6   7   8   9
+      7       6   7   8   9  10
+gen xxa nl=7 ns=5
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+     Samp     1       3       5
+   Line
+      1       0   1   2   3   4
+      2       1   2   3   4   5
+      3       2   3   4   5   6
+      4       3   4   5   6   7
+      5       4   5   6   7   8
+      6       5   6   7   8   9
+      7       6   7   8   9  10
+imlog xxa xxb lead_rm=329 nl=7 ns=4 linehdr=1
+Beginning VICAR task imlog
+imlog version Wed Jan  2 2008
+label-list xxb
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxb ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                7 lines per band
+                4 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: pkim -- Tue Apr  8 14:04:43 2008 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: IMLOG -- User: pkim -- Tue Apr  8 14:04:43 2008 ----
+ 
+************************************************************
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+ Task:IMLOG     User:pkim      Date_Time:Tue Apr  8 14:04:43 2008
+     Samp     1       3
+   Line
+      1       0   1   2   3
+      2       1   2   3   4
+      3       2   3   4   5
+      4       3   4   5   6
+      5       4   5   6   7
+      6       5   6   7   8
+      7       6   7   8   9
+end-proc

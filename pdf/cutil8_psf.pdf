@@ -1,0 +1,168 @@
+!cutil8_psf.pdf version 2.0
+!L1 AMT Image Processing Subsystem, Build 4.8
+!Latest Change Date: 23JAN2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 8 - Prepare PSF/OTF/SNR Files.
+
+!This VICAR procedure reads a PSF file (Point Spread Function) in FITS
+!format from the WFSC team, then processes and converts it into calibration files
+!for use by the L1 software. The PSF may be of two kinds, Image or SNR.
+!There must be one Image PSF for each image filter. The Image PSF is
+!converted into an OTF (Optical Transfer Function) calibration file.
+!The SNR (Signal/Noise) PSFs are also per image filter, but are in pairs
+!of Day and Night. Each must be processed and converted into a PSF
+!calibration file, then converted into an SNR-Image calibration file.
+
+!This procedure reads and processes one PSF at a time and converts it
+!into a calibration file based on supplied parameters. Use multiple calls
+!to this procedure to process multiple PSF files.
+
+!This code should be executed from the "run8_psf.pdf" program.
+!**********************************************************************
+
+!Notes on this VICAR procedure:
+
+!1) The input for this job is a PSF file from WFSC that is 512x512 and
+!in FITS format.
+!2) There are two (2) output files; the input PSF file converted from
+!FITS to binary format, and the PSF converted into an OTF or Image vicar file.
+!3) Example Input Filenames:
+!WFSC's choice
+!4) Example Output Filenames:
+!ACAL_PSF_F001_V00003.img
+!ACAL_OTF_F001_V00003.cmp
+!ACAL_SNR-PSF_F001-DAY_V00003.rel
+!ACAL_SNR-IMG_F001-DAY_V00003.rel
+!ACAL_SNR-PSF_F001-NIG_V00003.rel
+!ACAL_SNR-IMG_F001-NIG_V00003.rel
+!**********************************************************************
+
+!VICAR Parameter Defintions
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  inpdir string   def="/raid14/linux/cutil/"      !Input Data Directory
+parm  outdir string   def="/raid14/linux/cutil/vic/"  !Output Calibration Directory
+parm  inpfit string   def="amt_psf_pan.fits"          !Input PSF file in FITS format 
+parm  nl     integer  def=3375     !Image Number of Lines
+parm  ns     integer  def=3648     !Image Number of Samples
+parm  filter string   def="001"    !Filter Number of the Flat Field (001-009, except 007)
+parm  psf    string   def="IMG"    !Image ("IMG") or SNR ("SNR")
+parm  vers   string   def="00000"  !Version Information; Becomes part of out filename.
+parm  snr    string   def="DAY"    !"DAY" or "NIG"ht SNR file
+!Parameters used within this program
+local found  integer  !File found (1) or not found (1)
+local sec    integer  !Clock Seconds for temporary variable names
+local nl1    integer  !nl of incoming fits file
+local ns1    integer  !ns of incoming fits file
+local format string   !format of fits file
+!**********************************************************************
+
+body
+let _onfail="goto error2"
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl     &inpdir val=found
+if          (found=0) goto error1
+file2tcl     &outdir val=found   
+if          (found=0) goto error1
+!**********************************************************************
+
+if          (psf = "SNR") goto next1
+!Read input fits-formatted PSF Image file. It should always be 512x512. If
+!not, resize it.
+!Use the tailor command if the input fits file size field is damaged.
+ush tailor   &"inpdir"&"inpfit"
+fitsin       &"inpdir"&"inpfit" &"outdir"xx1tmp&sec
+form         &"outdir"xx1tmp&sec format nl1 ns1
+if          (nl1 <> 512 or ns1 <> 512) 
+  size       &"outdir"xx1tmp&sec &"outdir"ACAL_PSF_F&"filter"_V&"vers".rel +
+             size=(1,1,512,512) 'noin
+else
+  copy       &"outdir"xx1tmp&sec &"outdir"ACAL_PSF_F&"filter"_V&"vers".rel
+end-if
+write       " "
+write       "*** Created Image PSF Calibration File: &"outdir"ACAL_PSF_F&"filter"_V&"vers".rel "
+write       " "
+!**********************************************************************
+
+!Generate an OTF from the Image PSF
+fft2005      inp=&"outdir"ACAL_PSF_F&"filter"_V&"vers".rel +
+             out=&"outdir"ACAL_OTF_F&"filter"_V&"vers".cmp +
+             mode=forward format=comp +
+             insect=(3375,3648) 'preqswap 'norm 'quadswap  !Pad and zero-fill
+write       " "
+write       "*** OTF/FFT Generated: &"outdir"ACAL_OTF_F&"filter"_V&"vers".cmp "
+write       " "
+goto theend
+!**********************************************************************
+
+next1>
+!Read input fits-formatted SNR PSF file. It should always be 512x512. If
+!not, resize it.
+!Use the tailor command if the input fits file size field is damaged.
+ush tailor   &"inpdir"&"inpfit"   
+fitsin       &"inpdir"&"inpfit" &"outdir"xx1tmp&sec
+form         &"outdir"xx1tmp&sec format nl1 ns1
+if          (nl1 <> 512 or ns1 <> 512)
+  size       &"outdir"xx1tmp&sec &"outdir"ACAL_SNR-PSF_F&"filter"-&"snr"_V&"vers".rel +
+             size=(1,1,512,512) 'noin
+else
+  copy       &"outdir"xx1tmp&sec &"outdir"ACAL_SNR-PSF_F&"filter"-&"snr"_V&"vers".rel
+end-if
+write       " "
+write       "*** Created SNR PSF Calibration File: &"outdir"ACAL_SNR-PSF_F&"filter"-&"snr"_V&"vers".rel "
+write       " "
+!**********************************************************************
+
+!Generate a SNR Image from the SNR-OSF
+fft2005      inp=&"outdir"ACAL_SNR-PSF_F&"filter"-&"snr"_V&"vers".rel +
+             out=&"outdir"xx1tmp&sec +
+             mode=forward format=comp +
+             insect=(3375,3648) 'preqswap 'quadswap  !Pad and zero-fill  
+f2comp       inp=&"outdir"xx1tmp&sec +
+             out=&"outdir"ACAL_SNR-IMG_F&"filter"-&"snr"_V&"vers".rel +
+             size=(1,1,3375,3648) op=cabs
+write       " "
+write       "*** Created SNR Image Calibration File: &"outdir"ACAL_SNR-IMG_F&"filter"-&"snr"_V&"vers".rel " 
+write       " "
+!**********************************************************************
+
+theend>
+!Delete Temporary Files, Handle Errors, and Print Closing Message
+file2tcl     &"outdir"xx1tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+write       " "
+write       "*** Calibration Utility-8 PSF/OTF/SNR Program: Successfully Completed ***"
+write       " "
+goto         theend1
+
+error1>
+!Error Messages
+write       " "
+write       "*** ERROR: Specified Directory Not Found ***"
+write       "*** Calibration Utility-8 PSF/OTF/SNR Program: Stopped Due to Errors ***"
+write       " "
+file2tcl     &"outdir"xx1tmp&sec val=found 
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+goto         theend1
+
+error2>
+!Error Messages
+write       " "
+write       "*** Miscellaneous ERROR: Check the Log or Screen for Error Messages ***"
+write       "*** Calibration Utility-8 PSF/OTF/SNR Program: Stopped Due to Errors ***"
+write       " "
+file2tcl     &"outdir"xx1tmp&sec val=found
+if          (found = 1) ush rm &"outdir"xx1tmp&sec
+
+theend1>
+!**********************************************************************
+end-proc

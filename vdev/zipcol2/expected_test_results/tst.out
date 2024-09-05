@@ -1,0 +1,91 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+Test general capabilities, 1 to many and many to 1
+Beginning VICAR task ibis
+Beginning VICAR task ibis
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c2+50
+5 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c2+80
+5 records in
+Beginning VICAR task ibis
+ 
+Number of Rows:5  Number of Columns: 2       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:5
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+        1.00       51.00
+        1.00       52.00
+        2.00       53.00
+        3.00       54.00
+        4.00       55.00
+Beginning VICAR task ibis
+ 
+Number of Rows:5  Number of Columns: 2       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:5
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+        1.00       81.00
+        3.00       82.00
+        4.00       83.00
+        4.00       84.00
+        5.00       85.00
+Beginning VICAR task zipcol2
+zipcol2 version Sat Dec 29 2007
+Beginning VICAR task ibis
+ 
+Number of Rows:5  Number of Columns: 2       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:5
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+        1.00       81.00
+        1.00       81.00
+        2.00      789.00
+        3.00       82.00
+        4.00       84.00
+ Test general capabilities
+Beginning VICAR task ibis
+Beginning VICAR task ibis
+Beginning VICAR task mf
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstzipcol2', line 34
+

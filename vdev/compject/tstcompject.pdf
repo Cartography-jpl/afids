@@ -1,0 +1,22 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+
+! TEST SCRIPT FOR comptab
+
+gen xxx1 nl=7 ns=7 'half
+f2 xxx1 out=xxx2 func="line*((samp<5)+(samp>5))"
+list xxx2
+concomp xxx2 (xxx4,xxx3)
+list xxx4
+
+comptab (xxx4,xxx2) xxx5
+ibis-l xxx5
+
+mf3 xxx5 f="c10=90+@index"
+compject (xxx4,xxx5) xxx6 cols=(1,10) backgrnd=7
+list xxx6
+
+theend>
+end-proc

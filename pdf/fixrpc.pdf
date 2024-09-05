@@ -1,0 +1,63 @@
+procedure
+parm inp      type=(string,99)
+parm elev     type=(string,99)
+parm linesamp real count=2 def=(-999.0,-999.0)  !optional point loc in raw
+parm lonlat   real count=2 def=(-999.0,-999.0)  !optional point lonlat in raw
+
+local ullon real
+local ullat real
+
+local    test2l  real     !RPC calc
+local    test2s  real     !RPC calc
+local    testbl  real     !RPC calc
+local    testbs  real     !RPC calc
+local    xxf2    type=(string,99)     !RPC calc
+local    labloff int      !RPC calc
+local    labsoff int      !RPC calc
+local    testloff real    !RPC calc
+local    testsoff real    !RPC calc
+local    iloff   int      !RPC calc
+local    isoff   int      !RPC calc
+body
+
+! get the mapping info
+
+plab2tcl &inp property=Geotiff keyword="NITF_CornerLon1=" val=ullon vtype=8
+plab2tcl &inp property=Geotiff keyword="NITF_CornerLat1=" val=ullat vtype=8
+
+! update RPC section in &inp (must not be run twice)
+
+let xxf2 = "&inp" // ".corncalc"
+
+let test2l = linesamp(1)
+if (test2l>-900)
+   let test2l = test2l
+   let test2s = linesamp(2)
+   let testbl = lonlat(1)
+   let testbs = lonlat(2)
+   ibis-gen &xxf2 nc=13 nr=1 deffmt=DOUB datacol=(8,9,1,2) +
+      data=(&test2l,&test2s,&testbl,&testbs)
+else
+   let test2l = 1.0
+   let test2s = 1.0
+   ibis-gen &xxf2 nc=13 nr=1 deffmt=DOUB datacol=(8,9,1,2) +
+      data=(&test2l,&test2s,&ullon,&ullat)
+end-if
+pixmap (&xxf2,&elev) mapcols=(1,2) pixcols=(10,11) 'maptopix
+getzval (&elev,&xxf2) cols=(10,11,3) win=2
+rpcfwd (&xxf2,&inp)
+mf3 &xxf2 f="c12=c4-c8$c13=c5-c9"
+ibis-l &xxf2 nr=1
+ibis2tcl &xxf2 v1=testloff v2=testsoff vartype=(-1,-1) +
+   ibisloc=(1,12,1,13)
+plab2tcl &inp property=Geotiff val=labloff +
+   keyword=RPC_FIELD4 vtype=4
+plab2tcl &inp property=Geotiff val=labsoff +
+   keyword=RPC_FIELD5 vtype=4
+let iloff = labloff-$fix(testloff)
+let isoff = labsoff-$fix(testsoff)
+write "testloff &testloff labloff &labloff iloff &iloff"
+write "testsoff &testsoff labsoff &labsoff isoff &isoff"
+gtgenup &inp ("RPC_FIELD4=&iloff","RPC_FIELD5=&isoff")
+
+end-proc

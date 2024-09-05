@@ -1,0 +1,70 @@
+process help=*
+PARM INP TYPE=STRING COUNT=1
+PARM OUT TYPE=STRING COUNT=1
+PARM LON TYPE=INT COUNT=1
+PARM LAT TYPE=INT COUNT=1
+PARM HEMI1 TYPE=STRING DEFAULT="w" VALID=("w","e")
+PARM HEMI2 TYPE=STRING DEFAULT="n" VALID=("n","s")
+
+END-PROC
+.TITLE
+dtedvlog - converts a DMA DTED file to VICAR
+.HELP
+PURPOSE:
+
+The source DMA files are the standard files as they come on CD-ROM.
+This program converts the data to VICAR.  A GeoTIFF label can be
+added with GTGEN.  This should always be done with a proc so that 
+mistakes will not occur.  See the procedure DTEDLOG.PDF.
+
+EXECUTION:
+
+Example
+
+dtedvlog INP=A OUT=B LON=lon LAT=lat HEMI1=w HEMI2=n
+
+OPERATION:
+
+The DMA DTED file can be on a CDROM or can be copied to a disk
+file with the FILE MANAGER or the unix dd command.
+
+It seems that the headers were of different sizes for the different 
+generations of DMA DTED, so the program reads the header to a
+characteristic set of four zero words, then starts reading the data.
+
+Other assumptions:
+
+1.  Files between 50 degrees north and 50 degrees south are 1201 by
+1201.  50 degrees and beyond are 1201 by 601.  The label is not
+checked for this, though this could be added to the program.
+
+2.  There are 5 halfword pixels between each line.
+
+3.  The level 1 file input name must end with .dt1, level 2 is .dt2
+
+ TIMING: 
+
+About 3 seconds on a SPARCstation.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          25 Sep 2002
+ COGNIZANT PROGRAMMER:   A. Zobrist          25 Sep 2002
+ 
+ REVISION HISTORY
+  02-09-24    AZ   Initial version
+  04-01-27    AZ   Use .dt1/.dt2 filename for level
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE LON
+STRING - DMA DTED longitude
+.VARIABLE LAT
+STRING - DMA DTED latitude
+.VARIABLE HEMI1
+STRING - w OR e
+.VARIABLE HEMI2
+STRING - n OR s
+.END

@@ -1,0 +1,6 @@
+$ vpack ldir2tcl.com -mixed -
+	-s ldir2tcl.c -
+	-i ldir2tcl.imake -
+	-p ldir2tcl.pdf -
+	-t tstldir2tcl.pdf
+$ Exit

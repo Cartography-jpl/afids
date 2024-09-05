@@ -1,0 +1,6 @@
+$ vpack fastmos.com -mixed -
+	-s fastmos.f -
+	-i fastmos.imake -
+	-p fastmos.pdf -
+	-t tstfastmos.pdf timefastmos.pdf tstfastmos.log
+$ Exit

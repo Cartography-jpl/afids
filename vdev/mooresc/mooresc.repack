@@ -1,0 +1,6 @@
+$ vpack mooresc.com -mixed -
+	-s mooresc.c -
+	-i mooresc.imake -
+	-p mooresc.pdf -
+	-t tstmooresc.pdf
+$ Exit

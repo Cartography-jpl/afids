@@ -1,0 +1,70 @@
+procedure
+body
+
+goto curr
+
+
+!************************************************************
+!  run this section one time for the project
+!************************************************************
+
+mosmaster austst 3600 136.0 -24.0
+
+
+!************************************************************
+!  run this section one time for each band, recommend separate
+!  directory for each band, can rerun for single frames
+!************************************************************
+
+bigbatch austst nn3
+bigb10x nn3
+bigingest nn3
+
+
+!************************************************************
+!  rerun these if any new frames ingested, zprocess is fast
+!************************************************************
+
+curr>
+zprocess austst nn3
+goto theend
+
+ibis-l austst_nn3_cfile cols=(2,5,12,18,20,21,23,24,25,26)
+
+quadmos  austst west nn3 quad=(110.0,-10.0,127.0,-40.0) +
+   runtype=reduce10 out=auststnn3west.10xb
+
+quadmos  austst mid nn3 quad=(123.0,-10.0,137.0,-40.0) +
+   runtype=reduce10 out=auststnn3mid.10xb
+
+quadmos  austst east nn3 quad=(133.0,-10.0,155.0,-40.0) +
+   runtype=reduce10 out=auststnn3east.10xb
+
+mosfth 3 austst auststnn3west.10xb auststnn3mid.10xb auststnn3east.10xb +
+   out=auststnn3.10xb
+goto theend
+
+!************************************************************
+!  this is for 5 degree quads, it needs the full continent
+!  run of zprocess for equalization of brightness and the
+!  apropriate quadmos 10x run to set up for 'readramp
+!  parameter in featherw
+!************************************************************
+
+
+quadmos  austst west nn3 quad=(120.0,-25.0,125.0,-30.0) +
+   runtype=full out=austst120x25.5x5.nn3b
+
+quadmos  austst west nn3 quad=(125.0,-25.0,130.0,-30.0) +
+   runtype=full out=austst125x25.5x5.nn3b
+
+
+quadmos  austst west nn3 quad=(120.0,-20.0,125.0,-25.0) +
+   runtype=full out=austst120x20.5x5.nn3b
+
+quadmos  austst west nn3 quad=(125.0,-20.0,130.0,-25.0) +
+   runtype=full out=austst125x20.5x5.nn3b
+
+
+theend>
+end-proc

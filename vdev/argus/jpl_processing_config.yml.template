@@ -1,0 +1,72 @@
+# This provides configuration used to do JPL processing.
+
+#====================================================================
+# This is the list of image data to process. Normally we just use the
+# standard directory structure, but if you have some odd case you can
+# edit this (e.g., remove a bad camera, add a second directory with
+# more images).
+#
+# The image files have two kinds, both of which are handled. There is
+# ".JPL" JPEG and ".CR2" which is Cannon raw format. Currently we only 
+# plan using the JPEG format files going forward, but this could change.
+
+image_dirs:
+  - ../Image/Cam01
+  - ../Image/Cam02
+  - ../Image/Cam03
+  - ../Image/Cam04
+  - ../Image/Cam05
+  - ../Image/Cam06
+  - ../Image/Cam07
+  - ../Image/Cam08
+  - ../Image/Cam09
+  - ../Image/Cam10
+  - ../Image/Cam11
+  - ../Image/Cam12
+  - ../Image/Cam13
+
+#====================================================================
+# This gives the list of aflight files. Note that wildcards are allowed
+# here. Normally we just use the normal directory structure, but
+# you can modify this for some unusual case (e.g., exclude a file, get
+# aflights from a second directory).
+
+aflight_files:
+  - ../AFlight/*.aflight
+
+#====================================================================
+# In Mali, we had cameras where the timestamps put on the images were
+# significantly off. It is now part of the procedures that the camera
+# times are synchronized before a flight, so we shouldn't have these
+# offsets any more. But the ability to give the time offset has been
+# left in place in case it is needed. This array is in camera order,
+# giving the time offset in seconds.
+
+# time_offset: [0,1,2,3,4,5,6,7,8,9,10,11,12]
+
+#====================================================================
+# In Mali, we had instances where the trigger lines where crossed. What
+# this means is that data in the aflight file labelled for camera 1 might
+# really be for camera 2. Hopefully we'll never see this, but since we
+# needed to handle this for Mali we've left this functionality in. 
+#
+# If defined, this gives a mapping between the label (first array) and the
+# actual camera (second array). 
+#
+# The first line is the camera as (incorrectly) labelled during the flight.
+# The second line is the correct camera label. Cameras that don't need to
+# be relabelled can be left out, and in fact an empty list is legal and 
+# simply means don't do any relabelling.
+
+# relabel_camera:
+#   - [1,2,3]
+#   - [2,3,1]
+
+#=======================================================================
+# List of cameras to process, in the order they should be laid down on
+# the mosaic.
+
+camera_list: [6, 5, 4, 3, 2, 1, 7, 8, 9, 10, 11, 12, 13]
+
+
+

@@ -1,0 +1,6 @@
+$ vpack astrtchr.com -mixed -
+	-s astrtchr.F -
+	-i astrtchr.imake -
+	-p astrtchr.pdf -
+	-t tstastrtchr.pdf tstastrtchr.log
+$ Exit

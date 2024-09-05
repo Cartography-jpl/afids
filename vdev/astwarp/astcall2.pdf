@@ -1,0 +1,390 @@
+procedure
+refgbl $echo
+parm key string
+parm rawimg type=(string,99)
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted type=(string,99)
+parm lsat type=(string,99)
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+parm xvdonly string valid=("n","y") default="n"
+parm outimg type=(string,99)
+parm refimg type=(string,99) def=""
+
+parm maptype type=string valid=("pc","utm","ref") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm angcor type=string valid=("noangcor","angcor") default="noangcor"
+
+parm angfac type=real default=1.0
+parm ecor1 type=real default=0.11
+parm ecor2 type=real default=0.00
+parm lsoverrd type=string valid=("no","yes") default="no"
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+parm linesamp type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm lsatls type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+   
+local rawroot type=(string,99)
+local fnamein type=(string,99)
+
+local typeIR string
+local ixclosest int
+local ixnext int
+
+local qlon real
+local qloninc real
+local qlat real
+local qlatinc real
+local iblat1 real
+local iblat2 real
+local iblon1 real
+local iblon2 real
+
+local fname2 type=(string,99)
+local fname3 type=(string,99)
+local fname4 type=(string,99)
+local fname5 type=(string,99)
+local fname9 type=(string,99)
+
+local inroot type=(string,99)
+local outroot type=(string,99)
+local scratchroot type=(string,99)
+
+local inloc type=(string,99)
+local outloc type=(string,99)
+local gridinfoloc type=(string,99)
+local gridfinalloc type=(string,99)
+
+local dtedfile type=(string,99)
+local basefile type=(string,99)
+local outn type=(string,99)
+local outnsuffix type=(string,99)
+local mosstring type=(string,128)
+local landsatroot type=(string,128)
+local elevroot type=(string,128)
+
+local dtype string
+local ndtype int
+
+local tlat1 real
+local tlon1 real
+local tlat2 real
+local tlon2 real
+local tlat3 real
+local tlon3 real
+local tlat4 real
+local tlon4 real
+local slat1 real
+local slon1 real
+local slat2 real
+local slon2 real
+local gamma real
+local alpha real
+local satelv real
+
+local moslon int
+local moslat int
+local moslon2 int
+local moslat2 int
+
+local lognl int
+local logns int
+local lognl10 int
+local logns10 int
+
+local nl1 real
+local ns1 real
+local nl2 real
+local ns2 real
+local nl3 real
+local ns3 real
+local ll1 real
+local ls1 real
+local ll2 real
+local ls2 real
+local ll3 real
+local ls3 real
+
+local stopat int
+local found2 int
+local qexist int
+
+body
+let $echo="yes"
+
+write "astcall2 5/15/2008"
+let satelv = 704000.0
+
+! now the master is registered to landsat again, both are 6
+! for changes to nighttime see modcall
+
+if (rtype="master")
+   let stopat=6
+else
+   let stopat=6
+end-if
+
+! call walt's routine to generate fnamein
+
+idgen prefix=bob outvar=fnamein
+
+let typeIR = "VNIR"
+
+let inloc = "raw" // "&key" // "/"
+let outloc = "final" // "&key" // "/"
+
+let rawroot = "&inloc" // "&fnamein" // "&typeIR"
+let fname2 = "&rawroot" // "_2.img"
+let fname3 = "&rawroot" // ".int"
+let fname4 = "&rawroot" // "_VNIR.txt"
+let fname5 = "scratch/" // "&fnamein" // "&typeIR" // ".nav"
+let fname9 = "scratch/" // "&fnamein" // "&typeIR" // ".tmp"
+
+!  log the aster VNIR band 2 matches landsat band 3
+
+file2tcl &fname2 val=found2
+let found2 = 0     !force the logging
+if (found2=0)
+   write "logging &rawimg"
+   asterlog inp=&rawimg out=&rawroot sensor="VNIR" lookback=0
+   label-add inp=&fname2 items="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+end-if
+
+! for compression testing
+compresschk &fname2
+
+if (xvdonly="y")
+      xvd &fname2
+      goto theend
+   end-if
+
+!  the following call is after a run of logger, be sure to use
+!  a sufficiently fine grid for dted correction (nah,nav)
+
+!   calculating the satellite position from Walt's log file
+
+asc2tcl &fname4 keyword="ASTER_PRODUCT_TYPE=" val=dtype +
+     btrim=1 etrim=1 vtype=0
+write "dtype (&dtype)"
+if (dtype="1A")
+   let ndtype = 4
+else
+   let ndtype = 121
+end-if
+
+asc2tcl &fname4 keyword="ASTER_UPPERLEFT_LON=" val=tlon1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERLEFT_LAT=" val=tlat1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERRIGHT_LON=" val=tlon2 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERRIGHT_LAT=" val=tlat2 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERLEFT_LON=" val=tlon3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERLEFT_LAT=" val=tlat3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERRIGHT_LON=" val=tlon4 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERRIGHT_LAT=" val=tlat4 vtype=8
+
+if (tlon1<(-900.0))
+asc2tcl &fname4 keyword="ASTER_UL_LON=" val=tlon1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UL_LAT=" val=tlat1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UR_LON=" val=tlon2 vtype=8
+asc2tcl &fname4 keyword="ASTER_UR_LAT=" val=tlat2 vtype=8
+asc2tcl &fname4 keyword="ASTER_LL_LON=" val=tlon3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LL_LAT=" val=tlat3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LR_LON=" val=tlon4 vtype=8
+asc2tcl &fname4 keyword="ASTER_LR_LAT=" val=tlat4 vtype=8
+end-if
+
+asc2tcl &fname4 keyword="ASTER_POINTING_ANGLE=" val=gamma vtype=8
+if (gamma<(-900.0)) let gamma = 0.0
+if (gamma<(-900.0)) goto theend
+let alpha = gamma/(1.0+satelv/6367443.0)   !approximation
+write "aster pointing angle = &gamma, satellite angle approx &alpha"
+
+!to avoid the approximation need to iterate e.c.e. = 
+!h*alpha/R and alpha = atan(Rcos(ece)/(h-R(1-cos(ece))) 
+
+! testing the angfac angle correction, could be linear form (need data)
+
+let alpha = alpha*angfac
+
+
+ibis-gen xxgcalc NC=14 NR=2 deffmt=DOUB  datacols=(1,2,3,4) +
+    data=(&tlon1,&tlat1,&tlon2,&tlat2,&tlon3,&tlat3,&tlon4,&tlat4)
+ibis-l xxgcalc
+
+! remember a + angle (to west) puts satellite to east of center
+
+mf3 xxgcalc f="c5=(c1+c3)*0.5$c6=(c2+c4)*0.5$c7=c1-c3$c8=c2-c4"
+mf3 xxgcalc f="c9=@atan2(c8,c7)$c10=-(&alpha)*(&satelv)/6367443"
+mf3 xxgcalc f="c11=c10*@cos(c9)$c12=c10*@sin(c9)$c13=c5-c11$c14=c6-c12"
+ibis-l xxgcalc
+ibis2tcl xxgcalc v1=slon1 v2=slat1 v3=slon2 v4=slat2 +
+     vartype=(-1,-1,-1,-1) ibisloc=(1,13,1,14,2,13,2,14)
+write "slon1,slat1,slon2,slat2 &slon1,&slat1,&slon2,&slat2"
+
+!   have to process the int file (1A has l,s; 1B has 11x11)
+
+ibis-copy &fname3 &fname5
+if (dtype<>"1A")
+   asc2tcl &fname4 keyword="LOG_NL=" val=lognl vtype=4
+   asc2tcl &fname4 keyword="LOG_NS=" val=logns vtype=4
+   let lognl10 = lognl/10
+   let logns10 = logns/10
+   mf3 &fname5 f="c1=0.5+(c1-1)*&lognl10"
+   mf3 &fname5 f="c2=0.5+(c2-1)*&logns10"
+end-if
+ibis-l &fname5 nr=22
+
+! new section for shift correction, tom case in crete
+
+let nl1 = linesamp(1)
+if (nl1>(-990.0))
+   let ns1 = linesamp(2)
+   let nl2 = linesamp(3)
+   let ns2 = linesamp(4)
+   let nl3 = linesamp(5)
+   let ns3 = linesamp(6)
+
+   let ll1 = lsatls(1)
+   let ls1 = lsatls(2)
+   let ll2 = lsatls(3)
+   let ls2 = lsatls(4)
+   let ll3 = lsatls(5)
+   let ls3 = lsatls(6)
+   
+   ibis-gen &fname9 nc=6 nr=3 deffmt=DOUB datacol=(1,2,5,6) +
+      data=(&nl1,&ns1,&ll1,&ls1, +
+            &nl2,&ns2,&ll2,&ls2, +
+            &nl3,&ns3,&ll3,&ls3)
+   pixmap (&fname9,&lsat) mapcols=(4,3) pixcols=(5,6) 'pixtomap
+   ibis-l &fname9
+   ibis-l &fname5 nr=3
+   polygeov (&fname9,&fname5) cols=(4,3,1,2) dcols=(1,2,4,3)
+   ibis-l &fname5 nr=3
+end-if
+
+!   now the test, real satellite at &satelv
+
+let inroot = "&inloc" // "&fnamein" // "&typeIR" 
+let outroot = "&outloc" // "&fnamein" // "&typeIR" 
+let scratchroot = "scratch/" // "&fnamein"
+let gridinfoloc = "&outloc" // "&fnamein" // "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein" // "gridfinal"
+
+! get the quad from the 11 x 11
+
+ibis-l &fname5 nr=1 sr=1 'format
+ibis-l &fname5 nr=1 sr=&ndtype 'format
+
+ibis2tcl &fname5 v1=iblat1 v2=iblat2 v3=iblon1 v4=iblon2 +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,3,&ndtype,3,1,4,&ndtype,4)
+let qlon = iblon1
+let qloninc = iblon2-iblon1+0.1
+let qlat = iblat1+0.1
+let qlatinc = iblat1-iblat2+0.2
+
+write "iblon1,iblat1 &iblon1,&iblat1"
+write "iblon2,iblat2 &iblon2,&iblat2"
+write "qlon,qlat &qlon,&qlat"
+
+write "qloninc,qlatinc &qloninc,&qlatinc"
+
+! now prepare the base and dted mosaics if needed
+
+if ("&lsat"="" or "&dted"="")
+   if (tlon3>0.0)
+      let moslon = $fix(tlon3-0.2)
+   else
+      let moslon = $fix(-tlon3+1.2)*(-1)
+   end-if
+   if (tlat4>0.0)
+      let moslat = $fix(tlat4-0.2)
+   else
+      let moslat = $fix(-tlat4+1.2)*(-1)
+   end-if
+   if (tlon2>0.0)
+      let moslon2 = $fix(tlon2+1.2)
+   else
+      let moslon2 = $fix(-tlon2+0.2)*(-1)
+   end-if
+   if (tlat1>0.0)
+      let moslat2 = $fix(tlat1+1.2)
+   else
+      let moslat2 = $fix(-tlat1+0.2)*(-1)
+   end-if
+
+translog LANDSAT_ROOT landsatroot
+translog ELEV_ROOT elevroot
+
+!write "ullon &ullon ullat &tlat1"
+!write "urlon &tlon2 urlat &urlat"
+!write "lllon &tlon3 lllat &lllat"
+!write "lrlon &lrlon lrlat &tlat4"
+!write "moslon &moslon moslat &moslat"
+!write "moslon2 &moslon2 moslat2 &moslat2"
+!goto theend
+end-if
+
+if ("&lsat"<>"")
+   let basefile = "&lsat"
+else
+   let basefile = "b&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // ".lsat"
+   let outn = "basemos/&basefile"
+   file2tcl &outn val=qexist
+   if (qexist=0)
+      let mosstring = landsatroot
+      subset_landsat slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 dir1="&mosstring" +
+         outn="&outn" dir2="./"
+   end-if
+   let basefile = "basemos/&basefile"
+end-if
+
+if ("&dted"<>"")
+   let dtedfile = "&dted"
+else
+   let dtedfile = "d&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2"
+   let outn = "dtedmos/&dtedfile"
+   let outnsuffix = "&outn" // "_dem.img"
+   file2tcl &outnsuffix val=qexist
+   if (qexist=0)
+      let mosstring = elevroot
+      mos_l2_dem slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 DIRin="&mosstring" +
+         out="&outn" DIRout="./"
+   end-if
+   let dtedfile = "dtedmos/&dtedfile" // "_dem.img"
+end-if
+
+astwarp2 inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted=&dtedfile  lsat=&basefile +
+   seq=qq  pixdeg=7200.0 angcor=&angcor outimg=&outimg +
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc +
+   quadunit=0 master="&refimg" rastype=&rastype +
+   gridinfo=&gridinfoloc ecor1=&ecor1 ecor2=&ecor2+
+   gridfinal=&gridfinalloc loff=0 soff=0 loff2=0 soff2=0 +
+   sensE1=&slon1 sensN1=&slat1 senselv1=&satelv interp=&interp +
+   sensE2=&slon2 sensN2=&slat2 senselv2=&satelv sensunit=0 +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype +
+   modelfit=&modelfit maptype=&maptype lsoverrd=&lsoverrd +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right dtype=&dtype +
+   usermapref="&usermapref" +
+   siteref="&siteref" +
+   siteout="&siteout"
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc

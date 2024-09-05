@@ -1,0 +1,33 @@
+tstpaintc
+let _onfail= "stop"
+gen x
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+ibis-gen x1 nr=10 data=(1,2,3,4)
+Beginning VICAR task ibis
+gen cx1 linc=2 sinc=2
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+paintc inp=(x,x1) out=cx1
+Beginning VICAR task paintc
+paintc - 10-06-2019 - rjb - 64-bit
+paintc inp=(cx1,x1) out=uncx1
+Beginning VICAR task paintc
+paintc - 10-06-2019 - rjb - 64-bit
+difpic inp=(x, cx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =  99
+difpic inp=(x, uncx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =  99
+difpic inp=(cx1, uncx1)
+Beginning VICAR task difpic
+DIFPIC version 12-Jul-2016 - rjb (64-bit)
+ NUMBER OF DIFFERENCES =   0
+let $echo="no"
+exit
+slogoff

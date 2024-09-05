@@ -1,0 +1,93 @@
+process help=*
+ !
+ PARM INP     TYPE=STRING COUNT=2
+ PARM ACOLS   TYPE=INTEGER COUNT=4 DEFAULT=(1,2,3,4)
+ PARM BCOLS   TYPE=INTEGER COUNT=4 DEFAULT=(1,2,3,4)
+ parm SLVAR    type=name
+ parm SSVAR    type=name
+ parm NLVAR    type=name
+ parm NSVAR    type=name
+ !
+ END-PROC
+!
+! HELP TEXT FOR GTGORE
+.TITLE
+GTGORE - special purpose program to calculate gores for gtwarpxd.
+.HELP
+PURPOSE
+     GTGORE is a VICAR applications program which calculates gore
+     adjustments for GTWARPXD (see its subroutine GTWRPSUB).  It
+     is not intended for general use.
+	   
+CALL
+     gtgore (GRID_A,GRID_B) ACOLS=(C1,C2,C3,C4) BCOLS=(C1,C2,C3,C4) +
+           SLVAR=INCSL SSVAR=INCSS NLVAR=INCNL NSVAR=INCNS
+  WHERE:
+     GRID_A         is the first grid in GEOMV format.
+     GRID_B         is the second grid in GEOMV format.
+     ACOLS          are the columns used in the first ibis file.
+     BCOLS          are the columns used in the second ibis file.
+     SLVAR          is a TAE TCL variable to output the SL increment
+     SSVAR          is a TAE TCL variable to output the SS increment
+     NLVAR          is a TAE TCL variable to output the NL increment
+     NSVAR          is a TAE TCL variable to output the NS increment
+     
+OPERATION
+
+GTGORE operates like gridcomp except that.
+
+PERFORMANCE
+
+faster than gridcomp
+
+.PAGE
+Restrictions
+------------
+
+Only a 40 x 40 grid can be input as the second file.  The first file must
+be in GEOMV input format.  Both input files are IBIS files.
+
+.PAGE
+Original Programmer: A. L. Zobrist, 04 Feb. 2003.
+Current Cognizant Programmer: A. L. Zobrist
+Revisions:
+  Sun Dec 30 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.LEVEL1
+.VARI INP
+IBIS tables containing the two
+grids to be composed.
+.VARI ACOLS
+Columns in the first input
+.VARI BCOLS
+Columns in the second input
+.variable SLVAR
+TAE TCL variable to receive the 
+integer value of the adjustment
+of the image SL
+.variable NLVAR
+TAE TCL variable to receive the 
+integer value of the adjustment
+of the image NL
+.variable SSVAR
+TAE TCL variable to receive the 
+integer value of the adjustment
+of the image SS
+.variable NSVAR
+TAE TCL variable to receive the 
+integer value of the adjustment
+of the image NS
+.LEVEL2
+.VARIABLE ACOLS
+    ACOLS=(C1,C2,C3,C4)  Columns in the first IBIS tabular file that
+			 contain the tiepoints.  C1 has new line,
+			 C2 has new sample, C3 has old line, and
+			 C4 has old sample.  The defaults are
+			 (1,2,3,4).
+.VARIABLE BCOLS
+    BCOLS=(C5,C6,C7,C8)  Columns in the second IBIS tabular file that
+			 contain the tiepoints.  C5 has new line,
+			 C6 has new sample, C7 has old line, and
+			 C8 has old sample.  The defaults are
+			 (1,2,3,4).
+.END

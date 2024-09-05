@@ -1,0 +1,136 @@
+procedure help=*
+parm cube type=(string,99)
+parm img type=(string,99)
+parm vr0 real
+parm vr2 real
+parm ur0 real
+parm ur2 real
+parm seq type=(string,99) default="qq"
+local lon1 real
+local lat1 real
+local lon2 real
+local lat2 real
+local lon3 real
+local lat3 real
+local lon4 real
+local lat4 real
+local rnl real
+local rns real
+body
+
+write "rpccctr version 18-mar-08"
+
+ibis-copy &cube xxc1&seq
+
+rowop2 xxc1&seq xxc2&seq keycol=(4,5) prec=1.0 +
+   range=(&vr0,&vr0,&ur0,&ur0) 'select
+!ibis-list xxc2&seq
+ibis2tcl xxc2&seq v1=lon1 v2=lat1 vartype=(-1,-1) ibisloc=(1,1,1,2)
+gtgenup &img +
+   geotiff=("NITF_CORNERLON1=&lon1","NITF_CORNERLAT1=&lat1")
+
+rowop2 xxc1&seq xxc2&seq keycol=(4,5) prec=1.0 +
+   range=(&vr0,&vr0,&ur2,&ur2) 'select
+!ibis-list xxc2&seq
+ibis2tcl xxc2&seq v1=lon2 v2=lat2 vartype=(-1,-1) ibisloc=(1,1,1,2)
+gtgenup &img +
+   geotiff=("NITF_CORNERLON2=&lon2","NITF_CORNERLAT2=&lat2")
+
+write "range=(&vr2,&vr2,&ur2,&ur2)"
+rowop2 xxc1&seq xxc2&seq keycol=(4,5) prec=1.0 +
+   range=(&vr2,&vr2,&ur2,&ur2) 'select
+!ibis-list xxc2&seq
+ibis2tcl xxc2&seq v1=lon3 v2=lat3 vartype=(-1,-1) ibisloc=(1,1,1,2)
+gtgenup &img +
+   geotiff=("NITF_CORNERLON3=&lon3","NITF_CORNERLAT3=&lat3")
+
+rowop2 xxc1&seq xxc2&seq keycol=(4,5) prec=1.0 +
+   range=(&vr2,&vr2,&ur0,&ur0) 'select
+!ibis-list xxc2&seq
+ibis2tcl xxc2&seq v1=lon4 v2=lat4 vartype=(-1,-1) ibisloc=(1,1,1,2)
+gtgenup &img +
+   geotiff=("NITF_CORNERLON4=&lon4","NITF_CORNERLAT4=&lat4")
+
+!  redo the old VICAR GeoTIFF mapping so xvd will work better
+
+let rnl = ur2-0.5
+let rns = vr2-0.5
+gtgen out=xxc2&seq 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&lon1,&lat1,0.0)", +
+   "ModelTiePointTag=(&rns,0,0,&lon2,&lat2,0.0)", +
+   "ModelTiePointTag=(0,&rnl,0,&lon4,&lat4,0.0)", +
+   "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+   "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+   "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+   "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+   "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+gtgenup (&img,xxc2&seq)
+
+tush rm xxc1&seq
+tush rm xxc2&seq
+
+end-proc
+.TITLE
+rpccctr - put corners of rpc cube into nitf label format vicar image
+.HELP
+PURPOSE
+    
+Uses an output from Program sc2rpc to generate corner points and
+put them into a vicar label prior to calling program vicar2ntf to 
+make the nitf format.  Or the corners can be seen in the vicar
+label.
+
+A GEOTiff label in geographic coordinates is also added to the
+label for possible use by sc2rpc.  (It is usually approximate).
+
+   
+CALL
+
+  rpccctr cube=xxxscale image=xxximg &vr0 &vr2 &ur0 &ur2
+  
+  the cube corners of the call to sc2rpc have to be passed in the
+  parameters (&vr0,&vr2,&ur0,&ur2)
+  
+OPERATION
+
+reads the corners of the cube and uses label-add to put them into
+the file label.
+
+PERFORMANCE
+
+about 2 seconds on a SUN blade 2000.
+
+Restrictions
+------------
+
+using sea level for now, need to improve for elevation.
+
+
+
+Original Programmer: A. L. Zobrist, 25 Nov, 2005
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 25 Nov, 2005
+
+.LEVEL1
+parm cube type=(string,99)
+parm img type=(string,99)
+parm vr0 real
+parm vr2 real
+parm ur0 real
+parm ur2 real
+
+.var cube
+The output from sc2rpc
+.var img
+The file used by sc2rpc call
+.var vr0
+vr0 param used by sc2rpc
+.var vr2
+vr2 param used by sc2rpc
+.var ur0
+ur0 param used by sc2rpc
+.var ur2
+ur2 param used by sc2rpc
+.END
+

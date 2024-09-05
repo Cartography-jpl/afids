@@ -1,0 +1,113 @@
+process help=*
+parm inp      type=(string,99) count=3
+parm out      type=(string,99) count=2
+parm sl       type=int
+parm ss       type=int
+parm nl       type=int
+parm ns       type=int
+parm lines    type=int
+parm samples  type=int
+parm lineSkip type=int default=2
+parm sampSkip type=int default=2
+end-proc
+.title
+VICAR Program goeslog - logs GOES image file to VICAR/IBIS
+.help
+PURPOSE
+
+     GOESLOG logs GOES image and navigation files to VICAR/IBIS.
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     goeslog INP=(A,B,C) OUT=(D,E) PARMS
+     
+     where
+
+     A           is a GOES image
+     B           is a GOES lon file
+     C           is a GOES lat file
+     D		 is a VICAR image
+     E           is an IBIS file of coordinates for D
+
+     PARMS	allows user to specify sub-area of archive:
+       sl start line (one based value with (1,1) pixel in nw corner
+       ss start sample (one based value)
+       nl number of lines to extract
+       ns number of samples to extract
+       lineSkip used to downsample nav data; = 1 -> include every line; = 2 -> every other line, etc.
+       sampSkip used to downsample nav data; = 1 -> include every sample = 2 -> every other samp, etc.
+
+.PAGE
+OPERATION
+
+     GOESLOG logs a user-specified sub-area of a GOES image to 
+     VICAR/IBIS. The extracted image will have 32 bits per pixel.
+     The IBIS file will contain a table of (line, sample, lat, lon) 
+     double precision float quadruples, used to navigate the 
+     extracted image.
+   
+.PAGE
+
+RESTRICTIONS
+
+     The input GOES IR (band 4 or 5) image file must be a 500 pixel 
+     square image with little endian 4 byte unsigned pixel values.
+
+     The input GOES longitude and latitude files must be 500 value square
+     arrays with big endian 2 byte signed values converted to longitude
+     or latitude by dividing by -100 or 100, respectively.
+
+     Input data sets must originate in the Western Hemisphere.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, A. Zobrist
+
+REVISIONS: 
+  Tue Feb 26 2008
+    Ported to 64-bit AFIDS environment
+
+  Fri Dec 10 2004
+    Switched IBIS organization from row to column
+
+  Mon Dec  6 2004
+    Added lineSkip, sampSkip to reduce nav data volume
+
+  Mon Jan  7 2002
+    Now expects image to be big endian, instead of little endian.
+
+  Mon Dec  3 2001
+    Reversed lat/lon column order in IBIS nav output file
+    Factored out IBIS generation code
+
+  16 nov 2001
+    Initial version
+
+.level1
+.var inp
+File1 - GOES image
+File2 - GOES lon nav file
+File3 - GOES lat nav file
+.var out
+File1 - VICAR image
+File2 - IBIS geographic coords
+.var sl
+Starting line
+.var ss
+Starting sample
+.var nl
+Number of lines
+.var ns
+Number of samples
+.level2
+.var sl
+Starting line of GOES archive data set. This is a one-based value where the origin is in nw corner.
+.var ss
+Starting sample of GOES archive data set. This is a one-based value where the origin is in nw corner.
+.var nl
+Number of lines to extract from the GOES archive data set.
+.var ns
+Number of samples to extract from GOES archive data set.
+.end

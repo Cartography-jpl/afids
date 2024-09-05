@@ -1,0 +1,159 @@
+procedure	! gen_slope_mask
+
+parm inp_img string ! def="wv2_pan_test.img"
+parm elv_file string def="" ! elevation file used in logging process (30 meter)
+parm elv_spacing string valid=("5meter","10meter","30meter") def="30meter"
+parm max_slope real def=3.0
+parm mask_name string def=""
+
+local slope_bm string init="_slope_bm"
+local found1 integer
+local found2 integer
+local sl integer
+local ss integer
+local nl integer
+local ns integer
+local min integer
+local max integer
+local minlat real
+local maxlat real
+local minlong real
+local maxlong real
+local v1 real
+local v2 real
+local v3 real
+local v4 real
+local errors integer init=0
+
+refgbl $echo
+body
+
+let $echo="no"
+let $switch=512
+
+write "gen_slope_mask version Sat May  7 2011"
+
+write "Elevation spacing: &elv_spacing"
+
+! ignore passed elevation, force srtm-based model
+!local afidsvdevdata type=string
+!translog AFIDS_VDEV_DATA afidsvdevdata
+!let elv_file = "&afidsvdevdata/middle_east_elv.hlf"
+
+if (elv_file="")
+  elevmos &inp_img elev_name=elv_file
+end-if
+
+write "elv_file: &elv_file"
+
+file2tcl &inp_img val=found1
+if (found1=0)
+  write "No input satellite image found."
+  let errors=errors+1
+end-if
+
+file2tcl &elv_file val=found2
+if (found2=0)
+  write "No elevation file ''&elv_file'' found. Aborting ..."
+  let errors=errors+1
+end-if
+if (errors>0)
+  write "Key files not found ... Aborting ..."
+  goto theend
+end-if
+
+write "Get the lat/long extents of &inp_img ..."
+
+lab2tcl &inp_img v1=nl v2=ns keyword=(nl,ns) 'system
+
+ibis-gen temp1 nr=2 nc=4 datacol=(1,2) data=(1,1,&nl,&ns)
+
+write "Pixmapping &inp_img ..."
+
+pixmap (temp1,&inp_img) mapcols=(3,4) pixcols=(1,2) pixtomap=pixtomap
+
+write "Done pixmapping."
+
+ibis2tcl temp1 minlat maxlat minlong maxlong vartype=(0,0,0,0) varcnt=4 +
+  ibisloc=(2,4,1,4,1,3,2,3)
+
+write "Minlat: &minlat / Maxlat: &maxlat"
+write "Minlong: &maxlong / Maxlong: &maxlong"
+
+!	Get the line/sample of these values in the elevation file
+
+pixmap (temp1,&elv_file) mapcols=(3,4) pixcols=(1,2) maptopix=maptopix
+
+ibis2tcl temp1 v1 v2 v3 v4 vartype=(0,0,0,0) varcnt=4 +
+    ibisloc=(1,1,1,2,2,1,2,2)
+
+let sl=$fix(&v1+.5)
+let ss=$fix(&v2+.5)
+let v3=v3-v1+1
+let v4=v4-v2+1
+let nl=$fix(&v3+.5)
+let ns=$fix(&v4+.5)
+
+!	Extract the AOI out of the existing elevation file
+if (elv_spacing="other")
+!  gtcopy &elv_file base_elv size=(&sl,&ss,&nl,&ns)
+  gtcopy &elv_file combo_elv size=(&sl,&ss,&nl,&ns)
+else
+  gtcopy &elv_file combo_elv size=(&sl,&ss,&nl,&ns)
+  goto dip_az
+end-if
+
+!	Make a 5 meter mosaic of this AOI
+
+!	The procedure mos_5m_elv references the 5 meter datasets 
+!	and the database afgh_5m_elv_db.int
+!mos_5m_elv &minlat &minlong &maxlat &maxlong fname=5m_elv_file
+
+!	Force the base elevation file to the resolution and nl/ns of the 5 meter ...
+!gtwarp base_elv 5m_base_elv ref=5m_elv_file 'coverref
+
+!	Now combine the 2, insert the true 5 meter first then the resampled
+!fastmos (5m_elv_file,5m_base_elv) combo_elv
+
+!	Compute the dip and azimuth
+dip_az>
+
+if (elv_spacing="5meter")
+  pixgrad inp=combo_elv out=(dip,azimuth) method=arcinfo lscale=0.003106856 sscale=0.003106856 aalt=3.28084
+else-if (elv_spacing="10meter")
+  pixgrad inp=combo_elv out=(dip,azimuth) method=arcinfo lscale=0.006213712 sscale=0.006213712 aalt=3.28084
+else-if (elv_spacing="30meter")
+  pixgrad inp=combo_elv out=(dip,azimuth) method=arcinfo lscale=0.01864114 sscale=0.01864114 aalt=3.28084
+end-if
+
+!	Create the slope binary mask (0-->90 = 0-->255)
+
+let v1 = (max_slope * 2.8333)
+let min = $fix(&v1+.5)
+let max = min + 1
+
+!	Decompress ... boxflt2 requirement
+comprs dip dips comp=none
+
+!	Expand the slope pixels
+if (elv_spacing="5meter")
+  boxflt2 dips temp1 nlw=67 nsw=67
+else-if (elv_spacing="10meter")
+  boxflt2 dips temp1 nlw=33 nsw=33
+else-if (elv_spacing="30meter")
+  boxflt2 dips temp1 nlw=11 nsw=11
+end-if
+
+!	Now generate the binary mask
+write "stretch table 0 1 &min 1 &max 0 255 0"
+stretch temp1 dip_bm table=(0,1,&min,1,&max,0,255,0)
+
+!	Now force the dip bm to the same pixel spacing as the satellite image
+gtwarp dip_bm &inp_img&slope_bm ref=&inp_img 'coverref 'noin
+
+if (mask_name <> "")
+  ush mv &inp_img&slope_bm &mask_name
+end-if
+
+theend>
+end-proc

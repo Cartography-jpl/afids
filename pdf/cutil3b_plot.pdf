@@ -1,0 +1,251 @@
+!cutil3b_plot.pdf version 1.0
+!L1 AMT Image Processing Subsystem, Build 4.13
+!Latest Change Date: 09SEP2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 3b - Plot AVE Means vs. Integration Time
+
+!This VICAR procedure plots the Means vs. Integration Time of a selected
+!clock, gain, filter, and subtype group of "ave" images produced by
+!the cutil3_ave procedure, for evaluation of the data quality. The 
+!plots are produced by gnuplot (provided through VICAR). The input files
+!are defined by a prefix (e.g., ave_AL1N_subtypeclockrate_gain_filter)
+!produced by the cutil3_ave program, to simplify file input.
+
+!This code should be executed from the "run3b_plot.pdf" program.
+   
+!**********************************************************************
+!Notes on this VICAR procedure:
+
+!1) Three DIFFERENT directory locations are required:
+!---The input (inp) directory is where the ave vicar files are located.          
+!---The link (lnk) directory is where links to the input directory's ave vicar
+!files are created and put. These links are deleted as each input file is
+!processed. If the directory is not created by the user, it is created as per
+!the user-provided name. There should also be a "ave_ZZZ_LASTFILE.img" file,
+!but if not found, one is created. (The LASTFILE is a dummy file; it contains
+!nothing; it's the filename that is important.)       
+!---The output (out) directory is where the L1N file is placed after conversion 
+!to VICAR format and renamed. If not created by the user, it is created as per
+!the user-provided name.
+!2) A typical set of input ave images looks like:
+!Example input filename: ave_AL1N_subtypeclockrate_gain_filter_inttime.hlf
+!Example:  ave_AL1N_PRC_c8_g1_f007_int00800.000.hlf
+!3) Plots are displayed on the screen, and a postscript (.ps) file is
+!produced for printing. To print on a Linux system: lp *.ps
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name     Format   Description
+parm  inpdir   string   def="/raid16/tll/cutil/vic/"   !Input Directory
+parm  lnkdir   string   def="/raid16/tll/cutil/link2/" !Link Directory
+parm  outdir   string   def="/raid16/tll/cutil/"       !Working Directory
+parm  search   string   def="ave_AL1N_PRC_c8_g1_f001"
+!Parameters used within this program
+local strname  string   !path/filename of input AL1N image.
+local strnam2  string   !filename of input AL1N image (path removed).
+local numf     integer  !LASTFILE found (1) or not found (0)
+local I        integer  !Index Counter
+local found    integer  !File found (1) or not found (1)
+local sec      integer  !Clock Seconds for temporary variable names
+local int      string   !Integration time (ms) in string format
+local intr     real     !Integration time (ms) in real format
+local subt     string   !Subtype (PRC, SHC) from label
+local lmean    real     !Image histogram mean
+local lsigma   real     !Image standard deviation
+!**********************************************************************
+
+body
+let            _onfail="goto error2"
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=sec
+write         "***Initial Time = &sec Seconds"
+
+!Validate and/or Make Directories
+file2tcl      &inpdir val=found
+if            (found=0) goto error1
+file2tcl      &lnkdir val=found    
+if            (found=0) ush mkdir -m 777 &lnkdir
+if            (found=0) write "***&lnkdir NOT FOUND, WAS CREATED***"
+file2tcl      &outdir val=found   
+if            (found=0) ush mkdir -m 777 &outdir
+if            (found=0) write "***&outdir NOT FOUND, WAS CREATED***"
+if            ("&inpdir" = "&lnkdir") goto error1
+if            ("&inpdir" = "&outdir") goto error1
+if            ("&outdir" = "&lnkdir") goto error1
+
+!Create links to the input data
+ush ln -s -f  &"inpdir"/&"search"* &lnkdir
+file2tcl      &"lnkdir"/ave_ZZZ_LASTFILE.img val=found
+if            (found=0) gen out=&"lnkdir"/ave_ZZZ_LASTFILE.img 
+
+!Create ibisfile for storing Image Quality
+ibis-gen      &"outdir"xx1tmp&sec nr=22 nc=3 
+!**********************************************************************
+
+!Begin Loop
+
+let            I = 0            !Loop Counter
+loop
+let            I = I + 1
+write         "I = &I"
+!Fail-safe Stop Loop
+if            (I = 23) break
+
+!Get the first/top filename in a directory containing the provided
+!'search' string, and return the complete path and filename
+!as the string variable 'strname'. Also remove the name's suffix.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "getFMFRS &"lnkdir"&"search"*") strvar=strname
+
+!Check if this filename is 'LASTFILE'. If it is, stop and break.
+!"numf" is actually the number of files found; Should be 0 or 1.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind LASTFILE &strname") intvar=numf
+!write         "numf = &numf"
+!If numf is 1, then IT IS the LASTFILE. Stop looping and exit.
+if            (numf = 1) break
+
+!Remove directory/path from name
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "removePath &strname") strvar=strnam2
+
+!Break when NOMATCH occurs
+write         "Input = &strnam2"
+if            (strnam2 = "NOMATCH") Break
+
+!Extract metadata, Calculate Mean/Sigma, and place in Ibis File.
+plab2tcl       &"inpdir"&"strnam2".hlf vtype=7 val=intr +
+               property="GEOTIFF" keyword=AMT_INTEGRATION_TIME
+write         "integration time = &intr"
+plab2tcl       &"inpdir"&"strnam2".hlf vtype=0 val=int +
+               property="GEOTIFF" keyword=AMT_INTEGRATION_TIME
+write         "integration time = &int"
+plab2tcl       &"inpdir"&"strnam2".hlf vtype=0 val=subt +
+               property="GEOTIFF" keyword=AMT_PRODUCT_SUBTYPE
+write         "Subtype = &subt"
+edibis         &"outdir"xx1tmp&sec command=("(&I,1) set &intr")
+hist           &"inpdir"&"strnam2".hlf mean=lmean sigma=lsigma 'nohi
+edibis         &"outdir"xx1tmp&sec command=("(&I,2) set &lmean")
+edibis         &"outdir"xx1tmp&sec command=("(&I,3) set &lsigma")
+label-delete   &"outdir"xx1tmp&sec
+let            intr = 0.0
+let            lmean = 0.0
+let            lsigma = 0.0
+!**********************************************************************
+
+!Remove the "ave" file from the lnk directory (so the next file
+!can be processed), and END the LOOP.
+ush            rm -f &"lnkdir"&"strnam2".hlf
+end-loop
+let            I = I - 1
+ibis-copy     &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec nc=3 nr=22
+mf3            &"outdir"xx2tmp&sec func="c1=c1/1000"
+!**********************************************************************
+
+!List File Summary of Image Quality Measures
+write          ""
+ibis-l        &"outdir"xx2tmp&sec  'nohead 'nocol +
+               cform="%12.5f %12.5f %12.5f" +
+               pream=("    &search  Summary",+
+              "======================================",+
+              "    INT Time       MEAN         SIGMA ")
+write         ""
+!**********************************************************************
+
+if            (subt = "SHC") goto next1
+!PRC GNUPLOT
+ibis2asc      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec cols=(1,2) penup=0
+ush cat       &"outdir"xx1tmp&sec
+
+!Create an ascii text file of gnuplot commands.
+tcl2file      &"outdir"xx2tmp&sec tcltext=(+
+              "set title '&search HISTOGRAM MEANS'" +
+              "set grid" +
+              "set time" +
+              "set xlabel 'Integration Time'" +
+              "set ylabel 'Histogram Means'" +
+              "set xrange [0:1]" +
+              "set yrange [0:4095]" +
+              "set size 1" +
+              "set terminal x11" +
+              "plot '&"outdir"xx1tmp&sec' using 1:2 with linespoints lt 1 lw 3" +
+              "#Create postscript output file" +
+              "set terminal postscript" +
+              "set output '&"search"_OUTPLOT.ps'"+
+              "plot '&"outdir"xx1tmp&sec' using 1:2 with linespoints lt 1 lw 3" +
+              "pause 3600")
+!Run gnuplot in the background (&)
+ush            gnuplot &"outdir"xx2tmp&sec &
+!ush            lp OUTPLOT.ps
+goto           next2
+!**********************************************************************
+next1>
+
+!SHC GNUPLOT
+ibis2asc      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec cols=(1,2) penup=0
+ush cat       &"outdir"xx1tmp&sec
+
+!Create an ascii text file of gnuplot commands.
+tcl2file      &"outdir"xx2tmp&sec tcltext=(+   
+              "set title '&search HISTOGRAM MEANS'" +
+              "set grid" +
+              "set time" +
+              "set xlabel 'Integration Time'" +
+              "set ylabel 'Histogram Means'" + 
+              "set xrange [0:14]" +
+              "set yrange [0:4095]" +
+              "set size 1" +
+              "set terminal x11" +
+              "plot '&"outdir"xx1tmp&sec' using 1:2 with linespoints lt 1 lw 3" +
+              "#Create postscript output file" +
+              "set terminal postscript" +
+              "set output '&"search"_OUTPLOT.ps'"+
+              "plot '&"outdir"xx1tmp&sec' using 1:2 with linespoints lt 1 lw 3" +
+              "pause 3600")
+!Run gnuplot in the background (&)
+ush            gnuplot &"outdir"xx2tmp&sec &
+!ush            lp OUTPLOT.ps
+!**********************************************************************
+next2>
+
+!Delete Temporary Files and Closing Messages
+file2tcl      &"outdir"xx1tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx1tmp&sec
+file2tcl      &"outdir"xx2tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx2tmp&sec
+goto          theend1
+
+error1>
+!Missing or Duplicate Directory Specification
+write        " "
+write        "*** ERROR: Missing or Duplicate Directory Specification ***"
+write        "*** Calibration Utility-3b Plot Stopped Due to Errors ***"
+file2tcl      &"outdir"xx1tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx1tmp&sec
+file2tcl      &"outdir"xx2tmp&sec val=found 
+if           (found = 1) ush rm -f &"outdir"xx2tmp&sec
+goto          theend2
+
+error2>
+!Data or Plotting Error
+write        " "
+write        "*** Miscellaneous Data or Plotting Problem  ***"
+write        "*** Calibration Utility-3b Plot Stopped Due to Errors ***"   
+file2tcl      &"outdir"xx1tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx1tmp&sec
+file2tcl      &"outdir"xx2tmp&sec val=found 
+if           (found = 1) ush rm -f &"outdir"xx2tmp&sec
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-3b Plot Processing Successfully Completed ***"
+write        " "
+theend2>
+end-proc

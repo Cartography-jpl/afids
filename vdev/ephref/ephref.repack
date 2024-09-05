@@ -1,0 +1,6 @@
+$ vpack ephref.com -mixed -
+	-s ephref.c -
+	-i ephref.imake -
+	-p ephref.pdf -
+	-t tstephref.pdf devephref.pdf
+$ Exit

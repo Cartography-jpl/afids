@@ -1,0 +1,60 @@
+procedure	! extract_same_aoi
+!		/raid21/quickbird/latest
+
+
+parm mosaic string	! mosaic to extract from
+parm source string	! landsat scene to match
+parm aoi string		! extracted window
+
+local found integer
+local val1 real
+local val2 real
+local val3 real
+local val4 real
+local sl integer
+local ss integer
+local nl integer
+local ns integer
+local num integer
+local inc integer
+local fname string
+local minlat real init=90.0
+local maxlat real init=-90.0
+local minlong real init=180.0
+local maxlong real init=-180.0
+local diff real
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+
+!	Get the nl / ns of the source image
+lab2tcl &source v1=nl v2=ns keyword=(nl,ns) 'system
+
+!	Get the lat/long extents of the source image
+ibis-gen pts nr=2 nc=4 datacol=(1,2) data=(1,1,&nl,&ns)
+pixmap (pts,&source) pixcol=(1,2) mapcol=(3,4) 'pixtomap 
+ibis2tcl pts val1 val2 val3 val4 vartype=(0,0,0,0) varcnt=4 +
+	ibisloc=(1,3,1,4,2,3,2,4) ! minlong maxlat maxlong minlat
+
+!	Get the pixel locations in the mosaic of these lat/long values
+pixmap (pts,&mosaic) pixcol=(1,2) mapcol=(3,4) 'maptopix
+ibis2tcl pts val1 val2 val3 val4 vartype=(0,0,0,0) varcnt=4 +
+	ibisloc=(1,1,1,2,2,1,2,2)
+let sl = $fix(&val1+.5)
+let ss = $fix(&val2+.5)
+let diff = (val3 - val1) + 1
+let nl = $fix(&diff+.5)
+let diff = (val4 - val2) + 1
+let ns = $fix(&diff+.5)
+
+!	Extract the aoi from the mosaic
+write "gtcopy &mosaic &aoi size=(&sl,&ss,&nl,&ns)"
+gtcopy &mosaic &aoi size=(&sl,&ss,&nl,&ns)
+
+write "=================================================================="
+write " "
+
+theend>
+end-proc

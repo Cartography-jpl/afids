@@ -1,0 +1,227 @@
+THIS IS A TEST OF MODULE ROTATE
+WE WILL ROTATE A GEN'D IMAGE BY -45 DEG SUCH THAT
+SHADING SHOULD APPEAR IN THE SAMPLE DIRECTION ONLY
+let $autousage="none"
+gen A NL=15 NS=15 IVAL=90
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list A
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp     1       3       5       7       9      11      13      15
+   Line
+      1      90  91  92  93  94  95  96  97  98  99 100 101 102 103 104
+      2      91  92  93  94  95  96  97  98  99 100 101 102 103 104 105
+      3      92  93  94  95  96  97  98  99 100 101 102 103 104 105 106
+      4      93  94  95  96  97  98  99 100 101 102 103 104 105 106 107
+      5      94  95  96  97  98  99 100 101 102 103 104 105 106 107 108
+      6      95  96  97  98  99 100 101 102 103 104 105 106 107 108 109
+      7      96  97  98  99 100 101 102 103 104 105 106 107 108 109 110
+      8      97  98  99 100 101 102 103 104 105 106 107 108 109 110 111
+      9      98  99 100 101 102 103 104 105 106 107 108 109 110 111 112
+     10      99 100 101 102 103 104 105 106 107 108 109 110 111 112 113
+     11     100 101 102 103 104 105 106 107 108 109 110 111 112 113 114
+     12     101 102 103 104 105 106 107 108 109 110 111 112 113 114 115
+     13     102 103 104 105 106 107 108 109 110 111 112 113 114 115 116
+     14     103 104 105 106 107 108 109 110 111 112 113 114 115 116 117
+     15     104 105 106 107 108 109 110 111 112 113 114 115 116 117 118
+rotate A B ANGLE=-45. IDSNAM=IDS.DAT IDSNS=1000
+ROTATE2	INP=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task ROTATE2
+REGION (   1,    1,   15,   15) OF THE INPUT PICTURE IS ROTATED   -45.0 DEGREES ABOUT   8.0 ,   8.0
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL        8.0,     8.0
+IF ($COUNT(OUT) = 0) RETURN
+LGEOM INP=A OUT=B SIZE=@SIZE NL=@NL NS=@NS        +
+  IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR
+Beginning VICAR task LGEOM
+END-PROC
+list B
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+ Task:LGEOM     User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp     1       3       5       7       9      11      13      15
+   Line
+      1       0   0   0   0   0 101 103 104 105 107   0   0   0   0   0
+      2       0   0   0   0 100 101 103 104 105 107 108   0   0   0   0
+      3       0   0   0  98 100 101 103 104 105 107 108 110   0   0   0
+      4       0   0  97  98 100 101 103 104 105 107 108 110 111   0   0
+      5       0  96  97  98 100 101 103 104 105 107 108 110 111 112   0
+      6      94  96  97  98 100 101 103 104 105 107 108 110 111 112 114
+      7      94  96  97  98 100 101 103 104 105 107 108 110 111 112 114
+      8      94  96  97  98 100 101 103 104 105 107 108 110 111 112 114
+      9      94  96  97  98 100 101 103 104 105 107 108 110 111 112 114
+     10      94  96  97  98 100 101 103 104 105 107 108 110 111 112 114
+     11       0  96  97  98 100 101 103 104 105 107 108 110 111 112   0
+     12       0   0  97  98 100 101 103 104 105 107 108 110 111   0   0
+     13       0   0   0  98 100 101 103 104 105 107 108 110   0   0   0
+     14       0   0   0   0 100 101 103 104 105 107 108   0   0   0   0
+     15       0   0   0   0   0 101 103 104 105 107   0   0   0   0   0
+WRITE "SHIFT THE OUTPUT CENTER OF ROTATION AND USE NOINTERP"
+SHIFT THE OUTPUT CENTER OF ROTATION AND USE NOINTERP
+rotate A B ANGLE=-45. 'NOIN CENTER=(8,4)
+ROTATE2	INP=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task ROTATE2
+REGION (   1,    1,   15,   15) OF THE INPUT PICTURE IS ROTATED   -45.0 DEGREES ABOUT   8.0 ,   8.0
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL        8.0,     4.0
+IF ($COUNT(OUT) = 0) RETURN
+LGEOM INP=A OUT=B SIZE=@SIZE NL=@NL NS=@NS        +
+  IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR
+Beginning VICAR task LGEOM
+END-PROC
+list B
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+ Task:LGEOM     User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp     1       3       5       7       9      11      13      15
+   Line
+      1     100 102 102 104 106 106 108   0   0   0   0   0   0   0   0
+      2     100 101 103 104 105 107 108 110   0   0   0   0   0   0   0
+      3      99 101 103 104 105 107 109 109 111   0   0   0   0   0   0
+      4     100 101 102 104 106 107 108 110 111 112   0   0   0   0   0
+      5     100 101 102 104 106 107 108 110 111 112 114   0   0   0   0
+      6      99 101 103 104 105 107 109 109 111 113 114 115   0   0   0
+      7     100 101 103 104 105 107 108 110 111 113 114 115 117   0   0
+      8     100 102 102 104 106 106 108 110 112 112 114 116 116 118   0
+      9     100 101 103 104 105 107 108 110 111 113 114 115 117   0   0
+     10      99 101 103 104 105 107 109 109 111 113 114 115   0   0   0
+     11     100 101 102 104 106 107 108 110 111 112 114   0   0   0   0
+     12     100 101 102 104 106 107 108 110 111 112   0   0   0   0   0
+     13      99 101 103 104 105 107 109 109 111   0   0   0   0   0   0
+     14     100 101 103 104 105 107 108 110   0   0   0   0   0   0   0
+     15     100 102 102 104 106 106 108   0   0   0   0   0   0   0   0
+WRITE "NOW LET'S ROTATE ABOUT (10,6) [104 DN]"
+NOW LET'S ROTATE ABOUT (10,6) [104 DN]
+WRITE " AND MAKE IT END UP AT (3,3)....AND IN HALFWORD"
+ AND MAKE IT END UP AT (3,3)....AND IN HALFWORD
+gen C NL=15 NS=16 IVAL=90 'HALF
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list C
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1        90    91    92    93    94    95    96    97    98    99   100   101   102   103   104
+      2        91    92    93    94    95    96    97    98    99   100   101   102   103   104   105
+      3        92    93    94    95    96    97    98    99   100   101   102   103   104   105   106
+      4        93    94    95    96    97    98    99   100   101   102   103   104   105   106   107
+      5        94    95    96    97    98    99   100   101   102   103   104   105   106   107   108
+      6        95    96    97    98    99   100   101   102   103   104   105   106   107   108   109
+      7        96    97    98    99   100   101   102   103   104   105   106   107   108   109   110
+      8        97    98    99   100   101   102   103   104   105   106   107   108   109   110   111
+      9        98    99   100   101   102   103   104   105   106   107   108   109   110   111   112
+     10        99   100   101   102   103   104   105   106   107   108   109   110   111   112   113
+     11       100   101   102   103   104   105   106   107   108   109   110   111   112   113   114
+     12       101   102   103   104   105   106   107   108   109   110   111   112   113   114   115
+     13       102   103   104   105   106   107   108   109   110   111   112   113   114   115   116
+     14       103   104   105   106   107   108   109   110   111   112   113   114   115   116   117
+     15       104   105   106   107   108   109   110   111   112   113   114   115   116   117   118
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp      16
+   Line
+      1       105
+      2       106
+      3       107
+      4       108
+      5       109
+      6       110
+      7       111
+      8       112
+      9       113
+     10       114
+     11       115
+     12       116
+     13       117
+     14       118
+     15       119
+rotate C D ANGLE=-45. LINE=10 SAMP=6 CENTER=(3,3)
+ROTATE2	INP=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task ROTATE2
+REGION (   1,    1,   15,   16) OF THE INPUT PICTURE IS ROTATED   -45.0 DEGREES ABOUT  10.0 ,   6.0
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL        3.0,     3.0
+IF ($COUNT(OUT) = 0) RETURN
+LGEOM INP=C OUT=D SIZE=@SIZE NL=@NL NS=@NS        +
+  IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR
+Beginning VICAR task LGEOM
+END-PROC
+list D
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+ Task:LGEOM     User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1       101   103   104   105   107   108   110   111   112   114   115   117     0     0     0
+      2       101   103   104   105   107   108   110   111   112   114   115     0     0     0     0
+      3       101   103   104   105   107   108   110   111   112   114     0     0     0     0     0
+      4       101   103   104   105   107   108   110   111   112     0     0     0     0     0     0
+      5       101   103   104   105   107   108   110   111     0     0     0     0     0     0     0
+      6       101   103   104   105   107   108   110     0     0     0     0     0     0     0     0
+      7       101   103   104   105   107   108     0     0     0     0     0     0     0     0     0
+      8       101   103   104   105   107     0     0     0     0     0     0     0     0     0     0
+      9         0   103   104   105     0     0     0     0     0     0     0     0     0     0     0
+     10         0     0   104     0     0     0     0     0     0     0     0     0     0     0     0
+rotate C D ANGLE=-85
+ROTATE2	INP=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task ROTATE2
+REGION (   1,    1,   15,   16) OF THE INPUT PICTURE IS ROTATED   -85.0 DEGREES ABOUT   8.0 ,   8.5
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL        8.0,     8.5
+IF ($COUNT(OUT) = 0) RETURN
+LGEOM INP=C OUT=D SIZE=@SIZE NL=@NL NS=@NS        +
+  IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR
+Beginning VICAR task LGEOM
+END-PROC
+list D
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+ Task:LGEOM     User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp       1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
+   Line
+      1         0     0   105   106   107   108   109   110   111   112   114   115   116   117     0
+      2         0   103   104   105   106   107   108   109   110   112   113   114   115   116   117
+      3         0   102   103   104   105   106   107   109   110   111   112   113   114   115   116
+      4         0   101   102   103   104   105   107   108   109   110   111   112   113   114   115
+      5         0   100   101   102   103   105   106   107   108   109   110   111   112   113   114
+      6         0    99   100   101   103   104   105   106   107   108   109   110   111   112   113
+      7         0    98    99   101   102   103   104   105   106   107   108   109   110   111   112
+      8         0    97    99   100   101   102   103   104   105   106   107   108   109   110   112
+      9         0    97    98    99   100   101   102   103   104   105   106   107   108   110   111
+     10         0    96    97    98    99   100   101   102   103   104   105   106   108   109   110
+     11         0    95    96    97    98    99   100   101   102   103   104   106   107   108   109
+     12         0    94    95    96    97    98    99   100   101   102   104   105   106   107   108
+     13         0    93    94    95    96    97    98    99   100   102   103   104   105   106   107
+     14        91    92    93    94    95    96    97    99   100   101   102   103   104   105   106
+     15         0     0    92    93    94    95    97    98    99   100   101   102   103   104     0
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+ Task:LGEOM     User:smyth     Date_Time:Thu Aug 22 15:01:07 2013
+     Samp      16
+   Line
+
+      2       118
+end-proc
+disable-log

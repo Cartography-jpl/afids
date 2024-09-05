@@ -1,0 +1,19 @@
+procedure
+body
+
+rowop2 crete_10_zfile xxxttt keycol=3 +
+   range=(-999998,-999998) 'select
+ibis-l xxxttt
+ibis-copy xxxttt crete_10_zfile
+
+rowop2 crete_10_cfile xxxttt keycol=3 +
+   range=(-999998,-999998) 'select
+ibis-l xxxttt
+ibis-copy xxxttt crete_10_cfile
+
+rowop2 crete_10_nfile xxxttt keycol=3 +
+   range=(-999998,-999998) 'select
+ibis-l xxxttt
+ibis-copy xxxttt crete_10_nfile
+
+end-proc

@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+
+local ls integer
+
+body
+
+let $echo="no"
+
+longsize ls
+
+write "sizeof(long): &ls bytes"
+
+end-proc

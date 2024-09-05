@@ -1,0 +1,259 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+
+local infile string
+local dted string
+local nlc int
+local nsc int
+local nhc int
+local nrcalc int
+
+local geoid96 type=(string,99)
+local wgs84elv type=(string,99)
+local afidsvdevdata type=(string,99)
+
+local rpctype type=(string,2)
+
+local w1 real
+local w2 real
+local w3 real
+local o1 real
+local o2 real
+local o3 real
+
+local peph1 real
+local peph2 real
+local peph3 real
+local peph4 real
+local peph5 real
+
+local patt1 real
+local patt2 real
+local patt3 real
+local patt4 real
+local patt5 real
+
+local ur0 real
+local ur1 real
+local ur2 real
+local vr0 real
+local vr1 real
+local vr2 real
+local hr0 real
+local hr1 real
+local hr2 real
+
+local avelv real
+
+body
+let $autousage = "none"
+let _onfail="return"
+let $echo="yes"
+
+let infile = "../test_data/iraq61.img.bak"
+let dted = "../test_data/qb1_iraq_dem.hlf"
+gtcopy &dted xxx1 size=(1,1,1,1)
+gtsize xxx1 xxxmapref pzoom=10.0
+label-list &infile
+let rpctype = "B"
+
+rpc2sc &infile xxx1 +
+  lonrange=(44.825,44.859) +
+  latrange=(35.861,35.882) +
+  hrange=(300.0,600.0) +
+  u0=512.0 +
+  v0=512.0 +
+  altitude=450000.0
+
+ibis-l xxx1
+ibis-l bugg
+
+! now inverse the process to test
+
+ibis2tcl xxx1 v1=patt1 v2=patt2 v3=patt3 v4=patt4 +
+              v5=peph1 v6=peph2 v7=peph3 v8=peph4 +
+   vartype=(-1,-1,-1,-1,-1,-1,-1,-1) +
+   ibisloc=(1,1,1,2,1,3,1,4,1,5,1,6,1,7,1,8)
+   
+scinterp peph=(&peph1,&peph2,&peph3,&peph4,0.0) +
+ patt=(&patt1,&patt2,&patt3,&patt4,0.0) +
+ seph=(&peph1,&peph2,&peph3,&peph4,0.0) +
+ satt=(&patt1,&patt2,&patt3,&patt4,0.0) +
+ imtime=0.0 +
+ w_t1=w1 w_t2=w2 w_t3=w3 +
+ w_omega1=o1 w_omega2=o2 w_omega3=o3
+ 
+write "w1,w2,w3 &w1,&w2,&w3"
+write "o1,o2,o3 &o1,&o2,&o3"
+
+! cube dimensions for base elevation
+
+let ur0 = 0.0
+let ur1 = 500.0
+let ur2 = 1000.0
+let vr0 = 0.0
+let vr1 = 333.333
+let vr2 = 1000.0
+let hr0 = 0.0
+let hr1 = 1.0
+let hr2 = 1.0
+
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+write "nrcalc &nrcalc"
+ibis-gen xxxcube nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,xxxcube) +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  hrange=(&hr0,&hr1,&hr2) +
+  w_t_c=(&w1,&w2,&w3) +
+  w_omega_c=(&o1,&o2,&o3)  +
+  fu=551025.0000   +
+  fv=644699.25  +
+  q=-0.01 +
+  u0=512.0 +
+  v0=512.0 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+!   q=-0.070865345075440 + 12/12/06
+!  u0=-162.5 +
+!  v0=1254.0 +
+!  q=-0.071682922041564 +
+ibis-l xxxcube nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" 'format
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+let wgs84elv = "&afidsvdevdata/etop02nobath.hlf"
+pixmap (xxxcube,&wgs84elv) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&wgs84elv,xxxcube) cols=(6,7,8) win=2
+!mf3 xxxcube f="@avg(c8)"
+ibis2tcl xxxcube v1=avelv vartype=(-1) ibisloc=(1,8)
+write "avelv &avelv"
+ibis-l xxxcube nr=10 cols=(6,7,8) csiz=(12,12,12) +
+   cfor="%14.7f %14.7f %14.7f"
+
+! cube dimensions
+
+let ur0 = 0.0
+let ur1 = 52.63157894
+let ur2 = 1000.0
+let vr0 = 0.0
+let vr1 = 66.66666666
+let vr2 = 1000.0
+let hr0 = 0.0+avelv
+let hr1 = 50.0
+let hr2 = 200.0+avelv
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+write "nlc nsc nhc &nlc &nsc &nhc "
+write "nrcalc &nrcalc"
+ibis-gen xxxcube nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,xxxcube) +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  hrange=(&hr0,&hr1,&hr2) +
+  w_t_c=(&w1,&w2,&w3) +
+  w_omega_c=(&o1,&o2,&o3)  +
+  fu=551025.0000 +
+  fv=644699.25 +
+  q=-0.01 +
+  u0=512.0 +
+  v0=512.0 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+ibis-l xxxcube nr=5 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" 'format
+write "correcting wgs84 to geoid96; higher is -"
+
+let geoid96 = "&afidsvdevdata/EGM96_20_x100.HLF"
+pixmap (xxxcube,&geoid96) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&geoid96,xxxcube) cols=(6,7,8) win=2
+mf3 xxxcube f="c3=c3-c8*0.01"
+
+ibis-l xxxcube nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+ibis-l xxxcube nr=10 cols=(6,7,8) csiz=(12,12,12) +
+   cfor="%14.7f %14.7f %14.7f"
+
+! need the rpc scale in an ibis file, first fifteen records of col 6
+
+ibis-copy xxxcube xxxscale
+rpcsccub xxxscale dcols=(1,2,3,4,5) scol=6 rpctype=&rpctype
+
+ibis-l xxxscale nr=15 cols=(1,2,3,4,6) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+rpcscale (xxxscale,xxxcube) rpccol=6 cols=(1,2,3,4,5) 'scale
+ibis-l xxxcube nr=20 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" sr=1
+
+! generate ibis formatted rpc file, with scales col 2, guess vector col 1
+
+ibis-copy xxxscale xxrpc nr=80
+mf3 xxrpc f= +
+ "c2=c6$c1=(@index>20.5)*(@index<21.5)*1.0+(@index>60.5)*(@index<61.5)*1.0"
+ibis-l xxrpc
+
+! solving sequence
+
+ibislsqf (xxxcube,xxrpc) func=rpcn20 datacol=(1,2,3) depcol=4 +
+    rescol=7 solcol=(1,3) rpctype=&rpctype rpcls=L
+
+ibisnlsq (xxxcube,xxrpc) func=rpcd19 datacol=(1,2,3) depcol=4 +
+    rescol=8 solcol=(3,4) rpctype=&rpctype rpcls=L
+
+ibislsqf (xxxcube,xxrpc) func=rpcn20 datacol=(1,2,3) depcol=5 +
+    rescol=7 solcol=(4,5) rpctype=&rpctype rpcls=S
+
+ibisnlsq (xxxcube,xxrpc) func=rpcd19 datacol=(1,2,3) depcol=5 +
+    rescol=8 solcol=(5,6) rpctype=&rpctype rpcls=S
+
+!  put rpc into ntf image
+
+ibis-l xxrpc nr=15 cols=(1,2,4,5,6) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+ibis2rpc xxrpc xxrpc2 ccol=6 scol=2
+label-list xxrpc2
+
+copy &infile xxximg
+gtgenup (xxximg,xxrpc2)
+ibis-l xxxscale nr=15 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+sort xxxscale sortcol=(4,5)  indexcol=6
+mf3 xxxscale f="c3=-c3"
+aggrg2 xxxscale xxxscale2 AGCOL=6 AREA=3 BYAR=(1,2,4,5)
+ibis-l xxxscale2 nr=15 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+rpccctr xxxscale2 xxximg &vr0 &vr2 &ur0 &ur2
+
+gtlabfix xxximg GEOTIFF
+label-list xxximg
+
+rpcwarp (&infile, +
+   &dted) +
+   xxximg3 +
+   ref=xxxmapref +
+   'coverinp nah=100 nav=100
+   
+rpcwarp (xxximg, +
+   &dted) +
+   xxximg2 +
+   ref=xxximg3 +
+   'coverref nah=100 nav=100
+   
+xvd (xxximg3,xxximg2,xxximg2)
+
+end-proc

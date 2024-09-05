@@ -1,0 +1,6 @@
+$ vpack fifor.com -mixed -
+	-s fifor.c -
+	-i fifor.imake -
+	-p fifor.pdf -
+	-t tstfifor.pdf
+$ Exit

@@ -1,0 +1,44 @@
+procedure	! coregsecond
+
+parm panin  string def="10MAY21184840-P1BS-052366905020_01_P001.NTF"
+parm imgout string def="10MAY21184840-P1BS-052366905020_01_P001_o.img"
+parm refimg string def="10MAY16183214-P1BS-052366900030_01_P001_o.img"
+parm elevdata string def="/mnt/vd1/wlb/svn_1069/install/data/vdev/port_gaston_elv.hlf"
+parm basedata string def="/mnt/vd1/wlb/svn_1069/install/data/vdev/port_gaston_doq.img"
+parm senstype string valid=("i","q","n","g","w")
+
+local found integer
+
+body
+
+write "coregsecond version Wed Jul 13 2011"
+
+write "panin &panin"
+write "imgout &imgout"
+write "refimg &refimg"
+write "elevdata &elevdata"
+write "basedata &basedata"
+write "senstype &senstype"
+
+file2tcl "&imgout" val=found
+if (found=1) goto theend
+
+if (senstype="g" or senstype="w")
+  let senstype = "q"
+end-if
+
+! coregister pan
+
+ikqbcall2 key=tst +
+     rawimg="&panin" +
+     rawmeta="" rawhdr="" +
+     outimg="&imgout" +
+     nah=0 nav=0 rtype=secondary +
+     dted="&elevdata" +
+     base="&basedata" rawtype=nitf senstype=&senstype +
+     mpix=0.0 mpixf=0.0 maptype=pc xvdonly=n +
+     refimg="&refimg" +
+     rastype=area
+
+theend>
+end-proc

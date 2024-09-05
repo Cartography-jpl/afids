@@ -1,0 +1,62 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+
+refgbl $echo
+refgbl $autousage
+! Oct 02, 2019 - RJB
+! TEST SCRIPT FOR GENEPLOT
+!
+! Vicar Programs:
+!       translog ibis-list geneplot
+! 
+! External Programs"
+!   gnuplot 5.0 or greater
+!   ImageMagick 
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+
+body
+let _onfail="goto rm"
+let $echo="yes"
+
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+!MIPL
+    ush ln -s /project/test_work/testdata/mipl/vgr vgr
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data/plotbkrd pl
+    else
+!        ush ln -s $AFIDS_TESTDATA/plotbkrd pl
+        ush ln -s /media/sf_raid3/test_data/plotbkrd pl
+    end-if
+end-if
+
+! temporary run
+geneplot inp=(pl/bkrdplot_1_4_16295.ibis, pl/bkrdplot_2_17_14255.ibis, pl/bkrdplot_3_20_6832.ibis, pl/bkrdplot_4_2_2161.ibis, pl/bkrdplot_5_6_432.ibis) out=x.gif
+
+ush $GNUPLOT tmp_geneplot.pg
+ush display x1.gif
+
+rm>
+let $echo="no"
+ush rm pl
+END-PROC

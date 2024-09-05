@@ -1,0 +1,6 @@
+$ vpack mf4.com -
+	-s mf4.c -
+	-i mf4.imake -
+	-p mf4.pdf -
+	-t tstmf4.pdf new_session.log
+$ Exit

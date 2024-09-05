@@ -1,0 +1,15 @@
+procedure
+
+local outval string
+body
+
+tclpad inval="27" val=outval len=7
+write "outval . &outval ."
+
+tclpad inval="27" val=outval len=7 char=x
+write "outval . &outval ."
+
+tclpad inval="27" val=outval len=7 char=x 'right
+write "outval . &outval ."
+
+end-proc

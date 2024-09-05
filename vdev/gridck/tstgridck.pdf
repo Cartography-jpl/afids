@@ -1,0 +1,46 @@
+procedure
+
+parm version string def="ibis-1"
+parm org string def="column"
+
+
+local nah int
+local nav int
+
+! Dec 04, 2017 - RJB
+! TEST SCRIPT FOR GRIDCK
+! tests ibis files
+!
+! Vicar Programs:
+!       gengrid2 ibis-list 
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+refgbl $echo
+body
+
+let _onfail="stop"
+let $echo="yes"
+
+! test all parameters
+
+gengrid2 out=xxx1 ncol=8 nah=3 nav=4 +
+     l1=2.2 s1=5.5 +
+     l2=2.6 s2=7.5 +
+     l3=2.4 s3=5.7 +
+     l4=2.8 s4=7.7
+     
+ibis-list xxx1 cols=(1,2)
+
+gridck xxx1 cols=(1,2) valnah=nah valnav=nav
+
+let $echo="no"
+write "nah,nav = &nah &nav"
+
+end-proc

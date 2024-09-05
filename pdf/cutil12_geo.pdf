@@ -1,0 +1,833 @@
+!cutil12_geo.pdf version 1.1 for general NITF Imagery
+!L1 AMT Image Processng Subsystem, Build 4.13
+!Latest Change Date: 24MAR2009 T. L. Logan
+!***********************************************************************
+
+!Calibration Utility Program 12 - Geolocation Window Accuracy
+
+!This VICAR procedure compares an NITF image that has been (1) RPC-rectified 
+!(but not orthorectified) with the same image after (2) orthorectification,
+!and with the (3) OrthoBase. The Accuracy (rms/cep) is measured between
+!the three images for a grid of window locations in the common area between 
+!the images. Thus for a given image, this procedure !calculates the
+!geolocation improvement between "raw" RPCs and ortho-rectification
+!(and also with the definitive OrthoBase). A summary statistics text file
+!is output.
+
+!This procedure will also produce OUTPLOT.ps and OUTPLOT.img files which
+!depict the location of the window grids relative to the image data.
+!Use them to choose (up to five) windows for generating Window output files
+!and associated accuracy 'T' vector plots. To get the Window files (in
+!vicar half format), rerun this procedure with redow=y and specify the
+!window numbers (e.g., wind1=8; wind2=17; etc.).
+
+!This code should be executed from the "run12_geo.pdf" program.
+!***********************************************************************
+
+!Notes on this VICAR procedure:
+
+!This procedure requires a high resolution and current OrthoBase like
+!1m CIB, DOQ, or other prepared OrthoBase, and conversion of the input
+!raw image into orthorectification using cutil11_ortho. You'll also need
+!a high resolution DEM. The "prefix" is a short name chosen to describe
+!your activiy---often an image date---and is used for output products.
+!Temporary files start with xxtmp, xxq, and xxx*.
+!***********************************************************************
+
+!VICAR Parameer Definitions
+procedure              !Required VICAR Command
+!Input parameters passed to this program
+!Type Name    Format   Description
+parm   inp1   string   def="orthobase_cib.img"
+parm   inp2   string   def="ortho_image.img"
+parm   inp3   string   def="raw_image.NTF"
+parm   out1   string   def="rpc_rectified_image.img"
+parm   elev   string   def="high_res_dem_wgs84.hlf"
+parm   prefx  string   def="2005NOV23"
+parm   wsize  integer  def=2048  !Window size (square)
+parm   ffts   integer  def=128  !fftsize for accuracy assessment
+parm   magn   real     def=1.0  !magnify fftsize
+parm   redow  string   valid=("n","y") def="n"  !Redo Windows only
+parm   gplot  string   valid=("n","y") def="n"  !gnuplot of windows
+parm   redop  string   valid=("n","y") def="n"  !Redo gplot only
+parm   wind1  integer  def=0
+parm   wind2  integer  def=0
+parm   wind3  integer  def=0
+parm   wind4  integer  def=0
+parm   wind5  integer  def=0
+!Parameters used within this program
+!Imcorner Dimensions
+local  ull    real     !upper left line
+local  uls    real     !upper left sample
+local  url    real     !upper right line
+local  urs    real     !upper right sample
+local  lll    real     !lower left line
+local  lls    real     !lower left sample
+local  lrl    real     !lower right line
+local  lrs    real     !lower right sample
+!Lat/Long Common Dimensions
+local  slat   real     !common area starting latitude
+local  slon   real     !common area starting longitutde
+local  elat   real     !common area ending latitude
+local  elon   real     !common area ending longitude
+!Common Line/Sample Dimensions
+local  cslr   real     !common area starting line (real format)
+local  cssr   real     !common area starting sample (real)
+local  celr   real     !common area ending line (real)
+local  cesr   real     !common area ending sample (real0
+local  csl    integer  !common area starting line
+local  css    integer  !common area starting sample
+local  cnl    integer  !common area number of lines
+local  cns    integer  !common area number of samples
+local  cel    integer  !common area ending line
+local  ces    integer  !common area ending sample
+local  ccl    integer  !common center line
+local  ccs    integer  !common center sample
+local  isize  integer  !Larger of the common line or sample dimension
+local  isizr  real     !"real" format version of isize
+local  zoom   real     !Zoom factor for reducing image for grid display
+local  iscale real     !Scale of orthoimage
+local  bscale real     !Scale of orthobase
+local  iscali integer  !Scale of orthoimage
+local  bscali integer  !Scale of orthobase
+local  mpix   real     !OrthoImage Meters per Pixel
+local  mpix2  real     !Ortho Meters per Pixel at Image Latitude
+local  mpx    real     !Length of the Parallel at Image Latitude
+!Other Variables
+local  rms    real     !Accuracy rms (root-mean-square)
+local  cep    real     !Accuracy cep (circular error of probability 90%)
+local  sec    integer  !Clock Seconds for temporary variable names
+local  gsloff real     !RawRectify line offset for gnuplot
+local  gssoff real     !RawRectify samp offset for gnuplot
+local  loff   real     !Accuracy: line (vertical) offset
+local  soff   real     !Accuracy: sample (horizontal) offset
+local  gridl  integer  !Total window grid size (lines)
+local  grids  integer  !Total window grid size (samples
+local  nl     integer  !Variable input number of lines
+local  ns     integer  !Variable input number of samples
+local  nr     integer  !Number of rows in an interface file
+local  format keyword  !dummy variable
+local  lend   integer  !Number of wsize windows in the image line direction
+local  send   integer  !Number of wsize windows in the image samp direction
+local  vnr    integer  !Ibis file column length: send + 1
+local  hnr    integer  !Ibis file column length: lend + 1
+local  I      integer  !Index number of the grid window
+local  L      integer  !Start of incremental grid window row/line
+local  S      integer  !Start of incremental grid window samp
+local  LC     integer  !Index number of the grid row (vertical)
+local  SC     integer  !Index number of the grid  (horizontal)
+local  fonts  integer  !Line/Sample of first window grid center (for Font)
+local  fontr  real     !"real" format of "fonts"
+local  finc   integer  !number to write into window/tile
+local  fonts2 integer  !fonts * 2
+local  sfont  integer  !Sample font position increment
+local  lfont  integer  !Line font position increment
+local  tmp1   integer  !Temporary font variable
+local  acc1   real     !Accuracy tcl variable
+local  acc2   real     !Accuracy tcl variable
+local  acc3   real     !Accuracy tcl variable
+local  acc4   real     !Accuracy tcl variable
+local  var    real     !Temporary variable
+!**********************************************************************
+
+body
+
+let            _onfail="goto error1"
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=sec 
+write         "***Initial Time = &sec Seconds"
+
+if         (redow = "y") goto jump1
+if         (redop = "y") goto jump4
+!**********************************************************************
+
+!Raw RPC-Rectified Image Module
+!Rectify the raw image using only the original RPCs and
+!Elevation only---No CIB, DOQ, or other Orthobase.
+!First, Calculate a "modeltransformationtag" for the gtlabel
+!using a 3-point projection (does't change RPCs; rpc2gtlb).
+vextract2   inp=&inp3 out=xx2tmp&sec 
+rpc2gtlb   (xx2tmp&"sec",&elev) rastype="area"
+!Now rectify/warp the raw image to "RawRectify"
+rpcwarp     inp=(xx2tmp&"sec",&elev) ref=&inp2 out=&out1 'coverref
+write      "rpc2gtlb and  rpcwarp COMPLETE"
+
+!Raw RPC-Rectified Image
+!Get the four IMAGE corners of the RawRectify image for conversion to lat/lon
+form        &out1 format nl ns
+!Put line/samples into interface file
+ibis-gen    xx1tmp&"sec" nc=8 nr=4 !deffmt=DOUB
+edibis      xx1tmp&"sec" comm=("(1,1) set 1")
+edibis      xx1tmp&"sec" comm=("(1,2) set 1")
+edibis      xx1tmp&"sec" comm=("(2,1) set 1")
+edibis      xx1tmp&"sec" comm=("(2,2) set &ns")
+edibis      xx1tmp&"sec" comm=("(3,1) set &nl")
+edibis      xx1tmp&"sec" comm=("(3,2) set 1")
+edibis      xx1tmp&"sec" comm=("(4,1) set &nl")
+edibis      xx1tmp&"sec" comm=("(4,2) set &ns")
+edibis      xx1tmp&"sec" comm=("(1,5) set 1.0") 
+edibis      xx1tmp&"sec" comm=("(2,5) set 2.0")
+edibis      xx1tmp&"sec" comm=("(3,5) set 3.0")
+edibis      xx1tmp&"sec" comm=("(4,5) set 4.0")
+!Convert the RawImage's sl,ss,el,es to Lat/Long 
+pixmap     (xx1tmp&"sec",&out1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+ibis-list   xx1tmp&"sec" cols=(1,2,3,4,5) csiz=(16,16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+!**********************************************************************
+
+!OrthoBase Image Module
+!Get the four IMAGE corners of the Orthobase for conversion to lat/lon
+form        &inp1 format nl ns
+!Put line/samples into interface file
+ibis-gen    xx2tmp&"sec" nc=8 nr=4 !deffmt=DOUB
+edibis      xx2tmp&"sec" comm=("(1,1) set 1")
+edibis      xx2tmp&"sec" comm=("(1,2) set 1")
+edibis      xx2tmp&"sec" comm=("(2,1) set 1")
+edibis      xx2tmp&"sec" comm=("(2,2) set &ns")
+edibis      xx2tmp&"sec" comm=("(3,1) set &nl")
+edibis      xx2tmp&"sec" comm=("(3,2) set 1")
+edibis      xx2tmp&"sec" comm=("(4,1) set &nl")
+edibis      xx2tmp&"sec" comm=("(4,2) set &ns")
+edibis      xx2tmp&"sec" comm=("(1,5) set 1.0")
+edibis      xx2tmp&"sec" comm=("(2,5) set 2.0")
+edibis      xx2tmp&"sec" comm=("(3,5) set 3.0")
+edibis      xx2tmp&"sec" comm=("(4,5) set 4.0")
+!Convert the Orthobase's sl,ss,el,es to Lat/Long
+pixmap     (xx2tmp&"sec",&inp1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+ibis-list   xx2tmp&"sec" cols=(1,2,3,4,5) csiz=(16,16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+!**********************************************************************
+
+!OrthoImage Module
+!Get the four IMAGE corners of the Orthoimage for conversion to lat/lon
+form        &inp2 format nl ns
+!Put line/samples into interface file
+!Convert the OrthoImage's sl,ss,el,es to Lat/Long
+ibis-gen    xx3tmp&"sec" nc=8 nr=4 !deffmt=DOUB
+edibis      xx3tmp&"sec" comm=("(1,1) set 1")
+edibis      xx3tmp&"sec" comm=("(1,2) set 1")
+edibis      xx3tmp&"sec" comm=("(2,1) set 1")
+edibis      xx3tmp&"sec" comm=("(2,2) set &ns")
+edibis      xx3tmp&"sec" comm=("(3,1) set &nl")
+edibis      xx3tmp&"sec" comm=("(3,2) set 1")
+edibis      xx3tmp&"sec" comm=("(4,1) set &nl")
+edibis      xx3tmp&"sec" comm=("(4,2) set &ns")
+edibis      xx3tmp&"sec" comm=("(1,5) set 1.0")   
+edibis      xx3tmp&"sec" comm=("(2,5) set 2.0")
+edibis      xx3tmp&"sec" comm=("(3,5) set 3.0")   
+edibis      xx3tmp&"sec" comm=("(4,5) set 4.0")
+!Convert the OrthoImage's sl,ss,el,es to Lat/Long
+pixmap     (xx3tmp&"sec",&inp2) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+ibis-list   xx3tmp&"sec" cols=(1,2,3,4,5) csiz=(16,16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+!**********************************************************************
+
+!Combine the interface files
+icat       (xx1tmp&"sec",xx2tmp&"sec") xx4tmp&"sec"
+icat       (xx4tmp&"sec",xx3tmp&"sec") xx5tmp&"sec"
+ibis-list   xx5tmp&"sec" cols=(1,2,3,4,5) csiz=(16,16,16,16,16) +
+            cfor="%16.1f%16.1f%16.6f%16.6f%16.1f"
+
+!Calculate the inside Starting lat (line) common to all three images
+rowop2      xx5tmp&"sec" xx4tmp&"sec" keycol=5 range=(2.9,4.1) 'delete
+ibis-l      xx4tmp&"sec"
+mf3         xx4tmp&"sec" func="@vmin(c4)"
+ibis-list   xx4tmp&"sec" cols=(1,2,3,4) csiz=(16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx4tmp&"sec" v1=slat ibisloc=(1,4) vartype=0
+
+!Calculate the inside Starting long (samp) common to all three images
+rowop2      xx5tmp&"sec" xx4tmp&"sec" keycol=(5,5) range=(1.9,2.1,3.9,5.1) 'delete
+ibis-l      xx4tmp&"sec"
+mf3         xx4tmp&"sec" func="@vmax(c3)"
+ibis-list   xx4tmp&"sec" cols=(1,2,3,4) csiz=(16,16,16,16) + 
+            cfor="%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx4tmp&"sec" v1=slon ibisloc=(1,3) vartype=0
+
+!Calculate the inside Ending lat (line) common to all three images
+rowop2      xx5tmp&"sec" xx4tmp&"sec" keycol=5 range=(0.9,2.1) 'delete
+ibis-l      xx4tmp&"sec"
+mf3         xx4tmp&"sec" func="@vmax(c4)"
+ibis-list   xx4tmp&"sec" cols=(1,2,3,4) csiz=(16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx4tmp&"sec" v1=elat ibisloc=(1,4) vartype=0
+
+!Calculate the inside Ending long (samp) common to all three images
+rowop2      xx5tmp&"sec" xx4tmp&"sec" keycol=(5,5) range=(0.9,1.1,2.9,3.1) 'delete
+ibis-l      xx4tmp&"sec"
+mf3         xx4tmp&"sec" func="@vmin(c3)"
+ibis-list   xx4tmp&"sec" cols=(1,2,3,4) csiz=(16,16,16,16) + 
+            cfor="%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx4tmp&"sec" v1=elon ibisloc=(1,3) vartype=0
+
+write " "
+write "The common image area between all 3 scenes is:"
+write "slat= &slat slon= &slon elat= &elat elon= &elon"
+write " "
+!**********************************************************************
+
+!Extract common image area between all 3 scenes
+!Put lat/longs into an interface file
+edibis      xx1tmp&"sec" comm=("(1,4) set &slat")
+edibis      xx1tmp&"sec" comm=("(1,3) set &slon")
+edibis      xx1tmp&"sec" comm=("(2,4) set &elat")
+edibis      xx1tmp&"sec" comm=("(2,3) set &elon")
+
+!RawRectify Image Subarea
+!Convert lat/long to lines/samples
+pixmap     (xx1tmp&"sec",&out1) mapcols=(3,4) pixcols=(1,2) 'maptopix
+ibis-list   xx1tmp&"sec" cols=(1,2,3,4) nr=2 csiz=(16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx1tmp&"sec" v1=cslr ibisloc=(1,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cssr ibisloc=(1,2) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=celr ibisloc=(2,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cesr ibisloc=(2,2) vartype=0
+let         csl = $fix(cslr+0.5)
+let         css = $fix(cssr+0.5)
+let         cel = $fix(celr+0.5)
+let         ces = $fix(cesr+0.5)
+let         cnl = (cel - csl)
+let         cns = (ces - css)
+write       " "
+write  "csl= &csl css= &css cel= &cel ces= &ces cnl= &cnl cns= &cns"
+write       " "
+gtcopy      &out1 &"out1"_sub size=(&csl,&css,&cnl,&cns)
+
+!Get the four DATA corners of the RawRectify subarea for gnuplot
+imcorner   inp=&"out1"_sub thresh=60 line1=ull samp1=uls +
+           line2=url samp2=urs line3=lll samp3=lls +
+           line4=lrl samp4=lrs
+!Put RawRectify line/samples into file for gnuplot
+ibis-gen    xx8tmp&sec  nc=2 nr=18 !deffmt=DOUB
+edibis      xx8tmp&sec comm=("(1,1) set &ull")
+edibis      xx8tmp&sec comm=("(1,2) set &uls")
+edibis      xx8tmp&sec comm=("(2,1) set &url")
+edibis      xx8tmp&sec comm=("(2,2) set &urs")   
+edibis      xx8tmp&sec comm=("(3,1) set &lrl")
+edibis      xx8tmp&sec comm=("(3,2) set &lrs")
+edibis      xx8tmp&sec comm=("(4,1) set &lll")
+edibis      xx8tmp&sec comm=("(4,2) set &lls")
+edibis      xx8tmp&sec comm=("(5,1) set &ull")
+edibis      xx8tmp&sec comm=("(5,2) set &uls")
+edibis      xx8tmp&sec comm=("(6,1) set 0.0")   
+edibis      xx8tmp&sec comm=("(6,2) set 0.0")
+!**********************************************************************
+
+!OrthoImage Subarea
+!Convert lat/long to lines/samples
+pixmap     (xx1tmp&"sec",&inp2) mapcols=(3,4) pixcols=(1,2) 'maptopix
+ibis-list   xx1tmp&"sec" cols=(1,2,3,4) nr=2 csiz=(16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx1tmp&"sec" v1=cslr ibisloc=(1,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cssr ibisloc=(1,2) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=celr ibisloc=(2,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cesr ibisloc=(2,2) vartype=0
+let         csl = $fix(cslr+0.5)
+let         css = $fix(cssr+0.5)
+let         cel = $fix(celr+0.5)
+let         ces = $fix(cesr+0.5)
+let         cnl = (cel - csl)
+let         cns = (ces - css)
+write       " "
+write  "csl= &csl css= &css cel= &cel ces= &ces cnl= &cnl cns= &cns"
+write       " "
+gtcopy      &inp2 &"inp2"_sub size=(&csl,&css,&cnl,&cns)
+
+!Get the four DATA corners of the OrthoImage subarea for gnuplot              
+imcorner   inp=&"inp2"_sub thresh=60 line1=ull samp1=uls +     
+           line2=url samp2=urs line3=lll samp3=lls +        
+           line4=lrl samp4=lrs    
+!Put OrthoImage line/samples into file for gnuplot
+edibis      xx8tmp&sec comm=("(7,1) set &ull")
+edibis      xx8tmp&sec comm=("(7,2) set &uls")
+edibis      xx8tmp&sec comm=("(8,1) set &url")
+edibis      xx8tmp&sec comm=("(8,2) set &urs")
+edibis      xx8tmp&sec comm=("(9,1) set &lrl")
+edibis      xx8tmp&sec comm=("(9,2) set &lrs")
+edibis      xx8tmp&sec comm=("(10,1) set &lll")
+edibis      xx8tmp&sec comm=("(10,2) set &lls")
+edibis      xx8tmp&sec comm=("(11,1) set &ull")
+edibis      xx8tmp&sec comm=("(11,2) set &uls")
+edibis      xx8tmp&sec comm=("(12,1) set 0.0") 
+edibis      xx8tmp&sec comm=("(12,2) set 0.0") 
+!**********************************************************************
+
+!OrthoBase Subarea
+!Check whether orthobase is the same scale as the imagebase.
+!If not, change it to match
+plab2tcl    &inp1 val=bscale keyword=MODELPIXELSCALETAG vtype=7
+plab2tcl    &inp2 val=iscale keyword=MODELPIXELSCALETAG vtype=7
+write      "iscale = &iscale  bscale = &bscale"
+let         iscali = $fix(iscale*100000000)
+let         bscali = $fix(bscale*100000000)
+write      "iscali = &iscali  bscali = &bscali"
+if         (iscali = bscali)
+   ush cp  &inp1 xx6tmp&sec
+else
+   gtsize (&inp1,&inp2) xx6tmp&sec 'coverinp
+end-if
+
+!Convert lat/long to lines/samples
+pixmap     (xx1tmp&"sec",xx6tmp&sec) mapcols=(3,4) pixcols=(1,2) 'maptopix
+ibis-list   xx1tmp&"sec" cols=(1,2,3,4) nr=2 csiz=(16,16,16,16) +
+            cfor="%16.6f%16.6f%16.6f%16.6f%16.6f"
+ibis2tcl    xx1tmp&"sec" v1=cslr ibisloc=(1,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cssr ibisloc=(1,2) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=celr ibisloc=(2,1) vartype=0
+ibis2tcl    xx1tmp&"sec" v1=cesr ibisloc=(2,2) vartype=0
+let         csl = $fix(cslr+0.5)
+let         css = $fix(cssr+0.5)
+let         cel = $fix(celr+0.5)
+let         ces = $fix(cesr+0.5)   
+let         cnl = (cel - csl)
+let         cns = (ces - css)
+write       " "
+write  "csl= &csl css= &css cel= &cel ces= &ces cnl= &cnl cns= &cns"
+write       " "
+gtcopy      xx6tmp&sec xx7tmp&sec size=(&csl,&css,&cnl,&cns)
+cform       xx7tmp&sec &"inp1"_sub oform=half
+
+!Get the four DATA corners of the OrthoBase subarea for gnuplot
+imcorner   inp=&"inp1"_sub thresh=60 line1=ull samp1=uls +      
+           line2=url samp2=urs line3=lll samp3=lls +            
+           line4=lrl samp4=lrs    
+!Put OrthoBase line/samples into file for gnuplot
+edibis      xx8tmp&sec comm=("(13,1) set &ull")
+edibis      xx8tmp&sec comm=("(13,2) set &uls")
+edibis      xx8tmp&sec comm=("(14,1) set &url")
+edibis      xx8tmp&sec comm=("(14,2) set &urs")
+edibis      xx8tmp&sec comm=("(15,1) set &lrl")
+edibis      xx8tmp&sec comm=("(15,2) set &lrs")
+edibis      xx8tmp&sec comm=("(16,1) set &lll")
+edibis      xx8tmp&sec comm=("(16,2) set &lls")
+edibis      xx8tmp&sec comm=("(17,1) set &ull")
+edibis      xx8tmp&sec comm=("(17,2) set &uls")
+edibis      xx8tmp&sec comm=("(18,1) set 0.0") 
+edibis      xx8tmp&sec comm=("(18,2) set 0.0") 
+ush         cp xx8tmp&sec cutil12_save.int
+!***********************************************************************
+!***********************************************************************
+
+jump1>
+if         (redow = "y") form &"inp1"_sub nl=cnl ns=cns
+if         (redow = "y") 
+  plab2tcl &inp2 val=iscale keyword=MODELPIXELSCALETAG vtype=7
+else
+end-if
+
+!Divide overlay area into grid for accuracy analysis
+let         I = 1
+let         L = (wsize - 1) * (-1)
+let         S = (wsize - 1) * (-1)
+let         lend = $fix(cnl/wsize)
+let         send = $fix(cns/wsize)
+let         nr = lend * send
+let         LC = 0
+let         SC = 0
+write " "   
+write "I=&I L=&L S=&S lend=&lend send=&send nr=&nr cnl=&cnl cns=&cns "
+write " "
+
+!Create ibisfile for storing Window Accuracy statistics
+ibis-gen    xx9tmp&sec nr=&nr nc=9 !deffmt=DOUB
+
+!Loop through all grid windows and extract statistics
+loop
+
+let         I = I - 1
+let         LC = LC + 1
+if         (LC > lend) break
+let         L = L + wsize
+let         SC = 0
+let         S = (wsize - 1) * (-1)
+
+   loop
+
+   let       I = I + 1
+   let       SC = SC + 1
+   if       (SC > send) break
+   let       S = S + wsize
+   write    "I = &I  L = &L  S = &S  LC = &LC  SC = &SC"
+   let       rms = 0.0
+   let       cep = 0.0
+   let       loff = 0.0
+   let       soff = 0.0
+
+   !Extract windows - Use orthoimage window subarea and the original full size
+   !orthobase and rpc_proc images for ACCCK. Use the orthobase window and rpc_pro
+   !window subareas for image displays (NOT ACCCK).
+   gtcopy    &"inp1"_sub xx10tmp&"sec" size=(&L,&S,&wsize,&wsize) !orthoBase
+   gtcopy    &"out1"_sub xx11tmp&"sec" size=(&L,&S,&wsize,&wsize) !rpc_proj
+   gtcopy    &"inp2"_sub xx12tmp&"sec" size=(&L,&S,&wsize,&wsize) !rpc_orthoimage
+   if       (I = wind1 or I = wind2 or I = wind3 or I = wind4 or I = wind5)
+     fitg    xx10tmp&sec Window&"I"_&"prefx"_obase.img percent=2.0 'gauss 'byte
+     fitg    xx11tmp&sec Window&"I"_&"prefx"_rpcpj.img percent=2.0 'gauss 'byte
+     fitg    xx12tmp&sec Window&"I"_&"prefx"_oimag.img percent=2.0 'gauss 'byte
+   end-if       
+   !Calculate Accuracy between orthoimage (window) and rawrectify (original), and
+   !orthoImage (window) and orthoBase (original).
+   let       _onfail="goto skip1"
+   if       (I = wind1 or I = wind2 or I = wind3 or I = wind4 or I = wind5)
+     accck   xx12tmp&sec &out1 fftsize=&ffts magnif=&magn remap="n" labeladd="y" +
+             rmscrit=90.0 outfile=xx8tmp&sec
+     cform   xx12tmp&sec xx6tmp&sec iran=(0,4095) oran=(0,255) 'byte
+     size    xx6tmp&sec xx7tmp&sec size=(1,1,1200,1200)
+     f2     (xx7tmp&sec,xx8tmp&sec) xx2tmp&sec func="(in2.eq.255)*in1"
+     hist   xx2tmp&sec
+     stretch xx2tmp&sec ProjPlot_&"prefx"_Wind&"I".img +
+             table=(0,0.,1,130.,40,255.,255,255.)
+   else
+     accck   xx12tmp&sec &out1 fftsize=&ffts magnif=&magn remap="n" labeladd="y" +  
+             rmscrit=90.0
+   end-if
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=rms +
+             keyword=ACCURACY vtype=7
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=cep +
+             keyword=ACCURACY_CEP vtype=7
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=loff +   
+             keyword=CENTERING_ACCURACY vtype=7 sequence=1
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=soff +   
+             keyword=CENTERING_ACCURACY vtype=7 sequence=2
+   skip1>
+   let       _onfail="goto error1"
+   edibis    xx9tmp&sec comm=("(&I,1) set &I")
+   edibis    xx9tmp&sec comm=("(&I,2) set &rms")
+   edibis    xx9tmp&sec comm=("(&I,3) set &cep")
+   edibis    xx9tmp&sec comm=("(&I,4) set &loff")
+   edibis    xx9tmp&sec comm=("(&I,5) set &soff")
+   !ibis-l    xx9tmp&sec nr=&I
+   let       _onfail="goto skip2"
+   if       (I = wind1 or I = wind2 or I = wind3 or I = wind4 or I = wind5)
+     accck   xx12tmp&sec &inp1 fftsize=&ffts magnif=&magn remap="n" labeladd="y" +  
+             rmscrit=90.0 outfile=xx8tmp&sec
+     cform   xx12tmp&sec xx6tmp&sec iran=(0,4095) oran=(0,255) 'byte
+     size    xx6tmp&sec xx7tmp&sec size=(1,1,1200,1200)
+     f2     (xx7tmp&sec,xx8tmp&sec) xx2tmp&sec func="(in2.eq.255)*in1"
+     hist   xx2tmp&sec
+     stretch xx2tmp&sec BasePlot_&"prefx"_Wind&"I".img +
+             table=(0,0.,1,130.,40,255.,255,255.)
+   else
+     accck   xx12tmp&sec &inp1 fftsize=&ffts magnif=&magn remap="n" labeladd="y" +  
+             rmscrit=90.0
+   end-if
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=rms +
+             keyword=ACCURACY vtype=7
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=cep +
+             keyword=ACCURACY_CEP vtype=7
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=loff +
+             keyword=CENTERING_ACCURACY vtype=7 sequence=1
+   plab2tcl  xx12tmp&"sec" property=COREG_META_DATA val=soff +
+             keyword=CENTERING_ACCURACY vtype=7 sequence=2
+   edibis    xx9tmp&sec comm=("(&I,6) set &rms")
+   edibis    xx9tmp&sec comm=("(&I,7) set &cep")
+   edibis    xx9tmp&sec comm=("(&I,8) set &loff")
+   edibis    xx9tmp&sec comm=("(&I,9) set &soff")
+   skip2>
+   let       _onfail="goto error1"
+   ibis-l    xx9tmp&sec nr=&I
+   end-loop
+end-loop
+write       "Accuracy Calculation Loop COMPLETE"
+!**********************************************************************
+
+!Convert accuracy pixels to meters
+!Calculate meters/pixel at the Equator (should match the ikqbcall2 mpix input parm)
+!(iscale is the number of degrees per pixel. 1/iscale is the number of pixels/degree)
+let         mpix = (111321/(1/iscale))  !111321=Length of the Parallel at the Equator (meters)
+!Calculate meters/pixel at the Latitude of the image (used for cep and rms)
+let         var = (slat+elat)/2                    !Center Latitude
+edibis      xx1tmp&sec comm=("(1,5) set &var")
+ibis-l      xx1tmp&sec nc=4 nr=5 cols=(1,2,3,4,5)
+!Calculate the Length of the Parallel at the Image's Center Latitude
+!COS assumes a spherical Earth. Use of the Robinson Tables would be better.
+mf3         xx1tmp&sec func="c5=@cos(2*3.14159*c5/360)*111321"
+ibis-l      xx1tmp&sec nc=4 nr=5 cols=(1,2,3,4,5)
+ibis2tcl    xx1tmp&"sec" v1=mpx ibisloc=(1,5) vartype=0  
+let         mpix2 = (&mpx/(1/iscale)) !Pixel Scale at Image Center Latitude
+write       " "
+write       "At Latitude= &var Degrees"
+write       "The Length of the Parallel is: &mpx meters"
+write       "And the Pixel size is: &mpix2 meters"
+write       " "
+mf3         xx9tmp&sec func="(c2=c2*&"mpix2"$c3=c3*&"mpix2")"
+mf3         xx9tmp&sec func="(c6=c6*&"mpix2"$c7=c7*&"mpix2")"
+!Prepare Summary File
+!All Window/Tiles
+ibis-l      xx9tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8,9) +
+            cform="%4.0f %8.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("                 GEOLOCATION WINDOW ACCURACIES FOR &prefx ",+
+            "                 Pixel=&mpix meters; WindowSize=&wsize pixels", +
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", +
+            "WINDOW  RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "=================================================================================")
+
+ibis-l      xx9tmp&sec out=xx1tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8,9) +
+            cform="%4.0f %8.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("                 GEOLOCATION WINDOW ACCURACIES FOR &prefx ",+
+            "                 Pixel=&mpix meters; WindowSize=&wsize pixels", +
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", + 
+            "WINDOW  RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "=================================================================================")
+
+!Image Summary RMS Average and Sigma
+rowop2      xx9tmp&sec xx11tmp&sec keyc=(2,6) range=(0,0,0,0) 'delete
+ibis-copy   xx11tmp&sec xx10tmp&sec nc=25
+mf3         xx10tmp&sec func="c10=c2$c11=c3$c12=c4$c13=c5"
+mf3         xx10tmp&sec func="c14=c6$c15=c7$c16=c8$c17=c9"
+mf3         xx10tmp&sec func="c18=c2$c19=c3$c20=c4$c21=c5"
+mf3         xx10tmp&sec func="c22=c6$c23=c7$c24=c8$c25=c9"
+!orthoimage vs rpc-only: rms average & sigma
+rowop2      xx10tmp&sec xx11tmp&sec keyc=(2,3) range=(-1.0,0.01,-1.0,0.01) 'delete
+mf3         xx11tmp&sec func="c10=c10*c10$@average(c10)$c10=@sqrt(c10)"
+mf3         xx11tmp&sec func="c11=c11*c11$@average(c11)$c11=@sqrt(c11)"
+mf3         xx11tmp&sec func="c12=c12*c12$@average(c12)$c12=@sqrt(c12)"
+mf3         xx11tmp&sec func="c13=c13*c13$@average(c13)$c13=@sqrt(c13)"
+mf3         xx11tmp&sec func="@sigma(c18)$@sigma(c19)$@sigma(c20)$@sigma(c21)"
+
+!average to tcl variables
+ibis2tcl    xx11tmp&sec v1=acc1 v2=acc2 v3=acc3 v4=acc4 vartype=(0,0,0,0) +
+            ibisloc=(1,10,1,11,1,12,1,13) 
+ibis-gen    xx12tmp&sec nc=8 nr=1
+edibis      xx12tmp&sec comm=("(1,1) set &acc1")
+edibis      xx12tmp&sec comm=("(1,2) set &acc2")
+edibis      xx12tmp&sec comm=("(1,3) set &acc3")
+edibis      xx12tmp&sec comm=("(1,4) set &acc4") 
+!sigma to tcl vcariables
+ibis2tcl    xx11tmp&sec v1=acc1 v2=acc2 v3=acc3 v4=acc4 vartype=(0,0,0,0) +        
+            ibisloc=(1,18,1,19,1,20,1,21)                     
+ibis-gen    xx13tmp&sec nc=8 nr=1
+edibis      xx13tmp&sec comm=("(1,1) set &acc1")
+edibis      xx13tmp&sec comm=("(1,2) set &acc2")
+edibis      xx13tmp&sec comm=("(1,3) set &acc3")
+edibis      xx13tmp&sec comm=("(1,4) set &acc4")
+
+!orthoimage vs orthobase: rms average & sigma
+rowop2      xx10tmp&sec xx11tmp&sec keyc=(6,7) range=(-1.0,0.01,-1.0,0.01) 'delete
+mf3         xx11tmp&sec func="c14=c14*c14$@average(c14)$c14=@sqrt(c14)"
+mf3         xx11tmp&sec func="c15=c15*c15$@average(c15)$c15=@sqrt(c15)"
+mf3         xx11tmp&sec func="c16=c16*c16$@average(c16)$c16=@sqrt(c16)"
+mf3         xx11tmp&sec func="c17=c17*c17$@average(c17)$c17=@sqrt(c17)"
+mf3         xx11tmp&sec func="@sigma(c22)$@sigma(c23)$@sigma(c24)$@sigma(c25)"
+
+!average to tcl variables
+ibis2tcl    xx11tmp&sec v1=acc1 v2=acc2 v3=acc3 v4=acc4 vartype=(0,0,0,0) +
+            ibisloc=(1,14,1,15,1,16,1,17)
+edibis      xx12tmp&sec comm=("(1,5) set &acc1")
+edibis      xx12tmp&sec comm=("(1,6) set &acc2")
+edibis      xx12tmp&sec comm=("(1,7) set &acc3")
+edibis      xx12tmp&sec comm=("(1,8) set &acc4")
+ibis-l      xx12tmp&sec
+!sigma to tcl variables
+ibis2tcl    xx11tmp&sec v1=acc1 v2=acc2 v3=acc3 v4=acc4 vartype=(0,0,0,0) +
+            ibisloc=(1,22,1,23,1,24,1,25)
+edibis      xx13tmp&sec comm=("(1,5) set &acc1")
+edibis      xx13tmp&sec comm=("(1,6) set &acc2")
+edibis      xx13tmp&sec comm=("(1,7) set &acc3")
+edibis      xx13tmp&sec comm=("(1,8) set &acc4")
+ibis-l      xx13tmp&sec
+
+ibis-l      xx12tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8) nr=1 +
+            cform="%12.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("          SUMMARY: RMS COLUMN AVERAGES FOR &prefx ",+
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", +
+            "        RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "       ==========================================================================", +
+            " ")
+ibis-l      xx12tmp&sec out=xx2tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8) nr=1 +
+            cform="%12.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("  ",  +
+            "                 SUMMARY: RMS COLUMN AVERAGES FOR &prefx ",+
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", + 
+            "        RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "       ==========================================================================", +
+            " ")
+
+ibis-l      xx13tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8) nr=1 +
+            cform="%12.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("          SUMMARY: COLUMN SIGMAS FOR &prefx ",+  
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", +
+            "        RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "       ==========================================================================", +
+            " ")
+ibis-l      xx13tmp&sec out=xx3tmp&sec 'nohead 'nocol cols=(1,2,3,4,5,6,7,8) nr=1 +   
+            cform="%12.2f %8.2f %8.2f %8.2f %11.2f %8.2f %8.2f %8.2f" +
+            pream=("  ", +
+            "                 SUMMARY: COLUMN SIGMAS FOR &prefx ",+  
+            "           ORTHO-IMAGE VS. RPC-PROJECTED    ||     ORTHO-IMAGE VS. ORTHO-BASE", + 
+            "        RMSm     CEPm    LOFFpxl  SOFFpxl   ||  RMSm     CEPm    LOFFpxl  SOFFpxl", +
+            "       ==========================================================================", +
+            " ")
+
+ush         cat xx1tmp&sec xx2tmp&sec xx3tmp&sec > GeoAcc_&"prefx".txt
+!if         (redow = "y") goto jump2
+jump4>
+!**********************************************************************
+
+!Produce OutPlot Image
+!Repeat some parameters for "redo gplot" option
+form        &"inp2"_sub nl=cnl ns=cns
+let         lend = $fix(cnl/wsize)
+let         send = $fix(cns/wsize)
+let         isize = cnl
+if         (cnl < cns) let isize = cns
+let         isize = isize + 1000
+write      "isize = &isize"
+!Generate window grid lines
+let         gridl = wsize * lend
+let         grids = wsize * send
+let         hnr = lend + 1
+let         vnr = send + 1
+!Vertical grid lines
+ibis-gen    xx5tmp&sec nc=7 nr=&vnr !deffmt=DOUB
+mf3         xx5tmp&sec func="c1=1$c2=((@index-1)*&wsize)$c3=&gridl"
+mf3         xx5tmp&sec func="c4=c2$c5=0$c6=0"
+ibis-l      xx5tmp&sec cols=(1,2,3,4,5,6)
+trnscol2    xx5tmp&sec xx6tmp&sec from=(1,3,5) datacol=7 ncol=7
+trnscol2    xx5tmp&sec xx7tmp&sec from=(2,4,6) datacol=7 ncol=7
+icat       (xx6tmp&sec,xx7tmp&sec) xx5tmp&sec 'h
+ibis-l      xx5tmp&sec
+ibis-copy   xx5tmp&sec xx4tmp&sec incols=(7,14) outcol=(1,2) nc=2
+edibis      xx4tmp&sec comm=("(1,2) set 1.0")
+edibis      xx4tmp&sec comm=("(2,2) set 1.0")
+!ibis-l      xx4tmp&sec
+!Horizontal grid lines
+ibis-gen    xx5tmp&sec nc=7 nr=&hnr !deffmt=DOUB
+mf3         xx5tmp&sec func="c1=((@index-1)*&wsize)$c2=1$c3=c1"  
+mf3         xx5tmp&sec func="c4=&"grids"$c5=0$c6=0"
+ibis-l      xx5tmp&sec cols=(1,2,3,4,5,6)
+trnscol2    xx5tmp&sec xx6tmp&sec from=(1,3,5) datacol=7 ncol=7
+trnscol2    xx5tmp&sec xx7tmp&sec from=(2,4,6) datacol=7 ncol=7
+icat       (xx6tmp&sec,xx7tmp&sec) xx5tmp&sec 'h
+ibis-l      xx5tmp&sec
+ibis-copy   xx5tmp&sec xx6tmp&sec incols=(7,14) outcol=(1,2) nc=2
+edibis      xx6tmp&sec comm=("(1,2) set 1.0")
+edibis      xx6tmp&sec comm=("(2,2) set 1.0")
+!ibis-l      xx6tmp&sec
+
+icat       (xx4tmp&sec,xx6tmp&sec) xx5tmp&sec 'v
+ibis-l      xx5tmp&sec
+
+!Make reduced image with grid windows
+!Fit largest image dimension to 1000
+let         isizr = $float(&isize)
+let         zoom = 1000.0/(isizr-1000.0)
+write      "zoom = &zoom"
+let         fontr = $float(wsize)*zoom
+let         fonts = $fix(fontr)/2
+write      "font location = &fonts "
+size        &"inp2"_sub xx2tmp&sec zoom=&zoom
+fitg        xx2tmp&sec xx1tmp&sec percent=2.0 'gauss 'byte
+form        xx1tmp&sec nl=cnl ns=cns
+label-l     xx1tmp&sec
+
+ush cp      xx5tmp&sec xx2tmp&sec
+mf3         xx2tmp&sec func="c1=c1*&"zoom"$c2=c2*&zoom"
+ibis-l      xx2tmp&sec
+ibis-copy   xx2tmp&sec xx3tmp&sec sr=1 sc=1 nc=2 'row 'ibis-1  !int->gr1
+polyscrb    xx3tmp&sec xx2tmp&sec size=(1,1,&cnl,&cns) 
+stretch     xx2tmp&sec xx3tmp&sec table=(0,1.,1,1.,254,1.,255,255.)
+f2         (xx1tmp&sec,xx3tmp&sec) xx4tmp&sec func="in1*in2"
+label-l     xx4tmp&sec
+
+ush cp      cutil12_save.int xx2tmp&sec
+mf3         xx2tmp&sec func="c1=c1*&"zoom"$c2=c2*&zoom"
+ibis-l      xx2tmp&sec
+ibis-copy   xx2tmp&sec xx3tmp&sec sr=1 sc=1 nc=2 'row 'ibis-1  !int->gr1
+polyscrb    xx3tmp&sec xx2tmp&sec size=(1,1,&cnl,&cns)
+stretch     xx2tmp&sec xx3tmp&sec table=(0,1.,1,1.,254,1.,255,255.)
+f2         (xx4tmp&sec,xx3tmp&sec) xx2tmp&sec func="in1*in2"
+
+!Put Window/Tile numbers into OUTPLOT image
+let         finc = 1
+let         lfont = &fonts
+let         sfont = &fonts
+let         fonts2 = (&fonts * 2)
+loop
+  write    "&finc &lfont &sfont "
+  font      xx2tmp&sec &"prefx"_OUTPLOT.img position=(&lfont,&sfont) +
+            text="&finc" tall=20 thick=2 dn=255 font=1
+  copy      &"prefx"_OUTPLOT.img xx2tmp&sec
+  let       sfont = sfont + fonts2
+  let       finc = finc + 1
+  let       tmp1 = (send*fonts2)
+  if       (sfont > tmp1)
+    let     sfont = fonts
+    let     lfont = (lfont + fonts2)
+  else
+  end-if
+  let       tmp1 = (lend*fonts2) 
+  if       (lfont > tmp1) goto done_font
+end-loop
+done_font>
+vtiff3-fr   &"prefx"_OUTPLOT.img &"prefx"_OUTPLOT.tiff
+
+if         (gplot = "n") goto jump2
+!Make gnuplot
+ibis2asc    xx5tmp&sec xx4tmp&sec cols=(1,2) penupval=0.0
+!ush         cat xx4tmp&sec
+ibis-l      cutil12_save.int
+ibis2asc    cutil12_save.int xx6tmp&sec cols=(1,2) penupval=0.0
+!ush         cat xx6tmp&sec
+tcl2file    xx7tmp&sec tcltext=(+
+           "set title 'WINDOW PLOT FOR RPC-PROJECTED &prefx (Rotate 90d cw: <--UP)'" +
+           "set grid" +
+           "set time" +
+           "set xlabel 'Line'" +
+           "set ylabel 'Sample'" +
+           "set xrange [1:&isize]" +
+           "set yrange [1:&isize]" +
+           "set size 1.0" +
+           "set terminal x11" +
+           "set multiplot" +
+           "plot 'xx4tmp&sec' using 1:2 with linespoints lt 1 lw 1" +
+           "plot 'xx6tmp&sec' using 1:2 with linespoints lt 3 lw 1" +
+           "set nomultiplot" +
+           "#Create postscript output file" +
+           "set terminal postscript" +
+           "set output '&"prefx"_OUTPLOT.ps'"+
+           "set multiplot" +
+           "plot 'xx4tmp&sec' using 1:2 with linespoints lt 1 lw 1" +
+           "plot 'xx6tmp&sec' using 1:2 with linespoints lt 3 lw 1" +
+           "set nomultiplot" +
+           "pause 3600")
+!Run gnuplot in the background (&)
+ush        gnuplot  xx7tmp&sec &
+tush       sleep 5
+!**********************************************************************
+
+jump2>
+!Proc Ending Maintenance Module
+!Print Closing Messages and Delete Temporary Files
+write         " "
+write         "*** Image Geolocation Processing (cutil12_geo) Successfully Completed ***"
+write         " "
+
+tush          rm xx*&sec
+tush          rm xx*
+goto          theend
+
+error1>
+write         " "
+write         "*** ERROR: Image Geolocation FAILED ***"
+write         " "
+write         "*** See Accompanying Error Messages ***"
+goto          jump3
+
+error2>
+write         " "
+write         "*** ERROR: Image Geolocation FAILED ***"       
+write         " "
+write         "*** Window size is too small - Aborting ***"
+
+jump3>
+!Delete temporary files and directories
+tush          rm xx*&sec
+tush          rm xx*
+let           $SFI=-1
+
+theend>
+!                ***Job Finished***
+!**********************************************************************
+end-proc

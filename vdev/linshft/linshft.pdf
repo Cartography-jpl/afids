@@ -1,0 +1,80 @@
+process help=*
+parm inp type=(string,99) count=2
+parm itie type=real count=4
+parm otie type=real count=4
+parm xdelta type=real count=2 default=(0.0,0.0)
+parm xnum type=int count=1 valid=(1:100) default=1
+parm shiftmax type=real default=10.0
+parm shift type=name
+parm xshift type=name
+parm corval type=name
+parm subpix type=keyword count=0:1 valid=SUBPIX default=--
+parm apodize type=keyword count=0:1 valid=APODIZE default=--
+parm zthresh type=int count=2 default=(-1,99999)
+END-PROC
+.TITLE
+linshft - find a shift along a line in two images
+.HELP
+PURPOSE:
+
+Calculates the shift to be applied to file 2 along the correlation line
+to obtain agreement with file1.
+
+Subpixel not implemented yet.
+
+EXECUTION:
+
+alz please do
+
+ TIMING: 
+
+less than one second
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          24 Aug 2004
+ COGNIZANT PROGRAMMER:   A. Zobrist          24 Aug 2004
+ 
+ REVISION HISTORY
+  04-08-24    AZ   Initial version
+  04-09-02    AZ   cross dimension matching
+Wed Jan  2 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  
+.LEVEL1
+.var inp
+two images for matching
+.var itie
+two points in image 1;
+defines a line for match
+.var otie
+two approximately matching
+points in image 2
+.var xdelta
+two increments for cross
+track correlation (help 2)
+.var xnum
+number of cross track pts
+.var shiftmax
+limit search for shift;
++ or - this value
+.var shift
+return variable for linear
+shift along line (real)
+.var xshift
+return variable for linear
+shift across line (real)
+.var corval
+return variable for
+correlation value (real)
+.var subpix
+perform subpixel shift
+.var apodize
+taper end values to avoid
+end effect
+.var zthresh
+inclusive range for pixel
+values to correlate
+.level 2
+.var xdelta
+The first value is added to the line coordinate of the otie and otie
+and the second value is added to the sample coordinate.  The user should
+make sure that the xdelta is in a perpendicular direction.
+.END

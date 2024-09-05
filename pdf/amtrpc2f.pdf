@@ -1,0 +1,391 @@
+procedure
+!NOTES:
+!need to truncate rpc shift/scales to prescribed digits    5?
+!did walt fix vic2nitf routine
+!Need to modify L1 software to supply SV_t_C and SV_q_C vectors
+!via text file. For now, they are defaulted zeroes.
+
+parm infile     type=string  !input file (dir&file)
+parm id         type=string  !time stamp for variable names
+parm rpctype    type=(string,2) valid=("A","B") default="A"
+parm crnronly   type=(string,2) valid=("y","n") default="n"
+parm rdir       type=string default=""
+parm pephw      type=real
+parm pephx      type=real
+parm pephy      type=real
+parm pephz      type=real
+parm pepht      type=real
+parm pattw      type=real
+parm pattx      type=real
+parm patty      type=real
+parm pattz      type=real
+parm pattt      type=real
+parm sephw      type=real
+parm sephx      type=real
+parm sephy      type=real
+parm sephz      type=real
+parm sepht      type=real
+parm sattw      type=real
+parm sattx      type=real
+parm satty      type=real
+parm sattz      type=real
+parm sattt      type=real 
+parm itim       type=real
+parm SV_t_C     type=real count=3 default=(0.0,0.0,0.0)
+parm SV_q_C     type=real count=4 default=(1.0,0.0,0.0,0.0)
+parm Delta_UT1  type=real default=0.1128609
+local nlc       int
+local nsc       int
+local nhc       int
+local nrcalc    int
+local found     int
+local w1        real
+local w2        real
+local w3        real
+local o0        real
+local o1        real
+local o2        real
+local o3        real
+local ur0       real
+local ur1       real
+local ur2       real
+local vr0       real
+local vr1       real
+local vr2       real
+local hr0       real
+local hr1       real
+local hr2       real
+
+local avelv     real
+local geoid96   type=(string,99)
+local wgs84elv  type=(string,99)
+local afidsvdevdata type=(string,99)
+local tval      real
+local dc1       real
+local ra        real
+local dec       real
+
+!refgbl $echo
+body
+!let $echo="yes"
+
+goto skip1
+!write out input parameters
+write   "pephw= &pephw"
+write   "pephx= &pephx"
+write   "pephy= &pephy"
+write   "pephz= &pephz"
+write   "pepht= &pepht"
+write   "pattw= &pattw"
+write   "pattx= &pattx"
+write   "patty= &patty"
+write   "pattz= &pattz"
+write   "pattt= &pattt"
+write   "sephw= &septw"
+write   "sephx= &sephx"
+write   "sephy= &sephy"
+write   "sephz= &sephz"
+write   "sepht= &sepht"
+write   "sattw= &sattw"
+write   "sattx= &sattx"
+write   "satty= &satty"
+write   "sattz= &sattz"
+write   "sattt= &sattt" 
+write   "itim= &itim"
+write   "rpctype= &rpctype"
+skip1>
+write   "crnronly= &crnronly"
+
+! bad input case
+
+let dc1 = pattw*pattw+pattx*pattx+patty*patty+pattz*pattz
+!dc1 should be ~1.0 if the quaternions are good
+if (dc1<0.9 or dc1>1.11)
+   if (crnronly="n")
+      ibis-gen &"rdir"xx1tmp&"id" nc=8 nr=80 deffmt=DOUB
+      ibis2rpc &"rdir"xx1tmp&"id" &"rdir"xx2tmp&"id" ccol=6 scol=2
+      gtgenup (&infile,&"rdir"xx2tmp&"id")
+   else
+   end-if
+   !label-list &infile
+   rpccctrz &infile
+   gtlabfix &infile GEOTIFF
+   !label-list &infile
+   !vicar2ntf &infile xxxntf
+   goto theend
+end-if    
+
+scinterp peph=(&pephw,&pephx,&pephy,&pephz,&pepht) +
+         patt=(&pattw,&pattx,&patty,&pattz,&pattt) +
+         seph=(&sephw,&sephx,&sephy,&sephz,&sepht) +
+         satt=(&sattw,&sattx,&satty,&sattz,&sattt) +
+         imtime=&itim +
+         w_t_sv1=w1 w_t_sv2=w2 w_t_sv3=w3 +
+         w_q_sv0=o0 w_q_sv1=o1 w_q_sv2=o2 w_q_sv3=o3
+
+!write  "w1,w2,w3 &w1,&w2,&w3"
+!write  "o0,o1,o2,o3 &o0,&o1,&o2,&o3"
+
+! cube dimensions for base elevation (1 point case)
+
+let ur0 = 0.0
+let ur1 = 1824.0
+let ur2 = 3648.0
+let vr0 = 0.0
+let vr1 = 1125.0
+let vr2 = 3375.01
+let hr0 = 0.0
+let hr1 = 1.0
+let hr2 = 1.0
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+!write "nrcalc &nrcalc"
+ibis-gen &"rdir"xx4tmp&"id" nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,&"rdir"xx4tmp&"id") +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  ACS_time=&itim +
+  hrange=(&hr0,&hr1,&hr2) +
+  TOD_t_SV=(&w1,&w2,&w3) +
+  TOD_q_SV=(&o0,&o1,&o2,&o3)  +
+  SV_t_C=&SV_t_C + 
+  SV_q_C=&SV_q_C + 
+  Delta_UT1=&Delta_UT1 +
+  fu=2500000 +
+  fv=2500000 +
+  q=0.0 +
+  u0=1824.5 +
+  v0=1688 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+! off Earth case
+
+ibis2tcl &"rdir"xx4tmp&"id" v1=tval vartype=-1 ibisloc=(1,1)
+if (tval<-9990.0)
+
+   ! array for J2000
+
+   let ur0 = 0.0
+   let ur1 = 1824.0
+   let ur2 = 3648.0
+   let vr0 = 0.0   
+   let vr1 = 1687.5
+   let vr2 = 3375.01
+
+   let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+   let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+   let nrcalc = nlc*nsc
+   write "J2000 nrcalc &nrcalc"
+   ibis-gen &"rdir"xx4tmp&"id" nc=8 nr=&nrcalc deffmt=DOUB
+
+   astroref (&infile,&"rdir"xx4tmp&"id") +
+     urange=(&ur0,&ur1,&ur2) + 
+     vrange=(&vr0,&vr1,&vr2) + 
+     ACS_time=&itim +
+     TOD_t_SV=(&w1,&w2,&w3) +
+     TOD_q_SV=(&o0,&o1,&o2,&o3) +
+     SV_t_C=&SV_t_C + 
+     SV_q_C=&SV_q_C + 
+     fu=2500000 +    
+     fv=2500000 +    
+     q=0.0 +
+     u0=1824.5 +
+     v0=1688 +
+     kappa=(0.0,0.0,0.0,0.0,0.0)
+
+   ibis-l &"rdir"xx4tmp&"id" 'format
+
+   ! label-delete &infile &infile property="GEOTIFF"
+
+   !Delete the RPC, NITF, and GT labels, as they are
+   !earth-only. Keep all AMT labels  --- TLL
+   gtdel  &infile prefix="RPC"
+   gtdel  &infile prefix="NITF"
+   gtdel  &infile prefix="MODEL"
+   gtdel  &infile prefix="GTMODEL"
+   gtdel  &infile prefix="GEOG"
+   gtdel  &infile prefix="GTRAS"
+
+   ibis2tcl &"rdir"xx4tmp&"id" v1=ra v2=dec vartype=(-1,-1) +
+      ibisloc=(5,3,5,4)
+   gtgenup inp=&infile geotiff="AMT_UP_CENTER_RA=&ra" +
+     property="GEOTIFF"
+   gtgenup inp=&infile geotiff="AMT_UP_CENTER_DEC=&dec" +
+     property="GEOTIFF"
+
+   ibis2tcl &"rdir"xx4tmp&"id" v1=ra v2=dec vartype=(-1,-1) +
+      ibisloc=(1,3,1,4)
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER1_RA=&ra" +
+     property="GEOTIFF"
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER1_DEC=&dec" +
+     property="GEOTIFF"
+   
+   ibis2tcl &"rdir"xx4tmp&"id" v1=ra v2=dec vartype=(-1,-1) +
+      ibisloc=(3,3,3,4)
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER2_RA=&ra" +
+     property="GEOTIFF"
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER2_DEC=&dec" +
+     property="GEOTIFF"
+
+  ibis2tcl &"rdir"xx4tmp&"id" v1=ra v2=dec vartype=(-1,-1) +
+      ibisloc=(9,3,9,4)
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER3_RA=&ra" +
+     property="GEOTIFF"
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER3_DEC=&dec" +
+     property="GEOTIFF"
+
+   ibis2tcl &"rdir"xx4tmp&"id" v1=ra v2=dec vartype=(-1,-1) +
+      ibisloc=(7,3,7,4)
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER4_RA=&ra" +
+     property="GEOTIFF"
+   gtgenup inp=&infile geotiff="AMT_UP_CORNER4_DEC=&dec" +
+     property="GEOTIFF"
+
+   gtlabfix &infile GEOTIFF
+!  label-list &infile
+
+!  vicar2ntf xxximg out=xxxntf
+   goto theend
+
+end-if
+
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" 'format
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+let wgs84elv = "&afidsvdevdata/etop02nobath.hlf"
+pixmap (&"rdir"xx4tmp&"id",&wgs84elv) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&wgs84elv,&"rdir"xx4tmp&"id") cols=(6,7,8) win=2
+!mf3 &"rdir"xx4tmp&"id" f="@avg(c8)"
+ibis2tcl &"rdir"xx4tmp&"id" v1=avelv vartype=(-1) ibisloc=(1,8)
+!write "avelv &avelv"
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(6,7,8) csiz=(12,12,12) +
+!   cfor="%14.7f %14.7f %14.7f"
+
+! cube dimensions
+
+let ur0 = 0.0
+let ur1 = 192.0
+let ur2 = 3648.0
+let vr0 = 0.0
+let vr1 = 225.0
+let vr2 = 3375.01
+let hr0 = 0.0+avelv
+let hr1 = 50.0
+let hr2 = 200.0+avelv
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+!write "nrcalc &nrcalc"
+ibis-gen &"rdir"xx4tmp&"id" nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,&"rdir"xx4tmp&"id") +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  hrange=(&hr0,&hr1,&hr2) +
+  ACS_time=&itim +
+  TOD_t_SV=(&w1,&w2,&w3) +
+  TOD_q_SV=(&o0,&o1,&o2,&o3) +
+  SV_t_C=&SV_t_C + 
+  SV_q_C=&SV_q_C + 
+  Delta_UT1=&Delta_UT1 +
+  fu=2500000 +
+  fv=2500000 +
+  q=0.0 +
+  u0=1824.5 +
+  v0=1688 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" 'format
+
+!write "correcting wgs84 to geoid96; higher is -"
+
+let geoid96 = "&afidsvdevdata/EGM96_20_x100.HLF"
+pixmap (&"rdir"xx4tmp&"id",&geoid96) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&geoid96,&"rdir"xx4tmp&"id") cols=(6,7,8) win=2
+mf3 &"rdir"xx4tmp&"id" f="c3=c3-c8*0.01"
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(6,7,8) csiz=(12,12,12) +
+!   cfor="%14.7f %14.7f %14.7f"
+
+!  put rpc into ntf image
+!  crnronly = corners only
+!  crnronly = n means: 4 corners PLUS RPCs
+!  crnronly = y means: 4 corners and NO RPCs
+!  rpccctr puts the corner Lat/Lons into the label
+if  (crnronly="y")
+   ibis-copy &"rdir"xx4tmp&"id" &"rdir"xx5tmp&"id"
+   rpcsccub &"rdir"xx5tmp&"id" dcols=(1,2,3,4,5) scol=6 rpctype=&rpctype
+   rpcscale (&"rdir"xx5tmp&"id",&"rdir"xx4tmp&"id") rpccol=6 cols=(1,2,3,4,5) 'scale
+!  copy &infile xxximg
+   sort &"rdir"xx5tmp&"id" sortcol=(4,5)  indexcol=6
+   mf3 &"rdir"xx5tmp&"id" f="c3=-c3"
+   aggrg2 &"rdir"xx5tmp&"id" &"rdir"xx4tmp&"id" AGCOL=6 AREA=3 BYAR=(1,2,4,5)
+   rpccctr &"rdir"xx4tmp&"id" &infile &vr0 &vr2 &ur0 &ur2 &id
+   goto cornskp
+else
+!  copy &infile xxximg
+end-if
+
+! need the rpc scale in an ibis file, first fifteen records of col 6
+
+ibis-copy &"rdir"xx4tmp&"id" &"rdir"xx5tmp&"id"
+rpcsccub &"rdir"xx5tmp&"id" dcols=(1,2,3,4,5) scol=6 rpctype=&rpctype
+
+!   ibis-l &"rdir"xx5tmp&"id" nr=15 cols=(1,2,3,4,6) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+   rpcscale (&"rdir"xx5tmp&"id",&"rdir"xx4tmp&"id") rpccol=6 cols=(1,2,3,4,5) 'scale
+!   ibis-l &"rdir"xx4tmp&"id" nr=20 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" sr=1
+
+! generate ibis formatted rpc file, with scales col 2, guess vector col 1
+
+   ibis-copy &"rdir"xx5tmp&"id" &"rdir"xx1tmp&"id" nr=80
+   mf3 &"rdir"xx1tmp&"id" f= +
+    "c2=c6$c1=(@index>20.5)*(@index<21.5)*1.0+(@index>60.5)*(@index<61.5)*1.0"
+!   ibis-l &"rdir"xx1tmp&"id"
+
+! solving sequence
+
+   ibislsqf (&"rdir"xx4tmp&"id",&"rdir"xx1tmp&"id") func=rpcn20 datacol=(1,2,3) depcol=4 +
+       rescol=7 solcol=(1,3) rpctype=&rpctype rpcls=L
+
+   ibisnlsq (&"rdir"xx4tmp&"id",&"rdir"xx1tmp&"id") func=rpcd19 datacol=(1,2,3) depcol=4 +
+       rescol=8 solcol=(3,4) rpctype=&rpctype rpcls=L
+
+   ibislsqf (&"rdir"xx4tmp&"id",&"rdir"xx1tmp&"id") func=rpcn20 datacol=(1,2,3) depcol=5 +
+       rescol=7 solcol=(4,5) rpctype=&rpctype rpcls=S
+
+   ibisnlsq (&"rdir"xx4tmp&"id",&"rdir"xx1tmp&"id") func=rpcd19 datacol=(1,2,3) depcol=5 +
+       rescol=8 solcol=(5,6) rpctype=&rpctype rpcls=S
+
+ibis2rpc &"rdir"xx1tmp&"id" &"rdir"xx2tmp&"id" ccol=6 scol=2
+gtgenup (&infile,&"rdir"xx2tmp&"id")
+
+sort &"rdir"xx5tmp&"id" sortcol=(4,5)  indexcol=6
+mf3 &"rdir"xx5tmp&"id" f="c3=-c3"
+aggrg2 &"rdir"xx5tmp&"id" &"rdir"xx4tmp&"id" AGCOL=6 AREA=3 BYAR=(1,2,4,5)
+!ibis-l &"rdir"xx4tmp&"id" nr=15 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+rpccctr &"rdir"xx4tmp&"id" &infile &vr0 &vr2 &ur0 &ur2 &id
+
+cornskp>
+gtlabfix &infile GEOTIFF
+!label-list &infile
+!vicar2ntf &infile xxxntf
+theend>
+end-proc
+

@@ -1,0 +1,6 @@
+$ vpack ikref.com -mixed -
+	-s ikref.c -
+	-i ikref.imake -
+	-p ikref.pdf -
+	-t tstikref.pdf
+$ Exit

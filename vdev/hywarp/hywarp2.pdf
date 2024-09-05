@@ -1,0 +1,1198 @@
+procedure help=*
+parm inroot type=(string,99)
+parm outroot type=(string,99)
+parm scratchroot type=(string,99)
+parm dted type=(string,99)
+parm lsat type=(string,99)
+parm master type=(string,99)
+parm gridinfo type=(string,99)
+parm gridfinal type=(string,99)
+
+parm seq type=(string,99) def="q"
+parm pixdeg type=real default=111.3333
+
+parm sensE1 type=real
+parm sensN1 type=real
+parm senselv1 type=real
+parm sensE2 type=real
+parm sensN2 type=real
+parm senselv2 type=real
+parm sensunit type=int
+
+parm quad1 type=real
+parm quad2 type=real
+parm quadsiz1 type=real
+parm quadsiz2 type=real
+parm quadunit type=int
+
+parm loff type=real default=0.
+parm soff type=real default=0.
+parm loff2 type=real default=0.
+parm soff2 type=real default=0.
+
+parm nah type=int default=600
+parm nav type=int default=400
+parm stopat type=int def=6
+parm rtype type=string
+parm line_upper int def=0
+parm line_lower int def=0
+parm maptype type=(string,4) valid=("pc","utm","ref") default="pc"
+parm modelfit type=(string,9) valid=("noelvcor","elvcor") default="elvcor"
+parm fftinit type=int default=512
+parm outimg type=(string,99)
+
+parm ecor1 type=real default=0.00
+parm ecor2 type=real default=0.00
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+refgbl $echo
+parm version string def="ibis-2"
+parm org string def="column"
+
+local line_nl int
+local eastp1 type=real
+local northm1 type=real
+
+local quad3 type=real
+local quad4 type=real
+
+local xxa type=(string,99)
+local xxb type=(string,99)
+local xxc type=(string,99)
+local xxe type=(string,99)
+local xxe2 type=(string,99)
+local xxe3 type=(string,99)
+local xxf type=(string,99)
+local xxf2 type=(string,99)
+local xxf3 type=(string,99)
+local xxg type=(string,99)
+local xxg2 type=(string,99)
+local xxxlab1 type=(string,99)
+local xxxlab2 type=(string,99)
+local xxxlab3 type=(string,99)
+local xxxfinalref type=(string,99)
+local xxxinp type=(string,99)
+local xxxtinp type=(string,99)
+local xxxtifref type=(string,99)
+local xxxsiteref type=(string,99)
+local isiteref type=(string,99)
+local xxxrestore type=(string,99)
+
+local xxxcora1 type=(string,99)
+local xxxcora2 type=(string,99)
+local xxxcora3 type=(string,99)
+local xxxcorb1 type=(string,99)
+local xxxcorc1 type=(string,99)
+local xxxcorc2 type=(string,99)
+
+local regfile type=(string,99)
+local regoutimg type=(string,99)
+
+local xxxB2 type=(string,99)
+local xxxB2out1 type=(string,99)
+local xxxB2out2 type=(string,99)
+local xxxB2out3 type=(string,99)
+local xxxB2out3pre type=(string,99)
+local xxxB2out4 type=(string,99)
+local xxxB2out5 type=(string,99)
+
+local xxxnav type=(string,99)
+local accplot type=(string,99)
+local gridfile1 type=(string,99)
+
+local sl type=int
+local ss type=int
+local nl type=int
+local ns type=int
+local t1l type=real
+local t1s type=real
+local t1e type=real
+local t1n type=real
+local t2l type=real
+local t2s type=real
+local t2e type=real
+local t2n type=real
+local t3l type=real
+local t3s type=real
+local t3e type=real
+local t3n type=real
+local tloff type=int
+local tsoff type=int
+
+local vd1 type=real
+local vd2 type=real
+local hd1 type=real
+local hd2 type=real
+
+local ixclosest int
+local ixc1 int
+local ixc2 int
+local ixc3 int
+local quadsum int
+local elvck real
+local regelv real
+local regsig real
+local elvrange real
+
+local corfail int
+local xxxcorfail type=(string,99)
+local polyfit type=(string,9) count=(5:5)
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local dsl int
+local dss int
+local dnl int
+local dns int
+
+local utmzone int
+local utmstring string
+local tutmstring string
+local rastypstr string
+local uln real
+local ule real
+local urn real
+local ure real
+local lln real
+local lle real
+
+local mlon real
+local mlat real
+local ilon int
+local ilat int
+
+local msl type=int
+local mss type=int
+local mnl type=int
+local mns type=int
+
+local vicortif type=int
+local inah type=int
+local inav type=int
+local iinterp type=(string,10)
+local irastype type=(string,10)
+local imaptype type=(string,4)
+local iusermapref type=(string,99)
+local savemapref type=(string,99)
+
+local scale1 real
+local scale2 real
+local fsitefac real
+local sitemag real
+local sitefac int
+local insidefac int
+
+local pointerr real
+local corpt int
+
+body
+
+!let _onfail="continue"
+let $echo="yes"
+
+write "hywarp2 05/06/08"
+
+if (siteref="" and siteout<>"")
+   write "ERROR: MUST SET BOTH SITEREF AND SITEOUT"
+end-if
+if (siteref<>"" and siteout="")
+   write "ERROR: MUST SET BOTH SITEREF AND SITEOUT"
+end-if
+
+if (rtype="secondary")
+   plab2tcl &master property=COREG_META_DATA val=inah keyword=gridnah vtype=4
+   plab2tcl &master property=COREG_META_DATA val=inav keyword=gridnav vtype=4
+   plab2tcl &master property=COREG_META_DATA val=iinterp keyword=interp vtype=0
+   plab2tcl &master property=COREG_META_DATA val=irastype keyword=rastype vtype=0
+   plab2tcl &master property=COREG_META_DATA val=imaptype keyword=maptype vtype=0
+   plab2tcl &master property=COREG_META_DATA val=iusermapref keyword=usermapref vtype=0
+   if (inah=(-999)) let inah = 900
+   if (inav=(-999)) let inav = 900
+   if (iinterp="-999") let iinterp = "bilin"
+   if (irastype="-999") let irastype = "point"
+   if (imaptype="-999") let imaptype = "pc"
+   if (iusermapref="-999") let iusermapref = ""
+else
+   let inah = nah
+   let inav = nav
+   let iinterp = interp
+   let irastype = rastype
+   let imaptype = maptype
+   let iusermapref = usermapref
+end-if
+
+let xxa = "scratch/xxa" // "&seq"
+let xxb = "scratch/xxb" // "&seq"
+let xxc = "scratch/xxc" // "&seq"
+let xxe = "scratch/xxe" // "&seq"
+let xxe2 = "scratch/xxe2" // "&seq"
+let xxe3 = "scratch/xxe3" // "&seq"
+let xxf = "scratch/xxf" // "&seq"
+let xxf2 = "scratch/xxf2" // "&seq"
+let xxf3 = "scratch/xxf3" // "&seq"
+let xxg = "scratch/xxg" // "&seq"
+let xxg2 = "scratch/xxg2" // "&seq"
+let xxxlab1 = "scratch/xxxlab1" // "&seq"
+let xxxlab2 = "scratch/xxxlab2" // "&seq"
+let xxxlab3 = "scratch/xxxlab3" // "&seq"
+let xxxinp = "scratch/xxxtemp" // "&seq"
+let xxxtinp = "scratch/xxxttemp" // "&seq"
+let xxxtifref = "scratch/xxxtifref" // "&seq"
+let xxxsiteref = "scratch/xxxsiteref" // "&seq"
+let xxxrestore = "scratch/xxxrestore" // "&seq"
+
+let xxxcora1 = "scratch/xxxcor.a1"
+let xxxcora2 = "scratch/xxxcor.a2"
+let xxxcora3 = "scratch/xxxcor.a3"
+let xxxcorb1 = "scratch/xxxcor.b1"
+let xxxcorc1 = "scratch/xxxcor.c1"
+let xxxcorc2 = "scratch/xxxcor.c2"
+
+let xxxcorfail = "scratch/xxxcorfail" // "&seq"
+
+let xxxB2 = "&inroot" // "_28-34.img"    
+
+   let xxxB2out1 = "&scratchroot" // "_map1.28-34"
+   let xxxB2out2 = "&scratchroot" // "_map2.28-34"
+   let xxxB2out3 = "&scratchroot" // "_map3.28-34"
+   let xxxB2out3pre = "&scratchroot" // "_map3pre.28-34"
+   let xxxB2out4 = "&outimg"
+   let xxxB2out5 = "&scratchroot" // "_map5.28-34"
+   
+let xxxnav = "&scratchroot" // ".nav"
+
+let savemapref = "&iusermapref"
+let vicortif = 0
+if (iusermapref<>"") file2tcl &iusermapref ftype=vicortif
+if (vicortif>0)
+   file2tcl &iusermapref fsubtype=vicortif
+   if (vicortif<>2 and vicortif<>4)
+      write "MSG: USER MAP REFERENCE NOT VICAR-GEOTIFF OR GEOTIFF"
+      goto theend
+   end-if
+   if (vicortif=2)
+      vtiff3-tovic &iusermapref &xxxtinp
+      gtcopy &xxxtinp &xxxtifref size=(1,1,1,1)
+      let iusermapref = "&xxxtifref"
+   end-if
+end-if
+
+let isiteref = "&siteref"
+let vicortif = 0
+if (siteref<>"") file2tcl &siteref ftype=vicortif
+if (vicortif>0)
+   file2tcl &siteref fsubtype=vicortif
+   if (vicortif<>2 and vicortif<>4)
+      write "MSG: SITE REFERENCE NOT VICAR-GEOTIFF OR GEOTIFF"
+      goto theend
+   end-if
+   if (vicortif=2)
+      vtiff3-tovic &siteref &xxxsiteref
+      let isiteref = "&xxxsiteref"
+   end-if
+   let imaptype = "ref"
+   let iusermapref = "&isiteref"
+   let savemapref = "&isiteref"
+end-if
+
+if (irastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+!   process the int file to a 10 column ibis file, be sure c3 is lon, c4 lat
+
+ibis-gen &xxa version=&version org=&org nc=10 nr=1 deffmt=DOUB
+ibis-copy &xxxnav &xxa nc=10
+
+!mf3 &xxa func="c1=c1+1.0$c2=c2+1.0" the .nav file must be in vicar pixels
+mf3 &xxa func="c5=c3$c3=c4$c4=c5"
+
+let line_nl = 0
+if (line_lower>0 or line_upper>0)
+   if (line_upper<1) let line_upper = 1
+   let line_nl = &line_lower-&line_upper+1
+   mf3 &xxa func="c1=c1-&line_upper"
+end-if
+ibis-list &xxa 'format nr=10 nc=5
+
+!   copy and label the input, also transform the pixel coord in cols 1,2
+!   by the offset params, note that the mapping is approximate.
+!   11/01 may need to recheck sign +/-  alpha version corrupted - alz
+
+mf3 &xxa func="c1=c1-(&loff)$c2=c2-(&soff)$c5=@index"
+
+    !   here, the program is automatically finding three tiepoints that
+    !   subtend a large triangle
+
+grid3pt &xxa cols=(1,2,3,4) ix1=ixc1 ix2=ixc2 ix3=ixc3 +
+  v11=t1l v21=t1s v31=t1e v41=t1n +
+  v12=t2l v22=t2s v32=t2e v42=t2n +
+  v13=t3l v23=t3s v33=t3e v43=t3n
+
+ibis-copy &xxa &xxxtinp
+mf3 &xxxtinp f="c5=(@index==&ixc1)+(@index==&ixc2)+(@index==&ixc3)"
+rowop &xxxtinp &xxxinp keycol=5 range=(0.5,10.0) 'select
+ibis-gen &xxxlab1 nc=2 nr=3 format=("REAL","REAL")
+icat (&xxxinp,&xxxlab1) &gridinfo 'h
+mf3 &gridinfo f="c11=(&line_upper)$c12=(&line_nl)"
+ibis-l &gridinfo
+! see below for: mf3 &gridinfo f="c7=&sl$c8=&ss$c9=&nl$c10=&ns$"
+
+let t1l = t1l-1  ! these convert vicar to GeoTIFF point-type
+let t1s = t1s-1
+let t2l = t2l-1
+let t2s = t2s-1
+let t3l = t3l-1
+let t3s = t3s-1
+
+gtgen out=&xxxlab1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtlist &xxxlab1
+
+if (sensunit=1)
+   write "converting L,S &sensN1,&sensE1,&sensN2,&sensE2"
+   ibis-gen &xxc version=&version org=&org nc=4 nr=2 deffmt=DOUB +
+      data=(&sensN1,&sensE1,&sensN2,&sensE2) datacols=(1,2)
+   pixmap (&xxc,&xxxlab1) mapcol=(3,4) pixcol=(1,2) 'pixtomap
+   ibis2tcl &xxc v1=sensE1 v2=sensN1 v3=sensE2 v4=sensN2 +
+      vartype=(-1,-1,-1,-1) ibisloc=(1,3,1,4,2,3,2,4)
+   write "to lon-lat &sensE1,&sensN1,&sensE2,&sensN2"
+else
+   write "sensor lon-lat &sensE1,&sensN1,&sensE2,&sensN2"
+end-if
+
+!   generate a master reference for PC and UTM, the UTM is used for initial
+!   model and may be used for final output
+
+let ilon = $fix(sensE1+0.5)
+let ilat = $fix(sensN1+0.5)
+let mlon = $float(ilon)
+let mlat = $float(ilat)
+let eastp1 = mlon+1.0
+let northm1 = mlat-1.0
+gtgen out=&xxxlab2 'tiecnvrt  +
+  geotiff=("ModelTiePointTag=(0,0,0,&mlon,&mlat,0.0)", +
+  "ModelTiePointTag=(0,&pixdeg,0,&mlon,&northm1,0.0)", +
+  "ModelTiePointTag=(&pixdeg,0,0,&eastp1,&mlat,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+if (mlat<0.0)
+   write "MSG: SOUTHERN HEMISPHERE CASES NOT AVAILABLE FOR HYPERION"
+   goto theend
+end-if
+
+let utmzone = $fix(mlon/6.0+31.0)
+if (utmzone<10)
+   let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+else
+   let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+end-if
+if (rtype="secondary" and imaptype<>"pc")
+   gt2tcl &master key="PROJECTEDCSTYPEGEOKEY" val=tutmstring vtype=0
+   gt2tcl &master key="PROJECTEDCSTYPEGEOKEY" val=utmzone vtype=4
+   if (utmzone>32000 and utmzone<33000)
+      let utmstring = tutmstring
+      let utmzone = utmzone-32600
+   end-if
+   write "master &master"
+   write "utmstring &utmstring"
+   write "utmzone &utmzone"
+end-if
+let ule = ($float(utmzone)-31.0)*6.0
+let ule = mlon-ule-3.0
+let ule = ule*80000.0+500000.0    ! need to calibrate, but approx OK
+let uln = mlat*110000.0        ! need to calibrate, but approx OK
+let ure = ule + 3000.0
+let urn = uln
+let lle = ule
+let lln = uln - 3000.0
+
+if (rtype="secondary" and imaptype="utm")
+    let xxxlab3 = "&master"
+else
+gtgen out=&xxxlab3 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&ule,&uln,0.0)", +
+     "ModelTiePointTag=(100,0,0,&ure,&urn,0.0)", +
+     "ModelTiePointTag=(0,100,0,&lle,&lln,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+     "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+     "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+     "GTRasterTypeGeoKey=&rastypstr")
+end-if
+gtlist &xxxlab3
+
+gtproj (&xxa,&xxxlab1,&xxxlab3) incol=(3,4,5) outcol=(6,7,8) 'tec
+ibis2tcl &xxa  v1=t1e v2=t1n v3=t2e v4=t2n v5=t3e v6=t3n +
+    vartype=(-1,-1,-1,-1,-1,-1) +
+    ibisloc=(&ixc1,6,&ixc1,7,&ixc2,6,&ixc2,7,&ixc3,6,&ixc3,7)
+
+if (line_upper>0)
+   copy &xxxB2 &xxxtinp sl=&line_upper nl=&line_nl
+else
+   copy &xxxB2 &xxxtinp
+end-if
+
+gtgen inp=&xxxtinp 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "ProjectedCSTypeGeoKey=&utmstring", +
+  "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+  "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr")
+gtlist &xxxtinp
+if (stopat=1) goto theend
+
+
+if (quadunit=0)
+   let quad3=quad1-quadsiz1
+   let quad4=quad2+quadsiz2
+   write "converting lon-lat &quad2,&quad1,&quadsiz2,&quadsiz1"
+   ibis-gen &xxc version=&version org=&org nc=4 nr=2 deffmt=DOUB +
+      data=(&quad2,&quad1,&quad4,&quad3) datacols=(1,2)
+   pixmap (&xxc,&xxxlab1) mapcol=(1,2) pixcol=(3,4) 'maptopix
+   ibis-list &xxc
+   ibis2tcl &xxc v1=quad1 v2=quad2 v3=quad3 v4=quad4 vartype=(-1,-1,-1,-1) +
+      ibisloc=(1,3,1,4,2,3,2,4)
+   let quadsiz1=quad3-quad1+1
+   let quadsiz2=quad4-quad2+1
+end-if
+let sl=$fix(quad1+0.5)
+let ss=$fix(quad2+0.5)
+let nl=$fix(quadsiz1+0.5)
+let ns=$fix(quadsiz2+0.5)
+write "preliminary (sl,ss,nl,ns) &sl,&ss,&nl,&ns"
+
+! reduce the working image to data extent if smaller to help elevation grid
+
+imcorner &xxxtinp sldat=dsl ssdat=dss nldat=dnl nsdat=dns inside=-2
+
+if (sl<dsl) let sl = dsl
+if (ss<dss) let ss = dss
+if (nl>dnl) let nl = dnl
+if (ns>dns) let ns = dns
+
+write "final (sl,ss,nl,ns) &sl,&ss,&nl,&ns"
+mf3 &gridinfo f="c7=(&sl)$c8=(&ss)$c9=(&nl)$c10=(&ns)"
+
+!   copy the subset of the input, move the corresponding (l,s) in ibis file
+
+gtcopy &xxxtinp &xxxinp size=(&sl,&ss,&nl,&ns)
+mf3 &xxa func="c1=c1-(&sl)+1$c2=c2-(&ss)+1"
+
+!   now the mapping sequence, gtproj code from aerowarp where lambert
+!   used, but UTM here (if PC model use mf3 instead).  remember, all coords
+!   for gtwarpxd are in the reference image space (&xxxlab2)
+
+ibis-copy &xxa &xxb nc=19
+pixmap (&xxb,&xxxinp) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+gtproj (&xxb,&xxxinp,&xxxlab2) incol=(5,6,9) outcol=(15,16,10) 'tec
+pixmap (&xxb,&xxxlab2) mapcol=(15,16) pixcol=(11,12) 'maptopix
+gtlist &xxxlab2
+gtlist &xxxinp
+
+!gtproj (&xxb,&xxxinp,&xxxlab2) incol=(3,4,9) outcol=(7,8,10) 'tec
+mf3 &xxb func="c7=c3$c8=c4"
+pixmap (&xxb,&xxxlab2) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxb func="c13=c11-c9$c14=c12-c10"
+
+!   call gtwarpxd, the distortion is in cols 9-12, the initial call
+!   is used only to get range for dted correction, so only need 40 x 40
+!   grid here
+
+gtwarpxd &xxxinp +
+     &xxxB2out1 +
+     ref=&xxxlab2 +
+     distort=(&xxb,,,,) 'coverinp +
+     dcols=(9,10,11,12) nah=&inah nav=&inav gridout=&gridfinal
+if (stopat=2) goto theend
+
+!   overall check section using getzval, can't use gtcomp because
+!   input proj is approximate, also, check only works for one distortion
+!   file in distort parameter 
+
+!getzval (&xxxinp,&xxb) cols=(1,2,17) win=2 'noin
+!pixmap (&xxb,&xxxB2out1) mapcol=(3,4) pixcol=(15,16) 'maptopix
+!getzval (&xxxB2out1,&xxb) cols=(15,16,18) win=2 'noin
+!mf3 &xxb func="c19=c17-c18"
+
+!ibis-list &xxb cols=(1,2,3,4) cfor="%12.4f %12.4f %12.4f %12.4f"
+!ibis-list &xxb cols=(5,6,7,8) cfor="%12.4f %12.4f %12.4f %12.4f"
+!ibis-list &xxb cols=(9,10,11,12) cfor="%12.4f %12.4f %12.4f %12.4f"
+!ibis-list &xxb cols=(13,14,15,16) cfor="%12.4f %12.4f %12.4f %12.4f"
+!ibis-list &xxb cols=(17,18,19) cfor="%12.4f %12.4f %12.4f"
+
+
+
+! new section for landsat correlation, clock error
+! now has code to use low median elevation points only
+! Nevin's correction to take out elevation, also use registration elevation
+
+
+imcorner &xxxB2out1 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=34
+gengrid2 out=&xxf ncol=50 nah=17 nav=48 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+
+pixmap (&xxf,&xxxB2out1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+watermask &xxf &xxf2 cols=(3,4,25,26,27)
+ibis2tcl &xxf2 vclen=corpt vartype=1
+mf3 &xxf2 f="c50=(@rand)*&corpt"
+rowop2 &xxf2 &xxf keycol=50 range=(0.0,600.0) 'select
+
+pixmap (&xxf,&dted) mapcols=(3,4) pixcols=(5,6) 'maptopix
+getzval (&dted,&xxf) cols=(5,6,7,11) win=41 'dted threj=(-500)
+mf3 &xxf f="c8=c7$@vmin(c8)"
+ibis2tcl &xxf v1=elvck vartype=-1 ibisloc=(1,8)
+if (elvck<(-9000.0))
+   write "ERROR: DTED DOES NOT COVER THE INPUT IMAGE AREA"
+   write "ERROR: PLEASE ENLARGE OR CORRECT"
+   goto theend
+end-if
+mf3 &xxf f="c8=c7$c9=c7$@vmin(c8)$@average(c9)$c10=(c8+c9)*0.5$c20=c7-c10"
+mf3 &xxf f="c12=c11$c13=c11$@vmax(c12)$@average(c13)$c14=c12*0.3+c13*0.7"
+ibis2tcl &xxf v1=regelv v2=regsig vartype=(-1,-1) ibisloc=(1,10,1,14)
+write "registration elevation = &regelv, max sig = &regsig"
+if (modelfit="noelvcor")
+   let elvrange = 270.0
+else
+   let elvrange = 5000.0
+end-if
+ibis-l &xxf nr=15 cols=(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+rowop &xxf &xxe keycol=(20,11) +
+     range=(-&elvrange,&elvrange,0.0001,&regsig) 'select
+
+
+ibis-l &xxe nr=15 cols=(1,2,3,4,5,6,7,8,9,10,11,12,13,14)
+piclsqm &xxe &xxxB2out1 &lsat &xxf &xxxcorfail &seq +
+  search=&fftinit  fftsize=128 minsrch=128 zrej=5 zerolim=10.0 +
+  lsqt=4.0 lsqthresh=45 +
+  modelfit=&modelfit regelv=&regelv dted=&dted +
+  sensE1=&sensE1 sensN1=&sensN1 senselv1=&senselv1 +
+  sensE2=&sensE2 sensN2=&sensN2 senselv2=&senselv2 +
+  ecor1=&ecor1 ecor2=&ecor2 ffthalf=1
+
+ibis-copy &xxf &xxxcora1
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone
+
+!   put alternate correlations here
+
+write "ERROR: NONE OF THE CORRELATIONS WORKED, INITIAL MAPPING STEP"
+goto theend
+
+cordone>
+
+! calculate satellite ephemeris model pointing error
+
+ibis-copy &xxf &xxg
+pixmap (&xxg,&xxxB2out1) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxg,&xxxB2out1,&xxxlab3) incol=(17,18,9) outcol=(15,16,10) 'tec
+pixmap (&xxg,&xxxlab3) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+pixmap (&xxg,&lsat) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+gtproj (&xxg,&lsat,&xxxlab3) incol=(13,14,9) outcol=(7,8,10) 'tec
+pixmap (&xxg,&xxxlab3) mapcol=(7,8) pixcol=(9,10) 'maptopix
+
+mf3 &xxg func=("c13=c11-c9$c14=c12-c10$c15=c13*c13+c14*c14$", +
+   "c16=@sqrt(c15)$@vmin(c16)$c17=c16*30.0")
+
+ibis2tcl &xxg v1=pointerr vartype=0 ibisloc=(1,17) vartype=-1
+ibis-l &xxg nr=2 cols=(13,14,15,16,17)
+write "pointerr &pointerr"
+
+label-add inp=&xxxinp items="sat_model_pointing_err=&pointerr" +
+     property="COREG_META_DATA"
+label-add inp=&xxxinp items="sat_model_pointing_err_units=utm-meter" +
+     property="COREG_META_DATA"
+label-add inp=&xxxinp items="sat_model_pointing_err_ref=&lsat" +
+     property="COREG_META_DATA"
+
+! coordinate transformations to gtwarpxd (8/19 corr)
+
+ibis-copy &xxf &xxg
+pixmap (&xxg,&xxxB2out1) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+!gtproj (&xxg,&xxxB2out1,&xxxlab2) incol=(17,18,9) outcol=(15,16,10) 'tec
+mf3 &xxg func="c15=c17$c16=c18"
+pixmap (&xxg,&xxxlab2) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+pixmap (&xxg,&lsat) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+!gtproj (&xxg,&lsat,&xxxlab2) incol=(13,14,9) outcol=(7,8,10) 'tec
+mf3 &xxg func="c7=c13$c8=c14"
+pixmap (&xxg,&xxxlab2) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg func="c13=c11-c9$c14=c12-c10"
+
+gtwarpxd &xxxinp +
+     &xxxB2out2 +
+     ref=&xxxlab2 +
+     distort=(&gridfinal,&xxg,,,) +
+     dcols=(0,0,0,0,9,10,11,12) gridout=&gridfinal +
+     polyfit=("","quad","","","") 'coverinp nah=&inah nav=&inav
+     
+if (stopat=3) goto theend
+
+
+!   now the elevation correction, coords for gtwarpxd have to be in ref coord
+
+if (dted<>"")
+
+elvcor &xxxB2out2 &dted &xxc &sensE1 &sensN1 &senselv1 +
+       &sensE2 &sensN2 &senselv2 &inah &inav &regelv +
+       ecor1=&ecor1 ecor2=&ecor2
+
+pixmap (&xxc,&xxxB2out2) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+pixmap (&xxc,&xxxB2out2) mapcol=(19,20) pixcol=(15,16) 'pixtomap
+pixmap (&xxc,&xxxlab2) mapcol=(5,6) pixcol=(1,2) 'maptopix
+pixmap (&xxc,&xxxlab2) mapcol=(19,20) pixcol=(15,16) 'maptopix
+
+! now move the result after elev corr by the params loff2,soff2, then warp
+
+mf3 &xxc func="c1=c1-(&loff2)$c2=c2-(&soff2)"
+
+gtwarpxd &xxxinp +
+     &xxxB2out3 +
+     ref=&xxxlab2 +
+     distort=(&gridfinal,&xxc,,,) +
+     dcols=(0,0,0,0,15,16,1,2) gridout=&gridfinal +
+     polyfit=("","","","","") 'coverinp nah=&inah nav=&inav
+
+end-if
+
+if (stopat=5) goto theend
+
+! the final registration again
+
+if (rtype="master")
+   let regfile = "&lsat"
+else
+   if (imaptype="pc")
+      let regfile = "&master"
+   else
+      let regfile = "&master" // "pc"
+   end-if
+end-if
+write "regfile set to &regfile"
+
+if (rtype="master")
+   imcorner &xxxB2out3 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=34
+   gengrid2 out=&xxe ncol=12 nah=17 nav=44 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+   pixmap (&xxe,&xxxB2out3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+   watermask &xxe &xxf2 cols=(3,4,5,6,7)
+   ibis2tcl &xxf2 vclen=corpt vartype=1
+   mf3 &xxf2 f="c12=(@rand)*&corpt"
+   rowop2 &xxf2 &xxe keycol=12 range=(0.0,600.0) 'select
+   write "grid: &l1,&s1 &l2,&s2"
+   write "grid: &l3,&s3 &l4,&s4"
+
+   piclsqqd &xxe &xxxB2out3 &regfile &xxf &xxxcorfail &seq +
+     search=128  fftsize=128 minsrch=128 zrej=5 zerolim=10.0 +
+     lsqt=4.0 lsqthresh=45 ffthalf=1
+   ibis-copy &xxf &xxxcorc2
+   restore-variable file=&xxxcorfail variable=(corfail)
+   write "Bcorfail &corfail"
+   if (corfail=0) goto cordone3
+   write "ERROR: CORRELATION FAILURE, MASTER CORRECTION"
+   goto theend
+end-if
+
+imcorner &xxxB2out3 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=18
+gengrid2 out=&xxe ncol=12 nah=17 nav=44 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+pixmap (&xxe,&xxxB2out3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+watermask &xxe &xxf2 cols=(3,4,5,6,7)
+ibis2tcl &xxf2 vclen=corpt vartype=1
+mf3 &xxf2 f="c12=(@rand)*&corpt"
+rowop2 &xxf2 &xxe keycol=12 range=(0.0,600.0) 'select
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+
+write "final correlation: &regfile"
+piclsqqd &xxe &xxxB2out3 &regfile &xxf &xxxcorfail &seq +
+  search=128 fftsize=64 minsrch=64 zrej=5 zerolim=10.0 +
+  lsqt=3.0 lsqthresh=45 ffthalf=1
+ibis-copy &xxf &xxxcorc1
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone3
+
+!   put alternate correlations here
+
+write "ERROR: CORRELATION FAILURE, SECONDARY TO MASTER CORRECTION"
+goto theend
+
+cordone3>
+
+!  produce the PC master for the non-pc case; can't use remap of
+!  the non-pc (poor results for utm case, could be poorer for
+!  other mappings)
+
+if (imaptype<>"pc" and rtype="master")
+   let xxxfinalref = "&xxxlab2"
+
+   ibis-copy &xxf &xxg2 nc=19
+   pixmap (&xxg2,&xxxB2out3) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+   gtproj (&xxg2,&xxxB2out3,&xxxfinalref) incol=(17,18,9) outcol=(15,16,10) 'tec
+   pixmap (&xxg2,&xxxfinalref) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+   pixmap (&xxg2,&regfile) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+   gtproj (&xxg2,&regfile,&xxxfinalref) incol=(13,14,9) outcol=(7,8,10) 'tec
+   pixmap (&xxg2,&xxxfinalref) mapcol=(7,8) pixcol=(9,10) 'maptopix
+   mf3 &xxg2 func="c13=c11-c9$c14=c12-c10"
+
+   gtwarpxd &xxxinp +
+     &xxxtinp +
+     ref=&xxxfinalref +
+     distort=(&gridfinal,&xxg2,,,) +
+     dcols=(0,0,0,0,9,10,11,12) +
+     polyfit=("","quad","","","") 'coverinp nah=&inah nav=&inav
+
+   imcorner &xxxtinp sldat=msl ssdat=mss nldat=mnl nsdat=mns inside=-25
+   let regoutimg = "&xxxB2out4" // "pc"
+   gtcopy &xxxtinp &regoutimg size=(&msl,&mss,&mnl,&mns)
+end-if
+
+!  the distortion files are remapped if non-pc mapping output
+
+if (imaptype="pc")
+   let xxxfinalref = "&xxxlab2"
+else 
+   if (imaptype="ref")
+      let xxxfinalref = "&iusermapref"
+   else
+      let xxxfinalref = "&xxxlab3"
+   end-if
+   
+   let gridfile1 = "&gridfinal" // "1"
+   ibis-gen &xxxtinp nc=4 nr=1 format=(DOUB,DOUB,DOUB,DOUB)
+   icat (&gridfile1,&xxxtinp) &xxe 'h
+   
+   pixmap (&xxe,&xxxlab2) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+   gtproj (&xxe,&xxxlab2,&xxxfinalref) incol=(5,6) outcol=(7,8) 'tec
+   pixmap (&xxe,&xxxfinalref) mapcol=(7,8) pixcol=(1,2) 'maptopix
+   
+   pixmap (&xxe,&xxxinp) mapcol=(5,6) pixcol=(3,4) 'pixtomap
+   gtproj (&xxe,&xxxinp,&xxxfinalref) incol=(5,6) outcol=(7,8) 'tec
+   pixmap (&xxe,&xxxfinalref) mapcol=(7,8) pixcol=(3,4) 'maptopix
+end-if
+
+ibis-copy &xxf &xxg2 nc=19
+pixmap (&xxg2,&xxxB2out3) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxg2,&xxxB2out3,&xxxfinalref) incol=(17,18,9) outcol=(15,16,10) 'tec
+pixmap (&xxg2,&xxxfinalref) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+pixmap (&xxg2,&regfile) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+gtproj (&xxg2,&regfile,&xxxfinalref) incol=(13,14,9) outcol=(7,8,10) 'tec
+pixmap (&xxg2,&xxxfinalref) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg2 func="c13=c11-c9$c14=c12-c10"
+
+if (rtype="master")
+   let polyfit=("","quad","","","")
+else
+   let polyfit=("","","","","")
+end-if
+
+if (imaptype="pc")
+   gtwarpxd &xxxinp +
+     &xxxtinp +
+     ref=&xxxfinalref +
+     distort=(&gridfinal,&xxg2,,,) +
+     dcols=(0,0,0,0,9,10,11,12) gridout=&gridfinal+
+     polyfit=&polyfit 'coverinp nah=&inah nav=&inav +
+     interp=&iinterp
+else
+   gtwarpxd &xxxinp +
+     &xxxtinp +
+     ref=&xxxfinalref +
+     distort=(&xxe,&xxg2,,,) +
+     dcols=(1,2,3,4,9,10,11,12) gridout=&gridfinal+
+     polyfit=&polyfit 'coverinp nah=&inah nav=&inav +
+     interp=&iinterp
+end-if
+
+if (rtype="master")
+   imcorner &xxxtinp sldat=msl ssdat=mss nldat=mnl nsdat=mns inside=-25
+   gtcopy &xxxtinp &xxxB2out4 size=(&msl,&mss,&mnl,&mns)
+else
+   gtoffset &xxxtinp &master    ! has to be whole pixel, verify (.0,.0)
+   gtsize (&xxxtinp,&master) &xxxB2out4 'coverref
+end-if
+
+label-add inp=&xxxB2out4 items="gridnah=&inah" +
+     property="COREG_META_DATA"
+label-add inp=&xxxB2out4 items="gridnav=&inav" +
+     property="COREG_META_DATA"
+label-add inp=&xxxB2out4 items="interp=&iinterp" +
+     property="COREG_META_DATA"
+label-add inp=&xxxB2out4 items="rastype=&irastype" +
+     property="COREG_META_DATA"
+label-add inp=&xxxB2out4 items="maptype=&imaptype" +
+     property="COREG_META_DATA"
+if (iusermapref<>"") label-add inp=&xxxB2out4 items="usermapref=&savemapref" +
+        property="COREG_META_DATA"
+
+!  accuracy check using correlation of final vs. master
+
+let accplot = "&xxxB2out4" // ".accplot"
+if (rtype="master")
+   accck &xxxB2out4 &lsat outfile=&accplot fftsize=64 +
+      outnl=1200 remap="y"
+else
+   accck &xxxB2out4 &master outfile=&accplot fftsize=64 +
+      outnl=1200 remap="n"
+end-if
+
+!  this section for site registration
+
+if (isiteref<>"")
+
+gt2tcl &xxxB2out4 val=scale1 keyword=MODELPIXELSCALETAG +
+   vtype=7 sequence=1
+gt2tcl &isiteref val=scale2 keyword=MODELPIXELSCALETAG +
+   vtype=7 sequence=1
+let fsitefac = scale1/scale2
+ibis-gen &xxf3 nc=1 nr=1 format="REAL" datacol=1 data=&fsitefac
+mf3 &xxf3 f="c1=@sqrt(c1)"
+ibis2tcl &xxf3 v1=fsitefac vartype=0 ibisloc=(1,1)
+let sitefac = $fix(fsitefac)
+if (sitefac<1) let sitefac = 1
+write "scale1,scale2 &scale1,&scale2"
+write "fsitefac,sitefac &fsitefac,&sitefac"
+let insidefac = 66/sitefac
+let sitemag = 1.0/fsitefac
+write "insidefac,sitemag &insidefac,&sitemag"
+
+imcorner &isiteref line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=&insidefac
+write "first site imcorner"
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+gengrid2 out=&xxe3 ncol=12 nah=22 nav=22 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+pixmap (&xxe3,&isiteref) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+pixmap (&xxe3,&xxxB2out4) mapcols=(3,4) pixcols=(1,2) 'maptopix
+watermask &xxe3 &xxf3 cols=(3,4,5,6,7) auxmap=&xxxB2out4
+ibis2tcl &xxf3 vclen=corpt vartype=1
+mf3 &xxf3 f="c12=(@rand)*&corpt"
+rowop2 &xxf3 &xxe3 keycol=12 range=(0.0,300.0) 'select
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+
+write "site correlation: &isiteref"
+piclsqqd &xxe3 &xxxB2out4 &isiteref &xxf &xxxcorfail &seq +
+  search=128 fftsize=128 minsrch=128 zrej=5 zerolim=10.0 +
+  lsqt=2.0 lsqthresh=45 ffthalf=1 +
+  magnif=&sitemag
+ibis-copy &xxf &xxxcorc1
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone4
+
+!   put alternate correlations here
+
+write "ERROR: CORRELATION FAILURE, SITE REGISTRATION"
+goto theend
+
+cordone4>
+
+let gridfile1 = "&gridfinal" // "1"
+ibis-gen &xxxtinp nc=4 nr=1 format=(DOUB,DOUB,DOUB,DOUB)
+icat (&gridfile1,&xxxtinp) &xxe 'h
+
+pixmap (&xxe,&xxxfinalref) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+gtproj (&xxe,&xxxfinalref,&isiteref) incol=(5,6) outcol=(7,8) 'tec
+pixmap (&xxe,&isiteref) mapcol=(7,8) pixcol=(1,2) 'maptopix
+
+pixmap (&xxe,&xxxinp) mapcol=(5,6) pixcol=(3,4) 'pixtomap
+gtproj (&xxe,&xxxinp,&isiteref) incol=(5,6) outcol=(7,8) 'tec
+pixmap (&xxe,&isiteref) mapcol=(7,8) pixcol=(3,4) 'maptopix
+
+ibis-copy &xxf &xxg2 nc=19
+pixmap (&xxg2,&xxxB2out4) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxg2,&xxxB2out4,&isiteref) incol=(17,18,9) outcol=(15,16,10) 'tec
+pixmap (&xxg2,&isiteref) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+!pixmap (&xxg2,&isiteref) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+!gtproj (&xxg2,&isiteref,&isiteref) incol=(13,14,9) outcol=(7,8,10) 'tec
+!pixmap (&xxg2,&isiteref) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg2 func="c9=c6$c10=c7"
+mf3 &xxg2 func="c13=c11-c9$c14=c12-c10"
+
+gtwarpxd &xxxinp +
+  &xxxB2out5 +
+  ref=&isiteref +
+  distort=(&xxe,&xxg2,,,) +
+  dcols=(1,2,3,4,9,10,11,12) gridout=&gridfinal+
+  polyfit=("","quad","","","") 'coverref nah=&inah nav=&inav +
+  interp=&iinterp
+
+! 2d correlation needed for site with radically different scale (10:1)
+! now going at same scale
+
+imcorner &isiteref line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=66
+write "second site imcorner"
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+gengrid2 out=&xxe3 ncol=12 nah=22 nav=22 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+pixmap (&xxe3,&isiteref) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+pixmap (&xxe3,&xxxB2out5) mapcols=(3,4) pixcols=(1,2) 'maptopix
+watermask &xxe3 &xxf3 cols=(3,4,5,6,7) auxmap=&xxxB2out5
+ibis2tcl &xxf3 vclen=corpt vartype=1
+mf3 &xxf3 f="c12=(@rand)*&corpt"
+rowop2 &xxf3 &xxe3 keycol=12 range=(0.0,300.0) 'select
+
+write "2d site correlation: &isiteref"
+piclsqqd &xxe3 &xxxB2out5 &isiteref &xxf &xxxcorfail &seq +
+  search=256 fftsize=256 minsrch=256 zrej=5 zerolim=10.0 +
+  lsqt=2.0 lsqthresh=45 ffthalf=1
+ibis-copy &xxf &xxxcorc1
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone5
+
+!   put alternate correlations here
+
+write "ERROR: CORRELATION FAILURE, SITE REGISTRATION"
+goto theend
+
+cordone5>
+
+ibis-copy &xxf &xxg2 nc=19
+pixmap (&xxg2,&xxxB2out5) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxg2,&xxxB2out5,&isiteref) incol=(17,18,9) outcol=(15,16,10) 'tec
+pixmap (&xxg2,&isiteref) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+!pixmap (&xxg2,&isiteref) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+!gtproj (&xxg2,&isiteref,&isiteref) incol=(13,14,9) outcol=(7,8,10) 'tec
+!pixmap (&xxg2,&isiteref) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg2 func="c9=c6$c10=c7"
+mf3 &xxg2 func="c13=c11-c9$c14=c12-c10"
+
+gtwarpxd &xxxinp +
+  &siteout +
+  ref=&isiteref +
+  distort=(&gridfinal,&xxg2,,,) +
+  dcols=(0,0,0,0,9,10,11,12) gridout=&gridfinal+
+  polyfit=("","quad","","","") 'coverref nah=&inah nav=&inav +
+  interp=&iinterp znoin=znoin
+
+label-add inp=&siteout items="gridnah=&inah" +
+     property="COREG_META_DATA"
+label-add inp=&siteout items="gridnav=&inav" +
+     property="COREG_META_DATA"
+label-add inp=&siteout items="interp=&iinterp" +
+     property="COREG_META_DATA"
+label-add inp=&siteout items="rastype=&irastype" +
+     property="COREG_META_DATA"
+label-add inp=&siteout items="maptype=&imaptype" +
+     property="COREG_META_DATA"
+if (iusermapref<>"") label-add inp=&siteout items="usermapref=&savemapref" +
+        property="COREG_META_DATA"
+
+write "MSG: SITE REGISTRATION ACCURACY FOLLOWS"
+let accplot = "&siteout" // ".accplot"
+accck &siteout &isiteref outfile=&accplot fftsize=256 +
+   outnl=1200 remap="n" timage2=&siteref
+
+end-if
+
+! stopat=6 goes to here
+
+theend>
+end-proc
+.TITLE
+hywarp - correct hyperion imagery
+.HELP
+PURPOSE
+    document out of date.  proc invisible to user   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.VARI INROOT
+root for the input files
+from avhrrsa program
+.VARI ROOT
+root for the output files
+.VARI DTED
+elevation file with GeoTIFF
+label covering area, in m.
+.VARI SENSE1
+sensor east, start of track
+see help 2
+.VARI SENSN1
+sensor north, start of track
+.VARI SENSELV1
+sensor elev (m), start of track
+.VARI SENSE2
+sensor east, end of track
+.VARI SENSN2
+sensor north, end of track
+.VARI SENSELV2
+sensor elev (m), end of track
+.VARI SENSUNIT
+0 - E,N in (lon,lat) degrees
+1 - E,N in (L,S) pixel of
+    raw file from AVHRRSA
+.VARI SEQ
+temp file naming modifier
+.VARI PIXDEG
+desired pixels per degree
+in output data sets
+.VARI QUAD1
+first coord of desired quad,
+see help 2
+.VARI QUAD2
+second coord of desired quad
+.VARI QUADSIZ1
+extent of first coord of
+desired quad
+.VARI QUADSIZ2
+extent of second coord of
+desired quad
+.VARI QUADUNIT
+0 - E,N in (lon,lat) degrees
+1 - E,N in (L,S) pixel of
+    raw file from AVHRRSA
+.VARI LOFF
+logging correction, plus
+value moves frame to South,
+or data to North; in pixels
+.VARI SOFF
+logging correction, plus
+value moves frame to East,
+or data to West; in pixels
+.VARI LOFF2
+post-elev correction, plus
+value moves frame to South,
+or data to North; in pixels
+.VARI SOFF2
+post-elev correction, plus
+value moves frame to East,
+or data to West; in pixels
+.VARI STOPAT
+1 - stop after label of input
+2 - stop after log corr and
+    (loff,soff) corr
+3 - stop after LSAT correlation
+    for clock shift error
+4 - stop after dted corr for
+    elevation offset
+5 - stop after correlation
+    to master image
+5 - stop after correcting all 
+    bands
+.LEVEL2
+.var inroot
+
+THIS DOCUMENT NEEDS UPDATING
+
+The inputs are: <inroot>.B1, <inroot>.B2, <inroot>.B3..., <inroot>.nav
+    <inroot>.meta
+The outputs are: <root>_map4.B1, <root>_map4.B2, <root>_map4.B3 ...
+
+An example of a root is /data/OCT14, so the files would
+       be /data/OCT14_map4.B3, etc.
+.var outroot
+The inputs are: <inroot>.B1, <inroot>.B2, <inroot>.B3..., <inroot>.nav
+    <inroot>.meta
+The outputs are: <root>_map4.B1, <root>_map4.B2, <root>_map4.B3 ...
+
+An example of a root is /data/OCT14, so the files would
+       be /data/OCT14_map4.B3, etc.
+.var seq
+The temporary files will incorporate this string in the names to parallel
+runs can be made.  This is intended to be modified later to a session
+variable, or some such thing, depending on the computer system.
+.VARI SENSE1
+There are two cases, (L,S) and (Lon,Lat) as specified by the SENSUNIT parm
+
+For the (L,S) case, the user inputs VICAR pixel locations for the ground
+track (also elevation) of the satellite.  During calculation for each
+line of data, the satellite is assumed to be at the intersection of that
+line with the straight line between the two given points.  Since the
+first approximation of the (lon-lat) space to the pixel space is affine,
+this is also a straight line in the (lon-lat) space.  THIS METHOD IS
+RECOMMENDED FOR THESE KEYWORDS.
+
+For the (Lon,Lat) case, the satellite is not placed at the actual lon-lat
+but is placed at the (Lon,Lat) which is extrapolated from the affine,
+approximate mapping of the user-selected quad.  This could actually
+misplace the location of the path of the satellite.  THIS METHOD IS
+NOT RECOMMENDED UNLESS ONLY THE LON-LAT OF THE SATELLITE IS KNOWN.
+
+Satellite location is used only for the correction of elevation offset
+of the image data.
+
+Elevation is in meters.
+.VARI QUAD1
+There are two cases, (L,S) and (Lon,Lat) as specified by the QUADUNIT parm
+
+For the (L,S) case, the four parameters are used as the corresponding
+VICAR parameters:
+     quad1     - sl
+     quad2     - ss
+     quadsize1 - nl
+     quadsize2 - ns
+note that the input image may have a funny rotation so that the vicar
+(sl,ss) may be at a corner other than the upper right corner.  To get
+a feel for which corner is the VICAR (sl,ss), run this proc with the
+STOPAT parameter set to 1.  Look at the rotation diagram near the end
+of the listing coming out of the GTLIST call.  The corner that has the 
+1 is the VICAR (sl,ss) corner.  Don't worry, the proc will always 
+produce a normal north-oriented VICAR image as output.  If you are not 
+sure about the nl,ns settings you can run a test case, or do a square
+image and cut it when done.  The (nl,ns) are always positive.
+
+For the (Lon,Lat) case, the rotation still has to be looked at and the
+(quad1,quad2) is set to the VICAR (sl,ss) corner.  The quadsize1/2 are
+set to the number of degrees of data desired.  The quadsize1/2 are always
+positive.  For the AVHRR rotation 3, quad1 is a latitude and quad2 is a
+longitude for the lower right corner of desired data.
+.END

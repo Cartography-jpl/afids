@@ -1,0 +1,41 @@
+process help=*
+PARM INP       TYPE=(STRING,99)
+PARM OUTPATH   TYPE=(STRING,99)
+PARM PROPERTY  TYPE=(STRING,99) DEFAULT="GEOTIFF"
+END-PROC
+
+! HELP TEXT FOR LAB2ASC
+.TITLE
+LAB2ASC - Dumps property label contents to a text file.
+.HELP
+PURPOSE
+Dumps property label contents to a text file.
+
+CALL
+     lab2asc INP OUTPATH PROPERTY
+  WHERE:
+     INP           is the input VICAR image file
+     OUTPATH       is the output text file
+     PROPERTY      is the property label to be dumped (usually GEOTIFF).
+
+.PAGE
+RESTRICTIONS
+------------
+
+INP, OUTPATH and PROPERTY must be less than 99 characters long.
+
+.PAGE
+WRITTEN BY:            W Bunch
+COGNIZANT PROGRAMMER:  W Bunch
+
+REVISIONS: 
+Mon Aug 18 2008 Initial version
+
+.LEVEL1
+.VAR INP
+Input VICAR file containing label data.
+.VAR OUTPATH
+Output text file containing label data.
+.VAR PROPERTY
+property label to be dumped.
+.END

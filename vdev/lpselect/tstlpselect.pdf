@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $echo="yes"
+let $autousage="none"
+
+
+ibis-gen lpxxx5 nc=4 nr=5 index=2 datacol=1 +
+     data=(0,2,3,4,5) 'ibis-2 format=(FULL,FULL,A12,A12) +
+     strcol=(3,4) +
+     string=(aaaaaa1,bbbbbb1,aaaaaa2,bbbbbb2,aaaaaa3, +
+      bbbbbb3,aaaaaa4,bbbbbb4,aaaaaa5,bbbbbb5)
+   
+lpselect inp=(lpxxx4.slp, lpxxx5) out=lpxxx6 key=1
+ibis-list lpxxx6
+
+theend>
+end-proc

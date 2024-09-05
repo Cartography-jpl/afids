@@ -1,0 +1,46 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = ccdrecip
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+#CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+#-Wno-globals - removes reports of 
+#Argument #2 of `xvp' is one type at (2) but is some other type at (1) [info -f g77 M GLOBALS]
+#Argument #2 of `xvwrit' is one precision at (2) but is some other precision at (1) [info -f g77 M GLOBALS]
+
+# -Wextra -Wcompare-reals  gives unuseful message
+FFLAG += -Wunused-parameter -Wunused -Wuninitialized -Wsurprising -Wintrinsic-shadow -Wno-globals
+
+
+
+#COMMENTS
+##############################################################
+#
+#  For gfortran:
+# -Wall includes:
+#       -Waliasing
+#       -Wampersand,
+#       -Wconversion, 
+#       -Wsurprising, 
+#       -Wc-binding-type, 
+#       -Wintrinsics-std, 
+#       -Wno-tabs, 
+#       -Wintrinsic-shadow, 
+#       -Wline-truncation, 
+#       -Wtarget-lifetime, 
+#       -Wreal-q-constant 
+#       -Wunused
+#
+# -Wextra includes:
+#       -Wcompare-reals 
+#       -Wunused-parameter
+#################################################
+

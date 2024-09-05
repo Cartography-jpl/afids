@@ -1,0 +1,6 @@
+$ vpack icat.com -mixed -
+	-s icat.c -
+	-p icat.pdf -
+	-i icat.imake -
+	-t tsticat.pdf
+$ Exit

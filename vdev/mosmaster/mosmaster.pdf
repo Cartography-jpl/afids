@@ -1,0 +1,80 @@
+procedure
+parm key string
+parm pixdeg real
+parm mstrlon real
+parm mstrlat real
+
+local gridspace real
+local mastername string
+local mastercopy string
+local master10x string
+local mstrlonp1 real
+local mstrlatm1 real
+local pixdeg10x real
+body
+
+
+!   did you create the constants file?
+
+let mastername = "&key" // "_params"
+
+asc2tcl &mastername keyword="gridspace=" val=gridspace vtype=8
+if (gridspace>0.0) write "file created OK"
+
+!   name the files
+
+let mastername = "&key" // "_master"
+let master10x = "&key" // "_master10x"
+let mstrlonp1 = mstrlon+1.0
+let mstrlatm1 = mstrlat-1.0
+
+!   generate the master image
+
+gen xxim1 nl=1 ns=1
+gtgen inp=xxim1 out=&mastername 'tiecnvrt +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,&mstrlon,&mstrlat,0.0)", +
+          "ModelTiePointTag=(0,&pixdeg,0,&mstrlon,&mstrlatm1,0.0)", +
+          "ModelTiePointTag=(&pixdeg,0,0,&mstrlonp1,&mstrlat,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+let pixdeg10x = pixdeg*0.1
+gtgen inp=xxim1 out=&master10x 'tiecnvrt +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,&mstrlon,&mstrlat,0.0)", +
+          "ModelTiePointTag=(0,&pixdeg10x,0,&mstrlon,&mstrlatm1,0.0)", +
+          "ModelTiePointTag=(&pixdeg10x,0,0,&mstrlonp1,&mstrlat,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+gtlist &mastername
+gtlist &master10x
+
+!   generate the zfile
+
+let mastername = "&key" // "_nn1_zfile"
+
+ibis-gen xxim1 nc=13 nr=1 +
+  format=("A30","A3","FULL","FULL","FULL","FULL","FULL","DOUB","DOUB" +
+  ,"DOUB","DOUB","DOUB","DOUB")
+ibis-l xxim1 'format
+rowop xxim1 &mastername keycol=6 range=(1.0,1.0) 'select
+ibis-l &mastername 'format
+
+!    make copies for all of the bands
+
+let mastercopy = "&key" // "_nn2_zfile"
+ibis-copy &mastername &mastercopy
+let mastercopy = "&key" // "_nn3_zfile"
+ibis-copy &mastername &mastercopy
+let mastercopy = "&key" // "_nn4_zfile"
+ibis-copy &mastername &mastercopy
+let mastercopy = "&key" // "_nn5_zfile"
+ibis-copy &mastername &mastercopy
+let mastercopy = "&key" // "_nn6_zfile"
+ibis-copy &mastername &mastercopy
+let mastercopy = "&key" // "_nn7_zfile"
+ibis-copy &mastername &mastercopy
+
+
+end-proc

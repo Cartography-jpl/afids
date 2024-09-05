@@ -1,0 +1,101 @@
+procedure help=*
+parm inp type=(string,99)
+parm out type=(string,99)
+parm worldedge type=string valid=("n","y") default="n"
+
+local egm96 type=(string,99)
+local vdevdata type=(string,99)
+local nl int
+local ns int
+local nlp2 int
+local nsp2 int
+
+body
+
+translog AFIDS_VDEV_DATA vdevdata
+let egm96 = "&vdevdata/EGM96_20_x100.HLF"
+
+if (worldedge="y")
+   lab2tcl &egm96 v1=nl v2=ns keyword=(nl,ns) 'system
+   let nlp2 = nl+4
+   let nsp2 = ns+4
+   gtcopy &egm96 xxxexpandegm96a size=(-1,-1,&nlp2,&nsp2)
+   f2 xxxexpandegm96a out=xxxexpandegm96b fun="in1+20000"
+   moore xxxexpandegm96b xxxexpandegm96a 'edgeval dmax=2
+   f2 xxxexpandegm96a out=xxxexpandegm96b fun="in1-20000"
+
+   lab2tcl &inp v1=nl v2=ns keyword=(nl,ns) 'system
+   let nlp2 = nl+2
+   let nsp2 = ns+2
+   gtcopy &inp xxxexpandone size=(0,0,&nlp2,&nsp2)
+   gtwarp xxxexpandegm96b +
+      xxxfixdted1 ref=xxxexpandone 'coverref +
+      nah=400 nav=400
+
+   gtcopy xxxfixdted1 xxxexpandone size=(2,2,&nl,&ns)
+
+   f2 (&inp,xxxexpandone) +
+      out=&out +
+      fun="in1+in2*0.01"
+   ush /bin/rm xxxexpandone
+   ush /bin/rm xxxexpandegm96?
+else
+   gtwarp &egm96 +
+      xxxfixdted1 ref=&inp 'coverref +
+      nah=400 nav=400
+
+   f2 (&inp,xxxfixdted1) +
+      out=&out +
+      fun="in1+in2*0.01"
+end-if
+
+gtgenup &out +
+  geotiff=("VerticalCSTypeGeoKey=5030(VertCS_WGS_84_ellipsoid)")
+
+ush /bin/rm xxxfixdted1
+
+theend>
+end-proc
+.TITLE
+EGM2WGS - Convert vertical datum Geoid'96 to WGS84 Ellipsoid
+.HELP
+PURPOSE
+The input file in Geoid'96 (for example SRTM elevation data) is
+converted to WGS84 Ellipsoid.
+
+CALL
+     egm2wgs INPUT OUTPUT
+  WHERE:
+     INPUT          is the Geoid'96 elevation file
+     OUTPUT         is the output WGS84 elevation file
+     
+OPERATION
+
+1. The routine finds the AFIDS Geoid/Spheroid difference file
+2. The diff file is GTWARPED to match the input file
+3. The warped diff is added from the input file (times .01)
+4. A GeoTIFF label is added for the vertical datum
+
+PERFORMANCE
+
+Same speed as GTCOPY
+
+.PAGE
+Restrictions
+------------
+
+The input must have a GeoTIFF label.
+
+.PAGE
+Original Programmer: A. L. Zobrist, 17 Dec, 2007
+Corrected May 24, 2010 wrong sign subtracting (geoid-spheroid difference) now adds. ALZ
+Corrected June 7, 2010 added param worldedge for NS poles and dateline. ALZ
+Current Cognizant Programmer: A. L. Zobrist
+.LEVEL1
+.VARI INP
+Input file with GeoTIFF label
+.VARI OUT
+Output file converted to WGS84
+vertical datum
+.END
+

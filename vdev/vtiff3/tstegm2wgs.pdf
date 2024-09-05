@@ -1,0 +1,32 @@
+procedure
+refgbl $echo
+parm version string def="ibis-1"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+! null case, area
+
+gen xxxim1 nl=50 ns=50 ival=1000  'half
+
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,-112,39,0.0)", +
+      "ModelTiePointTag=(50,0,0,-111,39,0.0)", +
+      "ModelTiePointTag=(0,50,0,-112,38,0.0)", +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtlist xxxim2
+
+egm2wgs xxxim2 xxxim3 
+
+gtlist xxxim3
+
+f2 (xxxim2,xxxim3) out=xxxim1 fun="abs(in1-in2)"
+hist xxxim1
+
+theend>
+end-proc

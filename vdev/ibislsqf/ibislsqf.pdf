@@ -1,0 +1,185 @@
+PROCESS       HELP=*
+PARM INP TYPE=(STRING) count=2
+PARM FUNC TYPE=(STRING,20) COUNT=1 DEFAULT="RPCN10" +
+ VALID=("RPCN20","RPCN10","RPCN11","RPCNZT","RPCNZ2", +
+ "RPCNZ1","RPCROLL")
+PARM RPCTYPE TYPE=(STRING,2) VALID=("A","B"," ") DEFAULT=" "
+PARM RPCLS TYPE=(STRING,2) VALID=("L","S"," ") DEFAULT=" "
+PARM DATACOL TYPE=INTEGER COUNT=1:20 
+PARM DEPCOL TYPE=INTEGER COUNT=1 
+PARM COEFFCOL TYPE=INTEGER COUNT=1:100 DEFAULT=0
+PARM RESCOL TYPE=INTEGER COUNT=1 DEFAULT=0
+PARM CONCOL TYPE=INTEGER DEFAULT=0
+PARM SOLCOL TYPE=INTEGER COUNT=2:3 DEFAULT=(1,2,0)
+PARM NOPRINT TYPE=KEYWORD COUNT=0:1 VALID=(--,NOPRINT) DEFAULT=--
+END-PROC
+.TITLE
+VICAR/IBIS Program "ibislsqf"
+.HELP
+PURPOSE
+
+   "ibislsqf" performs linear least squares fits on data in
+an IBIS interface (tabular) file.  The solutions and/or residuals
+can be placed in specified columns of the file.  The solutions can
+also be output to the terminal.  Multiple fits can be done on
+different parts of one file.
+
+The program features data handling for functions that are too complex
+to handle with other IBIS programs such as ibislsq2 and mf3, etc.
+The particular case is RPC function handling (RPF).
+
+The solcol applies to the second ibis file. The first column can be
+a guess solution vector and can be a superset of the variables that
+are actually being solved for.  The final solution is output to the
+second column named in solcol.  The remaining column is for testing
+purposes and checks the solution.  In the RPC case, the program is
+solving for the solution as a subset of the solution vector (for example
+it can be solving for only the x,y terms and not the height terms.
+
+The coefficients in the solution may be a subset of the coefficients in
+the solution vector.  This is useful for the RPF cases, see especially
+RPC10N and RPC12N.  The user must then program for transfers from the
+coefficient vector to the guess vector in two places:
+
+1.  Setting up the guess vector in the main program.
+2.  Transferring one solution step in the subroutine TEST_FDF.
+
+The PPC functions: "RPCN20","RPCN10","RPCN11","RPCNZT","RPCNZ2"
+
+RPCN20 - solves for the 20 numerator coefficients
+RPCN10 - solves for the 10 numerator coefficients not involving
+         the Height term
+RPCN11 - solves for the 10 numerator coefficients not involving
+         the Height term, plus the single H^1 term
+RPCNZT - solves for the 10 numerator coefficients that involve Height
+         holding the x,y terms constant, the numerator constant also
+         varies
+RPCNZ2 - solves for the numerator H^1 coefficient that involves Height
+         holding all other terms constant, the numerator constant also
+         varies
+RPCNZ1 - solves for the numerator H^1 coefficient that involves Height
+         holding all other terms constant, the numerator constant is held
+         fixed
+RPCROLL- solves for the numerator H^1 coefficients for both line and sample
+         directions constrained to be in the direction of roll.  The
+         numerator constants are held fixed
+
+EXECUTION
+
+     ibislsqf INP=(DATA,GUESS) FUNC=RPCN20 DATACOL=(1,2,3) DEPCOL=4 CONCOL=7 +
+	     RESCOL=8  COEFFCOL=(21,22,23,24,25) 'NOPRINT SOLCOL=(1,2,3,4,5)
+
+    This example shows the use of all of the parameters.  The input
+file, DATA.INT, is an IBIS interface file.  The data for the independent
+variables is in columns 1,2,3 and the data for the dependent 
+variables are in column 4.  The control column 7 is used for
+multiple fits to be done in one run.  The least square fits are done 
+on sets of rows; a new set is started whenever the value in the control 
+column changes.  If no control column is specified then one fit
+is done on the whole file.  The COEFFCOL and RESCOL parameters specify
+in which columns, of the input file, the results will be put.  If either
+or both are not specified then they will not be output.  There must be
+as many coefficient columns as there are independent columns and these
+match the sequence of the independent variable columns.  The
+coefficients of the solution are placed in columns 21,22,23,24,25.  The
+residual column can be used to easily calculate the deviation of the
+data points from the fitted line. Normally the solution for each set
+is printed to the terminal, but this can be turned off with the
+'NOPRINT keyword.  The second input file is an IBIS interface file contain-
+ing the guess in column 1, solution output into column 2, and testing values
+in the other three columns.
+
+    The length of each set should, of course, be longer than the
+number of independent variables (columns).  If it is not then the
+routine will still probably find a feasible solution (usually not unique)
+and go on.
+
+
+RESTRICTIONS
+
+The maximum number of independent columns (variables) is 20.  Note
+that all of the RPC routines use 3.
+
+Original Programmer: A. L. Zobrist, 18 Apr, 2005
+Current Cognizant Programmer: A. L. Zobrist
+Last changed by: A. L. Zobrist, 18 Apr, 2005
+Revisions:
+  Fri Dec 28 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+
+.LEVEL1
+.VARIABLE INP
+ Input IBIS interface file,
+ 2d file for guess and solution
+.VAR FUNC
+ Function to be minimized, see
+ program help
+.VAR RPCTYPE
+ "A" is RPC00A; "B" is RPC00B
+.VAR RPCLS
+ "L" for line; "S" for sample
+.VARIABLE DATACOL
+ Data cols, 1 record per point
+.VARIABLE DEPCOL
+ Dependent variable column
+.VARIABLE COEFFCOL
+ Optional columns to place
+ coefficients of the solution
+.VARIABLE RESCOL
+ Residuals column
+.VARIABLE CONCOL
+ Control column
+.VARIABLE SOLCOL
+ 1st column is solution guess
+ 2d column is solution
+optional columns
+ 3d column is solution check
+.VARIABLE NOPRINT
+Keyword to suppress printout
+
+.LEVEL2
+.VARIABLE INP
+   INP=(file,file2)   Input IBIS interface file for data, and guess-solution
+.VARIABLE DATACOL
+   DATACOL=(N1,...,Nj) The   integers   N1,...,Nj  specify   the 
+                      columns  which contain the data  for  the 
+                      non-linear function.  Each row contains 
+                      one data point.
+
+.VARIABLE DEPCOL
+   DEPCOL=M1          The integer M1  specifies   the columns
+                      which contain the data  for  the 
+                      dependent variable.  Each row contains 
+                      one data point.
+
+.VARIABLE COEFFCOL
+   COEFFCOL=(N1,...,Nk) The   integers   N1,...,Nk  specify   the 
+                      columns  which will receive the coefficients
+                      of the solution for use in applying to
+                      other operations in the IBIS file (for example
+                      a slope or trend of some data points can be
+                      found and the slope can be applied to other
+                      data).  If this parameter is omitted,  
+		      then no residuals are stored.
+		      
+		      Note that there is a lot of repetition of the
+		      coefficients in the columns, but this allows
+		      the coefficients to be used in a row-oriented
+		      arithmetic operation by routine MF.
+
+.VARIABLE RESCOL
+   RESCOL=R1          The  integer R1 specifies the  column which 
+                      will  receive the residuals corresponding 
+		      to the dependent variables for each data
+		      point.  If this parameter is omitted,  
+		      then no residuals are stored.
+.VARIABLE CONCOL
+   CONCOL=C           The integer C specifies a control column 
+                      which produces a separate fit for each 
+                      group of identical numbers in the control 
+                      column.  If this keyword is omitted, then 
+                      the whole file is processed in one least 
+                      squares fit.
+.VARIABLE NOPRINT
+    'NOPRINT	      Keyword to suppress printout of solution.
+.END

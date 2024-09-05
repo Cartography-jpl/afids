@@ -1,0 +1,62 @@
+gen xxx1 nl=6 ns=6 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 xxx1 out=xxx2 func="line*((samp<4)+(samp>4))"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 36 TIMES
+f2 xxx1 out=xxx2a  +
+  func="(line==3)*(samp==5)"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 36 TIMES
+list xxx2
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:45 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp       1     2     3     4     5     6
+   Line
+      1         1     1     1     0     1     1
+      2         2     2     2     0     2     2
+      3         3     3     3     0     3     3
+      4         4     4     4     0     4     4
+      5         5     5     5     0     5     5
+      6         6     6     6     0     6     6
+list xxx2a 'zer
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:45 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp       1     2     3     4     5     6
+   Line
+      1         0     0     0     0     0     0
+      2         0     0     0     0     0     0
+      3         0     0     0     0     1     0
+      4         0     0     0     0     0     0
+      5         0     0     0     0     0     0
+      6         0     0     0     0     0     0
+concompi (xxx2,xxx2a) (xxx4,xxx3)
+Beginning VICAR task concompi
+concompi version Thu Jan  3 2008
+list xxx4 ndig=2
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:45 2013
+ Task:CONCOMPI  User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp            1          2          3          4          5          6
+   Line
+      1              0          0          0          0          2          2
+      2              0          0          0          0          2          2
+      3              0          0          0          0          2          2
+      4              0          0          0          0          2          2
+      5              0          0          0          0          2          2
+      6              0          0          0          0          2          2
+end-proc
+disable-log

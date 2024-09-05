@@ -1,0 +1,6 @@
+$ vpack difpic.com -mixed -
+	-s difpic.f -
+	-p difpic.pdf -
+	-i difpic.imake -
+	-t tstdifpic.pdf tstdifpic.log
+$ Exit

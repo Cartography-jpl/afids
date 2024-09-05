@@ -1,0 +1,113 @@
+procedure	! run_band
+
+parm band integer valid=1:14
+parm ll_lat real
+parm ll_lon real
+parm num_qlat real def=1.0
+parm num_qlon real def=1.0
+parm pixdeg integer def=108000
+parm mpix real def=1.0
+
+local checkfile string
+local qexist integer
+
+local p_key string
+local north string init="n"
+local east string init="e"
+local ul_lat real
+local ul_lon real
+local uu string init="_"
+local B string init="b"
+local img string init=".img"
+local N string init="N"
+local sband string
+local ful_lat real
+local ful_lon real
+local flr_lat real
+local flr_lon real
+local ilon int
+local ilat int
+local skirt real
+refgbl $echo
+body
+let $echo="yes"
+
+let sband = "&band"
+let ul_lat = ll_lat + num_qlat*0.25
+let ul_lon = ll_lon
+
+let ilon = $fix(&ll_lon*100+0.01)
+let ilat = $fix(&ll_lat*100+0.01)
+let p_key="&north&ilat&east&ilon"
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!goto curr
+
+if (band=2)
+!************************************************************
+!  run this section one time for the project
+!************************************************************
+  let checkfile = "&p_key" // "_master"
+  file2tcl &checkfile val=qexist
+  if (qexist=0)
+    ! prog key pixdeg mlon mlat
+    qbmaster &p_key &pixdeg &ul_lon &ul_lat
+    ! prog key pixsiz mlon mlat
+    qbmapgen &p_key &mpix &ul_lon &ul_lat
+  end-if
+else
+  prepz &p_key &sband
+end-if
+
+!************************************************************
+!  run this section one time for each band, recommend separate
+!  directory for each band, can rerun for single frames
+!************************************************************
+
+! prog key band loopstart#
+
+write "qbmoslog &p_key &sband loopstart=0"
+
+qbmoslog &p_key &sband loopstart=0
+
+!************************************************************
+!  rerun these if any new frames ingested, zprocess is fast
+!************************************************************
+
+zprocess_q &p_key &sband
+processxy &p_key &sband
+
+! reduce10x not needed, did ramps for landsat, useful for quicklook
+
+goto fullcase
+
+let skirt = 0.1
+let ful_lon = ul_lon - skirt
+let ful_lat = ul_lat + skirt
+let flr_lon = ul_lon+num_qlon*0.25 + skirt
+let flr_lat = ul_lat-num_qlat*0.25 - skirt
+
+! prog key area band quad_dim runtype out
+quadmos_q &p_key all &sband +
+   quad=(&ful_lon,&ful_lat,&flr_lon,&flr_lat) +
+   runtype=reduce10 out=&p_key&uu&B&band&img
+
+goto theend
+
+curr>
+fullcase>
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!let num_qlat = 0.0  for feathery study
+
+let skirt = 0.1
+let ful_lon = ul_lon - skirt
+let ful_lat = ul_lat + skirt
+let flr_lon = ul_lon+num_qlon*0.25 + skirt
+let flr_lat = ul_lat-num_qlat*0.25 - skirt
+
+! prog key area band quad_dim runtype out
+quadmos_q &p_key all &sband +
+   quad=(&ful_lon,&ful_lat,&flr_lon,&flr_lat) +
+   runtype=full out=&p_key&uu&B&band&img
+
+theend>
+end-proc

@@ -1,0 +1,6 @@
+$ vpack imcorner.com -mixed -
+	-s imcorner.c -
+	-i imcorner.imake -
+	-p imcorner.pdf -
+	-t tstimcorner.pdf devimcorner.pdf
+$ Exit

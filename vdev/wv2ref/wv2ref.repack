@@ -1,0 +1,6 @@
+$ vpack wv2ref.com -mixed -
+	-s wv2ref.c -
+	-i wv2ref.imake -
+	-p wv2ref.pdf -
+	-t tstwv2ref.pdf
+$ Exit

@@ -1,0 +1,42 @@
+PROCESS       HELP=*
+PARM INP      TYPE=(STRING,99) COUNT=2
+PARM OUT      TYPE=(STRING,99) COUNT=1
+PARM MAPTOPIX TYPE=KEYWORD COUNT=(0:1) VALID=MAPTOPIX DEFAULT=--
+PARM PIXTOMAP TYPE=KEYWORD COUNT=(0:1) VALID=PIXTOMAP DEFAULT=--
+END-PROC
+.TITLE
+VICAR Program lppixmap
+.HELP
+PURPOSE
+
+.PAGE
+WRITTEN BY:    A. Zobrist  P. Kim, 8 Aug 2007
+
+REVISIONS: 
+  none
+
+.LEVEL1
+.VARIABLE INP
+Input files of the .slp file
+and the GEOTiff file with
+the convertion header. The
+".slp" MUST be specified
+before the GEOTiff file.
+
+For example:
+inp=(lake.slp, geotiff)
+.VARIABLE OUT
+Output file.  This file is
+a .slp file with the
+translated vertices.
+.VARIABLE MAPTOPIX
+Keyword to convert map to pixel.
+If specified, PIXTOMAP keyword
+cannot be specified.
+.VARIABLE PIXTOMAP
+Keyword to convert pixel to map.
+If specified, MAPTOPIX keyword
+cannot be specified.
+
+.LEVEL2
+.END

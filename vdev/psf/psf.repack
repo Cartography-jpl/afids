@@ -1,0 +1,6 @@
+$ vpack psf.com -mixed -
+	-s psf.f -
+	-i psf.imake -
+	-p psf.pdf -
+	-t tstpsf.pdf tstpsf.log
+$ Exit

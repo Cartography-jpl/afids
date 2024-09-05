@@ -1,0 +1,114 @@
+procedure help=*
+parm inp type=(string,99) count=1
+parm out type=(string,99) count=1
+parm mag type=real count=1 default=5.0
+parm tmag type=real count=1 default=5.0
+parm sl type=int count=1 default=1
+parm ss type=int count=1 default=1
+parm nl type=int count=1
+parm ns type=int count=1
+parm cols type=int count=4 default=(1,2,3,4)
+
+local c1 type=int
+local c2 type=int
+local c3 type=int
+local c4 type=int
+refgbl $echo
+body
+let $echo="yes"
+
+!  qkplot HANDYPROC
+
+let c1 = cols(1)
+let c2 = cols(2)
+let c3 = cols(3)
+let c4 = cols(4)
+
+!  prepare the residual vectors in format for polyscrb
+
+ibis-copy &inp xxxxxpq36 incols=(&c1,&c2,&c3,&c4) outcols=(1,2,3,4) nc=6
+mf3 xxxxxpq36 f=("c3=c1+&mag*c3$c4=c2+&mag*c4$", +
+   "c1=c1-(&sl)+1$c3=c3-(&sl)+1$c2=c2-(&ss)+1$c4=c4-(&ss)+1$c5=0$c6=0")
+ibis-copy xxxxxpq36 xxxxxpq37 sr=1 sc=1 nc=6 'row 'ibis-1
+
+!  prepare the little T's at base of vectors in format for polyscrb
+
+ibis-copy &inp xxxxxpq36 incols=(&c1,&c2,&c3,&c4) outcols=(1,2,3,4) nc=6
+mf3 xxxxxpq36 +
+  f=("c6=@sqrt(c3*c3+c4*c4)*0.04/(&tmag)$c5=c1+c4/c6$c4=c2-c3/c6$c3=c5$", +
+   "c1=2*c1-c3$c2=2*c2-c4$", +
+   "c1=c1-(&sl)+1$c3=c3-(&sl)+1$c2=c2-(&ss)+1$c4=c4-(&ss)+1$c5=0$c6=0")
+ibis-copy xxxxxpq36 xxxxxpq38 sr=1 sc=1 nc=6 'row 'ibis-1
+
+!  concatenate and scribe into image
+
+ibis-l xxxxxpq37 nr=3
+ibis-l xxxxxpq38 nr=3
+ibis-cat inp=(xxxxxpq37,xxxxxpq38) out=xxxxxpq39 gr1dim=2
+polyscrb xxxxxpq39 &out nl=&nl ns=&ns dn=0 bdn=255
+
+
+end-proc
+.TITLE
+qkplot - Handy plot of residuals in an IBIS file into an image
+.HELP
+PURPOSE
+     
+     If plotting capability is not available, this is a handy way to 
+     see a residual plot scribed into an image.  The four input columns
+     contain the (x,y,residual-x,residual-y).  The data will be scribed
+     as a black vector on a white image background with a little T at
+     the base.
+     
+     The image is sized with (nl,ns) or framed with (sl,ss,nl,ns) 
+     parameters.  The residuals can be magnified with the parameter
+     mag.
+	   
+CALL
+     qkplot A B mag=2.0 sl=100 ss=200 nl=500 ns-500 cols=(1,2,10,11)
+     
+     this call will plot ibis file A into image B.  The (x,y) are in
+     columns (1,2) and the residuals are in columns (10,11).  A 
+     500 x 500 image will be created with data values for x in the range 
+     100 to 600 and y from 200 to 700.   The residuals will be magnified
+     by 2.0.
+  
+OPERATION
+
+see above.
+
+PERFORMANCE
+
+about the speed of polyscrb.
+
+.PAGE
+Restrictions
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 11 Dec, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last changed by: A. L. Zobrist, 12 Dec, 2001
+
+.LEVEL1
+.vari inp
+input ibis file
+.vari out
+output image file
+.vari mag
+magnification of residuals
+.vari tmag
+magnification of vector tails
+.vari sl
+start line for plot window
+.vari ss
+start samp for plot window
+.vari nl
+num lines for plot window
+.vari ns
+num samps for plot window
+.vari cols
+(x,y,x-residual,y-residual)
+
+.END

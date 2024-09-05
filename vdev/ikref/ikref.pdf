@@ -1,0 +1,56 @@
+PROCESS      HELP=*
+
+PARM INP       TYPE=STRING  COUNT=0:5
+PARM META      TYPE=STRING  COUNT=0:1 DEFAULT=""
+PARM BAND      TYPE=INTEGER COUNT=0:1 DEFAULT=0 VALID=(0:5)
+PARM OUT       TYPE=STRING  COUNT=0:5
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "ikref"
+.HELP
+PURPOSE
+ This program converts raw dn images
+ into top of atmosphere reflectance 
+ images where the values range from 
+ 0 to 1.  The output image(s) is in 
+ "REAL" format.  Band 5 is the pan
+ band.  The order is blue, green,
+ red, nir, and pan.
+
+.LEVEL1
+.VARIABLE INP
+ Input raw dn ikonos image(s).
+ The number of inputs must
+ be either 1 or all 5 bands.
+ Order is blue, green, red,
+ nir, pan.
+
+.VARIABLE OUT
+ Output reflectance image(s).
+ Either 1 or all 5 bands depending
+ on the input
+
+.VARIABLE META
+ .IMD file containing metadata
+ regarding the multispectral
+ input images.
+
+.VARIABLE BAND
+ Specifies which band the input
+ image is.  Ignored if all 5
+ bands are input.
+
+.END
+
+
+
+
+
+
+
+
+
+
+

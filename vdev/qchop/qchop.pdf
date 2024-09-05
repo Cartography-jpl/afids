@@ -1,0 +1,37 @@
+process help=*
+PARM INP TYPE=STRING
+PARM OUT TYPE=STRING
+PARM NB TYPE=INTEGER DEFAULT=1000
+END-PROC
+.TITLE
+qchop - chop off the start of a file
+.HELP
+PURPOSE:
+qchop copies NB bytes of the input to the output
+EXECUTION:
+
+Example
+
+qchop A B 200
+
+OPERATION:
+qchop does not use VICAR IO.
+ TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          21 May 2000
+ COGNIZANT PROGRAMMER:   Barbara McGuffie    21 May 2000
+ 
+ REVISION HISTORY
+  00-5-21    AZ   Initial version
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input file
+.VARIABLE OUT
+STRING - Output file
+.VARIABLE NB
+INTEGER - Number of bytes to copy
+.END

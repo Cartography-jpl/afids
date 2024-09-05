@@ -1,0 +1,69 @@
+procedure help=*
+parm in string
+parm out string
+
+local ztype int
+body
+
+!   converts CIB1 to an approximate CIB5
+!   0.794597405^7 = .20000000
+
+gt2tcl &in val=ztype keyword=GTRASTERTYPEGEOKEY vtype=4
+
+if (ztype=1)
+   gtsize &in        xxxmntemp1 azoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 azoom=0.794597405
+   gtsize xxxmntemp2 xxxmntemp1 azoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 azoom=0.794597405
+   gtsize xxxmntemp2 xxxmntemp1 azoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 azoom=0.794597405
+   gtsize xxxmntemp2 &out       azoom=0.794597405
+else
+   gtsize &in        xxxmntemp1 pzoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 pzoom=0.794597405
+   gtsize xxxmntemp2 xxxmntemp1 pzoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 pzoom=0.794597405
+   gtsize xxxmntemp2 xxxmntemp1 pzoom=0.794597405
+   gtsize xxxmntemp1 xxxmntemp2 pzoom=0.794597405
+   gtsize xxxmntemp2 &out       pzoom=0.794597405
+end-if
+
+end-proc
+.TITLE
+cib1to5 - converts CIB1 to CIB5 using multiple zooms
+.HELP
+PURPOSE
+    
+Converts CIB1 to CIB5 using multiple zooms.  This avoids extreme
+undersampling of a single zoom.  Assumes GeoTIFF label.  Computes
+correct output GeoTIFF label.
+
+Useful for applying AFIDS to satellite imagery at or above 15 meters
+in pixel size such as Aster or Landsat..
+   
+CALL
+
+  cib1to5 input output
+  
+OPERATION
+
+Determines area or point type and calls gtsize seven times setting
+azoom or pzoom to 0.794597405.
+
+PERFORMANCE
+
+Restrictions
+------------
+
+Must have GeoTIFF label.
+
+Original Programmer: A. L. Zobrist, 25 Sep, 2006
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 25 Sep, 2006
+
+.LEVEL1
+.var in
+input image (a CIB1)
+.var out
+output image (will be CIB5)
+.END

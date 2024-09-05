@@ -1,0 +1,98 @@
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody  	1581 Aug  7  2007 lppixmap.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1488 Jul 17  2007 lppixmap.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1540 Jul 17  2007 lppixmap.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1536 Aug 28  2007 lppixmap.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1536 Aug 23  2007 lppixmap.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	1536 Aug 28  2007 lppixmap.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1581 Aug  5  2007 lppixmap.c
+raid27.dir:-rwxrwxrwx 1 rkf users  		1760 Jul  2  2007 lppixmap.c*
+
+raid19_home.dir:-r--r--r-- 1 azobrist nobody    9111 Aug  5  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim     nobody    8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody   	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody    	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	8668 Jul 18  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8668 Jul 18  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8922 Jul  4  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10304 Aug 28  2007 lppixmap.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	9111 Aug  5  2007 lppixmap.com
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    853 Aug  7  2007 lppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        512 Jul 17  2007 lppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       1953 Aug 23  2007 lppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        853 Aug  5  2007 lppixmap.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users               512 Jul  2  2007 lppixmap.pdf*
+
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    637 Aug  7  2007 tstlppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        637 Jul 17  2007 tstlppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        774 Aug 24  2007 tstlppixmap.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        786 Aug 24  2007 tstlppixmap.pdf~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        637 Aug  5  2007 tstlppixmap.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users               637 Jul  2  2007 tstlppixmap.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users               635 Jul  2  2007 tstlppixmap.pdf~*
+
+
+
+
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1488 Jul 17  2007 lppixmap.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1540 Jul 17  2007 lppixmap.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1536 Aug 28  2007 lppixmap.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1536 Aug 23  2007 lppixmap.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1536 Aug 28  2007 lppixmap.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       1581 Aug  5  2007 lppixmap.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       1581 Aug  7  2007 lppixmap.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       1581 Aug  7  2007 lppixmap.c
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator 1760 Jul  2  2007 lppixmap.c*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff     	8922 Jul  4  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	8668 Jul 18  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8668 Jul 18  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff         10304 Aug 28  2007 lppixmap.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	9111 Aug  5  2007 lppixmap.com
+Data2_dir.txt:-r--r--r--  1 rjb  staff       	9111 Aug  5  2007 lppixmap.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff     	8922 Jul  4  2007 lppixmap.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+Data4_dir.txt:-r--r--r--  1 rjb  staff       	9111 Aug  5  2007 lppixmap.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff     	8922 Jul  4  2007 lppixmap.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	8922 Jul  4  2007 lppixmap.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	8922 Jul  4  2007 lppixmap.com
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          512 Jul 17  2007 lppixmap.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff         1953 Aug 23  2007 lppixmap.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          853 Aug  5  2007 lppixmap.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff          853 Aug  7  2007 lppixmap.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff          853 Aug  7  2007 lppixmap.pdf
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    512 Jul  2  2007 lppixmap.pdf*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          637 Jul 17  2007 tstlppixmap.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          774 Aug 24  2007 tstlppixmap.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          786 Aug 24  2007 tstlppixmap.pdf~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff          637 Aug  5  2007 tstlppixmap.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff          637 Aug  7  2007 tstlppixmap.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff          637 Aug  7  2007 tstlppixmap.pdf
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    637 Jul  2  2007 tstlppixmap.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    635 Jul  2  2007 tstlppixmap.pdf~*
+
+

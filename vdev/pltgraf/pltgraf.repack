@@ -1,0 +1,6 @@
+$ vpack pltgraf.com -mixed -
+	-s pltgraf.f -
+	-i pltgraf.imake -
+	-p pltgraf.pdf -
+	-t tstpltgraf.pdf tstpltgraf.log
+$ Exit

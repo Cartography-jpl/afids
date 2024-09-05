@@ -1,0 +1,6 @@
+$ vpack genesearch.com -mixed -
+	-s genesearch.c -
+	-i genesearch.imake -
+	-p genesearch.pdf -
+	-t tstgenesearch.pdf
+$ Exit

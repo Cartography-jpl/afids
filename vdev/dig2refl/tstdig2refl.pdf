@@ -1,0 +1,314 @@
+procedure
+refgbl $echo
+refgbl $autousage
+
+local file string
+local PAN real
+local COA real
+local BLU real
+local GRN real
+local YEL real
+local RED real
+local RDE real
+local NR1 real
+local NR2 real
+local SW1 real
+local SW2 real
+local SW3 real
+local SW4 real
+local SW5 real
+local SW6 real
+local SW7 real
+local SW8 real
+
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="no"
+enable-log
+
+write ""
+write "********** running WV01 NTF test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv01/15MAR14105100-P1BS-500273955010_01_P012.NTF"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "PAN reflectance factor '&pan'"
+
+write ""
+write "********** running WV01 IMD test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv01/15MAR14105100-P1BS-500273955010_01_P012.IMD"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "PAN reflectance factor '&pan'"
+
+write ""
+write "********** running WV02 NTF test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv02/13OCT06_pan/13OCT08044607-P1BS-500060078130_05_P004.NTF"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+write ""
+write "********** running WV02 IMD test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv02/13OCT06_pan/13OCT08044607-P1BS-500060078130_05_P004.IMD"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+write ""
+write "********** running WV02 NTF test (8 multi-spectral bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv02/13OCT06_msi8/13OCT08044607-M1BS-500060078130_05_P004.NTF"
+
+let $echo="yes"
+dig2refl inp=&file +
+   coa=coa +
+   blu=blu +
+   grn=grn +
+   yel=yel +
+   red=red +
+   rde=rde +
+   nr1=nr1 +
+   nr2=nr2
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "coa reflectance factor '&coa'"
+write "blu reflectance factor '&blu'"
+write "grn reflectance factor '&grn'"
+write "yel reflectance factor '&yel'"
+write "red reflectance factor '&red'"
+write "rde reflectance factor '&rde'"
+write "nr1 reflectance factor '&nr1'"
+write "nr2 reflectance factor '&nr2'"
+
+write ""
+write "********** running WV02 IMD test (8 multi-spectral bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv02/13OCT06_msi8/13OCT08044607-M1BS-500060078130_05_P004.IMD"
+
+let $echo="yes"
+dig2refl inp=&file +
+   coa=coa +
+   blu=blu +
+   grn=grn +
+   yel=yel +
+   red=red +
+   rde=rde +
+   nr1=nr1 +
+   nr2=nr2
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "coa reflectance factor '&coa'"
+write "blu reflectance factor '&blu'"
+write "grn reflectance factor '&grn'"
+write "yel reflectance factor '&yel'"
+write "red reflectance factor '&red'"
+write "rde reflectance factor '&rde'"
+write "nr1 reflectance factor '&nr1'"
+write "nr2 reflectance factor '&nr2'"
+
+write ""
+write "********** running WV03 NTF test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv03/270362_pan/11MAR17WV030600017MAR11071332-P1BS-501186304010_01_P001_________AAE_0AAAAABPABV0.NTF"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+write ""
+write "********** running WV03 IMD test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv03/270362_pan/501186304010_01/DVD_VOL_1/501186304010_01/501186304010_01_P001_PAN/17MAR11071332-P1BS-501186304010_01_P001.IMD"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+! Cannot run this because it lacks STDIDC TRE. Nothing in this file identifies the sensor.
+!write ""
+!write "********** running WV03 NTF test (8 multi-spectral bands)"
+!let file = "/raid26/wlb/reflec/refl_test_data/wv03/M1BS_msi8/16FEB20184545-M1BS-500586615010_01_P001.NTF"
+
+!let $echo="yes"
+!dig2refl inp=&file +
+!   coa=coa +
+!   blu=blu +
+!   grn=grn +
+!   yel=yel +
+!   red=red +
+!   rde=rde +
+!   nr1=nr1 +
+!   nr2=nr2
+!let $echo="no"
+
+!write ">>> Returned reflectance factor(s):"
+!write "coa reflectance factor '&coa'"
+!write "blu reflectance factor '&blu'"
+!write "grn reflectance factor '&grn'"
+!write "yel reflectance factor '&yel'"
+!write "red reflectance factor '&red'"
+!write "rde reflectance factor '&rde'"
+!write "nr1 reflectance factor '&nr1'"
+!write "nr2 reflectance factor '&nr2'"
+
+write ""
+write "********** running WV03 IMD test (8 multi-spectral bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv03/M1BS_msi8/16FEB20184545-M1BS-500586615010_01_P001.IMD"
+
+let $echo="yes"
+dig2refl inp=&file +
+   coa=coa +
+   blu=blu +
+   grn=grn +
+   yel=yel +
+   red=red +
+   rde=rde +
+   nr1=nr1 +
+   nr2=nr2
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "coa reflectance factor '&coa'"
+write "blu reflectance factor '&blu'"
+write "grn reflectance factor '&grn'"
+write "yel reflectance factor '&yel'"
+write "red reflectance factor '&red'"
+write "rde reflectance factor '&rde'"
+write "nr1 reflectance factor '&nr1'"
+write "nr2 reflectance factor '&nr2'"
+
+write ""
+write "********** running WV03 NTF test (8 SWIR bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv03/A1BS_swir/16FEB20184543-A1BS-500591584090_01_P001.NTF"
+
+let $echo="yes"
+dig2refl inp=&file +
+   sw1=sw1 +
+   sw2=sw2 +
+   sw3=sw3 +
+   sw4=sw4 +
+   sw5=sw5 +
+   sw6=sw6 +
+   sw7=sw7 +
+   sw8=sw8
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "sw1 reflectance factor '&sw1'"
+write "sw2 reflectance factor '&sw2'"
+write "sw3 reflectance factor '&sw3'"
+write "sw4 reflectance factor '&sw4'"
+write "sw5 reflectance factor '&sw5'"
+write "sw6 reflectance factor '&sw6'"
+write "sw7 reflectance factor '&sw7'"
+write "sw8 reflectance factor '&sw8'"
+
+write ""
+write "********** running WV03 IMD test (8 SWIR bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/wv03/A1BS_swir/500591584090_01/DVD_VOL_1/500591584090_01/500591584090_01_P001_SWR/16FEB20184543-A1BS-500591584090_01_P001.IMD"
+
+let $echo="yes"
+dig2refl inp=&file +
+   sw1=sw1 +
+   sw2=sw2 +
+   sw3=sw3 +
+   sw4=sw4 +
+   sw5=sw5 +
+   sw6=sw6 +
+   sw7=sw7 +
+   sw8=sw8
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "sw1 reflectance factor '&sw1'"
+write "sw2 reflectance factor '&sw2'"
+write "sw3 reflectance factor '&sw3'"
+write "sw4 reflectance factor '&sw4'"
+write "sw5 reflectance factor '&sw5'"
+write "sw6 reflectance factor '&sw6'"
+write "sw7 reflectance factor '&sw7'"
+write "sw8 reflectance factor '&sw8'"
+
+write ""
+write "********** running GE01 NTF test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/ge01/new_format/270344_pan/16AUG15GE010500015AUG16065832-P1BS-054603401100_01_P002_________AAE_0AAAAABKABF0.NTF"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+write ""
+write "********** running GE01 IMD test (pan only)"
+let file = "/raid26/wlb/reflec/refl_test_data/ge01/new_format/270344_pan/054603401100_01/DVD_VOL_1/054603401100_01/054603401100_01_P002_PAN/15AUG16065832-P1BS-054603401100_01_P002.IMD"
+
+let $echo="yes"
+dig2refl inp=&file pan=pan
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "pan reflectance factor '&pan'"
+
+write ""
+write "********** running GE01 NTF test (multi-spectral bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/ge01/new_format/270344_msi/16AUG15GE010500015AUG16065832-M1BS-054603401100_01_P002_________GA_E0AAAAAAJAAH0.NTF"
+
+let $echo="yes"
+dig2refl inp=&file +
+   blu=blu +
+   grn=grn +
+   red=red +
+   nr1=nr1
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "blu reflectance factor '&blu'"
+write "grn reflectance factor '&grn'"
+write "red reflectance factor '&red'"
+write "nr1 reflectance factor '&nr1'"
+
+write ""
+write "********** running GE01 IMD test (multi-spectral bands)"
+let file = "/raid26/wlb/reflec/refl_test_data/ge01/new_format/270344_msi/054603401100_01/DVD_VOL_1/054603401100_01/054603401100_01_P002_MUL/15AUG16065832-M1BS-054603401100_01_P002.IMD"
+
+let $echo="yes"
+dig2refl inp=&file +
+   blu=blu +
+   grn=grn +
+   red=red +
+   nr1=nr1
+let $echo="no"
+
+write ">>> Returned reflectance factor(s):"
+write "blu reflectance factor '&blu'"
+write "grn reflectance factor '&grn'"
+write "red reflectance factor '&red'"
+write "nr1 reflectance factor '&nr1'"
+
+theend>
+
+disable-log
+end-proc

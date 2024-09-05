@@ -1,0 +1,699 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+goto curr
+rpccwarp inp=(../test_data/xxchip2.img,  +
+   ../test_data/qb1_iraq_dem.hlf)  +
+   out=xxxmap nah=500 nav=500 'coverinp  +
+   ref=../test_data/qb1_cib.img
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "rpccwarp 04/26/07"
+rpccwarp 04/26/07
+let rpcimg = inp(1)
+let dted = inp(2)
+gt2tcl ../test_data/xxchip2.img val=tstring1 keyword="MODELPIXELSCALETAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+gt2tcl ../test_data/xxchip2.img val=tstring2 keyword="MODELTRANSFORMATIONTAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (tstring1="-999" and tstring2="-999")
+end-if
+if (savegrid<>"")
+else
+   let finalgrid = "xxqqgrid31"
+end-if
+lab2tcl ../test_data/xxchip2.img v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverinp"="coverinp")
+   rpc2grid inp=(../test_data/xxchip2.img,../test_data/qb1_iraq_dem.hlf) out=xxqqgrid1 nah=30 nav=30 ncol=13
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl ../test_data/xxchip2.img val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxqqgrid1 ncol=13 nah=30 nav=30    +
+l1=4.483132638619e+01 s1=3.587197754663e+01+
+ l2=4.484168053645e+01 s2=3.587175795984e+01    l3=4.483137093470e+01 s3=3.586520476886e+01 l4=4.484154456866e+01 s4=3.586499557958+
+e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid1 version="ibis-2" org="column" nc=13+
+       nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid1 func="c3=@int((@index-1)/31)/30"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/31)/30
+961 records in
+mf3 xxqqgrid1 func="c4=@mod(@index+30,31)/30"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+30,31)/30
+961 records in
+mf3 xxqqgrid1 func="c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+
++01))+(4.484168053645e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+01))+(4.484168053645e+01)
+961 records in
+mf3 xxqqgrid1 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+961 records in
+mf3 xxqqgrid1 func="c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+
++01))+(3.586520476886e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+01))+(3.586520476886e+01)
+961 records in
+mf3 xxqqgrid1 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+961 records in
+mf3 xxqqgrid1 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+961 records in
+end-proc
+pixmap (xxqqgrid1,../test_data/qb1_iraq_dem.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (../test_data/qb1_iraq_dem.hlf,xxqqgrid1) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxqqgrid1,../test_data/xxchip2.img)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+   gtproj (xxqqgrid1,../test_data/xxchip2.img,../test_data/qb1_cib.img) incol=(1,2) outcol=(6,7)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+NITF_IMAGEDATIM=05072951ZMAY03
+NITF_CETAG=RPC00B
+NITF_ACQ_DATE=20030505072952
+NITF_OBL_ANG=28.55
+NITF_ANGLE_TO_NORTH=270
+NITF_SUN_EL=+62.5
+NITF_SUN_AZ=129.6
+NITF_MEAN_GSD=029.8
+NITF_DYNAMIC_RANGE=02047
+NITF_ROLL_ANG=-28.03
+RPC_FIELD1=1
+RPC_FIELD2=0019.88
+RPC_FIELD3=0000.15
+RPC_FIELD4=1280
+RPC_FIELD5=13062
+RPC_FIELD6=+35.8606
+RPC_FIELD7=+044.9534
+RPC_FIELD8=+1017
+RPC_FIELD9=002921
+RPC_FIELD10=14238
+RPC_FIELD11=+00.0209
+RPC_FIELD12=+000.1239
+RPC_FIELD13=+0634
+RPC_FIELD141=+0.132748E-1
+RPC_FIELD142=-0.147510E+0
+RPC_FIELD143=-0.113465E+1
+RPC_FIELD144=-0.138959E-1
+RPC_FIELD145=+0.200180E-2
+RPC_FIELD146=+0.635242E-4
+RPC_FIELD147=+0.115861E-3
+RPC_FIELD148=-0.286551E-2
+RPC_FIELD149=-0.778726E-2
+RPC_FIELD1410=+0.388308E-5
+RPC_FIELD1411=-0.126487E-5
+RPC_FIELD1412=+0.788107E-5
+RPC_FIELD1413=+0.365929E-4
+RPC_FIELD1414=+0.232154E-5
+RPC_FIELD1415=-0.225421E-4
+RPC_FIELD1416=-0.208933E-4
+RPC_FIELD1417=+0.180910E-4
+RPC_FIELD1418=+0.363930E-6
+RPC_FIELD1419=-0.939815E-6
+RPC_FIELD1420=-0.431269E-7
+RPC_FIELD151=+0.100000E+1
+RPC_FIELD152=+0.380256E-2
+RPC_FIELD153=+0.643151E-2
+RPC_FIELD154=+0.314790E-3
+RPC_FIELD155=+0.184958E-4
+RPC_FIELD156=-0.198243E-5
+RPC_FIELD157=-0.116422E-5
+RPC_FIELD158=-0.192637E-4
+RPC_FIELD159=+0.722401E-4
+RPC_FIELD1510=-0.161779E-4
+RPC_FIELD1511=+0.495049E-5
+RPC_FIELD1512=+0.126794E-5
+RPC_FIELD1513=+0.190771E-3
+RPC_FIELD1514=-0.157429E-6
+RPC_FIELD1515=+0.246815E-4
+RPC_FIELD1516=+0.491660E-3
+RPC_FIELD1517=-0.541022E-6
+RPC_FIELD1518=+0.320900E-6
+RPC_FIELD1519=+0.181401E-4
+RPC_FIELD1520=+0.143592E-6
+RPC_FIELD161=-0.104025E-1
+RPC_FIELD162=+0.968850E+0
+RPC_FIELD163=-0.487887E-3
+RPC_FIELD164=-0.325142E-1
+RPC_FIELD165=-0.710444E-3
+RPC_FIELD166=+0.217572E-3
+RPC_FIELD167=-0.654969E-4
+RPC_FIELD168=+0.107384E-1
+RPC_FIELD169=-0.519453E-5
+RPC_FIELD1610=-0.176761E-4
+RPC_FIELD1611=-0.121058E-5
+RPC_FIELD1612=+0.106017E-3
+RPC_FIELD1613=+0.541226E-5
+RPC_FIELD1614=-0.389680E-5
+RPC_FIELD1615=+0.103307E-4
+RPC_FIELD1616=+0.584016E-4
+RPC_FIELD1617=+0.380777E-7
+RPC_FIELD1618=+0.901765E-5
+RPC_FIELD1619=+0.165988E-5
+RPC_FIELD1620=-0.119374E-6
+RPC_FIELD171=+0.100000E+1
+RPC_FIELD172=-0.319831E-3
+RPC_FIELD173=+0.681092E-3
+RPC_FIELD174=-0.549762E-3
+RPC_FIELD175=-0.267977E-5
+RPC_FIELD176=-0.619388E-5
+RPC_FIELD177=+0.267975E-7
+RPC_FIELD178=+0.476371E-5
+RPC_FIELD179=-0.147985E-4
+RPC_FIELD1710=-0.423457E-5
+RPC_FIELD1711=+0.144009E-7
+RPC_FIELD1712=-0.107213E-5
+RPC_FIELD1713=+0.110590E-6
+RPC_FIELD1714=+0.410217E-7
+RPC_FIELD1715=-0.169482E-6
+RPC_FIELD1716=+0.108104E-5
+RPC_FIELD1717=+0.000000E+0
+RPC_FIELD1718=-0.233038E-6
+RPC_FIELD1719=+0.186413E-7
+RPC_FIELD1720=-0.135637E-7
+CHIP_PARENT_OFFS_LINE=
+CHIP_PARENT_OFFS_SAMP=
+NITF_CORNERLON1=44.83170930595
+NITF_CORNERLAT1=35.87172707408
+NITF_CORNERELV1=3.766367775586E+02
+NITF_CORNERLON2=44.8412822999
+NITF_CORNERLAT2=35.87150787181
+NITF_CORNERELV2=4.323969211227E+02
+NITF_CORNERLON3=44.84115327505
+NITF_CORNERLAT3=35.86525567113
+NITF_CORNERELV3=4.088602900966E+02
+NITF_CORNERLON4=44.83174717856
+NITF_CORNERLAT4=35.86546526031
+NITF_CORNERELV4=3.769057829475E+02
+NITF_CENTERLON=4.483647301486E+01
+NITF_CENTERLAT=3.586848896933E+01
+NITF_CENTERELV=4.124234325431E+02
+NITF_CENTER_GSD=8.816892077020E-01
+NITF_CENTER_ELEV_LOOK_ANG=5.820481361276E+01
+NITF_CENTER_AZIM=3.207458726385E-01
+NITF_CENTER_UPISUP=9.004806560992E+01
+MODELTRANSFORMATIONTAG=(0.00000938738,-0.0000001377059,0,44.831894043966,-0.0000002082474,-0.0000062516683,0,35.871719164913,0,0,0,0,0,0,0,1)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(3461.0,-2159.0,0,4.500000000000E+01,3.600000000000E+01,0.0)
+MODELPIXELSCALETAG=(0.0000578034682,0.0000462962963,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+inverse not applied
+
+forward not applied
+
+datum shift not applied
+   pixmap (xxqqgrid1,../test_data/qb1_cib.img) mapcols=(6,7) pixcols=(8,9) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (8,9)
+   mf3 xxqqgrid1 func=("c10=c8$@vmin(c10)$c11=c8$@vmax(c11)$",  +
+            "c12=c9$@vmin(c12)$c13=c9$@vmax(c13)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c10=c8$@vmin(c10)$c11=c8$@vmax(c11)$c12=c9$@vmin(c12)$c13=c9$@vmax(c13)
+961 records in
+   ibis2tcl xxqqgrid1 v1=rminl v2=rmaxl v3=rmins v4=rmaxs vartype=(-1,-1,-1,-1)  +
+    ibisloc=(1,10,1,11,1,12,1,13)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let rminl=rminl+0.5
+   let rmaxl=rmaxl+0.5
+   let rmins=rmins+0.5
+   let rmaxs=rmaxs+0.5
+   let minl=$fix(rminl)-gorewid-2
+   let maxl=$fix(rmaxl)+gorewid+2
+   let mins=$fix(rmins)-gorewid-2
+   let maxs=$fix(rmaxs)+gorewid+2
+   write "input covers (605,541,760,725) in reference pixel space"
+input covers (605,541,760,725) in reference pixel space
+   let sl=minl
+   let ss=mins
+   let nl=maxl-minl+1
+   let ns=maxs-mins+1
+else
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (605,541,156,185)"
+geomv parameter (sl,ss,nl,ns) = (605,541,156,185)
+gtgen out=xxqqgrid4 'tiecnvrt  +
+  geotiff=("ModelTiePointTag=(0,0,0,-110.,34.,0.0)",  +
+  "ModelTiePointTag=(0,100,0,-110.,33.,0.0)",  +
+  "ModelTiePointTag=(100,0,0,-109.,34.,0.0)",  +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+rpc2grid inp=(../test_data/xxchip2.img,../test_data/qb1_iraq_dem.hlf) out=xxqqgrid2 nah=1 nav=1 ncol=13
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl ../test_data/xxchip2.img val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxqqgrid2 ncol=13 nah=1 nav=1    l1+
+=4.483132638619e+01 s1=3.587197754663e+01 l+
+2=4.484168053645e+01 s2=3.587175795984e+01    l3=4.483137093470e+01 s3=3.586520476886e+01 l4=4.484154456866e+01 s4=3.586499557958e++
+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2 version="ibis-2" org="column" nc=13+
+       nr=4 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2 func="c3=@int((@index-1)/2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/2)/1
+4 records in
+mf3 xxqqgrid2 func="c4=@mod(@index+1,2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+1,2)/1
+4 records in
+mf3 xxqqgrid2 func="c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+
++01))+(4.484168053645e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+01))+(4.484168053645e+01)
+4 records in
+mf3 xxqqgrid2 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+4 records in
+mf3 xxqqgrid2 func="c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+
++01))+(3.586520476886e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+01))+(3.586520476886e+01)
+4 records in
+mf3 xxqqgrid2 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+4 records in
+mf3 xxqqgrid2 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+4 records in
+end-proc
+pixmap (xxqqgrid2,../test_data/qb1_iraq_dem.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (../test_data/qb1_iraq_dem.hlf,xxqqgrid2) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxqqgrid2,../test_data/xxchip2.img)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+gtproj (xxqqgrid2,xxqqgrid4,../test_data/qb1_cib.img) incol=(1,2) outcol=(6,7)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,-110.,34.,0.0)
+MODELPIXELSCALETAG=(0.01,0.01,0.0)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(3461.0,-2159.0,0,4.500000000000E+01,3.600000000000E+01,0.0)
+MODELPIXELSCALETAG=(0.0000578034682,0.0000462962963,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+inverse not applied
+
+forward not applied
+
+datum shift not applied
+pixmap (xxqqgrid2,../test_data/qb1_cib.img) mapcols=(6,7) pixcols=(8,9) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (6,7) to columns (8,9)
+let maxl = sl+nl
+let maxs = ss+ns
+tieconv xxqqgrid2 out=xxqqgrid31 cols=(8,9,4,5)  +
+  nah=500 nav=500 minl=605 mins=541 maxl=761 maxs=726 'geomv
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+grid automatically detected
+geomv INP=(../test_data/xxchip2.img,xxqqgrid31,../test_data/qb1_cib.i+
+mg) OUT=xxxmap size=(605,541,156,185)         cols=(1,2,3,4) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 500 nav = 500
+requested memory 2356560
+if (savegrid<>"")
+end-if
+end-proc
+util6 xxxmap ../test_data/qb1_cib.img
+if (altfile2="")
+else
+   let file2 = "../test_data/qb1_cib.img"
+end-if
+let temp1 = "xxxmap" // ".rev1"
+let temp2 = "xxxmap" // ".rev2"
+let temp3 = "xxxmap" // ".rev3"
+lab2tcl xxxmap v1=fmt keyword=format 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+lab2tcl ../test_data/qb1_cib.img v1=fmtbase keyword=format 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+if (fmt=fmtbase)
+else
+   f2 xxxmap+
+       xxxmap+
+.rev1       fun="in1*0.022" format=BYTE
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 using hash table lookup
+FUNCTION EVALUATED 366 TIMES
+end-if
+stretch inp=xxxmap.r+
+ev1    out=xxx+
+map.rev2    'gauss
+Beginning VICAR task stretch
+STRETCH version Oct 17 2002
+DN values      0 and    255 excluded
+
+Histogram after exclusion: Mean=    12.2967 Sigma=     1.0814
+*** GAUSS OPTION ***
+Gaussian Stretch: GSIGMA =   3.00  GMEAN =   127.50
+gtwarp ../test_+
+data/qb1_c+
+ib.img    xxxm+
+ap.rev1    ref=xxxmap.rev2    'coverref  nah=400 nav=400
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 10-oct-07"
+gtwarp version 10-oct-07
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl ../test_data/qb1_cib.img v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxmap.rev2 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,156,185)"
+geomv parameter (sl,ss,nl,ns) = (1,1,156,185)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=160801 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/401)/400)*156+(1-0.5)$",       +
+       "c2=(@mod(@index+400,401)/400)*185+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/401)/400)*156+(1-0.5)$c2=(@mod(@index+400,401)/400)*185+(1-0.5)
+160801 records in
+pixmap (xxqqgrid2qq,xxxmap.rev2) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqgrid2qq,xxxmap.rev2,../test_data/qb1_cib.img) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(2921.0,-2763.0,0,4.500000000000E+01,3.600000000000E+01,0.0)
+MODELPIXELSCALETAG=(0.0000578034682,0.0000462962963,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(3461.0,-2159.0,0,4.500000000000E+01,3.600000000000E+01,0.0)
+MODELPIXELSCALETAG=(0.0000578034682,0.0000462962963,0.0)
+GTMODELTYPEGEOKEY=2(MODELTYPEGEOGRAPHIC)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+inverse not applied
+
+forward not applied
+
+datum shift not applied
+pixmap (xxqqgrid2qq,../test_data/qb1_cib.img) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+geomv INP=(../test_data/qb1_cib.img,xxqqgrid2qq,xxxmap.rev2) OUT=x+
+xxmap.rev1 size=(1,1,156,185)         cols=(1,2,7,8) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 400 nav = 400
+requested memory 32732
+end-proc
+if (nostrtch="n")
+   stretch inp=xxxmap.r+
+ev1       out=xxx+
+map.rev3       'gauss
+Beginning VICAR task stretch
+STRETCH version Oct 17 2002
+DN values      0 and    255 excluded
+
+Histogram after exclusion: Mean=    49.1609 Sigma=    26.1180
+*** GAUSS OPTION ***
+Gaussian Stretch: GSIGMA =   3.00  GMEAN =   127.50
+   xvd (xxxmap.re+
+v3,         xxxm+
+ap.rev2,         xxxmap.rev2)
+local f string
+local files string
+let files = ""
+if ($count(inp) >= 1)
+   let f = inp(1)
+   let files = "xxxmap.rev3"
+end-if
+if ($count(inp) >= 2)
+   let f = inp(2)
+   let files = "xxxmap.rev3 xxxmap.rev2"
+end-if
+if ($count(inp) >= 3)
+   let f = inp(3)
+   let files = "xxxmap.rev3 xxxmap.rev2 xxxmap.rev2"
+end-if
+if ($syschar(1) = "UNIX")
+   local afidsroot type=(string,128)
+   translog AFIDS_ROOT afidsroot
+   ush /data/afids5/vdev/xvd.csh  xxxmap.rev3 xxxmap.rev2 xxxmap.rev2 &
+[1] 7749
+else
+end-if
+end-proc
+else
+end-if
+end-proc
+xvd xxxmap
+local f string
+local files string
+let files = ""
+if ($count(inp) >= 1)
+   let f = inp(1)
+   let files = "xxxmap"
+end-if
+if ($count(inp) >= 2)
+end-if
+if ($count(inp) >= 3)
+end-if
+if ($syschar(1) = "UNIX")
+   local afidsroot type=(string,128)
+   translog AFIDS_ROOT afidsroot
+   ush /data/afids5/vdev/xvd.csh  xxxmap &
+[1] 7774
+else
+end-if
+end-proc
+xvd ../test_data/qb1_cib.img
+local f string
+local files string
+let files = ""
+if ($count(inp) >= 1)
+   let f = inp(1)
+   let files = "../test_data/qb1_cib.img"
+end-if
+if ($count(inp) >= 2)
+end-if
+if ($count(inp) >= 3)
+end-if
+if ($syschar(1) = "UNIX")
+   local afidsroot type=(string,128)
+   translog AFIDS_ROOT afidsroot
+   ush /data/afids5/vdev/xvd.csh  ../test_data/qb1_cib.img &
+[1] 7815
+else
+end-if
+end-proc
+goto theend
+end-proc

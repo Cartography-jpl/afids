@@ -1,0 +1,47 @@
+procedure
+
+parm inp type=string default="L71155038_03820090728_B61.img"
+parm out type=string default="ltab2.ibis"
+parm outimg type=string default="xxxfinal.img"
+parm lowthresh type=int default=136
+parm highthresh type=int default=141
+
+refgbl $echo
+
+body
+
+let $echo="yes"
+
+!f2 &inp xxxf2out.img func=("in1>=133&&in1<=138")
+!f2 &inp xxxf2out.img func=("in1>=138&&in1<=138")
+f2 &inp xxxf2out.img func=("in1>=&lowthresh&&in1<=&highthresh")
+
+cform xxxf2out.img xxxhalfinp.img oform=half
+
+concomp xxxhalfinp.img (xxxconcompout.img, xxxwork)
+
+!xvd concompout.img
+
+comptab inp=(xxxconcompout.img, xxxhalfinp.img) out=xxxltab.ibis
+
+getzval (&inp, xxxltab.ibis) cols=(3,4,11) 'NOIN
+
+rowop2 xxxltab.ibis &out keycol=2 range=(0, 4) 'select
+
+compject (xxxconcompout.img, &out) out=&outimg cols=(1,2)
+
+!xvd &outimg
+
+pixmap (&out, &outimg) mapcols=(9,10) pixcol=(3,4) 'pixtomap
+
+!ibis-l xxxltab2.ibis nr=10 cols=(1,2,3,4,5,9,10) +
+!       cform="%6d %6d %6d %6d %4.1f %9.6f %9.6f"
+
+!ibis2asc xxxltab2.ibis &out cols=(1,2,3,4,5,9,10)
+!ibis2asc xxxltab2.ibis &out cols=(1,9,10,11)
+
+!ush head &out
+
+theend>
+
+end-proc

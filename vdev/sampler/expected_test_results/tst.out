@@ -1,0 +1,34 @@
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /raid3/test_data nn
+    end-if
+end-if
+sampler inp=(nn/spot6_blu.hlf, nn/spot6_grn.hlf, nn/spot6_nir.hlf, nn/spot6_red.hlf)  +
+    out=subsamples.ibis ngridx=200 ngridy=200 seed=30
+Beginning VICAR task sampler
+sampler - 10-17-2019 - rjb - 64-bit
+ibis-list subsamples.ibis nr=10 nc=6
+Beginning VICAR task ibis
+ 
+Number of Rows:39649  Number of Columns: 6       
+File Version:IBIS-2  Organization:ROW  SubType:NONE
+ 
+Rows: 1:10
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00      113.00       85.00      143.00      162.00      216.00
+        0.00      167.00       82.00      145.00      109.00      222.00
+        1.00      195.00       93.00      148.00      181.00      222.00
+        2.00      628.00       90.00      147.00      183.00      220.00
+        2.00      917.00      126.00      189.00      422.00      240.00
+        3.00      642.00       89.00      149.00      208.00      221.00
+        3.00      996.00      179.00      233.00      459.00      284.00
+        3.00     1024.00      200.00      225.00      310.00      271.00
+        3.00     1095.00       92.00      142.00      151.00      220.00
+        3.00     1156.00      127.00      178.00      326.00      236.00
+let $echo="no"

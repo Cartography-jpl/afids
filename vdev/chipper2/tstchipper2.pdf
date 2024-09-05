@@ -1,0 +1,28 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpost3) out=chip.img cols=(2,3) textcol=5
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpre3, ../test_data/nxpost3) out=chip2.img cols=(2,3) textcol=5
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpre3, ../test_data/nxpost3, ../test_data/nxpost8) out=chip3.img cols=(2,3) textcol=5
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpre3, ../test_data/nxpost3, ../test_data/nxpost8) out=(chip4r.img, chip4g.img, chip4b.img) cols=(2,3) inpstack=3 textcol=5
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpre3, ../test_data/nxpost3, ../test_data/nxpost8) out=(chip5r.img, chip5g.img) cols=(2,3) inpstack=(1,2) textcol=5
+chipper2 inp=(../test_data/point2.ibis, ../test_data/nxpre3, ../test_data/nxpost3, ../test_data/nxpost8, ../test_data/nxpre3, ../test_data/nxpre3) out=(chip6r.img, chip6g.img, chip6b.img) cols=(2,3) inpstack=(3,2) textcol=5
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

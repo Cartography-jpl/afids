@@ -1,0 +1,6 @@
+$ vpack colort.com -mixed -
+	-s colort.f -
+	-i colort.imake -
+	-p colort.pdf -
+	-t tstcolort.pdf tstcolort.log
+$ Exit

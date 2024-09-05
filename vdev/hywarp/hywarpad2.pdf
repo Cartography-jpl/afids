@@ -1,0 +1,234 @@
+procedure help=*
+parm key type=string
+parm fnamein type=(string,99)
+parm rawimg type=(string,99)
+parm rawiml1r type=(string,99)
+parm rawacs type=(string,99) default=""
+parm rawacorn type=(string,99) default=""
+parm band type=int
+parm nband type=int default=1
+parm outimg type=(string,99)
+
+local iband int
+local topband int
+
+local rawkey type=(string,99)
+
+local fname type=(string,99)
+local rawfile type=(string,99)
+local logimg type=(string,99)
+local tempfile1 type=(string,99)
+local tempfile2 type=(string,99)
+local tempfile3 type=(string,99)
+local imgbandout type=(string,99)
+
+local gridname type=(string,99)
+local gridfinal1 type=(string,99)
+local gridfinal2 type=(string,99)
+local gridfinal3 type=(string,99)
+local gridinfo type=(string,99)
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local csl real
+local cnl real
+local icsl int
+local icnl int
+local sl int
+local ss int
+local nl int
+local ns int
+
+local nlcopy int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+local rastypstr string
+local interp type=(string,10)
+local rastype type=(string,10)
+local rms type=real
+local file2 type=(string,99)
+
+refgbl $echo
+body
+let $echo="yes"
+
+write "hywarpad2 05/14/08"
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=interp +
+    keyword=interp vtype=0
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=rastype +
+    keyword=rastype vtype=0
+if (interp="-999") let interp = "bilin"
+if (rastype="-999") let rastype = "point"
+
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=fname +
+    keyword=bobdate vtype=0
+let gridname = fname
+idgen prefix=bab outvar=logimg
+
+! iterate over the bands
+
+let iband = band-1
+let topband = band+nband-1
+loop
+   let iband = iband+1
+   if (iband>topband) goto loopdone
+
+let rawkey = "raw" // "&key" // "/&fname" // "tempraw"
+hyperionlog inp=&rawimg acs="&rawacs" out=&rawkey sb=&iband nbnd=1
+
+! other filenames
+
+let rawfile = "&rawkey" // "_&iband" // ".img"
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+let gridfinal1 = "final&key" // "/&fname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&fname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&fname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&fname"  // "gridinfo"
+
+label-add inp=&rawfile items="bobdate=&logimg" +
+         property="COREG_META_DATA"
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns v5=t3e v6=t3n +
+   vartype=(-1,-1,-1,-1,-1,-1) ibisloc=(1,7,1,8,1,9,1,10,3,3,3,4)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+ibis2tcl &gridinfo v1=csl v2=cnl vartype=(0,0) ibisloc=(1,11,1,12)
+let icsl = $fix(csl)
+let icnl = $fix(cnl)
+
+! the sl,ss,nl,ns for geom is different
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from hywarp.pdf
+
+! for compression testing
+compresschk &rawfile
+
+copy &rawfile &tempfile1 sl=&icsl nl=&icnl
+
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv) +
+      interp=&interp
+let imgbandout = "&outimg" // "_&iband"
+gtsize (&tempfile3,&fnamein) &imgbandout 'coverref
+
+plab2tcl &fnamein property=COREG_META_DATA val=rms +
+   keyword=ACCURACY vtype=7
+plab2tcl &fnamein property=COREG_META_DATA val=file2 +
+   keyword=ACCREF vtype=0
+label-add inp=&imgbandout items="accuracy=&rms" +
+     property="COREG_META_DATA"
+label-add inp=&imgbandout items="accuracy_unit=pixels" +
+     property="COREG_META_DATA"
+label-add inp=&imgbandout items="accref=&file2" +
+     property="COREG_META_DATA"
+
+end-loop
+loopdone>
+
+theend>
+write "MSG: SPECTRAL BANDS PRESUMED TO BE REGISTERED"
+write "MSG: PROCESSING COMPLETED"
+end-proc
+.TITLE
+hywarp - warp one (or n) additional band(s) of hyperion
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.vari band
+the band number, or start
+band number if nband>1
+.vari nband
+the number of bands desired
+.LEVEL2
+.vari nband
+how many bands to run, starting with the band given in band.
+for example: band=27 nband=10 will run bands 27,28,29,30,31,
+32,33,34,35,36.
+.END

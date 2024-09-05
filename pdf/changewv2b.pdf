@@ -1,0 +1,25 @@
+procedure
+
+parm joblab  string def=AF1A
+parm prelab  string def=10SEP28
+parm postlab string def=10OCT01
+parm pre     string def=10SEP28063856-P1BS-052404842080_01_P001
+parm post    string def=10OCT01062958-P1BS-052409192010_01_P001
+
+local sep string init="_"
+local fwddir string
+local bakdir string
+
+body
+
+let fwddir = "&joblab&sep&prelab&sep&postlab"
+let bakdir = "&joblab&sep&postlab&sep&prelab"
+
+write "changewv2b 10/13/2010"
+
+ush mkdir &bakdir ; cd &bakdir ; ln -s ../&fwddir/*_pan_sharp_* ./
+
+changewv2 &joblab &postlab &prelab &post &pre
+
+done>
+end-proc

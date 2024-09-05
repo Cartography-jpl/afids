@@ -1,0 +1,58 @@
+procedure
+
+body
+
+util1 inp=../test_data/alcase1314su.img out=alcase1314su.img.tst1.vic +
+   aoi=(201,1001,220,1020) xvd=y
+util1 inp=../test_data/alcase1314su.img out=alcase1314su.img.tst2.vic +
+   aoi=(191,991,230,1030) xvd=y
+
+util2 inp=alcase1314su.img.tst2.vic out=alcase1314su.img.tst2.tif 
+
+util3 inp=alcase1314su.img.tst1.vic +
+      out=alcase1314su.img.tst3.tif +
+      ref=alcase1314su.img.tst2.tif +
+      xvd=y
+
+! need larger case for util4
+
+util1 inp=../test_data/alcase1314su.img out=alcase1314su.img.tst1.vic +
+   aoi=(401,881,1000,1480) xvd=y
+
+util1 inp=../test_data/alcase2244mu.img out=alcase1314su.img.tst3.vic +
+   aoi=(401,881,1000,1480) xvd=y
+
+gtmove inp=alcase1314su.img.tst3.vic out=alcase1314su.img.tst2.vic +
+   shift=(2.2,3.1)
+
+util2 inp=alcase1314su.img.tst1.vic out=alcase1314su.img.tst1.tif 
+util2 inp=alcase1314su.img.tst2.vic out=alcase1314su.img.tst2.tif 
+
+util4 inp=alcase1314su.img.tst1.tif +
+      out=alcase1314su.img.tst3.tif +
+      ref=alcase1314su.img.tst2.tif +
+      xvd=y fftsize=128
+
+util5 ../test_data/alcase1314su.img 
+
+! test utilities 5,d,e on tif inputs
+
+util5 alcase.siteref.tst.img
+vtiff3-fromvic alcase.siteref.tst.img xx.tif
+util5 xx.tif
+vtiff3-tovic xx.tif xx.vic
+util5 xx.vic
+
+utild alcase.siteref.tst.img
+vtiff3-fromvic alcase.siteref.tst.img xx.tif
+utild xx.tif
+vtiff3-tovic xx.tif xx.vic
+utild xx.vic
+
+utile alcase.siteref.tst.img
+vtiff3-fromvic alcase.siteref.tst.img xx.tif
+utile xx.tif
+vtiff3-tovic xx.tif xx.vic
+utile xx.vic
+
+end-proc

@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+local delut1 real
+body
+let $echo="yes"
+
+! TEST SCRIPT FOR getdelta
+
+getdelta path="/home/alz/ikappt/getdeltadir/test_time_table" +
+    itim=215078269.5718 val=delut1
+
+write "delut1 &delut1"
+
+end-proc

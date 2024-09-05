@@ -1,0 +1,119 @@
+procedure
+
+local teststr   type=string
+local sysstr    type=string
+local yearstr   type=string
+local monstr    type=string
+local daystr    type=string
+local timestr   type=string
+local sys       type=real
+local year      type=real
+local month     type=real
+local day       type=real
+local timez     type=real
+local i         type=int
+local fname     type=string count=1
+local file      type=string count=(10) +
+    init=("F18201207011159z.TEST.SCAN.TIF", +
+          "F18201208011520z.TEST.SCAN.TIF", +
+          "F18201209012240z.TEST.SCAN.TIF", +
+          "F18201210020820z.TEST.SCAN.TIF", +
+          "F18201211021255z.TEST.SCAN.TIF", +
+          "F18201212021945z.TEST.SCAN.TIF", +
+          "F18201301030703z.TEST.SCAN.TIF", +
+          "F18201302031330z.TEST.SCAN.TIF", +
+          "F18201303032204z.TEST.SCAN.TIF", +
+          "F18201304041217z.TEST.SCAN.TIF")
+! Oct 2, 2013 - RJB
+! TEST SCRIPT FOR SUBSTR2TCL
+!
+! Vicar Programs:
+!     str2tcl ibis-gen ibis-list edibis
+! 
+! External programs
+!     <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+refgbl $echo
+
+body
+let $echo="yes"
+substr2tcl "200710221458x.img" stchar=9 numchar=4 substr=teststr
+let $echo="no"
+write "teststr = &teststr"
+
+! Example filename string: F18201307011159z.TEST.SCAN.TIF
+!   Parse into 5 cols: sys, year, month, day, timez
+! sys 
+! year
+! month
+! day
+! timez
+let $echo="yes"
+substr2tcl "F18201307011159z.TEST.SCAN.TIF" stchar=2  numchar=2 substr=sysstr
+let $echo="no"
+write "sys = &sysstr"
+let $echo="yes"
+substr2tcl "F18201307011159z.TEST.SCAN.TIF" stchar=4  numchar=4 substr=yearstr
+let $echo="no"
+write "year = &yearstr"
+let $echo="yes"
+substr2tcl "F18201307011159z.TEST.SCAN.TIF" stchar=8  numchar=2 substr=monstr
+let $echo="no"
+write "month = &monstr"
+let $echo="yes"
+substr2tcl "F18201307011159z.TEST.SCAN.TIF" stchar=10  numchar=2 substr=daystr
+let $echo="no"
+write "day = &daystr"
+
+let $echo="yes"
+substr2tcl "F18201307011159z.TEST.SCAN.TIF" stchar=12  numchar=4 substr=timestr
+let $echo="no"
+write "timez = &timestr"
+
+str2tcl inval=&sysstr vtype=8 val=sys
+str2tcl inval=&yearstr vtype=8 val=year
+str2tcl inval=&monstr vtype=8 val=month
+str2tcl inval=&daystr vtype=8 val=day
+str2tcl inval=&timestr vtype=8 val=timez
+
+ibis-gen xxA nc=5 nr=10 'col datacol=(1,2,3,4,5) deffmt=DOUB +
+    data=(&sys,&year,&month,&day,&timez)
+ibis-li xxA nr=5
+
+
+ibis-gen xxB nc=5 nr=10 'col deffmt=DOUB 
+ibis-li xxB nr=5
+let $echo="no"
+
+let i = 0
+loop
+    let i = i + 1
+    if (i > 10) break
+    let fname = file(i)
+    substr2tcl &fname stchar=2  numchar=2 substr=sysstr
+    str2tcl inval=&sysstr vtype=8 val=sys
+    substr2tcl &fname stchar=4  numchar=4 substr=yearstr
+    str2tcl inval=&yearstr vtype=8 val=year
+    substr2tcl &fname stchar=8  numchar=2 substr=monstr
+    str2tcl inval=&monstr vtype=8 val=month
+    substr2tcl &fname stchar=10  numchar=2 substr=daystr
+    str2tcl inval=&daystr vtype=8 val=day
+    substr2tcl &fname  stchar=12  numchar=4 substr=timestr
+    str2tcl inval=&timestr vtype=8 val=timez
+    edibis xxB command=("(&i,1) set &sys")
+    edibis xxB command=("(&i,2) set &year")
+    edibis xxB command=("(&i,3) set &month")
+    edibis xxB command=("(&i,4) set &day")
+    edibis xxB command=("(&i,5) set &timez")
+ 
+end-loop
+ibis-li xxB nr=10
+   
+end-proc

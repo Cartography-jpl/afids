@@ -1,0 +1,8 @@
+tstldir2tcl
+ldir2tcl strvar=ldir
+Beginning VICAR task ldir2tcl
+ldir2tcl version Thu Jan  3 2008
+let $echo="no"
+UNIQUE: The local directory is /data/rjb/unit_test/ldir2tcl.
+exit
+slogoff

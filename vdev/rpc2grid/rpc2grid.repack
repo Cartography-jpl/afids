@@ -1,0 +1,4 @@
+$ vpack rpc2grid.com -mixed -
+	-p rpc2grid.pdf -
+	-t tstrpc2grid.pdf
+$ Exit

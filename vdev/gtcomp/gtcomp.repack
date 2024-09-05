@@ -1,0 +1,4 @@
+$ vpack gtcomp.com -
+	-p gtcomp.pdf -
+	-t tstgtcomp.pdf
+$ Exit

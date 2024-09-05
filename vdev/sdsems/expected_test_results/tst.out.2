@@ -1,0 +1,14 @@
+enable-log
+ush ln -s ../test_data/dem.hlf test_compress.hlf
+comprs test_compress.hlf test.hlf
+Beginning VICAR task comprs
+ ** ABEND called **
+continue
+sdsems test.hlf out.hlf debline=50 debsamp=150
+Beginning VICAR task sdsems
+SDSEMS version 2018-06-15
+[VIC2-GENERR] Exception in XVOPEN, processing file: test.hlf
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+continue
+disable-log

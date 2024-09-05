@@ -1,0 +1,6 @@
+$ vpack f2multi976.com -mixed -
+	-s f2multi976.c -
+	-i f2multi976.imake -
+	-p f2multi976.pdf -
+	-t tstf2multi976.pdf
+$ Exit

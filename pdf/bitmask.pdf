@@ -1,0 +1,24 @@
+procedure ! bitmask
+
+parm inp_img string
+parm elev_mask string
+parm out_img string
+parm cloud_mask string default=""
+
+body
+
+write "bitmask version Tue Jul 12 2011"
+
+if (cloud_mask="")
+  f2 func="in1*in2" inp=(&inp_img,&elev_mask) out=&out_img
+else
+  ! should be able to do this with one call, but f2 dies with
+  ! f2 func="in1*in2*(in3.eq.0)" inp=(&inp_img,&elev_mask,&cloud_mask) out=&out_img
+
+  write "f2 func=in1*in2"
+  f2 func="in1*in2" inp=(&inp_img,&elev_mask) out=xxxmask
+  write "f2 func=in1*(in2.eq.0)"
+  f2 func="in1*(in2.eq.0)" inp=(xxxmask,&cloud_mask) out=&out_img
+end-if
+
+end-proc

@@ -1,0 +1,112 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+!spec2wv2 specfiles=(asterlib/usgs.perknic.rock.sedimentary.limestone.solid.ls397.spectrum.txt, asterlib/usgs.perknic.rock.sedimentary.shale.solid.phop004.spectrum.txt) out=bwr.ibis
+
+spec2wv2 specfiles=(asterlib/AluminumAndBlueTarp_A1.txt, +
+ asterlib/Aluminum_A1.txt, +
+ asterlib/BareSand_G5.txt, +
+ asterlib/BlackCalibrationPanel_clean.txt, +
+ asterlib/BlackCalibrationPanel_dirty.txt, +
+ asterlib/BlueBarrelsUpright_A6.txt, +
+ asterlib/BlueBarrelsonSide_A5.txt, +
+ asterlib/BlueTarp_A4.txt, +
+ asterlib/BlueTarp_G3.txt, +
+ asterlib/Burlap_F5.txt, +
+ asterlib/Calcite_C2.txt, +
+ asterlib/Calcite_C3.txt, +
+ asterlib/CamelDung_C5.txt, +
+ asterlib/CanvasSheetTarp_D5.txt, +
+ asterlib/CottonSheet_C4.txt, +
+ asterlib/DarkGrayCalibraitonPanel_clean.txt, +
+ asterlib/DarkGrayCalibrationPanel_dirty.txt, +
+ asterlib/Dolomite_D2.txt, +
+ asterlib/Dolomite_D3.txt, +
+ asterlib/FineDolomite_E3.txt, +
+ asterlib/GroundCAN-27_E2.txt, +
+ asterlib/GroundSugaronBareSand.txt, +
+ asterlib/GypsumSoilMagic_D4.txt, +
+ asterlib/LightGrayCalibrationPanel_clean.txt, +
+ asterlib/LightGrayCalibrationPanel_dirty.txt, +
+ asterlib/NewPotassiumChlorate_G4.txt, +
+ asterlib/OldGroundSugarAndSand_B3.txt, +
+ asterlib/OldGroundSugar_B3_Positionnearedge.txt, +
+ asterlib/PotassiumNitrate_F2.txt, +
+ asterlib/PowderSugar_B2.txt, +
+ asterlib/PrilledAN_F3.txt, +
+ asterlib/RecycledPlastic_HDPERegrind_A3.txt, +
+ asterlib/RunofffromE4.txt, +
+ asterlib/Sulfur_B4.txt, +
+ asterlib/SulfuronBareSand.txt, +
+ asterlib/WeatheredGroundAN_E4.txt, +
+ asterlib/WeatheredPotassiumChlorate_G2.txt, +
+ asterlib/WeedblockeronWhiteCalibrationPanel.txt, +
+ asterlib/WhiteCalibrationPanel_clean.txt, +
+ asterlib/WhiteCalibrationPanel_dirty.txt, +
+ asterlib/WovenBags_F4.txt) +
+ out=bwr.ibis
+
+!1spec2wv2 specfiles=(asterlib/AluminumAndBlueTarp_A1.txt, +
+!2 asterlib/Aluminum_A1.txt, +
+!3asterlib/BareSand_G5.txt, +
+!4asterlib/BlackCalibrationPanel_clean.txt, +
+!5asterlib/BlackCalibrationPanel_dirty.txt, +
+!6asterlib/BlueBarrelsUpright_A6.txt, +
+!7asterlib/BlueBarrelsonSide_A5.txt, +
+!8asterlib/BlueTarp_A4.txt, +
+!9asterlib/BlueTarp_G3.txt, +
+!10asterlib/Burlap_F5.txt, +
+!1asterlib/Calcite_C2.txt, +
+!2asterlib/Calcite_C3.txt, +
+!3asterlib/CamelDung_C5.txt, +
+!4asterlib/CanvasSheetTarp_D5.txt, +
+!5asterlib/CottonSheet_C4.txt, +
+!6asterlib/DarkGrayCalibraitonPanel_clean.txt, +
+!7asterlib/DarkGrayCalibrationPanel_dirty.txt, +
+!8asterlib/Dolomite_D2.txt, +
+!9asterlib/Dolomite_D3.txt, +
+!20asterlib/FineDolomite_E3.txt, +
+!1asterlib/GroundCAN-27_E2.txt, +
+!2asterlib/GroundSugaronBareSand.txt, +
+!3asterlib/GypsumSoilMagic_D4.txt, +
+!4asterlib/LightGrayCalibrationPanel_clean.txt, +
+!5asterlib/LightGrayCalibrationPanel_dirty.txt, +
+!6asterlib/NewPotassiumChlorate_G4.txt, +
+!7asterlib/OldGroundSugarAndSand_B3.txt, +
+!8asterlib/OldGroundSugar_B3_Positionnearedge.txt, +
+!9asterlib/PotassiumNitrate_F2.txt, +
+!30asterlib/PowderSugar_B2.txt, +
+!1asterlib/PrilledAN_F3.txt, +
+!2asterlib/RecycledPlastic_HDPERegrind_A3.txt, +
+!3asterlib/RunofffromE4.txt, +
+!4asterlib/Sulfur_B4.txt, +
+!5asterlib/SulfuronBareSand.txt, +
+!6asterlib/WeatheredGroundAN_E4.txt, +
+!7asterlib/WeatheredPotassiumChlorate_G2.txt, +
+!8asterlib/WeedblockeronWhiteCalibrationPanel.txt, +
+!9asterlib/WhiteCalibrationPanel_clean.txt, +
+!40asterlib/WhiteCalibrationPanel_dirty.txt, +
+!1asterlib/WovenBags_F4.txt) +
+!out=bwr.ibis
+
+!spec2wv2 specfiles=(asterlib/Sulfur_B4.txt) out=sulfur.ibis
+
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

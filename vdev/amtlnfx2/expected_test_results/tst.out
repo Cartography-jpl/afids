@@ -1,0 +1,287 @@
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*100"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:24 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:24 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4     163 166 169 172
+      5     183 186 189 192
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:24 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(99,4) blemwid=2 'add
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:24 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa func="im1+(line<2)*100+(line>7)*50"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1     103 106 109 112
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     193 196 199 202
+amtlnfx2 xxa xxb blemln=(0,8) blemwid=2 'add
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1      23  26  29  32
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     123 126 129 132
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*(100+(samp>2)*40)"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4     163 166 209 212
+      5     183 186 229 232
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add sampcut=(2,4)
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*(100+(samp>2)*40)"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4     163 166 209 212
+      5     183 186 229 232
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add sampwid=2
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa  +
+ fun="im1-(line>4)*(line<7)*50+(line>1)*(line<4)*50"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      73  76  79  82
+      3      93  96  99 102
+      4      63  66  69  72
+      5      33  36  39  42
+      6      53  56  59  62
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(2,5) blemwid=2 'add
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xx0 out=xxa  +
+ fun="im1+(line>4)*(line<7)*50-(line>3)*(line<6)*50"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 32 TIMES
+list xxa
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:F2        User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      13  16  19  22
+      5      83  86  89  92
+      6     153 156 159 162
+      7     123 126 129 132
+      8     143 146 149 152
+amtlnfx2 xxa xxb blemln=(4,5) blemwid=2 'add
+Beginning VICAR task amtlnfx2
+amtlnfx2 version 05-mar-08
+list xxb
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+ Task:AMTLNFX2  User:smyth     Date_Time:Fri Aug 16 21:58:25 2013
+     Samp     1       3
+   Line
+      1       3   6   9  12
+      2      23  26  29  32
+      3      43  46  49  52
+      4      63  66  69  72
+      5      83  86  89  92
+      6     103 106 109 112
+      7     123 126 129 132
+      8     143 146 149 152
+end-proc
+disable-log

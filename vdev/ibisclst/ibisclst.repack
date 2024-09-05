@@ -1,0 +1,6 @@
+$ vpack ibisclst.com -mixed -
+	-s ibisclst.c ibishelper.c ibishelper.h ibisControlMapper.c ibisControlMapper.h -
+	-i ibisclst.imake -
+	-p ibisclst.pdf -
+	-t tstibisclst.pdf
+$ Exit

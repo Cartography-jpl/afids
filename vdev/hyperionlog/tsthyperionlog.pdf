@@ -1,0 +1,17 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR HYPERIONLOG
+
+!hyperionlog inp=EO1H1720202002213110PZ_HYP.L1R acs=Hy_01AUG_Mode15_max_acs.hdf acorn=Hy_01AUG_Mode15_max.rfl
+!hyperionlog inp=EO1H1720202002213110PZ_HYP.L1R acs=Hy_01AUG_Mode15_max_acs.hdf
+hyperionlog inp=noacs.L1R acs=noacs.MET
+
+end-proc

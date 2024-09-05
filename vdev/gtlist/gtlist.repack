@@ -1,0 +1,6 @@
+$ vpack gtlist.com -mixed -
+	-s gtlist.c -
+	-i gtlist.imake -
+	-p gtlist.pdf -
+	-t tstgtlist.pdf
+$ Exit

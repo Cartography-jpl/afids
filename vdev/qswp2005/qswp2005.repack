@@ -1,0 +1,6 @@
+$ vpack qswp2005.com -mixed -
+	-s qswp2005.c -
+	-i qswp2005.imake -
+	-p qswp2005.pdf -
+	-t tstqswp2005.pdf
+$ Exit

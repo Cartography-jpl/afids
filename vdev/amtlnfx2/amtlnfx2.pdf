@@ -1,0 +1,89 @@
+process help=*
+PARM INP TYPE=STRING count=1
+PARM OUT TYPE=STRING count=1
+PARM BLEMLN TYPE=INTEGER COUNT=2
+PARM BLEMWID TYPE=INTEGER DEFAULT=11
+PARM MODE TYPE=KEYWORD VALID=(ADD,MULT) COUNT=(0:1) DEFAULT=ADD
+PARM SAMPCUT TYPE=INTEGER COUNT=(0:20) +
+ default=(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+PARM SAMPWID TYPE=INTEGER DEFAULT=0
+END-PROC
+.TITLE
+amtlnfx2 - fix line blemish for amt data
+.HELP
+PURPOSE:
+The AMT data can have 11 line bands of lightening or darkening at a
+known location in the image or subimage.  This routine corrects the
+blemish in the input image, writing a corrected output.
+
+The correction is determined by looking at neighbor lines (usually the
+line before and after, but one of the two can be off the image)
+comparing with the top or bottom line of the blemish area.  The comp-
+arison is calculated as an average difference (add mode) or as an
+average factor (mult mode).  The difference factor is then added or
+multiplied in the blemish area.
+
+The blemish areas can be overlapping (e.g. near the middle) or at the
+edge or partially off the edge.  Totally off the edge is a do-nothing
+and the input image will be copied to the output.
+
+Parameter SAMPCUT can be used to gather statistics in a number of
+vertical bands (up to 20).  The parameter values give the last pixel
+sample in each vertical band.  All zeros mean don't use this method.
+The bands must cover the image, so the last band must have ns (number
+of samples) as its last pixel.  Then the remaining parameter values
+must be set to 0.
+
+An alternative to SAMPCUT is to specify SAMPWID which creates equal
+bands of width SAMPWID with possibly an odd region at the right.  Do
+not use SAMPCUT if you use SAMPWID. Up to 4000 bands can be set,
+allowing per pixel-column statistics, if desired.
+
+EXECUTION:
+
+Example
+
+amtlnfx2 a b blemln=(1023,2510) blemwid=11
+
+This will correct image a with blemishes of width 11 starting at line
+1023 and 2510.
+
+OPERATION:
+
+The whole image is read, the blemish fixed, and the whole output written.
+Virtual memory limits the size of the image, but any AMT image can
+easily be accomodated.
+
+ TIMING: 
+
+Esentially the time to read and write the image.  The virtual memory
+working set is small so paging is not a problem.
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          04 Oct 2005
+ COGNIZANT PROGRAMMER:   A. Zobrist          04 Oct 2005
+ 
+ REVISION HISTORY
+  05-10-04    AZ   Initial version
+  03-03-08    AZ   Added sampwid parameter per Tom Logan Request
+  03-03-08    ALB  Ported to ANSI-C
+
+.LEVEL1
+.VARIABLE INP
+STRING - Input image file
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE BLEMLN
+INTEGER - Two start lines
+of the blemish areas
+.VARIABLE BLEMWID
+INTEGER - Width of the
+blemish areas
+.VAR MODE
+Keyword: Correction mode.
+Valid: ADD,MULT.
+.VARIABLE SAMPCUT
+INTEGER - non-zero values 
+are right edges of vertical
+bands to be handled with
+individual statistics.
+.END

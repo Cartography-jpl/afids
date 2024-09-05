@@ -1,0 +1,545 @@
+procedure	! gen_classes_35
+
+!		Path 168 / Row 37
+! gen_classes L71168037_03720030402 L71168037_03720090128 
+! gen_classes L71168037_03720030402 L71168037_03720090317 
+
+!		Path 169 / Row 37
+! gen_classes L71169037_03720030308 L71169037_03720090308
+! gen_classes L71169037_03720030308 L71169037_03720090220 
+
+! gen_classes L71170035_03520030502 L71170035_03520090211
+
+! gen_classes L71170035_03520000203 L71170035_03520090211
+
+! gen_classes L71168037_03720030402 EO1A1690372009 ! mode=skipgrid datatype=half
+
+parm f1 string		! secondary	(older scene)
+parm f2 string		! master	(newer scene)
+
+parm delta real def=210.0	! Must be an even number
+parm window integer def=256	! Must be an even number
+parm display string def="no"
+parm mode string def="default"	! or skipgrid
+parm datatype string def="byte"
+
+local quarter_window real
+local iquarter_window integer
+local v1 real
+local v2 real
+local v3 real
+local v4 real
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local sl integer init=1
+local ss integer init=1
+local nl integer init=1
+local ns integer init=1
+local nl2 integer init=1
+local ns2 integer init=1
+local diff real
+local diffl real
+local diffs real
+local nav integer
+local nah integer
+local num integer
+local inc integer
+local v_inc integer
+local h_inc integer
+local ull integer
+local uls integer
+local lrl integer
+local lrs integer
+local real_l real
+local real_s real
+local pts string init=".cornerpts"
+local tif string init=".tif"
+local xfinal integer
+local min real
+local max real
+local img string init=".img"
+local ndvi string init="_ndvi.img"
+local tiles string init="_tiles"
+local bfrac string init="_bfrac.img"
+local bgx string init="bg"
+local bg string init="_bg.img"
+local bgi string init="_bgi.img"
+local uu string init="_"
+local ndvi_diff string init="ndvi_diff"
+local ndvi_bgi_ob string init="ndvi_bgi_ob"
+local found1 integer
+local found2 integer
+
+!	new - summer 2008
+local B1 string init="_B10.img"
+local B2 string init="_B20.img"
+local B3 string init="_B30.img"
+local B4 string init="_B40.img"
+local B5 string init="_B50.img"
+local B61 string init="_B61.img"
+local B62 string init="_B62.img"
+local B7 string init="_B70.img"
+local B8 string init="_B80.img"
+local M string init="M"
+local cm string init=".cm"	! Cloud mask 1 = cloud
+local master string
+local dash string init="-"
+
+refgbl $echo
+! Operational History:
+!       Jul 25, 2009 - RJB - modifed from /raid21/iraq dated 20090625 by rkf 
+!       Aug 04, 2009 - RJB - fix $echoe, comments
+
+body
+let $switch=512
+let $echo="no"
+let _onfail= "continue"
+
+file2tcl tifdir val=found1
+if (found1=0) ush mkdir tifdir
+
+write "###============================================================="
+write "### gen_classes.pdf | Version - 08-04-2009 - RJB "
+let $echo="no"
+
+let master = "&f2"
+
+!	Check to see if this image has already been processed.
+
+file2tcl &f1&uu&f2&uu&bgx&uu&ndvi_bgi_ob&img val=found1
+let $echo="no"
+if (found1=1)
+  write " "
+  write "Image &f1&uu&f2&uu&bgx&uu&ndvi_bgi_ob&img already generated. Skipping to the next case."
+  write " "
+  goto theend	! already done
+end-if
+start>
+
+file2tcl &master&B2 val=found1		! Master image
+file2tcl &f1&B2 val=found2		! Image to compare with master
+let $echo="no"
+if ((found1=1)and(found2=1))
+  write "Both found (B20) ... proceeding ..."
+else
+  if (found1=0) write "??E - &master&B2 not found."
+  if (found2=0) write "??E - &f1&B2 not found."
+  goto theend
+end-if
+
+file2tcl &master&B3 val=found1		! Master image
+file2tcl &f1&B3 val=found2		! Image to compare with master
+if ((found1=1)and(found2=1))
+  write "Both found (B30) ... proceeding ..."
+else
+  if (found1=0) write "??E - &master&B3 not found."
+  if (found2=0) write "??E - &f1&B3 not found."
+  goto theend
+end-if
+
+file2tcl &master&ndvi val=found1		! Master image
+file2tcl &f1&ndvi val=found2		! Image to compare with master
+if ((found1=1)and(found2=1))
+  write "Both ndvi found ... proceeding ..."
+else
+  if (found1=0) write "??E - &master&ndvi not found."
+  if (found2=0) write "??E - &f1&ndvi not found."
+  goto theend
+end-if
+
+write " "
+write "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+write "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+write " "
+
+let $echo="yes"
+
+!	Generate the binary mask that will be used throughout
+
+file2tcl &master&B5 val=found1
+file2tcl &f1&B5 val=found2
+if ((found1=1)and(found2=1))
+  f2 (&master&B2,&master&B3,+
+  &master&B4,&master&B5,+
+  &f1&B2,&f1&B3,+
+  &f1&B4,&f1&B5) master-bm +
+  fun="(in1.ge.1).and.(in2.ge.1).and.(in3.ge.1).and.(in4.ge.1).and.(in5.ge.1).and.(in6.ge.1).and.(in7.ge.1).and.(in8.ge.1)"
+else
+  f2 (&master&B2,&master&B3,+
+  &master&B4,&f1&B2,+
+  &f1&B3,&f1&B4) master-bm +
+  fun="(in1.ge.1).and.(in2.ge.1).and.(in3.ge.1).and.(in4.ge.1).and.(in5.ge.1).and.(in6.ge.1)"
+end-if
+
+!	Apply cloud mask if available
+file2tcl &f1&cm val=found1
+if (found1=1)
+  f2 (master-bm,&f1&cm) rkftempbm fun="(.not.in2)*in1"
+  gtcopy rkftempbm master-bm
+end-if
+file2tcl &f2&cm val=found1
+if (found1=1)
+  f2 (master-bm,&f2&cm) rkftempbm fun="(.not.in2)*in1"
+  gtcopy rkftempbm master-bm
+end-if
+
+let quarter_window = $float(&window) / 4.0
+let iquarter_window = $fix(&quarter_window+.5)
+lab2tcl &master&B2 v1=nl v2=ns keyword=(nl,ns) 'system
+
+!	Find out the 4 corners within the image
+!	that actually contain data ...
+imcorner master-bm inside=&iquarter_window line1=l1 samp1=s1 line2=l2 +
+    samp2=s2 line3=l3 samp3=s3 line4=l4 samp4=s4
+
+let $echo="no"
+write "&l1 / &s1"
+write "&l2 / &s2"
+write "&l3 / &s3"
+write "&l4 / &s4"
+
+write "==============================================="
+let $echo="yes"
+!	Calculate the NAH
+!	Check accross the top first
+ibis-gen rkftemp1 nr=1 nc=10 datacol=(1,2,3,4) +
+  data=(&l1,&s1,&l2,&s2)
+mf3 rkftemp1 fun="c5=((c1-c3)*(c1-c3)) + ((c2-c4)*(c2-c4))"
+mf3 rkftemp1 fun="c6=@sqrt(c5)"
+mf3 rkftemp1 fun="c7=c6/&delta"
+ibis2tcl rkftemp1 diffs ibisloc=(1,7) vartype=0 varcnt=1
+let nah=$fix(&diffs+.5)
+
+!	Check accross the bottom next
+ibis-gen rkftemp1 nr=1 nc=10 datacol=(1,2,3,4) +
+  data=(&l3,&s3,&l4,&s4)
+mf3 rkftemp1 fun="c5=((c1-c3)*(c1-c3)) + ((c2-c4)*(c2-c4))"
+mf3 rkftemp1 fun="c6=@sqrt(c5)"
+mf3 rkftemp1 fun="c7=c6/&delta"
+ibis2tcl rkftemp1 diffs ibisloc=(1,7) vartype=0 varcnt=1
+let $echo="no"
+
+let xfinal=$fix(&diffs+.5)
+if (xfinal>nah)
+  write "Using the nah from the bottom"
+  let nah = xfinal
+else
+  write "Using the nah from the top"
+end-if
+write "&diffs / nah: &nah"
+
+write "==============================================="
+
+let $echo="yes"
+!	Calculate the NAV
+!	check right side first
+ibis-gen rkftemp1 nr=1 nc=10 datacol=(1,2,3,4) +
+  data=(&l2,&s2,&l4,&s4)
+mf3 rkftemp1 fun="c5=((c1-c3)*(c1-c3)) + ((c2-c4)*(c2-c4))"
+mf3 rkftemp1 fun="c6=@sqrt(c5)"
+mf3 rkftemp1 fun="c7=c6/&delta"
+ibis2tcl rkftemp1 diffl ibisloc=(1,7) vartype=0 varcnt=1
+let nav=$fix(&diffl+.5)
+
+!	Check the left side next
+ibis-gen rkftemp1 nr=1 nc=10 datacol=(1,2,3,4) +
+  data=(&l1,&s1,&l3,&s3)
+mf3 rkftemp1 fun="c5=((c1-c3)*(c1-c3)) + ((c2-c4)*(c2-c4))"
+mf3 rkftemp1 fun="c6=@sqrt(c5)"
+mf3 rkftemp1 fun="c7=c6/&delta"
+ibis2tcl rkftemp1 diffl ibisloc=(1,7) vartype=0 varcnt=1
+let $echo="no"
+
+let xfinal=$fix(&diffl+.5)
+if (xfinal>nav)
+  write "Using the nav from the left"
+  let nav = xfinal
+else
+  write "Using the nav from the right"
+end-if
+write "&diffl / nav: &nav"
+
+write "==============================================="
+let $echo="yes"
+!	Set up a grid nah by nav
+gengrid2 grid ncol=10 nah=&nah nav=&nav +
+    l1=&l1 s1=&s1 +
+    l2=&l2 s2=&s2 +
+    l3=&l3 s3=&s3 +
+    l4=&l4 s4=&s4
+ibis2tcl grid vclen=num
+mf grid fun="c3=index"
+if (mode="skipgrid") goto done1
+
+ibis-copy grid rkftemp1 sc=1 nc=2
+ibis-copy rkftemp1 rkftemp2 'row 'ibis-1
+
+!	Capture the geoTIF info from the input image
+gtcopy &master&B2 single_pixel size=(1,1,1,1)
+
+polyscrb rkftemp2 rkftemp3 nl=&nl ns=&ns
+if (datatype="half")
+  cform rkftemp3 rkftemp2 'half
+  copy rkftemp2 rkftemp3
+end-if
+
+fastmos (single_pixel,rkftemp3) pix nl=&nl ns=&ns
+
+!	Generate the cornerpoints for all of the tiles ...
+let inc=1
+loop
+  let $echo="no"
+  write "						LOOP 1 &inc / &num"
+  let $echo="yes"
+  ibis2tcl grid real_l real_s ibisloc=(&inc,1,&inc,2) +
+    vartype=(-1,-1) varcnt=2
+  let $echo="no"
+  let real_l = real_l - &quarter_window
+  let real_s = real_s - &quarter_window
+  let ull = $fix(&real_l+.5)
+  let uls = $fix(&real_s+.5)
+  let lrl = ull + window
+  let lrs = uls + window
+
+!	Keep the values within the image ...
+  if (ull<1) let ull=1
+  if (uls<1) let uls=1
+  if (lrl > nl) let lrl = nl
+  if (lrs > ns) let lrs = ns
+  let $echo="yes"
+  ibis-gen rkftemp1 nr=1 nc=12 datacol=(1,2,3,4,5,6,7,8,9,10,11,12) +
+    data=(&ull,&uls,&ull,&lrs,&lrl,&lrs,&lrl,&uls,&ull,&uls,0,0)
+  if (inc = 1)
+    ibis-copy rkftemp1 &f1&uu&f2&pts
+  else
+    icat (&f1&uu&f2&pts,rkftemp1) rkftemp2
+    ibis-copy rkftemp2 &f1&uu&f2&pts
+    label-del &f1&uu&f2&pts
+  end-if
+  let $echo="no"
+  let inc = inc + 1
+  if (inc > &num) goto done1
+end-loop
+done1>
+
+write "===> done1> LOOP COMPLETED ======="
+!	Make an image of the tiles and display it along with the conected
+!	centerpoints of the tiles (dragging a line) along with band 2
+let $echo="yes"
+!ibis-copy &f1&uu&f2&pts rkftemp1 'row 'ibis-1
+!polyscrb rkftemp1 rkftemp3 nl=&nl ns=&ns
+!if (datatype="half")
+!  cform rkftemp3 rkftemp2 'half
+!  copy rkftemp2 rkftemp3
+!end-if
+
+!fastmos (single_pixel,rkftemp3) &f1&uu&f2&tiles&img nl=&nl ns=&ns
+
+!if (display="yes") xvd (&master&B2,pix,rkftemp3)	! for a visual verification ...
+
+!	Save an image of the tiles (windows) used
+!vtiff3-fromv &f1&uu&f2&tiles&img tifdir/&f1&uu&f2&tiles&tif
+
+!	Loop through the image ... extract windows and process the data
+!	Build datasets h1 through h(nah) for each horizontal swath
+let $echo="no"
+!	fthmos can't handle too many characters ... restrict to 25
+if (nah > 25) let nah = 25
+let inc = 1
+let xfinal = 1
+let v_inc = 1
+let h_inc = 1
+loop
+  write "                       LOOP2 &inc / &num"
+  let $echo="yes"
+  ibis2tcl &f1&uu&f2&pts v1 v2 v3 v4 vartype=(0,0,0,0) varcnt=4 +
+    ibisloc=(&inc,1,&inc,2,&inc,5,&inc,6)
+  let $echo="no"
+  let sl = $fix(&v1+.5)
+  let ss = $fix(&v2+.5)
+  let diff = v3 - v1
+  let nl2 = $fix(&diff+.5)
+  let diff = v4 - v2  
+  let ns2 = $fix(&diff+.5)
+  
+!	Extract a tile for each of the following for f1 and f2:
+!	band 2 / band 3 / ndvi / bg / bfrac / bm
+  let $echo="yes"
+  gtcopy master-bm bm size=(&sl,&ss,&nl2,&ns2)
+  maxmin bm minival=min maxival=max
+  if (max=0) goto next_tile
+  
+  gtcopy &master&B2 master-b20 size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &master&B3 master-b30 size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &master&bfrac master-bfrac size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &master&bg master-bg size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &master&ndvi master-ndvi size=(&sl,&ss,&nl2,&ns2)
+  
+  gtcopy &f1&B2 f2-b20 size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &f1&B3 f2-b30 size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &f1&bfrac f2-bfrac size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &f1&bg f2-bg size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &f1&ndvi f2-ndvi size=(&sl,&ss,&nl2,&ns2)
+
+!       Generate the NDVI (Veg) difference file
+!	Skip over any tile containing no data ...
+
+  f2 (master-ndvi,bm) temp000 fun="in1*in2"
+  gtcopy temp000 master-ndvi
+  maxmin master-ndvi minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch master-ndvi temp1 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+  f2 (f2-ndvi,bm) temp000 fun="in1*in2"
+  gtcopy temp000 f2-ndvi
+  maxmin f2-ndvi minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch f2-ndvi temp2 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+! original f2 (temp1,temp2,bm) ndvi_diff fun="((in1-in2)+128)*in3"
+  f2 (temp2,temp1,bm) ndvi_diff fun="((in1-in2)+128)*in3"	! alz reversal
+
+!       Generate the bfrac difference file
+!  f2 (master-bfrac,bm) temp000 fun="in1*in2"
+!  gtcopy temp000 master-bfrac
+!  maxmin master-bfrac minival=min maxival=max
+!  if (max=0) goto next_tile
+!  stretch master-bfrac temp1 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+!  f2 (f2-bfrac,bm) temp000 fun="in1*in2"
+!  gtcopy temp000 f2-bfrac
+!  maxmin f2-bfrac minival=min maxival=max
+!  if (max=0) goto next_tile
+!  stretch f2-bfrac temp2 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+!  f2 (temp1,temp2,bm) bfrac_diff fun="((in1-in2)+128)*in3"
+
+!       Generate the bg difference file
+  f2 (master-bg,bm) temp000 fun="in1*in2"
+  gtcopy temp000 master-bg
+  maxmin master-bg minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch master-bg bg_master 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+  f2 (f2-bg,bm) temp000 fun="in1*in2"
+  gtcopy temp000 f2-bg
+  maxmin f2-bg minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch f2-bg bg_f2 'gauss gmean=128.0 gsigma=60.0 rexclu=(0,0)
+  f2 (bg_master,bg_f2,bm) bg_diff fun="((in1-in2)+128)*in3"
+
+!	Normalize bands 2 and 3 for f1 and f2
+  f2 (f2-b20,bm) temp000 fun="in1*in2"
+  gtcopy temp000 f2-b20
+  maxmin f2-b20 minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch f2-b20 b20old 'gauss gmean=128.0 gsigma=60.0 rexclude=(0,0)
+
+  f2 (master-b20,bm) temp000 fun="in1*in2"
+  gtcopy temp000 master-b20
+  maxmin master-b20 minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch master-b20 b20new 'gauss gmean=128.0 gsigma=60.0 rexclude=(0,0)
+
+  f2 (f2-b30,bm) temp000 fun="in1*in2"
+  gtcopy temp000 f2-b30
+  maxmin f2-b30 minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch f2-b30 b30old 'gauss gmean=128.0 gsigma=60.0 rexclude=(0,0)
+
+  f2 (master-b30,bm) temp000 fun="in1*in2"
+  gtcopy temp000 master-b30
+  maxmin master-b30 minival=min maxival=max
+  if (max=0) goto next_tile
+  stretch master-b30 b30new 'gauss gmean=128.0 gsigma=60.0 rexclude=(0,0)
+
+! original order  f2 (b20old,b30old,b20new,b30new) temp +
+  f2 (b20new,b30new,b20old,b30old) temp +	! alz reversal
+    fun="((((in1+in2)/2)-((in3+in4)/2))+128)*((in1.gt.1).and.(in3.gt.1))"
+  f2 temp bgi fun="in1*(in1.ge.129)"
+  f2 ndvi_diff temp fun="in1*(in1.ge.129)"
+  f2 bg_diff bg_temp fun="in1*(in1.ge.129)"
+
+!  f2 (temp,bgi) ndvi_bgi_ob fun="(in1+in2)/2"
+  f2 (temp,bgi,bg_temp) h&h_inc fun="(in1+in2+in3)/3"
+  if (h_inc = nah)
+
+    mos_tiles "h" &nah &v_inc
+    let $echo="no"
+    let h_inc = 1
+    write "Swath # &v_inc ..."
+    let $echo="yes"
+    if (v_inc = 25)
+      mos_tiles "v" &v_inc &xfinal
+      let $echo="no"
+      let xfinal = xfinal + 1
+      let v_inc = 1
+      let h_inc = 1
+    else
+      let v_inc = v_inc + 1
+    end-if
+  else
+    let h_inc = h_inc + 1
+  end-if
+  next_tile>
+  write "next_tile>"
+
+  write "								loop inc: &inc"
+
+!  if (inc=1034)
+!    let _onfail= "return"
+!    ibis-l xyz888888
+!  end-if
+
+  let inc = inc + 1
+  if (inc > &num) goto done2
+  let $echo="no"
+  write "							&inc / &num"
+end-loop
+done2>
+
+!	Mosaic the remaining tiles and rename it xfinal"n"
+let $echo="no"
+write "done2>"
+write "Current h_inc = &h_inc / v_inc = &v_inc"
+let $echo="yes"
+if (h_inc>1)	! Still have some dangling h tiles ... less than 25
+  mos_tiles "h" &h_inc &v_inc
+  gtcopy &master&B3    master-b30 size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &master&bfrac master-bfrac size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &master&bg    master-bg size=(&sl,&ss,&nl2,&ns2)
+
+
+  write "gtcopy &master&ndvi  master-ndvi size=(&sl,&ss,&nl2,&ns2)"
+
+  gtcopy &master&ndvi  master-ndvi size=(&sl,&ss,&nl2,&ns2)
+  
+  gtcopy &f1&B2     f2-b20 size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &f1&B3     f2-b30 size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &f1&bfrac  f2-bfrac size=(&sl,&ss,&nl2,&ns2)
+!  gtcopy &f1&bg     f2-bg size=(&sl,&ss,&nl2,&ns2)
+  gtcopy &f1&ndvi   f2-ndvi size=(&sl,&ss,&nl2,&ns2)
+
+end-if
+if (v_inc > 1)	! Less than 25 v tiles ... put them together too
+  mos_tiles "v" &v_inc &xfinal
+end-if
+
+force_delete num_xfinal
+
+ush ls xfinal* | wc > num_xfinal
+ush more num_xfinal
+ls -1lt xfinal*
+let $echo="no"
+write "These need to be mosaicked together and then gtwarped to match &f1 ..."
+let $echo="yes"
+vquic num_xfinal rkftemp1 ncol=3
+ibis2tcl rkftemp1 v1 vartype=0 varcnt=1
+let inc = $fix(&v1+.5)
+mos_tiles "xfinal" &inc
+gtwarp mos_final0 &f1&uu&f2&uu&bgx&uu&ndvi_bgi_ob&img ref=&master&B2 'coverref nah=301 nav=301
+
+theend>
+ush date
+end-proc

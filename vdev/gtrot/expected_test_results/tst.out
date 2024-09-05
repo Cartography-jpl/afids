@@ -1,0 +1,1280 @@
+gen xxxim1 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTGEN     User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 101"
+*********************************** 101
+gtrot inp=xxxim2 out=xxxim3 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 121"
+*********************************** 121
+gtrot inp=xxxim2 out=xxxim3 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:49 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 141"
+*********************************** 141
+gtrot inp=xxxim2 out=xxxim3 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 161"
+*********************************** 161
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:50 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 111"
+*********************************** 111
+gtrot inp=xxxim2 out=xxxim3 rot=1
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 131"
+*********************************** 131
+gtrot inp=xxxim2 out=xxxim3 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:51 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:52 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 151"
+*********************************** 151
+gtrot inp=xxxim2 out=xxxim3 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:52 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:52 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+write "*********************************** 171"
+*********************************** 171
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:48 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+     Samp     1       3
+   Line
+      1       1   2   3
+      2       4   5   6
+      3       7   8   9
+      4      10  11  12
+      5      13  14  15
+gen xxxim0 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim0 out=xxxim1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtrot inp=xxxim1 out=xxxim2 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+write "*********************************** 020"
+*********************************** 020
+gtrot inp=xxxim2 out=xxxim3 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:54 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:54 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+write "*********************************** 040"
+*********************************** 040
+gtrot inp=xxxim2 out=xxxim3 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:54 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:54 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+write "*********************************** 060"
+*********************************** 060
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:55 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:55 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+write "*********************************** 030"
+*********************************** 030
+gtrot inp=xxxim2 out=xxxim3 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:55 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:55 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+write "*********************************** 050"
+*********************************** 050
+gtrot inp=xxxim2 out=xxxim3 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+write "*********************************** 070"
+*********************************** 070
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4 rot=0
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:53 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+     Samp     1       3       5
+   Line
+      1      13  10   7   4   1
+      2      14  11   8   5   2
+      3      15  12   9   6   3
+gen xxxim0 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim0 out=xxxim1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtrot inp=xxxim1 out=xxxim2 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:57 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+write "*********************************** 242"
+*********************************** 242
+gtrot inp=xxxim2 out=xxxim3 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:57 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+gtrot inp=xxxim3 out=xxxim4 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:57 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+write "*********************************** 262"
+*********************************** 262
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:57 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:57 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+write "*********************************** 232"
+*********************************** 232
+gtrot inp=xxxim2 out=xxxim3 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:58 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+gtrot inp=xxxim3 out=xxxim4 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:58 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+write "*********************************** 252"
+*********************************** 252
+gtrot inp=xxxim2 out=xxxim3 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:58 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+gtrot inp=xxxim3 out=xxxim4 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:58 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+write "*********************************** 272"
+*********************************** 272
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4 rot=2
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:56 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+     Samp     1       3       5
+   Line
+      1       3   6   9  12  15
+      2       2   5   8  11  14
+      3       1   4   7  10  13
+gen xxxim0 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim0 out=xxxim1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtrot inp=xxxim1 out=xxxim2 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+write "*********************************** 343"
+*********************************** 343
+gtrot inp=xxxim2 out=xxxim3 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+gtrot inp=xxxim3 out=xxxim4 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:00 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+write "*********************************** 363"
+*********************************** 363
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:00 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:00 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+write "*********************************** 353"
+*********************************** 353
+gtrot inp=xxxim2 out=xxxim3 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:00 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+gtrot inp=xxxim3 out=xxxim4 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+write "*********************************** 373"
+*********************************** 373
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4 rot=3
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:43:59 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+     Samp     1       3
+   Line
+      1      15  14  13
+      2      12  11  10
+      3       9   8   7
+      4       6   5   4
+      5       3   2   1
+gen xxxim0 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim0 out=xxxim1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtrot inp=xxxim1 out=xxxim2 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+write "*********************************** 464"
+*********************************** 464
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:02 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+write "*********************************** 454"
+*********************************** 454
+gtrot inp=xxxim2 out=xxxim3 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:02 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+gtrot inp=xxxim3 out=xxxim4 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:02 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+write "*********************************** 474"
+*********************************** 474
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:02 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4 rot=4
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:01 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3       5
+   Line
+      1      15  12   9   6   3
+      2      14  11   8   5   2
+      3      13  10   7   4   1
+gen xxxim0 nl=5 ns=3 ival=1 linc=3 sinc=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim0 out=xxxim1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)",  +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)",  +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtrot inp=xxxim1 out=xxxim2 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim2
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+write "*********************************** 565"
+*********************************** 565
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+write "*********************************** 575"
+*********************************** 575
+gtrot inp=xxxim2 out=xxxim3 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim3 out=xxxim4 rot=5
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+     Samp     1       3
+   Line
+      1      13  14  15
+      2      10  11  12
+      3       7   8   9
+      4       4   5   6
+      5       1   2   3
+write "*********************************** 5676"
+*********************************** 5676
+gtrot inp=xxxim2 out=xxxim3 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:04 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+gtrot inp=xxxim3 out=xxxim4 rot=7
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim4
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim4 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:04 2013
+     Samp     1       3
+   Line
+      1       3   2   1
+      2       6   5   4
+      3       9   8   7
+      4      12  11  10
+      5      15  14  13
+gtrot inp=xxxim4 out=xxxim5 rot=6
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+gtlist xxxim5
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+list xxxim5 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:smyth     Date_Time:Fri Aug 16 21:44:03 2013
+ Task:GTROT     User:smyth     Date_Time:Fri Aug 16 21:44:04 2013
+     Samp     1       3       5
+   Line
+      1       1   4   7  10  13
+      2       2   5   8  11  14
+      3       3   6   9  12  15
+end-proc
+disable-log

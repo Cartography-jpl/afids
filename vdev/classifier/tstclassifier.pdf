@@ -1,0 +1,60 @@
+procedure
+
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+refgbl $echo
+refgbl $autousage
+! Oct 02, 2019 - RJB
+! TEST SCRIPT FOR GENEPLOT
+!
+! Vicar Programs:
+!       translog ibis-list geneplot
+! 
+! External Programs"
+!   gnuplot 5.0 or greater
+!   ImageMagick 
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+
+
+body
+let $echo="no"
+let $autousage="none"
+let _onfail="goto rm"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/test_data sp
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid3/test_data sp
+    else
+        ush ln -s $AFIDS_TESTDATA sp
+!        ush ln -s /media/sf_raid1/test_data sp
+    end-if
+end-if
+
+let $echo="yes"
+
+classifier inp=(sp/spot6_blu.hlf, sp/spot6_grn.hlf, sp/spot6_nir.hlf, sp/spot6_red.hlf) classibis=sp/subclusters.ibis out=(classifiedResult.img, classifiedResultDist.img)
+
+rm>
+let $echo="no"
+ush rm sp
+
+END-PROC

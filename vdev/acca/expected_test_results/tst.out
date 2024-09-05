@@ -1,0 +1,115 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /raid1/afids64oc/vdev
+Disabling interrupts ...
+
+let path    = "../test_data"
+let outpath = "regression_output"
+let band2   = "../test_data"//"/b2"
+let band3   = "../test_data"//"/b3"
+let band4   = "../test_data"//"/b4"
+let band5   = "../test_data"//"/b5"
+let band61  = "../test_data"//"/b6"
+let meta    = "../test_data"//"/met.txt"
+let filt1   = "regression_output"//"/filt1"
+let filt2   = "regression_output"//"/filt2"
+let filt3   = "regression_output"//"/filt3"
+let filt4   = "regression_output"//"/filt4"
+let filt5   = "regression_output"//"/filt5"
+let filt6   = "regression_output"//"/filt6"
+let filt7   = "regression_output"//"/filt7"
+let filt8   = "regression_output"//"/filt8"
+let filt9   = "regression_output"//"/filt9"
+let rad2    = "regression_output"//"/rad2"
+let rad3    = "regression_output"//"/rad3"
+let rad4    = "regression_output"//"/rad4"
+let rad5    = "regression_output"//"/rad5"
+let rad61   = "regression_output"//"/rad61"
+let ref2    = "regression_output"//"/ref2"
+let ref3    = "regression_output"//"/ref3"
+let ref4    = "regression_output"//"/ref4"
+let ref5    = "regression_output"//"/ref5"
+let bt61    = "regression_output"//"/bt61"
+let cmvalid = "regression_output"//"/validmask"
+let cmambig = "regression_output"//"/ambigmask"
+let final   = "regression_output"//"/finalout"
+let rsout   = "regression_output"//"/rs"
+let ref2ds  = "regression_output"//"/ref2ds"
+let ref3ds  = "regression_output"//"/ref3ds"
+let ref4ds  = "regression_output"//"/ref4ds"
+let ref5ds  = "regression_output"//"/ref5ds"
+let ndsiout = "regression_output"//"/ndsi"
+let svout   = "regression_output"//"/sv"
+let gvout   = "regression_output"//"/gv"
+let bcmpout = "regression_output"//"/bcomp"
+acca inp=("../test_data/b2", "../test_data/b3", "../test_data/+
+b4", "../test_data/b5", "../test_data/b6")        filter1out="regre+
+ssion_output/filt1" filter2out="regression_output/filt2" filter3out+
+="regression_output/filt3"        filter4out="r+
+egression_output/filt4" filter5out="regression_output/filt5" filter6out+
+="regression_output/filt6"        filter7out="regression_output/filt7" +
+filter8out="regression_output/filt8"        ref2out="regression_output+
+/ref2" ref3out="regression_output/ref3" ref4out="regression_output/re+
+f4" ref5out="regression_output/ref5"        rad2out="regression_out+
+put/rad2" rad3out="regression_output/rad3+
+" rad4out="regression_output/rad4" rad5out="regression_output/rad5"        rad61out="regression_output/rad61" out="regression_outpu+
+t/finalout" meta="../test_data/met.txt" btemp61out="regression_output/bt61"        maskvalid="regression_output/validmask" maskambi+
+g="regression_output/ambigmask" ref2dsout="regression_output/ref2ds"        ref3dsout="regression_output/ref3ds" ref4dsout="regress+
+ion_output/ref4ds" ref5dsout="regression_output/ref5ds"        rsout="regression_output/rs" ndsiout="regression_output/ndsi"       +
+ svout="regression_output/sv" gvout="regression_output/gv" tempcompout="regression_output/bcomp"
+Beginning VICAR task acca
+lmax2: 196.500000
+lmin2: -6.400000
+lmax3: 152.900000
+lmin3: -5.000000
+lmax4: 157.400000
+lmin4: -5.100000
+lmax5: 31.060000
+lmin5: -1.000000
+lmax6: 17.040000
+lmin6: 0.000000
+qcalmax2: 255.000000
+qcalmin2: 1.000000
+qcalmax3: 255.000000
+qcalmin3: 1.000000
+qcalmax4: 255.000000
+qcalmin4: 1.000000
+qcalmax5: 255.000000
+qcalmin5: 1.000000
+qcalmax6: 255.000000
+qcalmin6: 1.000000
+elevation: 60.201553
+juldate: 251
+distance: 1.007244
+Acquired data from metafile...
+snow count: 427
+desratio: 0.000528 snowper: 0.004229
+both warm and cold clouds are clouds -- a
+negative skew
+warm: 277.225222 cold: 268.677118
+cold and warm clouds are added to pass1
+END-PROC

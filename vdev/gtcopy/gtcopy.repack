@@ -1,0 +1,6 @@
+$ vpack gtcopy.com -mixed -
+	-s gtcopy.c -
+	-i gtcopy.imake -
+	-p gtcopy.pdf -
+	-t tstgtcopy.pdf
+$ Exit

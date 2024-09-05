@@ -1,0 +1,50 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = fftflip
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+CPPFLAGS += -I$(AFIDSTOP)/include/carto -I.
+
+FFLAGS += -Wunused-parameter -Wunused -Wuninitialized -Wsurprising -Wintrinsic-shadow -Wno-globals
+
+#special for afids with external fft libs for mac
+#LDFLAGS = -L/sw/lib -lfftw3 
+#COMMENTS
+##############################################################
+#
+#  For gfortran:
+# -Wall includes:
+#       -Waliasing
+#       -Wampersand,
+#       -Wconversion, 
+#       -Wsurprising, 
+#       -Wc-binding-type, 
+#       -Wintrinsics-std, 
+#       -Wno-tabs, 
+#       -Wintrinsic-shadow, 
+#       -Wline-truncation, 
+#       -Wtarget-lifetime, 
+#       -Wreal-q-constant 
+#       -Wunused
+#
+# -Wextra includes:
+#       -Wcompare-reals 
+#       -Wunused-parameter
+#################################################
+CPPFLAGS += -I../sub -I.
+#CFLAGS = -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+CFLAGS += -Wmissing-declarations
+CFLAGS += -Wundef -Wconversion -Wsign-compare
+#
+#
+## Extra Files fftflip depends on
+#
+fftflip:  ../sub/stacka_big.o 
+#

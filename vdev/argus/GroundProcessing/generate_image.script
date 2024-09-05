@@ -1,0 +1,6 @@
+#! /bin/sh -f
+
+cd "$1"
+make -j $2 -k count
+make -j $2 -k all
+read -s -p "---- Done. Press <Return> to continue --"

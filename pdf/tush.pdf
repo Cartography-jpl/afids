@@ -1,0 +1,81 @@
+procedure help=*
+parm p1     type=string default=""
+parm p2     type=string default=""
+parm p3     type=string default=""
+parm p4     type=string default=""
+parm p5     type=string default=""
+parm p6     type=string default=""
+parm p7     type=string default=""
+parm p8     type=string default=""
+parm p9     type=string default=""
+parm p10    type=string default=""
+parm p11    type=string default=""
+parm p12    type=string default=""
+parm p13    type=string default=""
+parm p14    type=string default=""
+parm p15    type=string default=""
+parm p16    type=string default=""
+parm p17    type=string default=""
+parm p18    type=string default=""
+parm p19    type=string default=""
+parm p20    type=string default=""
+
+local result string
+body
+
+let _onfail="continue"
+
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+	"tush &p1 &p2 &p3 &p4 &p5 &p6 &p7 &p8 &p9", +
+	"&p10 &p11 &p12 &p13 &p14 &p15 &p16 &p17 &p18 &p19 &p20") +
+	strvar=result
+
+write "&result"
+
+end-proc
+
+.title
+VICAR Program tush - a brittle ush that doesn't require subprocess spawning
+.help
+PURPOSE
+
+     Program tush - a brittle ush that doesn't require subprocess spawning
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     tush cmd arg arg arg ...
+     
+     where the supported tush command forms are:
+
+	tush cat fromFile
+	tush cat fromFile >> toFile
+	tush cp fromFile toFile
+	tush date >> toFile
+	tush echo string > toFile
+	tush echo string >> toFile
+	tush grep -e pat1 -e pat2 fromFile > toFile
+	tush link -s target linkName
+	tush mkdir dirName
+	tush mkfifo pipeName
+	tush pwd
+	tush rm file
+	tush sleep seconds	
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Fri Apr 20 2007
+    Initial version
+
+.end

@@ -1,0 +1,51 @@
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody      727 Apr  2  2007 lpin.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody 	 1422 Apr  6  2007 lpin.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody 	 1249 Apr  6  2007 lpin.c.backup
+raid27.dir:-rwxrwxrwx 1 rkf users 		 2740 Apr 26  2007 lpin.c*
+raid27.dir:-rwxrwxrwx 1 rkf users 		 1249 Apr 17  2007 lpin.c.backup*
+
+raid19_home.dir:-rwxr-xr-x 1 azobrist nobody  	7720 Apr  2  2007 lpin.com*
+raid19_home.dir:-rwxr-xr-x 1 pkim nobody 	7720 Apr  6  2007 lpin.com*
+raid27.dir:-rwxrwxrwx 1 rkf users 		9443 Apr 26  2007 lpin.com*
+
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody   	637 Apr  2  2007 lpin.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	637 Apr  6  2007 lpin.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users  		325 Apr 26  2007 lpin.pdf*
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody  	176 Apr  2  2007 tstlpin.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	128 Apr  6  2007 tstlpin.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	117 Apr  6  2007 tstlpin.pdf.backup
+raid27.dir:-rwxrwxrwx 1 rkf users     		138 Apr 26  2007 tstlpin.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users  		138 Apr 26  2007 tstlpin.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users  		117 Apr 17  2007 tstlpin.pdf.backup*
+
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   1422 Apr  6  2007 lpin.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   1249 Apr  6  2007 lpin.c.backup
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    727 Apr  2  2007 lpin.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    727 Apr  2  2007 lpin.c
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator  2740 Apr 26  2007 lpin.c*
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator  1249 Apr 17  2007 lpin.c.backup*
+
+
+Data0_dir.txt:-rwxr-xr-x  1 rjb  staff   7720 Apr  6  2007 lpin.com*
+Data2_dir.txt:-rwxr-xr-x  1 rjb  staff   7720 Apr  2  2007 lpin.com*
+Data4_dir.txt:-rwxr-xr-x  1 rjb  staff   7720 Apr  2  2007 lpin.com*
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator  9443 Apr 26  2007 lpin.com*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    637 Apr  6  2007 lpin.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    637 Apr  2  2007 lpin.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    637 Apr  2  2007 lpin.pdf
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator   325 Apr 26  2007 lpin.pdf*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    128 Apr  6  2007 tstlpin.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    117 Apr  6  2007 tstlpin.pdf.backup
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    176 Apr  2  2007 tstlpin.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    176 Apr  2  2007 tstlpin.pdf
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator   138 Apr 26  2007 tstlpin.pdf*
+Data7_new-rwxrwxrwx  1 rjb  _lpoperator   117 Apr 17  2007 tstlpin.pdf.backup*
+

@@ -1,0 +1,216 @@
+procedure help=*
+parm gridfile type=string
+parm image1 type=string
+parm image2 type=string
+parm gridout type=string
+parm fcorfail type=string
+parm seq type=string default="qq"
+
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm regelv type=real
+parm dted type=string
+parm search int default=128
+parm fftsize int default=128
+parm ffthalf int default=0 valid=(0:2)
+parm minsrch int default=128
+parm zrej int default=255
+parm zerolim real default=10.0
+parm seed int default=0
+
+parm lsqt type=real
+
+parm lsqthresh type=int
+parm satazim type=real
+parm satelev type=real
+parm magnif type=real default=1.0
+parm magmin type=real default=1.0
+parm magshrk type=(string,2) valid=("y","n") default="n"
+parm thr_res type=real default=10.0
+
+local corfail int
+local xxxxlsq1 string
+local xxxxlsq2 string
+local xxxxlsq3 string
+local gridoutlen type=int
+
+local meterpix type=real
+local degrad type=real
+local dwinsiz type=int
+
+body
+
+write "piclsqm2 2009/01/21"
+
+!let _onfail="continue"
+
+let corfail = 1
+let xxxxlsq1 = "xxxxlsq1" // "&seq"
+let xxxxlsq2 = "xxxxlsq2" // "&seq"
+let xxxxlsq3 = "xxxxlsq3" // "&seq"
+
+!  modelfit puts predictor corrections due to elevation into cols (8,9)
+
+if (modelfit="elvcor")
+
+   ! calculate meters per pixel
+
+   gt2tcl &image1 val=meterpix keyword=MODELPIXELSCALETAG vtype=8 sequence=1
+   let degrad = 3.1415926536/180.0
+
+   !  map the first image coord
+
+   pixmap (&gridfile,&image1) mapcol=(25,26) pixcol=(1,2) 'pixtomap
+   mf3 &gridfile func="c38=&regelv"
+
+   ! get the elevation through map base image, need to calc window size ??alz
+
+   let dwinsiz = 42
+
+   gtproj (&gridfile,&image2,&dted) incol=(25,26) outcol=(48,49)
+   pixmap (&gridfile,&dted) mapcols=(48,49) pixcols=(44,45) 'maptopix
+   getzval (&dted,&gridfile) cols=(44,45,50) win=&dwinsiz 'dted threj=(-500)
+   rowop2 &gridfile xxxxlsq3 keycol=50 range=(-10000.0,-9000.0) 'delete
+   ibis-copy xxxxlsq3 &gridfile
+   
+   mf3 &gridfile func=("c30=(&satazim)*(&degrad)$c37=c50-c38$", +
+         "c42=c37*@tan((90.0-(&satelev))*&degrad)")
+
+   mf3 &gridfile func=("c12=@int(-c42*@sin(c30)/(&meterpix))$", +
+           "c13=@int(c42*@cos(c30)/(&meterpix))")
+end-if
+
+mf3 &gridfile f=("c16=c1$c17=c2$@avg(c16)$@avg(c17)$c18=@rand$", +
+ "c11=(@abs(c16-c1)+@abs(c17-c2)+1000)*c18*c18") seed=&seed
+sort &gridfile sortcol=11
+
+write "satazim &satazim satelev &satelev"
+
+picmtch5 (&image1,&image2,&gridfile) SEARCH=&search  fftsize=&fftsize +
+       minsrch=&minsrch zrej=&zrej pred=linear autofit=22 redo=60 +
+       zerolim=&zerolim zerolim2=60.0 ffthalf=&ffthalf thr_res=&thr_res +
+       magnif=(&magnif,&magnif) magmin=(&magmin,&magmin) magshrk=&magshrk +
+       'elvcor
+
+!  lsq quadratic approach for eliminating bad match points.
+!  need more columns
+ibis-gen   xxxxlsq3 version="ibis-2" org=column nc=50 nr=1 deffmt=DOUB
+ibis-copy  &gridfile xxxxlsq3 nc=50
+!  remove -9999 points from file (failed matches)
+rowop2     xxxxlsq3 xxxxlsq1 keycol=10 range=(-10000.0,-9000.0) 'delete 
+
+!  modelfit moves the points by elevation model
+
+if (modelfit="elvcor")
+   
+   ! get the elevation through map base image, need to calc window size ??alz
+   
+   let dwinsiz = 42
+   
+   pixmap (xxxxlsq1,&image2) mapcols=(39,40) pixcols=(6,7) 'pixtomap
+   gtproj (xxxxlsq1,&image2,&dted) incol=(39,40) outcol=(48,49)
+   pixmap (xxxxlsq1,&dted) mapcols=(48,49) pixcols=(44,45) 'maptopix
+   getzval (&dted,xxxxlsq1) cols=(44,45,50) win=&dwinsiz 'dted threj=(-500)
+   
+   mf3 xxxxlsq1 func=("c30=(&satazim)*(&degrad)$c37=c50-c38$", +
+         "c42=c37*@tan((90.0-(&satelev))*&degrad)")
+   
+   mf3 xxxxlsq1 func=("c1=c1-c42*@sin(c30)/(&meterpix)$", +
+           "c2=c2+c42*@cos(c30)/(&meterpix)")
+end-if
+
+mf3        xxxxlsq1 func="c12=1.0$c16=c1*c1$c17=c1*c2$c18=c2*c2"
+
+ibislsq3 inp=xxxxlsq1 out=&gridout indcol=(1,2,12,16,17,18) +
+   depcol=6 depcol2=7 rescol=13 rescol2=14 'noprint thresh=&lsqt
+mf3       xxxxlsq1 func="c15=@sqrt(c13*c13+c14*c14)"
+ibis-list  &gridout cols=(1,2,6,7,9,10,11,13,14,15) nr=2
+
+pixmap (&gridout,&image2) mapcol=(3,4) pixcol=(6,7) 'pixtomap
+
+ibis2tcl &gridout vclen=gridoutlen vartype=1
+if (gridoutlen>lsqthresh) let corfail = 0
+write "gridoutlen lsqthresh corfail &gridoutlen &lsqthresh &corfail"
+save-variable file=&fcorfail variable=(corfail)
+
+end-proc
+.TITLE
+piclsqqd - picmtch5 and apply lsq to remove bad matches
+.HELP
+PURPOSE
+     
+	   
+CALL
+
+sample code from avwarp.pdf:
+
+
+
+gengrid out=&xxe ncol=11 nah=5 nav=4 hbase=400.0 hsize = 700.0 +
+                                    vbase=170.0 vsize = 240.0
+
+piclsqqd &xxe &xxxB3out1 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128  +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=16
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone
+
+piclsqqd &xxe &xxxB3out1 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=17.0 lsq2=8.0 lsq3=5.0 lsqthresh=10
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone
+
+write "none of the correlations worked, clock step"
+ibis-l corrnotwork
+
+cordone>
+
+
+
+another sample case from that proc:
+
+
+
+gengrid out=&xxe ncol=11 nah=8 nav=6 hbase=600.0 hsize = 180.0 +
+                                    vbase=110.0 vsize = 180.0
+
+
+piclsqqd &xxe &xxxB3out3 avmaster &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=35
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone2
+
+piclsqqd &xxe &xxxB3out3 avmaster2 &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 +
+  lsq1=10.0 lsq2=4.0 lsq3=2.0 lsqthresh=25
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Bcorfail &corfail"
+if (corfail=0) goto cordone2
+
+write "none of the correlations worked, final step"
+ibis-l corrnotwork
+
+cordone2>
+
+
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 21 Jan, 2002
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 12 May, 2002
+
+.LEVEL1
+
+.END

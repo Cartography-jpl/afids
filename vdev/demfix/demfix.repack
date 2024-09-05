@@ -1,0 +1,6 @@
+$ vpack demfix.com -mixed -
+	-s demfix.c -
+	-i demfix.imake -
+	-p demfix.pdf -
+	-t tstdemfix.pdf
+$ Exit

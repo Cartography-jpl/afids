@@ -1,0 +1,6 @@
+$ vpack rpcsccub.com -mixed -
+	-s rpcsccub.c -
+	-i rpcsccub.imake -
+	-p rpcsccub.pdf -
+	-t tstrpcsccub.pdf
+$ Exit

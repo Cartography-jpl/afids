@@ -1,0 +1,6 @@
+$ vpack gridavg.com -mixed -
+	-s gridavg.c -
+	-i gridavg.imake -
+	-p gridavg.pdf -
+	-t tstgridavg.pdf
+$ Exit

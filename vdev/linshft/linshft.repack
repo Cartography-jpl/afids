@@ -1,0 +1,6 @@
+$ vpack linshft.com -mixed -
+	-s linshft.c -
+	-i linshft.imake -
+	-p linshft.pdf -
+	-t tstlinshft.pdf
+$ Exit

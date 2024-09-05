@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST SCRIPT FOR GTGORE
+
+
+tstgtwarpxd
+
+
+end-proc

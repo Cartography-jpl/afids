@@ -1,0 +1,50 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST GTWARP HANDYPROC
+
+! basic application, note perth is NOT VICAR rotated and has "post" pixels
+! australia is standard VICAR rotation and area pixels
+
+gen xxim1 nl=10 ns=10
+gtgen inp=xxim1 out=xxperth 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,.3,.3,0.0)", +
+          "ModelTiePointTag=(10,0,0,.5,.3,0.0)", +
+          "ModelTiePointTag=(0,10,0,.3,.5,0.0)", +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gen xxim1 nl=20 ns=20
+gtgen inp=xxim1 out=xxaustralia 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,.2,.7,0.0)", +
+          "ModelTiePointTag=(20,0,0,.7,.7,0.0)", +
+          "ModelTiePointTag=(0,20,0,.2,.2,0.0)", +
+          "ProjectionGeoKey=1(CT_TransverseMercator)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtlist xxperth
+gtlist xxaustralia
+
+gtwarp inp=xxperth out=xxnewperth_inp ref=xxaustralia 'coverinp +
+    nah=3 nav=4 gorewid=1
+
+list xxnewperth_inp 'zero
+gtlist xxnewperth_inp
+
+! same as previous case except 'coverref parameter used
+
+gtwarp inp=xxperth out=xxnewperth_ref ref=xxaustralia 'coverref +
+    nah=3 nav=4 
+
+list xxnewperth_ref 'zero
+gtlist xxnewperth_ref
+
+
+theend>
+end-proc

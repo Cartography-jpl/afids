@@ -1,0 +1,6 @@
+$ vpack fitg.com -mixed -
+	-s fitg.c -
+	-i fitg.imake -
+	-p fitg.pdf -
+	-t tstfitg.pdf
+$ Exit

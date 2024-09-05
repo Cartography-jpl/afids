@@ -1,0 +1,181 @@
+procedure help=*
+parm inp type=(string,99) count=(10:10) +
+      default=("","","","","","","","","","")
+parm inp2 type=(string,99) count=(10:10) +
+      default=("","","","","","","","","","")
+parm out type=(string,99) count=1
+parm band type=(string,3) count=1 default="nn3"
+
+local key string
+local maptype string
+local hdrtype string
+local loc_out string
+
+local iloop int
+local curfile string
+local metfile string
+local cfband string
+local firstfile string
+local nextfile string
+local mosrec type=string
+local mosfile type=string
+local gtfile type=string
+local mostemp type=string
+local offset type=string
+
+local parmstr string
+
+local minsl int
+local minss int
+local maxnl int
+local maxns int
+local curnl int
+local curns int
+local fcurol real
+local fcuros real
+local curol int
+local curos int
+local tval int
+
+refgbl $echo
+body
+let $echo="yes"
+
+let key = "xxl"
+let maptype = "pc"
+let hdrtype=""
+
+!  LSATMOS HANDYPROC
+
+let mosrec = "scratch/xxx" // "&key" // "mosrec"
+let mosfile = "scratch/xxx" // "&key" // "mosfile"
+let mostemp = "scratch/xxx" // "&key" // "mostemp"
+let offset = "scratch/xxx" // "&key" // "offset"
+
+! first, dispense with the single file case
+
+let nextfile = inp(2)
+if (nextfile="")
+   let curfile = inp(1)
+   let metfile = inp2(1)
+   let loc_out = "xxxlmos1"
+   let cfband = "scratch/" // "&loc_out"
+   lsatglog key=&key infile=&curfile metfile=&metfile band=&band +
+      maptype=&maptype hdrtype="&hdrtype" out=&loc_out
+   gtcopy &cfband &out
+   goto theend
+end-if
+
+! now the multi file case
+
+let iloop = 0
+let parmstr = "("
+loop
+   let iloop = iloop+1
+   if (iloop>10) goto iloopdone
+   let curfile = inp(iloop)
+   let metfile = inp2(iloop)
+   if (curfile="") goto iloopdone
+   let loc_out = "xxxlmos" // "&iloop"
+   let cfband = "scratch/" // "&loc_out"
+   
+   lsatglog key=&key infile=&curfile metfile="&metfile" band=&band +
+       maptype=&maptype hdrtype="&hdrtype" out=&loc_out
+   
+   if (iloop=1)
+      let firstfile = cfband
+      lab2tcl &cfband v1=maxnl v2=maxns keyword=(nl,ns) 'system
+      let minsl = 1
+      let minss = 1
+   else
+      lab2tcl &cfband v1=curnl v2=curns keyword=(nl,ns) 'system
+      gtoffset &firstfile &cfband &offset
+      ibis2tcl &offset v1=fcurol v2=fcuros vartype=(-1,-1) ibisloc=(1,7,1,8)
+      if (fcurol>0.0) let fcurol = fcurol+0.5
+      if (fcurol<0.0) let fcurol = fcurol-0.5
+      if (fcuros>0.0) let fcuros = fcuros+0.5
+      if (fcuros<0.0) let fcuros = fcuros-0.5
+      let curol = $fix(fcurol)
+      let curos = $fix(fcuros)
+      if (curol<minsl) let minsl = curol
+      if (curos<minss) let minss = curos
+      let tval = curol+curnl-1
+      if (tval>maxnl) let maxnl = tval
+      let tval = curos+curns-1
+      if (tval>maxns) let maxns = tval
+   end-if
+      
+   ibis-gen &mosrec nr=1 nc=6 format=("A99","FULL","FULL","FULL","FULL","DOUB") +
+      data=(0,0,0,0,1.0) datacols=(2,3,4,5,6) +
+      string=("&cfband") strcols=(1)
+   
+   if (iloop=1) 
+      ibis-copy &mosrec &mosfile
+   else
+      ibis-cat (&mosfile,&mosrec) &mostemp
+      ibis-copy &mostemp &mosfile
+   end-if
+   
+   let parmstr = parmstr // "&cfband" // ","
+end-loop
+
+iloopdone>
+
+ibis-l &mosfile cols=(1,6) cfor="%45s%11.5f"
+let maxnl = maxnl-minsl+1
+let maxns = maxns-minss+1
+featherv +
+ inp=&parmstr +
+ &mosfile,&firstfile) +
+ out=&out sl=&minsl ss=&minss nl=&maxnl ns=&maxns +
+ dfeather=700  moorefac=3 'factor 'progress 'noramp 'geotiff
+
+theend>
+end-proc
+.TITLE
+LSATMOS - Log and mosaic Stennis LANDSATs
+.HELP
+PURPOSE
+     
+If only one file is given, the file will be logged.  If several files are
+given, they are logged and mosaicked. 
+
+TThe files must be named "&source" // ".&bandname" and 
+"&source" // ".&bandname".  The results are stored in a subdirectory
+named landsatmos.
+     
+CALL
+
+     LSATMOS inp=("p153r36_5t19900803","p154r36_5t19900803") out=mymos +
+          key="russia" band="nn3"
+ 
+  
+OPERATION
+
+The DMA files are logged to VICAR with routine DTEDVLOG.  This is called from
+procedure DTEDLOG which then adds a GeoTIFF label.  Finally, the routines 
+GTMSS and GTAPPEND are used to make the checkerboard mosaic.
+
+PERFORMANCE
+
+
+.PAGE
+
+Restrictions
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 03 Jan, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+ 
+.level1
+.var inp
+landsat input files in
+any order
+.var out
+output mosaic
+.vari band
+the band that will be processed
+.END

@@ -1,0 +1,6 @@
+$ vpack vic2shp.com -mixed -
+	-s vic2shp.c -
+	-i vic2shp.imake -
+	-p vic2shp.pdf -
+	-t tstvic2shp.pdf
+$ Exit

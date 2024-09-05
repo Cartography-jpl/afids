@@ -1,0 +1,16 @@
+procedure
+parm in type=(string,99)
+parm out type=(string,99)
+parm dark string default="/home/alz/amt/sep-open-dark_fr"
+parm gain string default="/home/alz/amt/sep-open-gain"
+parm bias string default="/home/alz/amt/sep-open-offset"
+parm factor1 type=int default=800
+
+body
+
+f2 inp=(&in,+
+  &dark,&gain,&bias) +
+  out=&out +
+  func="min(((in1-in2)*in3+in4)*(&factor1),4096)" format=half
+
+end-proc

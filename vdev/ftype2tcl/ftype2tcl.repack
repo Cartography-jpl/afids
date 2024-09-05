@@ -1,0 +1,6 @@
+$ vpack ftype2tcl.com -mixed -
+	-s ftype2tcl.c -
+	-i ftype2tcl.imake -
+	-p ftype2tcl.pdf -
+	-t tstftype2tcl.pdf
+$ Exit

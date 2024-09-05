@@ -1,0 +1,2616 @@
+tstfitsout
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/neat nn
+    end-if
+end-if
+let _onfail="goto rm"
+label-list nn/globe.red
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File nn/globe.red ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a VAX-VMS host
+                1 bands
+                800 lines per band
+                800 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: TASK -- User: RTO320 -- Tue Dec 11 06:59:43 1990 ----
+MISSION='GALILEO'
+SENSOR='SSI'
+PICNO='?'
+PA='E1WSSPIN__01A___WSPN'
+RIM=614104
+MOD91=0
+MOD10=1
+MOD8=0
+TCA='CLOSEST TIME'
+TARGET='EARTH'
+SCETYEAR=1990
+SCETDAY=345
+SCETHOUR=14
+SCETMIN=6
+SCETSEC=22
+SCETMSEC=0
+FILTER=2
+EXP=4.167
+GAIN=2
+RATE=4
+TLMFMT='XCM'
+BOOM='P'
+FIBE='1000'
+BARC='RC'
+ENTROPY=0.0
+TBPPXL=0.0
+TPPLNE=0.0
+INA=53.4285
+EMA=21.8998
+PHA=35.1321
+HRA=-999.0
+TWIST=0.0
+CONE=0.0
+RA=0.0
+DEC=0.0
+SUNAZ=0.0
+NORAZ=0.0
+SCAZ=0.0
+SMRAZ=0.0
+SMEAR=-999.0
+HSCL=0.0
+VSCL=0.0
+LAT=0.0
+LON=0.0
+RAD=0.0
+PLRANGE=0.0
+SLRANGE=0.0
+UBWC='ON'
+IOF=1.0
+CNV=4.96576
+SOLRANGE=1.495979e+08
+CAL='RED2F.CAL'
+DC='2F60.DC'
+BLM='RED2F.BLM'
+SO='CALIBRATION.SO'
+ENTRPY=2.68671
+---- Task: GALSOS -- User: CCA320 -- Tue Dec 11 12:29:08 1990 ----
+COMMENT='GALSOS replaced 584 pixels by interpolation'
+---- Task: GLLFILLI -- User: CCA320 -- Tue Dec 11 12:30:15 1990 ----
+---- Task: ADESPIKE -- User: CCA320 -- Tue Dec 11 12:30:39 1990 ----
+ADJ_LINE=56
+SAM_LINE=146
+---- Task: GEOMA -- User: CCA320 -- Tue Dec 11 12:32:01 1990 ----
+---- Task: C -- User: CCA320 -- Tue Dec 11 12:32:45 1990 ----
+CONV='OUT = IN*     0.036+       0.50'
+---- Task: PTP -- User: CCA320 -- Tue Dec 11 12:33:04 1990 ----
+---- Task: FLOT -- User: CCA320 -- Tue Dec 11 12:35:59 1990 ----
+---- Task: VLOOKUP -- User: EDJ320 -- Thu Dec 13 03:45:34 1990 ----
+ 
+************************************************************
+fitsout INP=nn/globe.red
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+MISSION = 'GALILEO'            /
+SENSOR  = 'SSI'                /
+PICNO   = '?'                  /
+PA      = 'E1WSSPIN__01A___WSPN'
+RIM     =               614104 /
+MOD91   =                    0 /
+MOD10   =                    1 /
+MOD8    =                    0 /
+TCA     = 'CLOSEST TIME'       /
+TARGET  = 'EARTH'              /
+SCETYEAR=                 1990 /
+SCETDAY =                  345 /
+SCETHOUR=                   14 /
+SCETMIN =                    6 /
+SCETSEC =                   22 /
+SCETMSEC=                    0 /
+FILTER  =                    2 /
+EXP     =                4.167 /
+GAIN    =                    2 /
+RATE    =                    4 /
+TLMFMT  = 'XCM'                /
+BOOM    = 'P'                  /
+FIBE    = '1000'               /
+BARC    = 'RC'                 /
+ENTROPY =                  0.0 /
+TBPPXL  =                  0.0 /
+TPPLNE  =                  0.0 /
+INA     =              53.4285 /
+EMA     =              21.8998 /
+PHA     =              35.1321 /
+HRA     =               -999.0 /
+TWIST   =                  0.0 /
+CONE    =                  0.0 /
+RA      =                  0.0 /
+DEC     =                  0.0 /
+SUNAZ   =                  0.0 /
+NORAZ   =                  0.0 /
+SCAZ    =                  0.0 /
+SMRAZ   =                  0.0 /
+SMEAR   =               -999.0 /
+HSCL    =                  0.0 /
+VSCL    =                  0.0 /
+LAT     =                  0.0 /
+LON     =                  0.0 /
+RAD     =                  0.0 /
+PLRANGE =                  0.0 /
+SLRANGE =                  0.0 /
+UBWC    = 'ON'                 /
+IOF     =                  1.0 /
+CNV     =              4.96576 /
+SOLRANGE=         1.495979e+08 /
+CAL     = 'RED2F.CAL'          /
+DC      = '2F60.DC'            /
+BLM     = 'RED2F.BLM'          /
+SO      = 'CALIBRATION.SO'     /
+ENTRPY  =              2.68671 /
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+COMMENT = 'GALSOS replaced 584 pixels by interpolation'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+ADJ_LINE=                   56 /
+SAM_LINE=                  146 /
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+CONV    = 'OUT = IN*     0.036+       0.50'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsout INP=nn/globe.red history=tasks
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsout INP=nn/globe.red history=nohistory
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+fitsout nn/globe.red glober.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+MISSION = 'GALILEO'            /
+SENSOR  = 'SSI'                /
+PICNO   = '?'                  /
+PA      = 'E1WSSPIN__01A___WSPN'
+RIM     =               614104 /
+MOD91   =                    0 /
+MOD10   =                    1 /
+MOD8    =                    0 /
+TCA     = 'CLOSEST TIME'       /
+TARGET  = 'EARTH'              /
+SCETYEAR=                 1990 /
+SCETDAY =                  345 /
+SCETHOUR=                   14 /
+SCETMIN =                    6 /
+SCETSEC =                   22 /
+SCETMSEC=                    0 /
+FILTER  =                    2 /
+EXP     =                4.167 /
+GAIN    =                    2 /
+RATE    =                    4 /
+TLMFMT  = 'XCM'                /
+BOOM    = 'P'                  /
+FIBE    = '1000'               /
+BARC    = 'RC'                 /
+ENTROPY =                  0.0 /
+TBPPXL  =                  0.0 /
+TPPLNE  =                  0.0 /
+INA     =              53.4285 /
+EMA     =              21.8998 /
+PHA     =              35.1321 /
+HRA     =               -999.0 /
+TWIST   =                  0.0 /
+CONE    =                  0.0 /
+RA      =                  0.0 /
+DEC     =                  0.0 /
+SUNAZ   =                  0.0 /
+NORAZ   =                  0.0 /
+SCAZ    =                  0.0 /
+SMRAZ   =                  0.0 /
+SMEAR   =               -999.0 /
+HSCL    =                  0.0 /
+VSCL    =                  0.0 /
+LAT     =                  0.0 /
+LON     =                  0.0 /
+RAD     =                  0.0 /
+PLRANGE =                  0.0 /
+SLRANGE =                  0.0 /
+UBWC    = 'ON'                 /
+IOF     =                  1.0 /
+CNV     =              4.96576 /
+SOLRANGE=         1.495979e+08 /
+CAL     = 'RED2F.CAL'          /
+DC      = '2F60.DC'            /
+BLM     = 'RED2F.BLM'          /
+SO      = 'CALIBRATION.SO'     /
+ENTRPY  =              2.68671 /
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+COMMENT = 'GALSOS replaced 584 pixels by interpolation'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+ADJ_LINE=                   56 /
+SAM_LINE=                  146 /
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+CONV    = 'OUT = IN*     0.036+       0.50'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+MISSION = 'GALILEO'            /
+SENSOR  = 'SSI'                /
+PICNO   = '?'                  /
+PA      = 'E1WSSPIN__01A___WSPN'
+RIM     =               614104 /
+MOD91   =                    0 /
+MOD10   =                    1 /
+MOD8    =                    0 /
+TCA     = 'CLOSEST TIME'       /
+TARGET  = 'EARTH'              /
+SCETYEAR=                 1990 /
+SCETDAY =                  345 /
+SCETHOUR=                   14 /
+SCETMIN =                    6 /
+SCETSEC =                   22 /
+SCETMSEC=                    0 /
+FILTER  =                    2 /
+EXP     =                4.167 /
+GAIN    =                    2 /
+RATE    =                    4 /
+TLMFMT  = 'XCM'                /
+BOOM    = 'P'                  /
+FIBE    = '1000'               /
+BARC    = 'RC'                 /
+ENTROPY =                  0.0 /
+TBPPXL  =                  0.0 /
+TPPLNE  =                  0.0 /
+INA     =              53.4285 /
+EMA     =              21.8998 /
+PHA     =              35.1321 /
+HRA     =               -999.0 /
+TWIST   =                  0.0 /
+CONE    =                  0.0 /
+RA      =                  0.0 /
+DEC     =                  0.0 /
+SUNAZ   =                  0.0 /
+NORAZ   =                  0.0 /
+SCAZ    =                  0.0 /
+SMRAZ   =                  0.0 /
+SMEAR   =               -999.0 /
+HSCL    =                  0.0 /
+VSCL    =                  0.0 /
+LAT     =                  0.0 /
+LON     =                  0.0 /
+RAD     =                  0.0 /
+PLRANGE =                  0.0 /
+SLRANGE =                  0.0 /
+UBWC    = 'ON'                 /
+IOF     =                  1.0 /
+CNV     =              4.96576 /
+SOLRANGE=         1.495979e+08 /
+CAL     = 'RED2F.CAL'          /
+DC      = '2F60.DC'            /
+BLM     = 'RED2F.BLM'          /
+SO      = 'CALIBRATION.SO'     /
+ENTRPY  =              2.68671 /
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+COMMENT = 'GALSOS replaced 584 pixels by interpolation'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+ADJ_LINE=                   56 /
+SAM_LINE=                  146 /
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+CONV    = 'OUT = IN*     0.036+       0.50'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsout nn/globe.red glober.fits history=tasks
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsout nn/globe.red glober.fits history=nohistory
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+fitsout nn/globe.red header=glober.hdr
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+MISSION = 'GALILEO'            /
+SENSOR  = 'SSI'                /
+PICNO   = '?'                  /
+PA      = 'E1WSSPIN__01A___WSPN'
+RIM     =               614104 /
+MOD91   =                    0 /
+MOD10   =                    1 /
+MOD8    =                    0 /
+TCA     = 'CLOSEST TIME'       /
+TARGET  = 'EARTH'              /
+SCETYEAR=                 1990 /
+SCETDAY =                  345 /
+SCETHOUR=                   14 /
+SCETMIN =                    6 /
+SCETSEC =                   22 /
+SCETMSEC=                    0 /
+FILTER  =                    2 /
+EXP     =                4.167 /
+GAIN    =                    2 /
+RATE    =                    4 /
+TLMFMT  = 'XCM'                /
+BOOM    = 'P'                  /
+FIBE    = '1000'               /
+BARC    = 'RC'                 /
+ENTROPY =                  0.0 /
+TBPPXL  =                  0.0 /
+TPPLNE  =                  0.0 /
+INA     =              53.4285 /
+EMA     =              21.8998 /
+PHA     =              35.1321 /
+HRA     =               -999.0 /
+TWIST   =                  0.0 /
+CONE    =                  0.0 /
+RA      =                  0.0 /
+DEC     =                  0.0 /
+SUNAZ   =                  0.0 /
+NORAZ   =                  0.0 /
+SCAZ    =                  0.0 /
+SMRAZ   =                  0.0 /
+SMEAR   =               -999.0 /
+HSCL    =                  0.0 /
+VSCL    =                  0.0 /
+LAT     =                  0.0 /
+LON     =                  0.0 /
+RAD     =                  0.0 /
+PLRANGE =                  0.0 /
+SLRANGE =                  0.0 /
+UBWC    = 'ON'                 /
+IOF     =                  1.0 /
+CNV     =              4.96576 /
+SOLRANGE=         1.495979e+08 /
+CAL     = 'RED2F.CAL'          /
+DC      = '2F60.DC'            /
+BLM     = 'RED2F.BLM'          /
+SO      = 'CALIBRATION.SO'     /
+ENTRPY  =              2.68671 /
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+COMMENT = 'GALSOS replaced 584 pixels by interpolation'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+ADJ_LINE=                   56 /
+SAM_LINE=                  146 /
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+CONV    = 'OUT = IN*     0.036+       0.50'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+typetext glober.hdr
+Beginning VICAR task typetext
+SIMPLE  =                    T /  format follows FITS standards                 BITPIX  =                    8 /  8-bit unsigned integers                       NAXIS   =                    2 /  number of axes                                NAXIS1  =
+                  800 /  number of pixels per row                      NAXIS2  =                  800 /  number of rows                                EXTEND  =                    T /  tape may have standard FITS extensions        BLOCKED =         
+           T /  tape may be blocked in multiplies of 2880     ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '                        DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS                      FILENAME= 'nn/globe.red    
+                       '                             USERID  = 'rjb     '           /                                                HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set       INTFMT  = 'LOW     '           /  VI
+CAR integer byte order (HIGH=big-endian)    DATATYPE= 'IMAGE   '           /  original VICAR data set type                  VIC-MIN =                    0 /  minimum value in VICAR data set               VIC-MAX =                  238 /  maximum val
+ue in VICAR data set               VIC-B/P =                    8 /  bits per pixel in VICAR data set              VIC-FMT = 'BYTE    '           /  data format in VICAR data set                 BSCALE  =             1.000000 /  real = tape*BSCALE +
+ BZERO                    BZERO   =             0.000000 /  amount of bias added to each FITS pixel       BUNIT   = 'DN      '           /  units of brightness                           DATAMAX =           238.000000 /  max FITS pixel value (after s
+caling)          DATAMIN =             0.000000 /  min FITS pixel value (after scaling)          CRVAL1  =         1.000000E+00 /  starting sample of image                      CRPIX1  =         1.000000E+00 /  reference pixel location in sample axi
+s       CTYPE1  = 'SAMPLE  '           /                                                CDELT1  =         1.000000E+00 /  sample increment on x-axis                    CRVAL2  =         1.000000E+00 /  starting line of image                        C
+RPIX2  =         1.000000E+00 /  reference pixel location in line axis         CTYPE2  = 'LINE    '           /                                                CDELT2  =        -1.000000E+00 /  line increment on y-axis                      HISTORY = 
+'VICAR HISTORY LABEL LISTING FOLLOWS'                                 VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'MISSION = 'GALILEO'            /                                                SENSOR  = 'SSI'    
+            /                                                PICNO   = '?'                  /                                                PA      = 'E1WSSPIN__01A___WSPN'                                                RIM     =               6141
+04 /                                                MOD91   =                    0 /                                                MOD10   =                    1 /                                                MOD8    =                    0 /     
+                                           TCA     = 'CLOSEST TIME'       /                                                TARGET  = 'EARTH'              /                                                SCETYEAR=                 1990 /              
+                                  SCETDAY =                  345 /                                                SCETHOUR=                   14 /                                                SCETMIN =                    6 /                       
+                         SCETSEC =                   22 /                                                SCETMSEC=                    0 /                                                FILTER  =                    2 /                                
+                EXP     =                4.167 /                                                GAIN    =                    2 /                                                RATE    =                    4 /                                         
+       TLMFMT  = 'XCM'                /                                                BOOM    = 'P'                  /                                                FIBE    = '1000'               /                                                BA
+RC    = 'RC'                 /                                                ENTROPY =                  0.0 /                                                TBPPXL  =                  0.0 /                                                TPPLNE  =  
+                0.0 /                                                INA     =              53.4285 /                                                EMA     =              21.8998 /                                                PHA     =           
+   35.1321 /                                                HRA     =               -999.0 /                                                TWIST   =                  0.0 /                                                CONE    =                  0.
+0 /                                                RA      =                  0.0 /                                                DEC     =                  0.0 /                                                SUNAZ   =                  0.0 /      
+                                          NORAZ   =                  0.0 /                                                SCAZ    =                  0.0 /                                                SMRAZ   =                  0.0 /               
+                                 SMEAR   =               -999.0 /                                                HSCL    =                  0.0 /                                                VSCL    =                  0.0 /                        
+                        LAT     =                  0.0 /                                                LON     =                  0.0 /                                                RAD     =                  0.0 /                                 
+               PLRANGE =                  0.0 /                                                SLRANGE =                  0.0 /                                                UBWC    = 'ON'                 /                                          
+      IOF     =                  1.0 /                                                CNV     =              4.96576 /                                                SOLRANGE=         1.495979e+08 /                                                CAL
+     = 'RED2F.CAL'          /                                                DC      = '2F60.DC'            /                                                BLM     = 'RED2F.BLM'          /                                                SO      = 'C
+ALIBRATION.SO'     /                                                ENTRPY  =              2.68671 /                                                VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'COMMENT = 'GALSOS rep
+laced 584 pixels by interpolation'                         VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'ADJ_LINE=                   56
+ /                                                SAM_LINE=                  146 /                                                VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'VIC-TASK= 'C                           
+' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'CONV    = 'OUT = IN*     0.036+       0.50'                                     VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'VIC-TASK= 'FLOT                        ' 'CCA320
+    ' 'Tue Dec 11 12:35:59 1990'VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'END                                                                             
+fitsout nn/globe.red header=glober.hdr history=tasks
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'
+VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'
+VIC-TASK= 'GLLFILLI                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'
+VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'
+VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'
+VIC-TASK= 'C                           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'
+VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'
+VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'
+VIC-TASK= 'VLOOKUP                     ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+typetext  glober.hdr
+Beginning VICAR task typetext
+SIMPLE  =                    T /  format follows FITS standards                 BITPIX  =                    8 /  8-bit unsigned integers                       NAXIS   =                    2 /  number of axes                                NAXIS1  =
+                  800 /  number of pixels per row                      NAXIS2  =                  800 /  number of rows                                EXTEND  =                    T /  tape may have standard FITS extensions        BLOCKED =         
+           T /  tape may be blocked in multiplies of 2880     ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '                        DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS                      FILENAME= 'nn/globe.red    
+                       '                             USERID  = 'rjb     '           /                                                HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set       INTFMT  = 'LOW     '           /  VI
+CAR integer byte order (HIGH=big-endian)    DATATYPE= 'IMAGE   '           /  original VICAR data set type                  VIC-MIN =                    0 /  minimum value in VICAR data set               VIC-MAX =                  238 /  maximum val
+ue in VICAR data set               VIC-B/P =                    8 /  bits per pixel in VICAR data set              VIC-FMT = 'BYTE    '           /  data format in VICAR data set                 BSCALE  =             1.000000 /  real = tape*BSCALE +
+ BZERO                    BZERO   =             0.000000 /  amount of bias added to each FITS pixel       BUNIT   = 'DN      '           /  units of brightness                           DATAMAX =           238.000000 /  max FITS pixel value (after s
+caling)          DATAMIN =             0.000000 /  min FITS pixel value (after scaling)          CRVAL1  =         1.000000E+00 /  starting sample of image                      CRPIX1  =         1.000000E+00 /  reference pixel location in sample axi
+s       CTYPE1  = 'SAMPLE  '           /                                                CDELT1  =         1.000000E+00 /  sample increment on x-axis                    CRVAL2  =         1.000000E+00 /  starting line of image                        C
+RPIX2  =         1.000000E+00 /  reference pixel location in line axis         CTYPE2  = 'LINE    '           /                                                CDELT2  =        -1.000000E+00 /  line increment on y-axis                      HISTORY = 
+'VICAR HISTORY LABEL LISTING FOLLOWS'                                 VIC-TASK= 'TASK                        ' 'RTO320    ' 'Tue Dec 11 06:59:43 1990'VIC-TASK= 'GALSOS                      ' 'CCA320    ' 'Tue Dec 11 12:29:08 1990'VIC-TASK= 'GLLFILLI
+                    ' 'CCA320    ' 'Tue Dec 11 12:30:15 1990'VIC-TASK= 'ADESPIKE                    ' 'CCA320    ' 'Tue Dec 11 12:30:39 1990'VIC-TASK= 'GEOMA                       ' 'CCA320    ' 'Tue Dec 11 12:32:01 1990'VIC-TASK= 'C                
+           ' 'CCA320    ' 'Tue Dec 11 12:32:45 1990'VIC-TASK= 'PTP                         ' 'CCA320    ' 'Tue Dec 11 12:33:04 1990'VIC-TASK= 'FLOT                        ' 'CCA320    ' 'Tue Dec 11 12:35:59 1990'VIC-TASK= 'VLOOKUP                   
+  ' 'EDJ320    ' 'Thu Dec 13 03:45:34 1990'END                                                                             
+fitsout nn/globe.red header=glober.hdr history=nohistory
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+fitsin glober.fits
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  800 /  number of pixels per row
+NAXIS2  =                  800 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/globe.red                           '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  238 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           238.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+END
+typetext glober.hdr
+Beginning VICAR task typetext
+SIMPLE  =                    T /  format follows FITS standards                 BITPIX  =                    8 /  8-bit unsigned integers                       NAXIS   =                    2 /  number of axes                                NAXIS1  =
+                  800 /  number of pixels per row                      NAXIS2  =                  800 /  number of rows                                EXTEND  =                    T /  tape may have standard FITS extensions        BLOCKED =         
+           T /  tape may be blocked in multiplies of 2880     ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '                        DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS                      FILENAME= 'nn/globe.red    
+                       '                             USERID  = 'rjb     '           /                                                HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set       INTFMT  = 'LOW     '           /  VI
+CAR integer byte order (HIGH=big-endian)    DATATYPE= 'IMAGE   '           /  original VICAR data set type                  VIC-MIN =                    0 /  minimum value in VICAR data set               VIC-MAX =                  238 /  maximum val
+ue in VICAR data set               VIC-B/P =                    8 /  bits per pixel in VICAR data set              VIC-FMT = 'BYTE    '           /  data format in VICAR data set                 BSCALE  =             1.000000 /  real = tape*BSCALE +
+ BZERO                    BZERO   =             0.000000 /  amount of bias added to each FITS pixel       BUNIT   = 'DN      '           /  units of brightness                           DATAMAX =           238.000000 /  max FITS pixel value (after s
+caling)          DATAMIN =             0.000000 /  min FITS pixel value (after scaling)          CRVAL1  =         1.000000E+00 /  starting sample of image                      CRPIX1  =         1.000000E+00 /  reference pixel location in sample axi
+s       CTYPE1  = 'SAMPLE  '           /                                                CDELT1  =         1.000000E+00 /  sample increment on x-axis                    CRVAL2  =         1.000000E+00 /  starting line of image                        C
+RPIX2  =         1.000000E+00 /  reference pixel location in line axis         CTYPE2  = 'LINE    '           /                                                CDELT2  =        -1.000000E+00 /  line increment on y-axis                      END       
+                                                                      
+gen gen8.256 nl=256 ns=256 format=byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen gen16.256 nl=256 ns=256 format=half linc=100.0 sinc=100.0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen gen32.256 nl=256 ns=256 format=full linc=2000. sinc=2000.
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+fitsout gen8.256 gen8.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen8.256                               '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                  1.0 /
+LINC    =                  1.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen8.fits gen8.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen8.256                               '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                  1.0 /
+LINC    =                  1.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+list gen8.256 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5       4   5   6   7   8   9  10  11  12  13
+      6       5   6   7   8   9  10  11  12  13  14
+      7       6   7   8   9  10  11  12  13  14  15
+      8       7   8   9  10  11  12  13  14  15  16
+      9       8   9  10  11  12  13  14  15  16  17
+     10       9  10  11  12  13  14  15  16  17  18
+list gen8.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5       4   5   6   7   8   9  10  11  12  13
+      6       5   6   7   8   9  10  11  12  13  14
+      7       6   7   8   9  10  11  12  13  14  15
+      8       7   8   9  10  11  12  13  14  15  16
+      9       8   9  10  11  12  13  14  15  16  17
+     10       9  10  11  12  13  14  15  16  17  18
+list gen8.256 sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp   200     202     204     206     208
+   Line
+    200     142 143 144 145 146 147 148 149 150 151
+    201     143 144 145 146 147 148 149 150 151 152
+    202     144 145 146 147 148 149 150 151 152 153
+    203     145 146 147 148 149 150 151 152 153 154
+    204     146 147 148 149 150 151 152 153 154 155
+    205     147 148 149 150 151 152 153 154 155 156
+    206     148 149 150 151 152 153 154 155 156 157
+    207     149 150 151 152 153 154 155 156 157 158
+    208     150 151 152 153 154 155 156 157 158 159
+    209     151 152 153 154 155 156 157 158 159 160
+list gen8.out sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp   200     202     204     206     208
+   Line
+    200     142 143 144 145 146 147 148 149 150 151
+    201     143 144 145 146 147 148 149 150 151 152
+    202     144 145 146 147 148 149 150 151 152 153
+    203     145 146 147 148 149 150 151 152 153 154
+    204     146 147 148 149 150 151 152 153 154 155
+    205     147 148 149 150 151 152 153 154 155 156
+    206     148 149 150 151 152 153 154 155 156 157
+    207     149 150 151 152 153 154 155 156 157 158
+    208     150 151 152 153 154 155 156 157 158 159
+    209     151 152 153 154 155 156 157 158 159 160
+fitsout gen16.256 gen16.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32700 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32700.000000 /  max FITS pixel value (after scaling)
+DATAMIN =        -32736.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen16.fits gen16.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32700 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32700.000000 /  max FITS pixel value (after scaling)
+DATAMIN =        -32736.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+*** 16-bit FITS to VICAR HALF (no conversion) ***
+list gen16.256 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5       400   500   600   700   800   900  1000  1100  1200  1300
+      6       500   600   700   800   900  1000  1100  1200  1300  1400
+      7       600   700   800   900  1000  1100  1200  1300  1400  1500
+      8       700   800   900  1000  1100  1200  1300  1400  1500  1600
+      9       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+     10       900  1000  1100  1200  1300  1400  1500  1600  1700  1800
+list gen16.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5       400   500   600   700   800   900  1000  1100  1200  1300
+      6       500   600   700   800   900  1000  1100  1200  1300  1400
+      7       600   700   800   900  1000  1100  1200  1300  1400  1500
+      8       700   800   900  1000  1100  1200  1300  1400  1500  1600
+      9       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+     10       900  1000  1100  1200  1300  1400  1500  1600  1700  1800
+list gen16.256 sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     200   201   202   203   204   205   206   207   208   209
+   Line
+    200    -25736-25636-25536-25436-25336-25236-25136-25036-24936-24836
+    201    -25636-25536-25436-25336-25236-25136-25036-24936-24836-24736
+    202    -25536-25436-25336-25236-25136-25036-24936-24836-24736-24636
+    203    -25436-25336-25236-25136-25036-24936-24836-24736-24636-24536
+    204    -25336-25236-25136-25036-24936-24836-24736-24636-24536-24436
+    205    -25236-25136-25036-24936-24836-24736-24636-24536-24436-24336
+    206    -25136-25036-24936-24836-24736-24636-24536-24436-24336-24236
+    207    -25036-24936-24836-24736-24636-24536-24436-24336-24236-24136
+    208    -24936-24836-24736-24636-24536-24436-24336-24236-24136-24036
+    209    -24836-24736-24636-24536-24436-24336-24236-24136-24036-23936
+list gen16.out sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     200   201   202   203   204   205   206   207   208   209
+   Line
+    200    -25736-25636-25536-25436-25336-25236-25136-25036-24936-24836
+    201    -25636-25536-25436-25336-25236-25136-25036-24936-24836-24736
+    202    -25536-25436-25336-25236-25136-25036-24936-24836-24736-24636
+    203    -25436-25336-25236-25136-25036-24936-24836-24736-24636-24536
+    204    -25336-25236-25136-25036-24936-24836-24736-24636-24536-24436
+    205    -25236-25136-25036-24936-24836-24736-24636-24536-24436-24336
+    206    -25136-25036-24936-24836-24736-24636-24536-24436-24336-24236
+    207    -25036-24936-24836-24736-24636-24536-24436-24336-24236-24136
+    208    -24936-24836-24736-24636-24536-24436-24336-24236-24136-24036
+    209    -24836-24736-24636-24536-24436-24336-24236-24136-24036-23936
+fitsout gen16.256 gen16.fits8 outdata=8
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+**FITSOUT - Caution - Each FITS value is  256.61 VICAR values
+BSCALE =  0.25661E+03    BZERO = -0.32736E+05
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32700 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =           256.611755 /  real = tape*BSCALE + BZERO
+BZERO   =        -32736.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000015 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen16.fits8 gen16.out8
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+??W - Data cannot be restored with original accuracy
+**Note that BSCALE =    256.61
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32700 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =           256.611755 /  real = tape*BSCALE + BZERO
+BZERO   =        -32736.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000015 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+list gen16.out8 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     1       3       5       7       9
+   Line
+      1     127 127 127 127 126 126 126 125 125 124
+      2     127 127 127 126 126 126 125 125 124 124
+      3     127 127 126 126 126 125 125 124 124 124
+      4     127 126 126 126 125 125 124 124 124 123
+      5     126 126 126 125 125 124 124 124 123 123
+      6     126 126 125 125 124 124 124 123 123 122
+      7     126 125 125 124 124 124 123 123 122 122
+      8     125 125 124 124 124 123 123 122 122 122
+      9     125 124 124 124 123 123 122 122 122 121
+     10     124 124 124 123 123 122 122 122 121 121
+list gen16.out8 sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp   247     249     251     253     255
+   Line
+    247      63  64  64  65  65  65  66  66  67  67
+    248      64  64  65  65  65  66  66  67  67  67
+    249      64  65  65  65  66  66  67  67  67  68
+    250      65  65  65  66  66  67  67  67  68  68
+    251      65  65  66  66  67  67  67  68  68  68
+    252      65  66  66  67  67  67  68  68  68  69
+    253      66  66  67  67  67  68  68  68  69  69
+    254      66  67  67  67  68  68  68  69  69  70
+    255      67  67  67  68  68  68  69  69  70  70
+    256      67  67  68  68  68  69  69  70  70  70
+fitsout gen32.256 gen32.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   32 /  32-BIT twos-complement signed integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =       1020000.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen32.fits gen32.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   32 /  32-BIT twos-complement signed integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =       1020000.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+list gen32.256 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0       2000       4000       6000       8000      10000      12000      14000      16000      18000
+      2           2000       4000       6000       8000      10000      12000      14000      16000      18000      20000
+      3           4000       6000       8000      10000      12000      14000      16000      18000      20000      22000
+      4           6000       8000      10000      12000      14000      16000      18000      20000      22000      24000
+      5           8000      10000      12000      14000      16000      18000      20000      22000      24000      26000
+      6          10000      12000      14000      16000      18000      20000      22000      24000      26000      28000
+      7          12000      14000      16000      18000      20000      22000      24000      26000      28000      30000
+      8          14000      16000      18000      20000      22000      24000      26000      28000      30000      32000
+      9          16000      18000      20000      22000      24000      26000      28000      30000      32000      34000
+     10          18000      20000      22000      24000      26000      28000      30000      32000      34000      36000
+list gen32.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0       2000       4000       6000       8000      10000      12000      14000      16000      18000
+      2           2000       4000       6000       8000      10000      12000      14000      16000      18000      20000
+      3           4000       6000       8000      10000      12000      14000      16000      18000      20000      22000
+      4           6000       8000      10000      12000      14000      16000      18000      20000      22000      24000
+      5           8000      10000      12000      14000      16000      18000      20000      22000      24000      26000
+      6          10000      12000      14000      16000      18000      20000      22000      24000      26000      28000
+      7          12000      14000      16000      18000      20000      22000      24000      26000      28000      30000
+      8          14000      16000      18000      20000      22000      24000      26000      28000      30000      32000
+      9          16000      18000      20000      22000      24000      26000      28000      30000      32000      34000
+     10          18000      20000      22000      24000      26000      28000      30000      32000      34000      36000
+list gen32.256 sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp          200        201        202        203        204        205        206        207        208        209
+   Line
+    200         796000     798000     800000     802000     804000     806000     808000     810000     812000     814000
+    201         798000     800000     802000     804000     806000     808000     810000     812000     814000     816000
+    202         800000     802000     804000     806000     808000     810000     812000     814000     816000     818000
+    203         802000     804000     806000     808000     810000     812000     814000     816000     818000     820000
+    204         804000     806000     808000     810000     812000     814000     816000     818000     820000     822000
+    205         806000     808000     810000     812000     814000     816000     818000     820000     822000     824000
+    206         808000     810000     812000     814000     816000     818000     820000     822000     824000     826000
+    207         810000     812000     814000     816000     818000     820000     822000     824000     826000     828000
+    208         812000     814000     816000     818000     820000     822000     824000     826000     828000     830000
+    209         814000     816000     818000     820000     822000     824000     826000     828000     830000     832000
+list gen32.out sl=200 ss=200 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp          200        201        202        203        204        205        206        207        208        209
+   Line
+    200         796000     798000     800000     802000     804000     806000     808000     810000     812000     814000
+    201         798000     800000     802000     804000     806000     808000     810000     812000     814000     816000
+    202         800000     802000     804000     806000     808000     810000     812000     814000     816000     818000
+    203         802000     804000     806000     808000     810000     812000     814000     816000     818000     820000
+    204         804000     806000     808000     810000     812000     814000     816000     818000     820000     822000
+    205         806000     808000     810000     812000     814000     816000     818000     820000     822000     824000
+    206         808000     810000     812000     814000     816000     818000     820000     822000     824000     826000
+    207         810000     812000     814000     816000     818000     820000     822000     824000     826000     828000
+    208         812000     814000     816000     818000     820000     822000     824000     826000     828000     830000
+    209         814000     816000     818000     820000     822000     824000     826000     828000     830000     832000
+fitsout gen32.256 gen32.fits8 outdata=8
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+**FITSOUT - Caution - Each FITS value is 4000.00 VICAR values
+BSCALE =  0.40000E+04    BZERO =  0.00000E+00
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =          4000.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen32.fits8 gen32.out8
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+??W - Data cannot be restored with original accuracy
+**Note that BSCALE =   4000.00
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =          4000.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+list gen32.out8 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp     1       3       5       7       9
+   Line
+      1       0   0   1   1   2   2   3   3   4   4
+      2       0   1   1   2   2   3   3   4   4   5
+      3       1   1   2   2   3   3   4   4   5   5
+      4       1   2   2   3   3   4   4   5   5   6
+      5       2   2   3   3   4   4   5   5   6   6
+      6       2   3   3   4   4   5   5   6   6   7
+      7       3   3   4   4   5   5   6   6   7   7
+      8       3   4   4   5   5   6   6   7   7   8
+      9       4   4   5   5   6   6   7   7   8   8
+     10       4   5   5   6   6   7   7   8   8   9
+list gen32.out8 sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:03 2013
+     Samp   247     249     251     253     255
+   Line
+    247       9   9   8   8   7   7   6   6   5   5
+    248       9   8   8   7   7   6   6   5   5   4
+    249       8   8   7   7   6   6   5   5   4   4
+    250       8   7   7   6   6   5   5   4   4   3
+    251       7   7   6   6   5   5   4   4   3   3
+    252       7   6   6   5   5   4   4   3   3   2
+    253       6   6   5   5   4   4   3   3   2   2
+    254       6   5   5   4   4   3   3   2   2   1
+    255       5   5   4   4   3   3   2   2   1   1
+    256       5   4   4   3   3   2   2   1   1   0
+fitsout gen32.256 gen32.fits16 outdata=16
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+**FITSOUT - Caution - Each FITS value is   31.13 VICAR values
+BSCALE =  0.31129E+02    BZERO =  0.00000E+00
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =            31.128880 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32767.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen32.fits16 gen32.out16
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+??W - Data cannot be restored with original accuracy
+**Note that BSCALE =     31.13
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =            31.128880 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32767.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+*** 16-bit FITS to VICAR HALF (no conversion) ***
+list gen32.out16 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0 16384 32512 16128    -1-16641 32511 16127  -258-16898
+      2     16384 32512 16128    -1-16641 32511 16127  -258-16898 32254
+      3     32512 16128    -1-16641 32511 16127  -258-16898 32254 15870
+      4     16128    -1-16641 32511 16127  -258-16898 32254 15870  -515
+      5        -1-16641 32511 16127  -258-16898 32254 15870  -515-17155
+      6    -16641 32511 16127  -258-16898 32254 15870  -515-17155 31997
+      7     32511 16127  -258-16898 32254 15870  -515-17155 31997 15613
+      8     16127  -258-16898 32254 15870  -515-17155 31997 15613  -772
+      9      -258-16898 32254 15870  -515-17155 31997 15613  -772-17412
+     10    -16898 32254 15870  -515-17155 31997 15613  -772-17412 31740
+list gen32.out16 sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp     247   248   249   250   251   252   253   254   255   256
+   Line
+    247    -31355 17797  1157-15228-31612 17540   900-15485-31869 17283
+    248     17797  1157-15228-31612 17540   900-15485-31869 17283   643
+    249      1157-15228-31612 17540   900-15485-31869 17283   643-15742
+    250    -15228-31612 17540   900-15485-31869 17283   643-15742-32126
+    251    -31612 17540   900-15485-31869 17283   643-15742-32126 17026
+    252     17540   900-15485-31869 17283   643-15742-32126 17026   386
+    253       900-15485-31869 17283   643-15742-32126 17026   386-15999
+    254    -15485-31869 17283   643-15742-32126 17026   386-15999-32383
+    255    -31869 17283   643-15742-32126 17026   386-15999-32383 16769
+    256     17283   643-15742-32126 17026   386-15999-32383 16769   129
+fitsin gen32.fits16 gen32.out32 data=true
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+??W - Data cannot be restored with original accuracy
+**Note that BSCALE =     31.13
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32.256                              '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1020000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =            31.128880 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32767.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:03 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     39
+ Total FITS keywords to transfer =     38
+
+*** 16-bit FITS to VICAR HALF (no conversion) ***
+list gen32.out32 sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0 16384 32512 16128    -1-16641 32511 16127  -258-16898
+      2     16384 32512 16128    -1-16641 32511 16127  -258-16898 32254
+      3     32512 16128    -1-16641 32511 16127  -258-16898 32254 15870
+      4     16128    -1-16641 32511 16127  -258-16898 32254 15870  -515
+      5        -1-16641 32511 16127  -258-16898 32254 15870  -515-17155
+      6    -16641 32511 16127  -258-16898 32254 15870  -515-17155 31997
+      7     32511 16127  -258-16898 32254 15870  -515-17155 31997 15613
+      8     16127  -258-16898 32254 15870  -515-17155 31997 15613  -772
+      9      -258-16898 32254 15870  -515-17155 31997 15613  -772-17412
+     10    -16898 32254 15870  -515-17155 31997 15613  -772-17412 31740
+list gen32.out32 sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp     247   248   249   250   251   252   253   254   255   256
+   Line
+    247    -31355 17797  1157-15228-31612 17540   900-15485-31869 17283
+    248     17797  1157-15228-31612 17540   900-15485-31869 17283   643
+    249      1157-15228-31612 17540   900-15485-31869 17283   643-15742
+    250    -15228-31612 17540   900-15485-31869 17283   643-15742-32126
+    251    -31612 17540   900-15485-31869 17283   643-15742-32126 17026
+    252     17540   900-15485-31869 17283   643-15742-32126 17026   386
+    253       900-15485-31869 17283   643-15742-32126 17026   386-15999
+    254    -15485-31869 17283   643-15742-32126 17026   386-15999-32383
+    255    -31869 17283   643-15742-32126 17026   386-15999-32383 16769
+    256     17283   643-15742-32126 17026   386-15999-32383 16769   129
+gen gen8b3.256 nl=256 ns=256 nb=3 format=byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen gen16b3.256 nl=256 ns=256 nb=3 format=half linc=100.0 sinc=100.0  +
+	binc=50.
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen gen32b3.256 nl=256 ns=256 nb=3 format=full linc=2000. sinc=2000.  +
+	binc=2500.
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+fitsout gen8b3.256 gen8b3.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen8b3.256                             '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =                  1.0 /
+LINC    =                  1.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen8b3.fits gen8b3.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen8b3.256                             '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =                  1.0 /
+LINC    =                  1.0 /
+BINC    =                  1.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     40
+ Total FITS keywords to transfer =     39
+
+list gen8b3.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5       4   5   6   7   8   9  10  11  12  13
+      6       5   6   7   8   9  10  11  12  13  14
+      7       6   7   8   9  10  11  12  13  14  15
+      8       7   8   9  10  11  12  13  14  15  16
+      9       8   9  10  11  12  13  14  15  16  17
+     10       9  10  11  12  13  14  15  16  17  18
+
+
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     2
+ ***********
+     Samp     1       3       5       7       9
+   Line
+      1     176 177 178 179 180 181 182 183 184 185
+      2     177 178 179 180 181 182 183 184 185 186
+      3     178 179 180 181 182 183 184 185 186 187
+      4     179 180 181 182 183 184 185 186 187 188
+      5     180 181 182 183 184 185 186 187 188 189
+      6     181 182 183 184 185 186 187 188 189 190
+      7     182 183 184 185 186 187 188 189 190 191
+      8     183 184 185 186 187 188 189 190 191 192
+      9     184 185 186 187 188 189 190 191 192 193
+     10     185 186 187 188 189 190 191 192 193 194
+list gen8b3.out sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp   247     249     251     253     255
+   Line
+    247     236 237 238 239 240 241 242 243 244 245
+    248     157 158 159 160 161 162 163 164 165 166
+    249     158 159 160 161 162 163 164 165 166 167
+    250     159 160 161 162 163 164 165 166 167 168
+    251     160 161 162 163 164 165 166 167 168 169
+    252     161 162 163 164 165 166 167 168 169 170
+    253     162 163 164 165 166 167 168 169 170 171
+    254     163 164 165 166 167 168 169 170 171 172
+    255     164 165 166 167 168 169 170 171 172 173
+    256     165 166 167 168 169 170 171 172 173 174
+fitsout gen16b3.256 gen16b3.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16b3.256                            '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32750 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32750.000000 /  max FITS pixel value (after scaling)
+DATAMIN =        -32736.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                 50.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen16b3.fits gen16b3.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   16 /  2-byte twos-complement integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen16b3.256                            '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =               -32736 /  minimum value in VICAR data set
+VIC-MAX =                32750 /  maximum value in VICAR data set
+VIC-B/P =                   16 /  bits per pixel in VICAR data set
+VIC-FMT = 'HALF    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =         32750.000000 /  max FITS pixel value (after scaling)
+DATAMIN =        -32736.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =                100.0 /
+LINC    =                100.0 /
+BINC    =                 50.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     40
+ Total FITS keywords to transfer =     39
+
+*** 16-bit FITS to VICAR HALF (no conversion) ***
+list gen16b3.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5       400   500   600   700   800   900  1000  1100  1200  1300
+      6       500   600   700   800   900  1000  1100  1200  1300  1400
+      7       600   700   800   900  1000  1100  1200  1300  1400  1500
+      8       700   800   900  1000  1100  1200  1300  1400  1500  1600
+      9       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+     10       900  1000  1100  1200  1300  1400  1500  1600  1700  1800
+
+
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     2
+ ***********
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1     21600 21700 21800 21900 22000 22100 22200 22300 22400 22500
+      2     21700 21800 21900 22000 22100 22200 22300 22400 22500 22600
+      3     21800 21900 22000 22100 22200 22300 22400 22500 22600 22700
+      4     21900 22000 22100 22200 22300 22400 22500 22600 22700 22800
+      5     22000 22100 22200 22300 22400 22500 22600 22700 22800 22900
+      6     22100 22200 22300 22400 22500 22600 22700 22800 22900 23000
+      7     22200 22300 22400 22500 22600 22700 22800 22900 23000 23100
+      8     22300 22400 22500 22600 22700 22800 22900 23000 23100 23200
+      9     22400 22500 22600 22700 22800 22900 23000 23100 23200 23300
+     10     22500 22600 22700 22800 22900 23000 23100 23200 23300 23400
+list gen16b3.out sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp     247   248   249   250   251   252   253   254   255   256
+   Line
+    247    -16336-16236-16136-16036-15936-15836-15736-15636-15536-15436
+    248    -16236-16136-16036-15936-15836-15736-15636-15536-15436-15336
+    249    -16136-16036-15936-15836-15736-15636-15536-15436-15336-15236
+    250    -16036-15936-15836-15736-15636-15536-15436-15336-15236-15136
+    251    -15936-15836-15736-15636-15536-15436-15336-15236-15136-15036
+    252    -15836-15736-15636-15536-15436-15336-15236-15136-15036-14936
+    253    -15736-15636-15536-15436-15336-15236-15136-15036-14936-14836
+    254    -19636-19536-19436-19336-19236-19136-19036-18936-18836-18736
+    255    -19536-19436-19336-19236-19136-19036-18936-18836-18736-18636
+    256    -19436-19336-19236-19136-19036-18936-18836-18736-18636-18536
+fitsout gen32b3.256 gen32b3.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   32 /  32-BIT twos-complement signed integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32b3.256                            '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1025000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =       1025000.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =               2500.0 /
+MODULO  =                  0.0 /
+END
+fitsin gen32b3.fits gen32b3.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                   32 /  32-BIT twos-complement signed integers
+NAXIS   =                    3 /  number of axes
+NAXIS1  =                  256 /  number of pixels per row
+NAXIS2  =                  256 /  number of rows
+NAXIS3  =                    3 /  number of bands
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'gen32b3.256                            '
+USERID  = 'rjb     '           /
+HOST    = 'X86-LINU'           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =              1025000 /  maximum value in VICAR data set
+VIC-B/P =                   32 /  bits per pixel in VICAR data set
+VIC-FMT = 'FULL    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =       1025000.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'GEN                         ' 'rjb       ' 'Thu Aug 22 18:21:04 2013'
+IVAL    =                  0.0 /
+SINC    =               2000.0 /
+LINC    =               2000.0 /
+BINC    =               2500.0 /
+MODULO  =                  0.0 /
+END
+ Total FITS keywords found       =     40
+ Total FITS keywords to transfer =     39
+
+list gen32b3.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0       2000       4000       6000       8000      10000      12000      14000      16000      18000
+      2           2000       4000       6000       8000      10000      12000      14000      16000      18000      20000
+      3           4000       6000       8000      10000      12000      14000      16000      18000      20000      22000
+      4           6000       8000      10000      12000      14000      16000      18000      20000      22000      24000
+      5           8000      10000      12000      14000      16000      18000      20000      22000      24000      26000
+      6          10000      12000      14000      16000      18000      20000      22000      24000      26000      28000
+      7          12000      14000      16000      18000      20000      22000      24000      26000      28000      30000
+      8          14000      16000      18000      20000      22000      24000      26000      28000      30000      32000
+      9          16000      18000      20000      22000      24000      26000      28000      30000      32000      34000
+     10          18000      20000      22000      24000      26000      28000      30000      32000      34000      36000
+
+
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     2
+ ***********
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1         472000     474000     476000     478000     480000     482000     484000     486000     488000     490000
+      2         474000     476000     478000     480000     482000     484000     486000     488000     490000     492000
+      3         476000     478000     480000     482000     484000     486000     488000     490000     492000     494000
+      4         478000     480000     482000     484000     486000     488000     490000     492000     494000     496000
+      5         480000     482000     484000     486000     488000     490000     492000     494000     496000     498000
+      6         482000     484000     486000     488000     490000     492000     494000     496000     498000     500000
+      7         484000     486000     488000     490000     492000     494000     496000     498000     500000     502000
+      8         486000     488000     490000     492000     494000     496000     498000     500000     502000     504000
+      9         488000     490000     492000     494000     496000     498000     500000     502000     504000     506000
+     10         490000     492000     494000     496000     498000     500000     502000     504000     506000     508000
+list gen32b3.out sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+ ***********
+ Band =     1
+ ***********
+     Samp          247        248        249        250        251        252        253        254        255        256
+   Line
+    247         984000     986000     988000     990000     992000     994000     996000     998000    1000000    1002000
+    248         986000     988000     990000     992000     994000     996000     998000    1000000    1002000    1004000
+    249         988000     990000     992000     994000     996000     998000    1000000    1002000    1004000    1006000
+    250         990000     992000     994000     996000     998000    1000000    1002000    1004000    1006000    1008000
+    251         992000     994000     996000     998000    1000000    1002000    1004000    1006000    1008000    1010000
+    252         994000     996000     998000    1000000    1002000    1004000    1006000    1008000    1010000    1012000
+    253         996000     998000    1000000    1002000    1004000    1006000    1008000    1010000    1012000    1014000
+    254         998000    1000000    1002000    1004000    1006000    1008000    1010000    1012000    1014000    1016000
+    255        1000000    1002000    1004000    1006000    1008000    1010000    1012000    1014000    1016000    1018000
+    256         962000     964000     966000     968000     970000     972000     974000     976000     978000     980000
+fitsout nn/io.grn iogrn.fits
+Beginning VICAR task fitsout
+*** FITSOUT 06/30/2012 (64-bit) - RJB
+         11111111112222222222333333333344444444
+12345678901234567890123456789012345678901234567
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  512 /  number of pixels per row
+NAXIS2  =                  512 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/io.grn                              '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'CONVIM                      ' 'CCA059    ' 'Mon Oct  8 15:50:02 1984'
+VIC-TASK= 'UNGRE                       ' 'CCA059    ' 'Wed Oct 10 15:15:13 1984'
+COMPONEN= 'RED   MEMBER OF TRIPLET'
+VIC-TASK= 'COPY                        ' 'CLS314    ' 'Fri Aug  1 07:36:04 1986'
+VIC-TASK= 'COPY                        ' 'DAA320    ' 'Tue Jun  2 14:06:53 1987'
+VIC-TASK= 'REPAIR                      ' 'DAA320    ' 'Tue Jun  2 14:19:41 1987'
+VIC-TASK= 'COMBINE                     ' 'DAA320    ' 'Tue Jun  2 16:33:33 1987'
+VIC-TASK= 'COPY                        ' 'RGD059    ' 'Fri Jul 10 18:51:13 1987'
+VIC-TASK= 'COPY                        ' 'RGD059    ' 'Fri Jul 10 18:51:52 1987'
+END
+fitsin iogrn.fits io.out
+Beginning VICAR task fitsin
+*** FITSIN 12/14/2012 (64-bit) rjb
+??W - EXTEND = T, Data may contain FITS extensions
+??W - BLOCKED = T, TAPE records may be blocked
+Processing will be attempted anyway...
+SIMPLE  =                    T /  format follows FITS standards
+BITPIX  =                    8 /  8-bit unsigned integers
+NAXIS   =                    2 /  number of axes
+NAXIS1  =                  512 /  number of pixels per row
+NAXIS2  =                  512 /  number of rows
+EXTEND  =                    T /  tape may have standard FITS extensions
+BLOCKED =                    T /  tape may be blocked in multiplies of 2880
+ORIGIN  = 'JPL-MIPL   PGM=FITSOUT   FITSOUT 06/30/2012 '
+DATE    = 'THU AUG 22, 2013'   /  date of transfer to FITS
+FILENAME= 'nn/io.grn                              '
+USERID  = 'rjb     '           /
+HOST    = 'VAX-VMS '           /  host processor (cpu) for VICAR data set
+INTFMT  = 'LOW     '           /  VICAR integer byte order (HIGH=big-endian)
+DATATYPE= 'IMAGE   '           /  original VICAR data set type
+VIC-MIN =                    0 /  minimum value in VICAR data set
+VIC-MAX =                  255 /  maximum value in VICAR data set
+VIC-B/P =                    8 /  bits per pixel in VICAR data set
+VIC-FMT = 'BYTE    '           /  data format in VICAR data set
+BSCALE  =             1.000000 /  real = tape*BSCALE + BZERO
+BZERO   =             0.000000 /  amount of bias added to each FITS pixel
+BUNIT   = 'DN      '           /  units of brightness
+DATAMAX =           255.000000 /  max FITS pixel value (after scaling)
+DATAMIN =             0.000000 /  min FITS pixel value (after scaling)
+CRVAL1  =         1.000000E+00 /  starting sample of image
+CRPIX1  =         1.000000E+00 /  reference pixel location in sample axis
+CTYPE1  = 'SAMPLE  '           /
+CDELT1  =         1.000000E+00 /  sample increment on x-axis
+CRVAL2  =         1.000000E+00 /  starting line of image
+CRPIX2  =         1.000000E+00 /  reference pixel location in line axis
+CTYPE2  = 'LINE    '           /
+CDELT2  =        -1.000000E+00 /  line increment on y-axis
+HISTORY = 'VICAR HISTORY LABEL LISTING FOLLOWS'
+VIC-TASK= 'CONVIM                      ' 'CCA059    ' 'Mon Oct  8 15:50:02 1984'
+VIC-TASK= 'UNGRE                       ' 'CCA059    ' 'Wed Oct 10 15:15:13 1984'
+COMPONEN= 'RED   MEMBER OF TRIPLET'
+VIC-TASK= 'COPY                        ' 'CLS314    ' 'Fri Aug  1 07:36:04 1986'
+VIC-TASK= 'COPY                        ' 'DAA320    ' 'Tue Jun  2 14:06:53 1987'
+VIC-TASK= 'REPAIR                      ' 'DAA320    ' 'Tue Jun  2 14:19:41 1987'
+VIC-TASK= 'COMBINE                     ' 'DAA320    ' 'Tue Jun  2 16:33:33 1987'
+VIC-TASK= 'COPY                        ' 'RGD059    ' 'Fri Jul 10 18:51:13 1987'
+VIC-TASK= 'COPY                        ' 'RGD059    ' 'Fri Jul 10 18:51:52 1987'
+END
+ Total FITS keywords found       =     42
+ Total FITS keywords to transfer =     41
+
+list io.out sl=1 ss=1 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp     1       3       5       7       9
+   Line
+      1     165 164 165 171 168 167 168 162 167 165
+      2     164 157 164 164 162 172 162 165 164 160
+      3     159 161 170 161 164 165 161 159 155 154
+      4     157 157 170 165 164 157 154 154 147 157
+      5     160 153 161 157 153 153 153 153 151 155
+      6     153 155 152 153 153 157 153 154 161 162
+      7     152 152 152 154 153 160 159 161 161 160
+      8     154 157 164 160 157 160 165 158 155 157
+      9     158 159 165 164 158 166 162 155 158 157
+     10     160 161 161 158 159 159 155 158 157 158
+list io.out sl=247 ss=247 nl=10 ns=10
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:FITSIN    User:rjb       Date_Time:Thu Aug 22 18:21:04 2013
+     Samp   247     249     251     253     255
+   Line
+    247     113  95  88 102 132 135 134 116 104  91
+    248     129 117 123 129 139 138 134 116 107 107
+    249     146 138 134 146 136 128 119 117 117 121
+    250     153 147 140 141 130 114 114 115 120 122
+    251     148 147 147 134 127 104 116 128 125 117
+    252     151 145 142 133 122 122 133 125 115 109
+    253     144 148 145 125 117 114 119 115 102  96
+    254     136 139 127 113  94  98 107 116 120 126
+    255     130 128 116  91  72  88  91  95 117 135
+    256     128 127 116  98  90  95 103 111 119 134
+ush rm -f nn
+let $echo="no"
+exit
+slogoff

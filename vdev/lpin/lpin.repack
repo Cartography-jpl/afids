@@ -1,0 +1,6 @@
+$ vpack lpin.com -
+	-s lpin.c -
+	-i lpin.imake -
+	-p lpin.pdf -
+	-t tstlpin.pdf
+$ Exit

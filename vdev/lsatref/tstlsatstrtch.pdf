@@ -1,0 +1,38 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+gen x
+lsatstrtch x cx1 compress="BASIC"
+lsatstrtch x cx2 compress="BASIC2"
+lsatstrtch cx1 uncx1 compress="NONE"
+lsatstrtch cx2 uncx2 compress="NONE"
+difpic inp=(x, cx1)
+difpic inp=(x, cx2)
+difpic inp=(x, uncx1)
+difpic inp=(x, uncx2)
+difpic inp=(cx1, cx2)
+difpic inp=(cx1, uncx1)
+difpic inp=(cx1, uncx2)
+difpic inp=(cx2, uncx1)
+difpic inp=(cx2, uncx2)
+difpic inp=(uncx1, uncx2)
+
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

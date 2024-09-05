@@ -1,0 +1,6 @@
+$ vpack spotref.com -mixed -
+	-s spotref.c -
+	-i spotref.imake -
+	-p spotref.pdf -
+	-t tstspotref.pdf
+$ Exit

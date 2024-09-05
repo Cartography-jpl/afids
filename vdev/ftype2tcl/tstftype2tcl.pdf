@@ -1,0 +1,138 @@
+procedure
+
+local val int
+local ftype int
+local fsubtype int
+local fsize int
+! Oct 1, 2013 - RJB
+! TEST SCRIPT FOR FILE2TCL
+!
+! Vicar Programs:
+!       gen gtgen vtiff3   
+! 
+! External programs
+!     unix chmod, touch, rm, ls
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! This test file contains the String UNIQUE: 
+! Do not remove it - It allows the line to be ignored
+! in the AFIDS automated Regression Test System.
+! UNIQUE: is used for lines that are dependent on
+! the testing environment such as date/time, userid,
+! directory path, process ID or other such conditions. 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!            
+refgbl $echo
+body
+let _onfail="stop"
+let $echo="yes"
+
+!!!!!!!!!!!! Test Cases !!!!!!!!!!!!!!
+
+! Non existing file
+ush rm -f xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+let $echo="no"
+write " "
+write "**** For non existing file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be                   val = 0, ftype = 0, fsubtype = 0"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! Protected file
+ftype2tcl inp=/mbox val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+let $echo="no"
+write " "
+write "**** For protected file (/mbox), val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be                        val = 0, ftype = 0, fsubtype = 0"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! Empty file
+ush rm -f xfoo.bar
+ush touch xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.bar
+let $echo="no"
+write " "
+write "**** For empty file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be            val = 1, ftype = -2, fsubtype = 0"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! Unknown file type
+
+ush rm -f xfoo.bar
+ush ls > xfoo.bar
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.bar
+let $echo="no"
+write " "
+write "**** For unknown file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be              val = 1, ftype = -1, fsubtype = 0"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! Vanilla VICAR file
+
+gen xfoo.img nl=1 ns=1
+ftype2tcl inp=xfoo.img val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.img
+let $echo="no"
+write " "
+write "**** For vanilla VICAR file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be                    val = 1, ftype = 1, fsubtype = 5"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+! VICAR with a GeoTIFF label
+
+gtgen out=xfoo.img 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(202,103,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,103,0,350807.4,5316081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+ftype2tcl inp=xfoo.img val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.img
+let $echo="no"
+write " "
+write "**** For VICAR file with GeoTIFF label, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be                               val = 1, ftype = 1, fsubtype = 4"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! Vanilla TIFF image
+
+gen xfoo.img nl=1 ns=1
+vtiff3-from inp=xfoo.img out=xfoo.tif
+ftype2tcl inp=xfoo.tif val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.img xfoo.tif
+let $echo="no"
+write " "
+write "**** For vanilla TIFF file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be                   val = 1, ftype = 2, fsubtype = 3"
+write "UNIQUE: fsize = &fsize"
+let $echo="yes"
+
+! GeoTIFF image
+
+gtgen out=xfoo.img 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(202,103,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,103,0,350807.4,5316081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+vtiff3-from inp=xfoo.img out=xfoo.tif
+ftype2tcl inp=xfoo.tif val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+ush rm -f xfoo.img xfoo.tif
+let $echo="no"
+write " "
+write "**** For GeoTIFF file, val = &val, ftype = &ftype, fsubtype = &fsubtype"
+write "Should be              val = 1, ftype = 2, fsubtype = 2"
+write "UNIQUE: fsize = &fsize"
+
+theend>
+end-proc

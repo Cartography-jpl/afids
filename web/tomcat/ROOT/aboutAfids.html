@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>About AFIDS</title>
+</head>
+<body>
+<h2>About AFIDS</h2>
+
+<p>
+The AFIDS (Automated Fusion of Image Data System) software currently
+supports the co-registration of multidate satellite imagery. When
+multidate imagery is obtained, one of the dates is identified as the
+"master," to which all "secondary" dates are registered. The master
+scene should be as clear and cloud-free as possible, be a near-nadir
+view, and have the best overlapping 'position' with respect to the
+secondary scenes, which may be offset due to variations in flight
+paths.
+</p>
+
+<p>
+The basic co-registration concept begins with an orthorectified 'image
+base' (in Platte Caree projection) to provide an approximate
+cartographic mapping and projection. The satellite datasets are
+initially registered to the 'image base' to obtain its projection
+characteristics. Medium resolution satellites use a global
+Landsat-based orthorectified image base, and higher resolution
+satellites use USGS Digital Ortho Quads (DOQ) or other
+sources. Digital elevation models are used to correct perspective
+shifts due to spacecraft height and view-angle. Satellite images are
+co-registered to the image base using an automated and recursive
+series of FFTs (Fast Fourier Transforms) to create a large set of very
+accurate tiepoints, which are used to warp the images. NO MANUAL
+tiepoints are used. This approach requires multiple sequential
+processing steps to warp the dataset by resampling pixel values. To
+avoid degradation of the data by multiple resamplings, each warp is
+represented by an "Ultra-Fine" grid of tiepoints. For successive
+warps, the grids are composed mathematically into a single grid such
+that ONLY ONE RESAMPLING occurs. The "Ultra-Fine" grid can currently
+contain over four million points (1000x1000 grid recommended),
+facilitating very high precision pixel adjustments. A publication
+describing the process is available.
+</p>
+
+<p>
+AFIDS is built upon the VICAR/IBIS software. VICAR (Video Image
+Communication And Retrieval) is a comprehensive command-line image
+processing system originally developed in the mid-1960s to support the
+Nation's unmanned space exploration program. IBIS (Image-Based
+Information System) is a raster-based Geographic Information System
+(GIS) developed in the 1970s as a fully integrated subsystem of
+VICAR. While both systems have continued to evolve through the years,
+it is the IBIS portion that has focused on developing an integrated
+and comprehensive set of semi-automated image co-registration software
+capabilities. This software set is generally referred to as the "GT"
+routines for their integrated use and compatibility with GeoTIFF
+georeferencing algorithms.
+</p>
+
+</body>
+</html>

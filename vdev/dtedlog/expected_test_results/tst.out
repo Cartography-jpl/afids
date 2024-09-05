@@ -1,0 +1,440 @@
+**********************************
+ TEST 1 - Level 2 Data missing
+**********************************
+dtedlog /export/data1/srtm2/caseK1arcsec/n44e134.02.dt2 out=xxx  +
+    lon=134 lat=44 level=2
+let $echo="yes"
+write "in dtedlog, level 2"
+in dtedlog, level 2
+if (level=1) let dns = 1201
+if (level=2) let dns = 3601
+ let dns = 3601
+let dnsm1 = dns-1
+let slon = lon
+if (hemi1="w") let slon = -lon
+ let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+let slonp1 = slon+1
+let slatp1 = slat+1
+file2tcl /export/data1/srtm2/caseK1arcsec/n44e134.02.dt2 val=isfile1
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+if (isfile1=1)
+else
+   gen xxxtmpfile nl=3601 ns=3601 ival=0 linc=0 sinc=0 format=half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+end-if
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nlm1 = nl-1
+flot xxxtmpfile xxx 'counter
+Beginning VICAR task flot
+** flot - 29-Jun-2016  (64-bit) - rjb
+gtgen inp=xxx 'tiecnvrt 'rectfit   +
+  geotiff=("ModelTiePointTag=(0,0,0,-134,45,0.0)",         +
+   "ModelTiePointTag=(3600,0,0,-133,45,0.0)",            "Model+
+TiePointTag=(0,3600,0,-134,44,0.0)",            "GTModelType+
+GeoKey=2(ModelTypeGeographic)",            "GTRasterTyp+
+eGeoKey=2(RasterPixelIsPoint)",            "GeogEllipso+
+idGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+if (lat>49)
+end-if
+if (isfile1=0)
+   file2tcl wyz246pqrst753 val=isfile2
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+   if (isfile2=1)
+   end-if
+end-if
+end-proc
+label-list xxx
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxx ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                3601 lines per band
+                3601 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-134,45,0.0)'
+MODELPIXELSCALETAG='(0.0002777777778,0.0002777777778,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=0.0
+SINC=0.0
+LINC=0.0
+BINC=1.0
+MODULO=0.0
+---- Task: FLOT -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+list xxx nl=3 ns=3
+Beginning VICAR task list
+ ** The specified window is all zero.
+list xxx nl=3 ns=3 ss=3599
+Beginning VICAR task list
+ ** The specified window is all zero.
+list xxx nl=3 ns=3 sl=3599
+Beginning VICAR task list
+ ** The specified window is all zero.
+list xxx nl=3 ns=3 sl=3599 ss=3599
+Beginning VICAR task list
+ ** The specified window is all zero.
+gtlist xxx
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+let $echo="no"
+**********************************
+ TEST 2 - Level2 Data Present
+**********************************
+dtedlog dt2/n33e130.02.dt2 out=www  +
+    lon=130 lat=33 level=2
+let $echo="yes"
+write "in dtedlog, level 2"
+in dtedlog, level 2
+if (level=1) let dns = 1201
+if (level=2) let dns = 3601
+ let dns = 3601
+let dnsm1 = dns-1
+let slon = lon
+if (hemi1="w") let slon = -lon
+ let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+let slonp1 = slon+1
+let slatp1 = slat+1
+file2tcl dt2/n33e130.02.dt2 val=isfile1
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+if (isfile1=1)
+   dtedvlog dt2/n33e130.02.dt2 xxxtmpfile 130 33 w n
+Beginning VICAR task dtedvlog
+dtedvlog version Thu Jan  3 2008
+else
+end-if
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nlm1 = nl-1
+flot xxxtmpfile www 'counter
+Beginning VICAR task flot
+** flot - 29-Jun-2016  (64-bit) - rjb
+gtgen inp=www 'tiecnvrt 'rectfit   +
+  geotiff=("ModelTiePointTag=(0,0,0,-130,34,0.0)",         +
+   "ModelTiePointTag=(3600,0,0,-129,34,0.0)",            "Model+
+TiePointTag=(0,3600,0,-130,33,0.0)",            "GTModelType+
+GeoKey=2(ModelTypeGeographic)",            "GTRasterTyp+
+eGeoKey=2(RasterPixelIsPoint)",            "GeogEllipso+
+idGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+if (lat>49)
+end-if
+if (isfile1=0)
+   if (isfile2=1)
+   end-if
+end-if
+end-proc
+label-list www
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File www ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                3601 lines per band
+                3601 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-130,34,0.0)'
+MODELPIXELSCALETAG='(0.0002777777778,0.0002777777778,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: DTEDVLOG -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: FLOT -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+list www nl=3 ns=3
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3
+   Line
+      1       384     0   256
+      2       384   384     0
+      3       640   384     0
+list www nl=3 ns=3 ss=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp    3599  3600  3601
+   Line
+      1       896  1152  1152
+      2      1664  1152   896
+      3      2432  1920   896
+list www nl=3 ns=3 sl=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3
+   Line
+   3599    -10751-10239 -9727
+   3600    -12287-11263-10239
+   3601    -13311-12543-11775
+list www nl=3 ns=3 sl=3599 ss=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp    3599  3600  3601
+   Line
+   3599    -30205-31485-30973
+   3600    -31229-32253 32515
+   3601     31235 30211 29443
+gtlist www
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+let $echo="no"
+**********************************
+ TEST 3 - Level 1 Data Missing 
+**********************************
+dtedlog /export/data1/dted1/e129/n41.dt1 out=yyy lon=129 lat=41
+let $echo="yes"
+write "in dtedlog, level 1"
+in dtedlog, level 1
+if (level=1) let dns = 1201
+ let dns = 1201
+if (level=2) let dns = 3601
+let dnsm1 = dns-1
+let slon = lon
+if (hemi1="w") let slon = -lon
+ let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+let slonp1 = slon+1
+let slatp1 = slat+1
+file2tcl /export/data1/dted1/e129/n41.dt1 val=isfile1
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+if (isfile1=1)
+else
+   gen xxxtmpfile nl=1201 ns=1201 ival=0 linc=0 sinc=0 format=half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+end-if
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nlm1 = nl-1
+flot xxxtmpfile yyy 'counter
+Beginning VICAR task flot
+** flot - 29-Jun-2016  (64-bit) - rjb
+gtgen inp=yyy 'tiecnvrt 'rectfit   +
+  geotiff=("ModelTiePointTag=(0,0,0,-129,42,0.0)",         +
+   "ModelTiePointTag=(1200,0,0,-128,42,0.0)",            "Model+
+TiePointTag=(0,1200,0,-129,41,0.0)",            "GTModelType+
+GeoKey=2(ModelTypeGeographic)",            "GTRasterTyp+
+eGeoKey=2(RasterPixelIsPoint)",            "GeogEllipso+
+idGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+if (lat>49)
+end-if
+if (isfile1=0)
+   file2tcl wyz246pqrst753 val=isfile2
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+   if (isfile2=1)
+   end-if
+end-if
+end-proc
+label-list yyy
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File yyy ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                1201 lines per band
+                1201 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-129,42,0.0)'
+MODELPIXELSCALETAG='(0.0008333333333,0.0008333333333,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=0.0
+SINC=0.0
+LINC=0.0
+BINC=1.0
+MODULO=0.0
+---- Task: FLOT -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+list yyy nl=3 ns=3
+Beginning VICAR task list
+ ** The specified window is all zero.
+list yyy nl=3 ns=3 ss=1199
+Beginning VICAR task list
+ ** The specified window is all zero.
+list yyy nl=3 ns=3 sl=1199
+Beginning VICAR task list
+ ** The specified window is all zero.
+list yyy nl=3 ns=3 sl=1199 ss=1199
+Beginning VICAR task list
+ ** The specified window is all zero.
+gtlist yyy
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+let $echo="no"
+**********************************
+ TEST 4 - Level 1 Data Present
+**********************************
+dtedlog dt1/e045/n40.dt1 out=zzz lon=45 lat=40
+let $echo="yes"
+write "in dtedlog, level 1"
+in dtedlog, level 1
+if (level=1) let dns = 1201
+ let dns = 1201
+if (level=2) let dns = 3601
+let dnsm1 = dns-1
+let slon = lon
+if (hemi1="w") let slon = -lon
+ let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+let slonp1 = slon+1
+let slatp1 = slat+1
+file2tcl dt1/e045/n40.dt1 val=isfile1
+Beginning VICAR task file2tcl
+file2tcl version 2016-09-12
+if (isfile1=1)
+   dtedvlog dt1/e045/n40.dt1 xxxtmpfile 45 40 w n
+Beginning VICAR task dtedvlog
+dtedvlog version Thu Jan  3 2008
+else
+end-if
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nlm1 = nl-1
+flot xxxtmpfile zzz 'counter
+Beginning VICAR task flot
+** flot - 29-Jun-2016  (64-bit) - rjb
+gtgen inp=zzz 'tiecnvrt 'rectfit   +
+  geotiff=("ModelTiePointTag=(0,0,0,-45,41,0.0)",          +
+  "ModelTiePointTag=(1200,0,0,-44,41,0.0)",            "ModelTi+
+ePointTag=(0,1200,0,-45,40,0.0)",            "GTModelTypeGeo+
+Key=2(ModelTypeGeographic)",            "GTRasterTypeGe+
+oKey=2(RasterPixelIsPoint)",            "GeogEllipsoidG+
+eoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+if (lat>49)
+end-if
+if (isfile1=0)
+   if (isfile2=1)
+   end-if
+end-if
+end-proc
+label-list zzz
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File zzz ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                1201 lines per band
+                1201 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+MODELTIEPOINTTAG='(0,0,0,-45,41,0.0)'
+MODELPIXELSCALETAG='(0.0008333333333,0.0008333333333,0.0)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: DTEDVLOG -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: FLOT -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+list zzz nl=3 ns=3
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3
+   Line
+      1    -19195-12795 -8955
+      2    -24571-20475-15355
+      3    -24571-20731-14075
+list zzz nl=3 ns=3 ss=1199
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp    1199  1200  1201
+   Line
+      1    -29952-28672-28416
+      2    -29184-27904-26624
+      3    -28672-27392-26368
+list zzz nl=3 ns=3 sl=1199
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3
+   Line
+   1199     27143-30457-23033
+   1200     26887-29945-20217
+   1201     20487 28423-25849
+list zzz nl=3 ns=3 sl=1199 ss=1199
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:FLOT      User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp    1199  1200  1201
+   Line
+   1199    -13304-20472-30968
+   1200     -6904-10744-18424
+   1201     -7160 -9976 -2040
+gtlist zzz
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+let $echo="no"

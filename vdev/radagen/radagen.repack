@@ -1,0 +1,6 @@
+$ vpack radagen.com -mixed -
+	-s radagen.f -
+	-i radagen.imake -
+	-p radagen.pdf -
+	-t tstradagen.pdf tstradagen.log
+$ Exit

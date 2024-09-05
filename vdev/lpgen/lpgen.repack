@@ -1,0 +1,6 @@
+$ vpack lpgen.com -mixed -
+	-s lpgen.c -
+	-i lpgen.imake -
+	-p lpgen.pdf -
+	-t tstlpgen.pdf
+$ Exit

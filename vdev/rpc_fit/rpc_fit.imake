@@ -1,0 +1,22 @@
+/* To build the make file, use vimake rpc_fit */
+
+#define  PROGRAM   rpc_fit
+
+#define MODULE_LIST rpc_fit.c
+
+#define MAIN_LANG_C
+#define R2LIB 
+
+/* Comment this out before delivery.*/
+/* #define DEBUG */
+
+#define USES_C_PLUS_PLUS
+/* Not available right now, sort out with Al */
+/* #define LIB_CARTO */
+#define LIB_P2SUB
+#define LIB_TAE
+#define LIB_RTL
+#define LIB_BOOST
+#define LIB_BLITZ
+#define LIB_GEOCAL
+#define LIB_GSL

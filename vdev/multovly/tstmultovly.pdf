@@ -1,0 +1,30 @@
+procedure
+
+
+refgbl $echo
+refgbl $autousage
+! Jun 27, 2012 - RJB
+! TEST SCRIPT FOR MULTOVLY
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list ibis-list
+! 
+! parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+body
+let $echo="no"
+let _onfail = "stop"
+let $autousage = "none"
+let $echo="yes"
+gen A linc = 0
+gen B sinc = 0
+list A
+list B
+multovly (A,B) C
+ibis-list C
+let $echo="no"
+end-proc

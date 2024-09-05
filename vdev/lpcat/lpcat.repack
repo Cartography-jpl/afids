@@ -1,0 +1,6 @@
+$ vpack lpcat.com -mixed -
+	-s lpcat.c -
+	-i lpcat.imake -
+	-p lpcat.pdf -
+	-t tstlpcat.pdf
+$ Exit

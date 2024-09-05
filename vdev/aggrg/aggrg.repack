@@ -1,0 +1,6 @@
+$ vpack aggrg.com -
+	-s aggrg.c -
+	-i aggrg.imake -
+	-p aggrg.pdf -
+	-t tstaggrg.pdf aggrg.dat
+$ Exit

@@ -1,0 +1,73 @@
+gen xxx1 nl=7 ns=7 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 xxx1 out=xxx2 func="line*((samp<5)+(samp>5))"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 49 TIMES
+list xxx2
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:F2        User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3     4     5     6     7
+   Line
+      1         1     1     1     1     0     1     1
+      2         2     2     2     2     0     2     2
+      3         3     3     3     3     0     3     3
+      4         4     4     4     4     0     4     4
+      5         5     5     5     5     0     5     5
+      6         6     6     6     6     0     6     6
+      7         7     7     7     7     0     7     7
+concomp xxx2 (xxx4,xxx3)
+Beginning VICAR task concomp
+concomp version Thu Jul  3 2014
+list xxx4
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:CONCOMP   User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp            1          2          3          4          5          6          7
+   Line
+      1              1          1          1          1          0          2          2
+      2              1          1          1          1          0          2          2
+      3              1          1          1          1          0          2          2
+      4              1          1          1          1          0          2          2
+      5              1          1          1          1          0          2          2
+      6              1          1          1          1          0          2          2
+      7              1          1          1          1          0          2          2
+comptab (xxx4,xxx2) xxx5
+Beginning VICAR task comptab
+comptab version Thu Jan  3 2008
+ibis-l xxx5
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 17      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+           1          28           1           1        6.78        4.00
+           2          14           1           6        6.16        4.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+        4.00        0.00        0.00        0.00        0.00        0.00
+        4.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17
++-----------+-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00
+end-proc
+disable-log

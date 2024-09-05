@@ -1,0 +1,61 @@
+procedure
+local tline int
+local tsamp int
+
+! test script for moore
+! 10-06-2019 - rjb
+!
+! vicar programs
+!   gen f2 list
+!
+! external programs
+!   <none>
+!
+refgbl $echo
+refgbl $autousage
+
+body
+let _onfail="stop"
+let $autousage="none"
+let $echo="yes"
+
+! TEST CASE FOR MOORE
+
+gen xxxim1 nl=10 ns=10 sinc=0
+gen xxxim2 nl=10 ns=10 linc=0
+f2 inp=(xxxim1,xxxim2) out=xxxim3 func="9*((abs(in1-5)+abs(in2-5))<3)"
+list xxxim3 'zer
+
+moore xxxim3 xxxim4 dmax=2
+
+list xxxim4 'zer
+
+! test params
+
+moore xxxim3 xxxim4 dmax=2 'outone
+
+list xxxim4 'zer
+
+moore xxxim3 xxxim4 dmax=2 'growone
+
+list xxxim4 'zer
+
+moore xxxim3 xxxim4 dmax=2 'outone 'growone
+
+list xxxim4 'zer
+
+
+! test case with 2 areas that run together
+
+gen xxxim1 nl=16 ns=16 sinc=0
+gen xxxim2 nl=16 ns=16 linc=0
+f2 inp=(xxxim1,xxxim2) out=xxxim3 +
+   func="9*((abs(in1-5)+abs(in2-5))<3)+7*((abs(in1-11)+abs(in2-11))<3)"
+list xxxim3 'zer
+
+moore xxxim3 xxxim4 dmax=12 'edgeval
+
+list xxxim4 'zer
+
+let $echo="no"
+END-PROC

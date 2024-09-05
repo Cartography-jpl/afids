@@ -1,0 +1,4 @@
+$ vpack compresschk.com -mixed -
+	-p compresschk.pdf -
+	-t tstcompresschk.pdf
+$ Exit

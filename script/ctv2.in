@@ -1,0 +1,6 @@
+#! /bin/csh -f
+
+set scriptdir=`dirname $0`
+source $scriptdir/../etc/afids/setup_afids_env.csh
+wish@tcl_version@ $scriptdir/../afids/tcl/ctv2.tcl $1 $2 $3
+

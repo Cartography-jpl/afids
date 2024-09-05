@@ -1,0 +1,52 @@
+procedure
+parm file1 type=(string,99)
+parm file2 type=(string,99)
+
+local temp1 type=(string,99)
+local temp2 type=(string,99)
+local temp3 type=(string,99)
+local fmt string
+local fmtbase string
+body
+
+let temp1 = "&file1" // ".rev1"
+let temp2 = "&file1" // ".rev2"
+let temp3 = "&file1" // ".rev3"
+
+lab2tcl &file1 v1=fmt keyword=format 'system
+lab2tcl &file2 v1=fmtbase keyword=format 'system
+! presumably B/H case never occurs
+if (fmt="BYTE" or fmtbase="HALF")
+   gtcopy &file1 +
+     &temp1
+else
+   f2 &file1 +
+     &temp1 +
+     fun="in1*0.022" format=byte
+end-if
+
+stretch inp=&temp1 +
+  out=&temp2 +
+  'gauss
+
+gtwarp &file2 +
+  &temp1 +
+  ref=&temp2 +
+  'coverref  nah=400 nav=400
+
+stretch inp=&temp1 +
+  out=&temp3 +
+  'gauss
+  
+xvd (&temp3, +
+    &temp2, +
+    &temp2)
+
+! cleanup doesn't work, xvd asynch
+
+gtcopy &temp3 +
+  &temp1 nl=1 ns=1
+!gtcopy &temp2 +
+!  &temp1
+
+end-proc

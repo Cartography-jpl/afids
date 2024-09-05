@@ -1,0 +1,5 @@
+$ vpack despike2.com -mixed -
+	-s despike2.c -
+	-i despike2.imake -
+	-p despike2.pdf
+$ Exit

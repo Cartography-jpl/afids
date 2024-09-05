@@ -1,0 +1,6 @@
+$ vpack str2tcl.com -mixed -
+	-s str2tcl.c -
+	-i str2tcl.imake -
+	-p str2tcl.pdf -
+	-t tststr2tcl.pdf
+$ Exit

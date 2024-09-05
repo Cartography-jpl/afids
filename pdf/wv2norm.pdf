@@ -1,0 +1,118 @@
+procedure     ! wv2norm.pdf
+
+parm preroot type=string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm postroot type=string def="10SEP14082717-P1BS-052403186290_01_P001"
+parm subdir type=string def= "IZ1_10SEP09_10SEP14"
+
+local img string init=".img"
+
+local nxpre1 string
+local nxpre2 string
+local nxpre3 string
+local nxpre4 string
+local nxpre5 string
+local nxpre6 string
+local nxpre7 string
+local nxpre8 string
+local nxpost1 string
+local nxpost2 string
+local nxpost3 string
+local nxpost4 string
+local nxpost5 string
+local nxpost6 string
+local nxpost7 string
+local nxpost8 string
+
+local pre10 string
+local pre20 string
+local pre30 string
+local pre40 string
+local pre50 string
+local pre60 string
+local pre70 string
+local pre80 string
+local post10 string
+local post20 string
+local post30 string
+local post40 string
+local post50 string
+local post60 string
+local post70 string
+local post80 string
+
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+
+body
+
+write "wv2norm version Sat May  7 2011"
+
+let $autousage = "none"
+let _onfail="return"
+let $echo="yes"
+
+let pre10 = "&preroot&img"
+let post10= "&postroot&img"
+let nxpre1 = "&subdir" // "/nxprepan.img"
+let nxpost1 = "&subdir" // "/nxpostpan.img"
+
+cvdnorm (&pre10 +
+   &post10) +
+   out=(&nxpre1 +
+   &nxpost1) +
+   sigma=(1.0, +
+   1.0) +
+   printls=(5863,4093) window=11 donut=5 
+
+tcl2tcl script=("set i [string first P1B &"preroot"]; ", +
+        "string replace &"preroot" $i [expr $i+2] M1B") strvar=preroot
+tcl2tcl script=("set i [string first P1B &"postroot"]; ", +
+        "string replace &"postroot" $i [expr $i+2] M1B") strvar=postroot
+
+let pre10 = "&preroot" // "_b1.img"
+let pre20 = "&preroot" // "_b2.img"
+let pre30 = "&preroot" // "_b3.img"
+let pre40 = "&preroot" // "_b4.img"
+let pre50 = "&preroot" // "_b5.img"
+let pre60 = "&preroot" // "_b6.img"
+let pre70 = "&preroot" // "_b7.img"
+let pre80 = "&preroot" // "_b8.img"
+let post10= "&postroot" // "_b1.img"
+let post20= "&postroot" // "_b2.img"
+let post30= "&postroot" // "_b3.img"
+let post40= "&postroot" // "_b4.img"
+let post50= "&postroot" // "_b5.img"
+let post60= "&postroot" // "_b6.img"
+let post70= "&postroot" // "_b7.img"
+let post80= "&postroot" // "_b8.img"
+
+let nxpre1 = "&subdir" // "/&preroot" // ".n1"
+let nxpre2 = "&subdir" // "/&preroot" // ".n2"
+let nxpre3 = "&subdir" // "/&preroot" // ".n3"
+let nxpre4 = "&subdir" // "/&preroot" // ".n4"
+let nxpre5 = "&subdir" // "/&preroot" // ".n5"
+let nxpre6 = "&subdir" // "/&preroot" // ".n6"
+let nxpre7 = "&subdir" // "/&preroot" // ".n7"
+let nxpre8 = "&subdir" // "/&preroot" // ".n8"
+let nxpost1 = "&subdir" // "/&postroot" // ".n1"
+let nxpost2 = "&subdir" // "/&postroot" // ".n2"
+let nxpost3 = "&subdir" // "/&postroot" // ".n3"
+let nxpost4 = "&subdir" // "/&postroot" // ".n4"
+let nxpost5 = "&subdir" // "/&postroot" // ".n5"
+let nxpost6 = "&subdir" // "/&postroot" // ".n6"
+let nxpost7 = "&subdir" // "/&postroot" // ".n7"
+let nxpost8 = "&subdir" // "/&postroot" // ".n8"
+
+cvdnorm (&pre10,&pre20,&pre30,&pre40,&pre50,&pre60,&pre70,&pre80 +
+   &post10,&post20,&post30,&post40,&post50,&post60,&post70,&post80) +
+   out=(&nxpre1,&nxpre2,&nxpre3,&nxpre4,+
+   &nxpre5,&nxpre6,&nxpre7,&nxpre8 +
+   &nxpost1,&nxpost2,&nxpost3,&nxpost4,+
+   &nxpost5,&nxpost6,&nxpost7,&nxpost8) +
+   sigma=(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0, +
+   1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0) +
+   printls=(5863,4093) window=11 donut=5 
+
+theend>
+end-proc

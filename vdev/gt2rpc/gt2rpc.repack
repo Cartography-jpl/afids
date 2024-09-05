@@ -1,0 +1,4 @@
+$ vpack gt2rpc.com -mixed -
+	-p gt2rpc.pdf -
+	-t tstgt2rpc.pdf
+$ Exit

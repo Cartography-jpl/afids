@@ -1,0 +1,6 @@
+$ vpack ibis2rpc.com -mixed -
+	-s ibis2rpc.c -
+	-i ibis2rpc.imake -
+	-p ibis2rpc.pdf -
+	-t tstibis2rpc.pdf
+$ Exit

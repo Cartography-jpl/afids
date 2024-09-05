@@ -1,0 +1,8 @@
+$ vpack rastovec.com -mixed -
+	-s rastovec.f lregn.f flabl.f slabl.f csegs.f comps.f polyc.f reduce.f -
+	   open_files.f oehdr.f cycle.f links.f ccp.f opvr.f outpol.f -
+	   close_pol.f outedg.f movcen.f -
+	-p rastovec.pdf -
+	-i rastovec.imake -
+	-t tstrastovec.pdf
+$ Exit

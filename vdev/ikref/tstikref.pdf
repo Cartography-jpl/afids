@@ -1,0 +1,24 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+ikref inp=../../../data/ik/orig/IK418524.img meta=../../../data/ik/orig/418524_meta.txt out=../../../data/ik/ref/IK418524.img band=5
+
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

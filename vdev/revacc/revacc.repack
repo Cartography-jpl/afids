@@ -1,0 +1,3 @@
+$ vpack revacc.com -mixed -
+	-p revacc.pdf revacc2.pdf revbase.pdf revmast.pdf revprod.pdf
+$ Exit

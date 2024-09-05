@@ -1,0 +1,55 @@
+procedure
+parm inp type=(string,99) count=2
+parm rastype type=string valid=("area","point") default="point"
+
+local out string
+local rastypstr string
+local ixc1 int
+local ixc2 int
+local ixc3 int
+local t1l type=real
+local t1s type=real
+local t1e type=real
+local t1n type=real
+local t2l type=real
+local t2s type=real
+local t2e type=real
+local t2n type=real
+local t3l type=real
+local t3s type=real
+local t3e type=real
+local t3n type=real
+
+body
+
+write "rpc2gtlb version 29-may-06"
+
+let out = inp(1)
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+rpc2grid inp=&inp out=xxxrpc2grid1 nah=1 nav=1 ncol=8
+ibis-l xxxrpc2grid1
+
+grid3pt xxxrpc2grid1 cols=(4,5,1,2) +
+  ix1=ixc1 ix2=ixc2 ix3=ixc3 +
+  v11=t1l v21=t1s v31=t1e v41=t1n +
+  v12=t2l v22=t2s v32=t2e v42=t2n +
+  v13=t3l v23=t3s v33=t3e v43=t3n
+
+gtgen out=xxxrpc2grid1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+gtgenup (&out,xxxrpc2grid1)
+
+end-proc

@@ -1,0 +1,4 @@
+$ vpack genpc.com -mixed -
+	-p genpc.pdf genutm.pdf genutm2.pdf -
+	-t tstgenpc.pdf tstgenutm.pdf tstgenutm2.pdf
+$ Exit

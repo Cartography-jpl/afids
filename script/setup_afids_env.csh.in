@@ -1,0 +1,105 @@
+set BASEDIR=@prefix@
+if( -e ${BASEDIR}/setup_afids_moved.sh ) then
+    source ${BASEDIR}/setup_afids_moved.csh
+else
+    setenv AFIDSTOP @prefix@
+    setenv AFIDSXVDTOP @AFIDS_XVD_PREFIX_ABS@
+    setenv AFIDSDATATOP @AFIDS_DATA_ABS@
+    setenv AFIDS_TESTDATA @afidstestdatadir@
+    setenv VICARTOP @VICAR_PREFIX_ABS@
+    setenv VICARGDALPLUGIN @VICAR_GDALPLUGIN_HOME_ABS@
+    setenv GNUPLOT @GNUPLOT_ABS@
+endif
+if($?PYTHONPATH) then
+    setenv PYTHONPATH ${BASEDIR}/lib/python3.9/site-packages:${BASEDIR}/lib64/python3.9/site-packages:${PYTHONPATH}
+else
+    setenv PYTHONPATH ${BASEDIR}/lib/python3.9/site-packages:${BASEDIR}/lib64/python3.9/site-packages
+endif
+if(! $?AFIDSPYTHONTOP) then
+    setenv AFIDSPYTHONTOP @prefix@
+endif
+setenv V2TOP ${VICARTOP}/vicar
+setenv DATUM_DATA ${AFIDSTOP}/share/geotrans
+setenv ELLIPSOID_DATA ${AFIDSTOP}/share/geotrans
+setenv AFIDS_ROOT ${AFIDSTOP}/afids
+setenv AFIDS_TCL ${AFIDS_ROOT}/tcl 
+setenv AFIDS_VERSION "@VERSION@"
+source ${AFIDSDATATOP}/setup_afids_data.csh
+source ${V2TOP}/vicset1.csh
+source ${V2TOP}/vicset2.csh
+setenv VRDIFONTS ${VICARTOP}/share/fonts/vrdi
+unalias vicar
+# We use to include vdev in the path. This causes problems, because
+# the unix command 'sort' gets replaced by the vicar proc sort which
+# isn't the same at all. The PATH was from before we introduced TAE_PATH.
+# I don't think we need this added to the path any more, so we'll remove this.
+# If this ends up causing a problem, we can revisit this.
+if ($?PATH) then
+  setenv PATH ${AFIDSTOP}/bin:${VICARTOP}/bin:${PATH}
+else
+  setenv PATH ${AFIDSTOP}/bin:${VICARTOP}/bin:/bin:/usr/bin:/usr/ucb
+endif
+if(! $?TAE_PATH) then
+    setenv TAE_PATH "${AFIDSTOP}/pommos:${AFIDSTOP}/afids/vdev:${AFIDSXVDTOP}/afids/vdev:${VICARTOP}/vicar/bin:${VICARTOP}/vicar/lib:${VICARTOP}/vicar/vids/lib:${AFIDSTOP}/afids_python/pommos"
+endif
+if($?GDAL_DRIVER_PATH) then
+  setenv GDAL_DRIVER_PATH ${VICARGDALPLUGIN}:${GDAL_DRIVER_PATH}
+else
+  setenv GDAL_DRIVER_PATH ${VICARGDALPLUGIN}
+endif
+if($?LD_LIBRARY_PATH) then
+  setenv LD_LIBRARY_PATH ${AFIDSTOP}/lib:${VICARTOP}/lib:${LD_LIBRARY_PATH}
+else
+  setenv LD_LIBRARY_PATH ${AFIDSTOP}/lib:${VICARTOP}/lib
+endif
+if( -e ${AFIDSPYTHONTOP}/etc/afids/setup_afids_python.csh ) then
+   source ${AFIDSPYTHONTOP}/etc/afids/setup_afids_python.csh
+endif
+if( -e ${AFIDSXVDTOP}/etc/afids/setup_afids_xvd.csh ) then
+   source ${AFIDSXVDTOP}/etc/afids/setup_afids_xvd.csh
+endif
+setenv OS_NAME `uname`
+setenv ITCL_LIBRARY @ITCL_PREFIX@
+setenv DFFPATH ${AFIDSTOP}/data/vextract 
+setenv AFIDS_JOERC ${AFIDSTOP}/share/joe
+setenv TCLLIBPATH "${AFIDSTOP}/afids/tma_tcl/dbtcl ${AFIDSTOP}/afids/tma_tcl/maptcl ${AFIDSTOP}/afids/tma_tcl/tma"
+# Point to installed location for GNUPLOT
+
+if("@build_gnuplot@" == "yes") then
+  setenv GNUPLOT_DRIVER_DIR ${AFIDSTOP}/libexec/gnuplot/5.4
+  setenv GNUHELP ${AFIDSTOP}/share/gnuplot/5.4/gnuplot.gih
+  setenv GNUPLOT_PS_DIR ${AFIDSTOP}/share/gnuplot/5.4/PostScript
+endif 
+
+# Make sure we can reach any of the binaries we were given. Don't worry
+# yet about duplicates, we will clean that up in the next step
+if("@GDAL_PREFIX@" != "") then
+    setenv PATH @GDAL_PREFIX@/bin:${PATH}
+    setenv LD_LIBRARY_PATH @GDAL_PREFIX@/lib:@GDAL_PREFIX@/lib64:${LD_LIBRARY_PATH}
+endif
+if("@GNUPLOT_PREFIX@" != "") then
+    setenv PATH @GNUPLOT_PREFIX@/bin:${PATH}
+    setenv LD_LIBRARY_PATH @GNUPLOT_PREFIX@/lib:@GNUPLOT_PREFIX@/lib64:${LD_LIBRARY_PATH}
+endif
+if("@THIRDPARTY_PATH@" != "") then
+    setenv PATH @THIRDPARTY_PATH@/bin:${PATH}
+    setenv LD_LIBRARY_PATH @THIRDPARTY_PATH@/lib:@THIRDPARTY_PATH@/lib64:${LD_LIBRARY_PATH}
+endif
+
+# Clean up duplicates in PATH variables
+setenv PATH `echo "$PATH" | awk -v RS=':' -v ORS=":" '\\!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}'`
+setenv LD_LIBRARY_PATH `echo "$LD_LIBRARY_PATH" | awk -v RS=':' -v ORS=":" '\\!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}'`
+
+# The JPEG 2000 reader in the ECW library will gladly suck up all
+# memory. This limits the amount of space used to 1 GB. We can up this
+# as machines get larger, but on minaret this is a good compromise.
+
+setenv GDAL_ECW_CACHE_MAXMEM 1000000000
+
+if ( `limit stacksize | grep -o '[0-9]\+'` < 32768 ) then
+    # For AFIDS, we need a larger stack size than the default value on
+    # some machines.  This is because the IBIS library tends to do
+    # everything on the Stack, which gets fairly large
+    limit stacksize 32768
+endif
+

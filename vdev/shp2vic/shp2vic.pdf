@@ -1,0 +1,50 @@
+process help=*
+parm shpinp    type=(string,99)
+parm ibisout   type=(string,99)
+parm swap      type=keyword default=0 count=(0:1) valid=swap default=--
+parm docodes   type=keyword default=0 count=(0:1) valid=docodes default=--
+parm doz       type=keyword default=0 count=(0:1) valid=doz default=--
+end-proc
+.title
+VICAR/IBIS Program "shp2vic"
+.help
+PURPOSE
+
+EXECUTION
+
+EXAMPLES
+
+RESTRICTIONS
+
+.level1
+
+.variable inp
+
+Input ESRI Shapefile with optional DBASE file.
+
+.variable out
+
+Output IBIS file with optional IBIS feature code and ASCII feature
+name tables.
+
+.variable swap
+
+Flag causing first and second vector coordinate columns to be swapped.
+
+.level2
+
+.variable inp
+
+Input ESRI Shapefile with optional DBASE file.
+
+.variable out
+
+Output IBIS file with optional IBIS feature code and ASCII feature
+name tables. This name is used as a prefix. The appended suffixes are
+(.int, _codes.int, _codes.txt).
+
+.variable swap
+
+Flag causing first and second vector coordinate columns to be swapped.
+
+.end

@@ -1,0 +1,6 @@
+$ vpack picmtch4.com -mixed -
+	-s picmtch4.c -
+	-i picmtch4.imake -
+	-p picmtch4.pdf -
+	-t tstpicmtch4.pdf devpicmtch4.pdf
+$ Exit

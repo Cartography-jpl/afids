@@ -1,0 +1,784 @@
+procedure
+refgbl $echo
+parm key string
+parm rawimg type=(string,99)
+parm rawmeta type=(string,99)
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted type=(string,99)
+parm base type=(string,99)
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+parm xvdonly string valid=("n","y") default="n"
+parm outimg type=(string,99)
+parm refimg type=(string,99) def=""
+
+parm mosmst type=(string,3) valid=("n","y") default="y"
+
+parm maptype type=string valid=("pc","utm","ref") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin","cubconv","cubsplin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+
+parm siteref type=(string,99) default=""
+parm siteout type=(string,99) default=""
+
+local rawroot type=(string,99)
+local fnamein type=(string,99)
+
+local fname2 type=(string,99)
+local fname3 type=(string,99)
+local fname4 type=(string,99)
+local fname5 type=(string,99)
+local temp type=(string,99)
+
+local inroot type=(string,99)
+local outroot type=(string,99)
+local scratchroot type=(string,99)
+
+local inloc type=(string,99)
+local outloc type=(string,99)
+local gridinfoloc type=(string,99)
+local gridfinalloc type=(string,99)
+
+local dtedfile type=(string,99)
+local basefile type=(string,99)
+local outn type=(string,99)
+local outnsuffix type=(string,99)
+
+local stopat int
+local orthogr (string,3)
+local dattype (string,40)
+local satelv real
+
+local utmzone int
+local refrow real
+local refcol real
+local refn real
+local refe real
+local refn1 real
+local refe1 real
+local refn2 real
+local refe2 real
+local ninc real
+local einc real
+local utmstring string
+local llmaster string
+local platform string
+local ilon int
+local ilat int
+local mlon real
+local mlat real
+local mlonp1 real
+local mlatm1 real
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+local ull real
+local uls real
+local url real
+local urs real
+local lll real
+local lls real
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+local lrlon real
+local lrlat real
+
+local uln real
+local ule real
+local urn real
+local ure real
+local lln real
+local lle real
+
+local iblon1 real
+local iblat1 real
+local iblon2 real
+local iblat2 real
+
+local qlon real
+local qlat real
+local qloninc real
+local qlatinc real
+
+local slon1 real
+local slat1 real
+local slon2 real
+local slat2 real
+
+local moslon int
+local moslat int
+local moslon2 int
+local moslat2 int
+
+local lnl int
+local lns int
+
+local afidsvdevdata type=(string,128)
+local landsatroot type=(string,128)
+local elevroot type=(string,128)
+local lonlatref type=(string,128)
+local mosstring type=(string,128)
+local abslat real
+local lrot real
+local crot real
+
+local rawtif int
+local mettype int
+local askew real
+local bskew real
+local skewrat real
+local topcor real
+local geotiff int
+local qexist int
+
+body
+let $echo="yes"
+
+write "lscall2 05/15/2008"
+
+let satelv = 704000.0
+
+let stopat=6
+
+! call walt's routine to generate fnamein
+
+idgen prefix=bob outvar=fnamein
+
+let inloc = "raw" // "&key" // "/"
+let outloc = "final" // "&key" // "/"
+
+let rawroot = "&inloc" // "&fnamein"
+let fname2 = "&rawroot" // "_3.img"
+let fname3 = "&rawroot" // ".int"
+let fname4 = "&rawroot" // ".utmref"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+let temp = "scratch/" // "&fnamein" // ".temp"
+let llmaster = "scratch/" // "&fnamein" // ".llref"
+
+! initial nulls and defaults
+
+let lnl = -999
+let lns = -999
+let mlon = -999.0
+let mlat = -999.0
+let mettype = 0
+let orthogr = "n"
+let platform = "-999"
+let lrot = -999.0
+let bskew = -999
+let askew = -999
+let skewrat = 0.0
+let refe1 = -999.0
+let refn1 = -999.0
+let refe2 = -999.0
+let refn2 = -999.0
+let refe = -999.0
+let refn = -999.0
+let einc = -999.0
+let ninc = -999.0
+let geotiff = 0
+
+! convert to vicar if tiff, check for geotiff type
+
+file2tcl &rawimg ftype=rawtif
+if (rawtif=2)
+   vtiff3-tovic &rawimg &fname2
+   lab2tcl &fname2 v1=lnl v2=lns keyword=(nl,ns) 'system
+   label-add inp=&fname2 items="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+   label-add inp=&fname2 items="rawnl=&lnl" +
+         property="COREG_META_DATA"
+   label-add inp=&fname2 items="rawns=&lns" +
+         property="COREG_META_DATA"
+   gt2tcl &fname2 key="MODELTIEPOINTTAG" val=refrow seq=2 vtype=8
+   if (refrow>-990.0) let geotiff = geotiff+1
+   gt2tcl &fname2 key="MODELTRANSFORMATIONTAG" val=refe seq=4 vtype=8
+   if (refe>-990.0) let geotiff = geotiff+1
+   gt2tcl &fname2 key="PROJECTEDCSTYPEGEOKEY" val=utmzone vtype=4
+   if (utmzone>-990) let geotiff = geotiff+1
+end-if
+
+if ("&rawmeta"="" or geotiff>1)      ! this is GT case
+   gt2tcl &fname2 key="MODELTIEPOINTTAG" val=refe seq=4 vtype=8
+   gt2tcl &fname2 key="MODELTIEPOINTTAG" val=refn seq=5 vtype=8
+   gt2tcl &fname2 key="MODELTIEPOINTTAG" val=refrow seq=2 vtype=8
+   gt2tcl &fname2 key="MODELTIEPOINTTAG" val=refcol seq=1 vtype=8
+
+   gt2tcl &fname2 key="PROJECTEDCSTYPEGEOKEY" val=utmzone vtype=4
+   if (utmzone>32000 and utmzone<33000) let utmzone = utmzone-32600
+
+   gt2tcl &fname2 key="MODELPIXELSCALETAG" val=einc seq=1 vtype=8
+   if (einc>-990.0)
+      let orthogr = "y"
+   else
+      let orthogr = "n"
+   end-if
+   goto typegt
+end-if
+
+if (rawtif=2) gtdel inp=&fname2 prefix="MODELTIEPOINTTAG"
+
+!  get various parameters
+
+if (mettype=1)   ! this section not active yet, maybe never
+   asc2tcl &rawmeta keyword=ZONEIDENTIFIER val=utmzone vtype=4 'met
+   asc2tcl &rawmeta keyword=ReferencePixelRowNumber val=refrow vtype=8 'met
+   asc2tcl &rawmeta keyword=ReferencePixelColumnNumber val=refcol vtype=8 'met
+   asc2tcl &rawmeta keyword=ReferencePixelNorthing val=refn vtype=8 'met
+   asc2tcl &rawmeta keyword=ReferencePixelEasting val=refe vtype=8 'met
+   asc2tcl &rawmeta keyword=NorthingIncrement val=ninc vtype=8 'met
+   asc2tcl &rawmeta keyword=EastingIncrement val=einc vtype=8 'met
+   let orthogr = "y"
+   goto skipmet
+end-if
+
+if (lnl<-990) asc2tcl &rawmeta keyword="LINES_PER_DATA_FILE=" val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="LINES PER IMAGE=" val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="PRODUCT_LINES_REF = " val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="PRODUCT_LINES_REF = " val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="Image Lines:" val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="ROW_SIZE " val=lnl vtype=4
+if (lnl<-990) asc2tcl &rawmeta keyword="Image Lines:" val=lnl vtype=4
+
+if (lns<-990) asc2tcl &rawmeta keyword="PIXELS_PER_LINE=" val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="PIXELS PER LINE=" val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="PRODUCT_SAMPLES_REF = " val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="PRODUCT_SAMPLES_REF = " val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="Image Pixels:" val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="COL_SIZE " val=lns vtype=4
+if (lns<-990) asc2tcl &rawmeta keyword="Image Pixels:" val=lns vtype=4
+
+if (lns<-990)
+   write "image dimensions not found"
+   goto theend
+end-if
+
+let refrow = $float(lnl)*0.5
+let refcol = $float(lns)*0.5
+
+asc2tcl &rawmeta keyword="PROJECTION UTM" val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="USGS_MAP_ZONE=" val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="USGS MAP ZONE =" val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="ZONE_NUMBER = " val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="ZONE_NUMBER = +" val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="ZONE_NUMBER =" val=utmzone vtype=4
+if (utmzone<-990) asc2tcl &rawmeta keyword="Zone:" val=utmzone vtype=4
+
+asc2tcl &rawmeta keyword=Y_INCREMENT val=ninc vtype=8
+if (ninc<-990.0) asc2tcl &rawmeta keyword="PIXEL_SPACING=" val=ninc seq=1 vtype=8 septyp=COMMA
+if (ninc<-990.0) asc2tcl &rawmeta keyword="COL_PIXEL_SIZE " val=ninc vtype=8
+
+asc2tcl &rawmeta keyword=X_INCREMENT val=einc vtype=8
+if (einc<-990.0) asc2tcl &rawmeta keyword="PIXEL_SPACING=" val=einc seq=2 vtype=8 septyp=COMMA
+if (ninc<-990.0) asc2tcl &rawmeta keyword="PIXEL SIZE =" val=einc vtype=8
+if (einc<-990.0) asc2tcl &rawmeta keyword="GRID_CELL_SIZE_REF = " val=einc vtype=8
+if (einc<-990.0) asc2tcl &rawmeta keyword="Line Spacing:" val=einc vtype=8
+if (einc<-990.0) asc2tcl &rawmeta keyword="ROW_PIXEL_SIZE " val=einc vtype=8
+if (einc<-990.0) asc2tcl &rawmeta keyword="Line Spacing:" val=einc vtype=8
+if (einc>-990.0 and ninc<-990.0) let ninc = -einc
+if (ninc>0.0) let ninc = -ninc
+
+asc2tcl &rawmeta keyword="CENTER_LON " val=mlon vtype=8
+if (mlon<-990.0) asc2tcl &rawmeta keyword="Scene center long:" val=mlon vtype=8
+
+asc2tcl &rawmeta keyword="CENTER_LAT " val=mlat vtype=8
+if (mlat<-990.0) asc2tcl &rawmeta keyword="Scene center lat:" val=mlat vtype=8
+
+! case where mlon,mlat in DMS notation  (don't have any cases yet)
+!
+!if (mlon<-990.0 or mlat<-990.0)
+!   asc2tcl ...
+!   ibis-gen &fname3 nr=1 nc=8 datacols=(1,2,3,4) deffmt="DOUB" +
+!      data=(&refe1,&refn1,&refe2,&refn2)
+!   mf3 &fname3 f="c5=@dmsnum(c1)$c6=@dmsnum(c2)$c7=@dmsnum(c3)$c8=@dmsnum(c4)"
+!   mf3 &fname3 f="c1=(c5+c7)*0.5$c2=(c6+c8)*0.5"
+!   etc
+!   goto theend
+!end-if
+
+! tough case where mlon,mlat gotton from utm corners
+! not handled yet .. keyword="East:"
+
+if (mlon<-990.0 or mlat<-990.0)
+   if (utmzone<-990)
+      write "need utmzone for utm corners case"
+      goto theend
+   end-if
+   
+   let refn2 = -999.0
+   let refe2 = -999.0
+   
+   asc2tcl &rawmeta keyword="REFERENCE_POSITION=" val=refn1 seq=4 vtype=8 septyp=COMMA
+   if (refn1<-990.0) asc2tcl &rawmeta keyword="UPPER_LEFT_CORNER=" val=refn1 seq=4 vtype=8 septyp=COMMA
+   if (refn1<-990.0) asc2tcl &rawmeta keyword="PRODUCT_UL_CORNER_MAPY = " val=refn1 vtype=8
+   if (refn1<-990.0) asc2tcl &rawmeta keyword="SCENE_UL_CORNER_MAPY = " val=refn1 vtype=8
+   if (refn1<-990.0) asc2tcl &rawmeta keyword="PRODUCT_UL_CORNER_MAPY = " val=refn1 vtype=8
+   if (refn1<-990.0) asc2tcl &rawmeta keyword="UL " val=refn1 seq=4 vtype=8
+   if (refn1<-990.0)
+      asc2tcl &rawmeta keyword="Y_START " val=refn1 vtype=8
+      let refn2 = refn1+$float(lnl)*ninc
+  end-if
+   
+   asc2tcl &rawmeta keyword="REFERENCE_POSITION=" val=refe1 seq=3 vtype=8 septyp=COMMA
+   if (refe1<-990.0) asc2tcl &rawmeta keyword="UPPER_LEFT_CORNER=" val=refe1 seq=3 vtype=8 septyp=COMMA
+   if (refe1<-990.0) asc2tcl &rawmeta keyword="PRODUCT_UL_CORNER_MAPX = " val=refe1 vtype=8
+   if (refe1<-990.0) asc2tcl &rawmeta keyword="SCENE_UL_CORNER_MAPX = " val=refe1 vtype=8
+   if (refe1<-990.0) asc2tcl &rawmeta keyword="PRODUCT_UL_CORNER_MAPX = " val=refe1 vtype=8
+   if (refe1<-990.0) asc2tcl &rawmeta keyword="UL " val=refe1 seq=3 vtype=8
+   if (refe1<-990.0)
+      asc2tcl &rawmeta keyword="X_START " val=refe1 vtype=8
+      let refe2 = refe1+$float(lns)*einc
+   end-if
+   
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="REFERENCE_POSITION=" val=refn2 seq=4 vtype=8 septyp=COMMA
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="LOWER_RIGHT_CORNER=" val=refn2 seq=4 vtype=8 septyp=COMMA
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="PRODUCT_LR_CORNER_MAPY = " val=refn2 vtype=8
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="SCENE_LR_CORNER_MAPY = " val=refn2 vtype=8
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="PRODUCT_LR_CORNER_MAPY = " val=refn2 vtype=8
+   if (refn2<-990.0) asc2tcl &rawmeta keyword="LR " val=refn2 seq=4 vtype=8
+   
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="REFERENCE_POSITION=" val=refe2 seq=3 vtype=8 septyp=COMMA
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="LOWER_RIGHT_CORNER=" val=refe2 seq=3 vtype=8 septyp=COMMA
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="PRODUCT_LR_CORNER_MAPX = " val=refe2 vtype=8
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="SCENE_LR_CORNER_MAPX = " val=refe2 vtype=8
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="PRODUCT_LR_CORNER_MAPX = " val=refe2 vtype=8
+   if (refe2<-990.0) asc2tcl &rawmeta keyword="LR " val=refe2 seq=3 vtype=8
+   
+   let refn = (refn1+refn2)*0.5
+   let refe = (refe1+refe2)*0.5
+   
+   if (refn<-990 or refe<-990)
+      write "didnt find utm corners or center lon-lat"
+      goto theend
+   end-if
+   
+   translog AFIDS_VDEV_DATA afidsvdevdata
+   translog LANDSAT_ROOT landsatroot
+   translog ELEV_ROOT elevroot
+   let lonlatref = "&afidsvdevdata/world_30as_lwm.img"
+   if (refn>0.0)
+      if (utmzone<10)
+         let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      else
+         let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      end-if
+   else
+      if (utmzone<10)
+         let utmstring = "3270" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+      else
+         let utmstring = "327" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+      end-if
+   end-if
+   ! file here is temporary only
+   gtgen out=&fname4 'tiecnvrt 'rectfit +
+     geotiff=("ModelTiePointTag=(0,0,0,500000,3000000,0.0)", +
+     "ModelTiePointTag=(0,1,0,500000,2999971.5,0.0)", +
+     "ModelTiePointTag=(1,0,0,500028.5,3000000,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+     "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+     "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+     "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   ibis-gen &fname3 nr=1 nc=4 datacols=(1,2) deffmt="DOUB" data=(&refe,&refn)
+   gtproj (&fname3,&fname4,&lonlatref) incol=(1,2) outcol=(3,4) 'tec
+   ibis2tcl &fname3 v1=mlon v2=mlat vartype=(-1,-1) ibisloc=(1,3,1,4)
+   write "calc mlon &mlon mlat &mlat"
+end-if
+
+
+if (mlon>-990.0 and utmzone<-990) let utmzone = $fix(mlon/6.0+31.0)
+
+! calculate (refe,refn) from (mlon,mlat)
+
+if (mlon>-990.0 and mlat>-990.0)
+   translog AFIDS_VDEV_DATA afidsvdevdata
+   translog LANDSAT_ROOT landsatroot
+   translog ELEV_ROOT elevroot
+   let lonlatref = "&afidsvdevdata/world_30as_lwm.img"
+   if (mlat>0.0)
+      if (utmzone<10)
+         let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      else
+         let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      end-if
+   else
+      if (utmzone<10)
+         let utmstring = "3270" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+      else
+         let utmstring = "327" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+      end-if
+   end-if
+   ! file here is temporary only
+   gtgen out=&fname4 'tiecnvrt 'rectfit +
+     geotiff=("ModelTiePointTag=(0,0,0,500000,3000000,0.0)", +
+     "ModelTiePointTag=(0,1,0,500000,2999971.5,0.0)", +
+     "ModelTiePointTag=(1,0,0,500028.5,3000000,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+     "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+     "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+     "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   ibis-gen &fname3 nr=1 nc=4 datacols=(1,2) deffmt="DOUB" data=(&mlon,&mlat)
+   gtproj (&fname3,&lonlatref,&fname4) incol=(1,2) outcol=(3,4) 'tec
+   ibis2tcl &fname3 v1=refe v2=refn vartype=(-1,-1) ibisloc=(1,3,1,4)
+   write "calc refe &refe refn &refn"
+else
+   write "image center lon-lat not found"
+   goto theend
+end-if
+
+! process the image to VICAR, geoTIFFs already done above
+
+if (rawtif<>2)
+   label-create &rawimg &fname2 nl=&lnl ns=&lns
+   label-add inp=&fname2 items="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+   label-add inp=&fname2 items="rawnl=&lnl" +
+         property="COREG_META_DATA"
+   label-add inp=&fname2 items="rawns=&lns" +
+         property="COREG_META_DATA"
+end-if
+
+! need to determine raw with skew case (defined as skewrat>2.5)
+
+imcorner &fname2 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4
+let bskew = l2-l1
+let topcor = 57.0*(bskew-87.0)/$float(lns)
+if (bskew<0) let bskew = l1-l2
+let bskew = bskew+1
+let askew = s1-s3
+let skewrat = askew/bskew
+if (askew<100.0) let skewrat = 0.0
+
+! get platform
+
+asc2tcl &rawmeta keyword="PLATFORM " val=platform vtype=0
+if (platform="-999") asc2tcl &rawmeta keyword="Satellite:          " val=platform vtype=0
+if (platform="-999") asc2tcl &rawmeta keyword="SATELLITE=" val=platform vtype=0
+
+if (platform="Landsat-1") let platform = "LANDSAT1"
+if (platform="Landsat-2") let platform = "LANDSAT2"
+if (platform="Landsat-3") let platform = "LANDSAT3"
+if (platform="Landsat-4") let platform = "LANDSAT4"
+if (platform="Landsat-5") let platform = "LANDSAT5"
+if (platform="Landsat-7") let platform = "LANDSAT7"  ! 7 not tested
+
+if (platform="LANDSAT_1;") let platform = "LANDSAT1"
+if (platform="LANDSAT_2;") let platform = "LANDSAT2"
+if (platform="LANDSAT_3;") let platform = "LANDSAT3"
+if (platform="LANDSAT_4;") let platform = "LANDSAT4"
+if (platform="LANDSAT_5;") let platform = "LANDSAT5"
+if (platform="LANDSAT_7;") let platform = "LANDSAT7"
+
+! get rotation for raw case
+
+if (skewrat>2.5)
+   asc2tcl &rawmeta keyword="ORIENTATION=" val=lrot vtype=8
+   if (lrot<-990.0) asc2tcl &rawmeta keyword="Image Orientation:" val=lrot vtype=8
+  
+   if (mlat<0.0)
+      let abslat = -mlat
+   else
+      let abslat = mlat
+   end-if
+   let crot = 6.683+0.0912055*abslat+0.00115565*abslat*abslat+topcor
+   if (platform="LANDSAT1") let crot = crot+1.5
+   if (platform="LANDSAT2") let crot = crot+1.5
+   if (platform="LANDSAT3") let crot = crot+1.5
+   if (platform="LANDSAT4") let crot = crot+0.0
+   if (platform="LANDSAT5") let crot = crot+0.0
+   if (platform="LANDSAT7") let crot = crot+0.0
+   
+   if (lrot<-990.0)
+      let lrot = crot
+      write "&platform rotation = &lrot at lat = &mlat, calculated (no label)"
+   else
+      write "&platform rotation = &lrot at lat = &mlat, calculated = &crot"
+   end-if
+end-if
+
+! no more asc2tcl's after here unless check for gt case (no meta file)
+
+write "lnl &lnl"
+write "lns &lns"
+write "utmzone:a &utmzone"
+write "refrow &refrow"
+write "refcol &refcol"
+write "refn1 &refn1"
+write "refe1 &refe1"
+write "refn2 &refn2"
+write "refe2 &refe2"
+write "refn &refn"
+write "refe &refe"
+write "ninc &ninc einc &einc"
+write "mlon &mlon"
+write "mlat &mlat"
+write "utmzone:b &utmzone"
+write "refe &refe refn &refn"
+write "platform = &platform"
+write "&platform rotation = &lrot  at lat = &mlat"
+write "rotation = &lrot"
+write "bskew askew skewrat topcor &bskew &askew &skewrat &topcor"
+write "orthogr &orthogr"
+
+! put on utm map label
+
+if (refrow<-990.0 or utmzone<-990 or refe<-990.0 or einc<-990.0)
+   write "missing parm refrow &refrow, or utmzone &utmzone or"
+   write "             refe &refe, or einc &einc"
+   goto theend
+end-if
+
+let ull = refrow-1
+let uls = refcol-1
+let url = ull
+let urs = uls+1
+let lll = ull+1
+let lls = uls
+write "ull,uls &ull,&uls"
+write "url,urs &url,&urs"
+write "lll,lls &lll,&lls"
+
+if (utmzone<10)
+   let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+else
+   let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+end-if
+
+let ule = refe
+let uln = refn
+let ure = ule + einc
+let urn = uln
+let lle = ule
+let lln = uln + ninc
+write "ule,uln &ule,&uln"
+write "ure,urn &ure,&urn"
+write "lle,lln &lle,&lln"
+
+gtgen in=&fname2 'tiecnvrt 'rectfit +
+  geotiff=("ModelTiePointTag=(&uls,&ull,0,&ule,&uln,0.0)", +
+  "ModelTiePointTag=(&urs,&url,0,&ure,&urn,0.0)", +
+  "ModelTiePointTag=(&lls,&lll,0,&lle,&lln,0.0)", +
+  "ProjectedCSTypeGeoKey=&utmstring", +
+  "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+  "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+!gtlist &fname2
+!xvd &fname2
+!goto theend
+
+if (skewrat>2.5)
+   ! (refrow,refcol) for skew case, overrides previous settings
+   let refrow = $float(lnl)*0.5
+   let refcol = $float(lns)*0.5
+   gtmove &fname2 +
+      &fname3 +
+      rotation=-&lrot
+   copy &fname3 &fname2
+end-if
+
+typegt>
+
+! prepare the int file
+
+let mlon = ($float(&utmzone)-31.0)*6.0+((&refe)-180000.0)*0.0000075
+let mlat = &refn*.0000091
+let ilon = $fix(mlon+0.5)
+let ilat = $fix(mlat+0.5)
+let mlon = $float(ilon)
+let mlat = $float(ilat)
+let mlonp1 = mlon+1.0
+let mlatm1 = mlat-1.0
+write "&mlon &mlat"
+
+gtgen out=&llmaster 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&mlon,&mlat,0.0)", +
+  "ModelTiePointTag=(3600,0,0,&mlonp1,&mlat,0.0)", +
+  "ModelTiePointTag=(0,3600,0,&mlon,&mlatm1,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+gtlist &llmaster
+
+let l1 = refrow-1
+let s1 = refcol-1
+let l2 = l1+1000
+let s2 = s1
+let l3 = l1+1000
+let s3 = s1+1000
+
+ibis-gen &fname5 nr=3 nc=19 datacols=(1,2) deffmt=DOUB +
+  data=(&l1,&s1,&l2,&s2,&l3,&s3) 
+pixmap (&fname5,&fname2) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+gtproj (&fname5,&fname2,&llmaster) incol=(5,6) outcol=(3,4) 'tec
+
+! prepare the satellite parameters
+
+let inroot = "&inloc" // "&fnamein"
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+let gridinfoloc = "&outloc" // "&fnamein" // "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein" // "gridfinal"
+
+! get the quad, using pixel in raw .img instead of lon-lat
+
+imcorner &fname2 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4
+write "l1,s1 &l1,&s1"
+let qlat = l1
+let qlon = s3
+let qlatinc = l4-l1+1
+let qloninc = s2-s3+1
+write "qlon,qlat &qlon,&qlat"
+write "qloninc,qlatinc &qloninc,&qlatinc"
+
+!  get the satellite ground trace end points
+
+imcorner &fname2 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+   line3=l3 samp3=s3 line4=l4 samp4=s4
+ibis-gen &fname3 nr=2 nc=20 datacols=(1,2,11,12) deffmt="DOUB"+
+   data=(&l1,&s1,&l2,&s2,&l3,&s3,&l4,&s4)
+pixmap (&fname3,&fname2) mapcol=(3,4) pixcol=(1,2) 'pixtomap
+pixmap (&fname3,&fname2) mapcol=(13,14) pixcol=(11,12) 'pixtomap
+gtproj (&fname3,&fname2,&llmaster) incol=(3,4) outcol=(5,6) 'tec
+gtproj (&fname3,&fname2,&llmaster) incol=(13,14) outcol=(15,16) 'tec
+! save (lon,lat) corners for possible mosaic use below
+ibis2tcl &fname3 +
+   v1=ullon v2=ullat v3=urlon v4=urlat +
+   v5=lllon v6=lllat v7=lrlon v8=lrlat +
+   vartype=(-1,-1,-1,-1,-1,-1,-1,-1) +
+   ibisloc=(1,5,1,6,1,15,1,16,2,5,2,6,2,15,2,16)
+mf3 &fname3 f="c7=(c5+c15)*0.5$c8=(c6+c16)*0.5"
+ibis-l &fname3
+ibis2tcl &fname3 v1=slon1 v2=slat1 v3=slon2 v4=slat2 +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,7,1,8,2,7,2,8)
+write "slon1,slat1 &slon1,&slat1"
+write "slon2,slat2 &slon2,&slat2"
+
+!write "fname2 &fname2"
+! can do util6 with this file and base
+!goto theend
+
+! now prepare the base and dted mosaics if needed
+
+if ("&base"="" or "&dted"="")
+   if (lllon>0.0)
+      let moslon = $fix(lllon-0.2)
+   else
+      let moslon = $fix(-lllon+1.2)*(-1)
+   end-if
+   if (lrlat>0.0)
+      let moslat = $fix(lrlat-0.2)
+   else
+      let moslat = $fix(-lrlat+1.2)*(-1)
+   end-if
+   if (urlon>0.0)
+      let moslon2 = $fix(urlon+1.2)
+   else
+      let moslon2 = $fix(-urlon+0.2)*(-1)
+   end-if
+   if (ullat>0.0)
+      let moslat2 = $fix(ullat+1.2)
+   else
+      let moslat2 = $fix(-ullat+0.2)*(-1)
+   end-if
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+translog LANDSAT_ROOT landsatroot
+translog ELEV_ROOT elevroot
+
+!write "ullon &ullon ullat &ullat"
+!write "urlon &urlon urlat &urlat"
+!write "lllon &lllon lllat &lllat"
+!write "lrlon &lrlon lrlat &lrlat"
+!write "moslon &moslon moslat &moslat"
+!write "moslon2 &moslon2 moslat2 &moslat2"
+!goto theend
+end-if
+
+if ("&base"<>"")
+   let basefile = "&base"
+else
+   let basefile = "b&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // ".lsat"
+   let outn = "basemos/&basefile"
+   file2tcl &outn val=qexist
+   if (qexist=0)
+      let mosstring = landsatroot
+      subset_landsat slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 dir1="&mosstring" +
+         outn="&outn" dir2="./"
+   end-if
+   let basefile = "basemos/&basefile"
+end-if
+
+if (xvdonly="y")
+   gtwarp &fname2 +
+     &temp +
+     ref=&basefile  'coverinp
+   xvd &temp
+   goto theend
+end-if
+
+if ("&dted"<>"")
+   let dtedfile = "&dted"
+else
+   let dtedfile = "d&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2"
+   let outn = "dtedmos/&dtedfile"
+   let outnsuffix = "&outn" // "_dem.img"
+   file2tcl &outnsuffix val=qexist
+   if (qexist=0)
+      let mosstring = elevroot
+      mos_l2_dem slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 DIRin="&mosstring" +
+         out="&outn" DIRout="./"
+   end-if
+   let dtedfile = "dtedmos/&dtedfile" // "_dem.img"
+end-if
+
+! for compression testing
+compresschk &fname2
+
+lswarp2 inroot=&inroot +
+   outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted=&dtedfile +
+   base=&basefile orthogr=&orthogr +
+   seq=rr pixdeg=3600.0 outimg=&outimg +
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc +
+   quadunit=1 master="&refimg" rastype=&rastype +
+   gridinfo=&gridinfoloc +
+   gridfinal=&gridfinalloc loff=0 soff=0 loff2=0 soff2=0 +
+   sensE1=&slon1 sensN1=&slat1 senselv1=&satelv interp=&interp +
+   sensE2=&slon2 sensN2=&slat2 senselv2=&satelv sensunit=0 mosmst="&mosmst"+
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype +
+   modelfit=&modelfit maptype=&maptype utmzonep=&utmzone +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right +
+   usermapref="&usermapref" +
+   siteref="&siteref" +
+   siteout="&siteout"
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc

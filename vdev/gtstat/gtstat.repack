@@ -1,0 +1,6 @@
+$ vpack gtstat.com -mixed -
+	-s gtstat.c -
+	-i gtstat.imake -
+	-p gtstat.pdf -
+	-t tstgtstat.pdf
+$ Exit

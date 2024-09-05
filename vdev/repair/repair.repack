@@ -1,0 +1,6 @@
+$ vpack repair.com -mixed -
+	-s repair.f -
+	-i repair.imake -
+	-p repair.pdf -
+	-t tstrepair.pdf tstrepair.log
+$ Exit

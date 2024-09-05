@@ -1,0 +1,55 @@
+procedure
+parm lond type=real
+parm lonm type=real
+parm lons type=real
+parm latd type=real
+parm latm type=real
+parm lats type=real
+
+local lon type=real
+local lat type=real
+local zone type=real
+local izone type=int
+local szone type=string
+local snorth type=string
+local utmstr type=string
+
+refgbl $echo
+body
+let $echo="no"
+
+let lon=lond+lonm/60.0+lons/3600.0
+let lat=latd+latm/60.0+lats/3600.0
+let zone = (lon+186.0)/6.0
+let izone = $fix(zone)
+let szone = "&izone"
+if (izone<10) let szone = "0" // "&szone"
+let snorth = "6"
+if (lat<0.0) let snorth = "7"
+
+let utmstr = "32" // "&snorth" // "&szone"
+let utmstr = utmstr // "(PCS_WGS84_UTM_zone_" // "&szone"
+if (lat<0.0) let utmstr = utmstr // "S)"
+if (lat>=0.0) let utmstr = utmstr // "N)"
+
+ibis-gen xxpqrs1 nr=1 nc=6 datacols=(1,2) data=(&lon,&lat) +
+      format=("DOUB","DOUB","DOUB","DOUB")
+
+
+gtgen out=xxxpqrslab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtgen out=xxxpqrslab2 +
+  geotiff=("ProjectedCSTypeGeoKey=&utmstr")
+
+gtlist xxxpqrslab2
+
+
+gtproj (xxpqrs1,xxxpqrslab1,xxxpqrslab2) incol=(1,2,5) +
+      outcol=(3,4,6) 'tec
+
+
+ibis-list xxpqrs1 cols=(1,2,3,4) 'nohead 'nocol
+
+theend>
+end-proc

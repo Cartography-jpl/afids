@@ -1,0 +1,4 @@
+$ vpack llutm.com -mixed -
+	-p llutm.pdf llutm2.pdf llutm3.pdf -
+	-t tstllutm.pdf
+$ Exit

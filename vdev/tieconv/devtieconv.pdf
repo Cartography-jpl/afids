@@ -1,0 +1,246 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-1"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+goto curr
+
+
+!!!!!!!!!!!! DEVELOPMENT CASES FOR ALZ, ALSO HAS A PLOT CASE
+!!!!!!!!!!!! SEE THE TSTTIECONV.PDF FILE FOR THE REGRESSION TEST
+
+
+!ibis-gen a version=&version org=&org  datacol=(1,2,3,4) +
+!    nc=4 nr=44
+!mf a func=("c1=sqrt(index*17+2763)","c2=sqrt(index*7+3431)")
+!mf a func=("c1=mod(c1,0.0001)*1000000","c2=mod(c2,0.0001)*1000000")
+!!mf a func=("c1=c1-mod(c1,0.1)","c2=c2-mod(c2,0.1)")
+!mf a func=("c3=c1*1.1","c4=c2*1.1")
+!ibis-list a cols=(1,2,3,4) csize=12 'format
+
+!!datetime
+!tieconv INP=a COLS=(1,2,3,4)  OUT=b +
+!      NAH=3,NAV=3,MINL=1.,MINS=1.,MAXL=100.,MAXS=100. +
+!    'GEOMV 'NOPR 
+!!datetime
+
+
+! testing the lgeom parameter output
+
+!tieconv INP=a COLS=(1,2,3,4)  OUT=b2 +
+!      NAH=3,NAV=3,MINL=1.,MINS=1.,MAXL=100.,MAXS=100. +
+!    'LGEOM 'NOPR 
+
+! now test that the tiepoint data sets are OK
+
+!gen mgtest 10 10 SINC=40 LINC=40
+
+!geomv (mgtest,b) mgtest2 SIZE=(1,1,10,10)
+!list mgtest2
+
+!lgeom mgtest mgtest3 SIZE=(1,1,10,10) PARMS=b2
+!list mgtest3
+
+!difpic (mgtest2,mgtest3)
+
+! now large test cases with plot
+
+ibis-gen a version=&version org=&org  datacol=(1,2,3,4) +
+    nc=4 nr=2000
+mf a func=("c1=sqrt(index*17+2763)","c2=sqrt(index*7+3431)")
+mf a func=("c1=mod(c1,0.0001)*1000000","c2=mod(c2,0.0001)*1000000")
+!mf a func=("c1=c1-mod(c1,0.1)","c2=c2-mod(c2,0.1)")
+mf a func=("c3=c1*1.1","c4=c2*1.1")
+!ibis-list a cols=(1,2,3,4) csize=12 'format
+
+datetime
+tieconv INP=a COLS=(1,2,3,4)  OUT=b +
+      NAH=1,NAV=1,MINL=1.,MINS=1.,MAXL=100.,MAXS=100. +
+    'GEOMV 'NOPR !'PLOT
+datetime
+
+!pltgraf inp=b xrange=(-20.0,120.0) yrange=(-20.0,120.0) xlen=10 ylen=10
+
+
+! rectangular grid case, hard for voronoi algorithms, see Euler #
+
+
+ibis-gen a version=&version org=&org  datacol=(1,2,3,4) +
+    nc=4 nr=8281
+mf a func=("c1=1.1*int((index-1)/91.0)","c2=1.1*mod(index-1,91)")
+mf a func=("c3=c1*1.1+index/10","c4=c2*1.1+index/10")
+
+
+tieconv INP=a COLS=(1,2,3,4)  OUT=b +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100. +
+    'GEOMV 'NOPR 'plot
+
+!pltgraf inp=b xrange=(-20.0,120.0) yrange=(-20.0,120.0) xlen=10 ylen=10
+
+
+! testing gridded input case, has to be triangulation case
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(1,2,3,4)  OUT=xxb 'plot 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+ibis-list xxb 'format
+
+
+! testing gridded input case, has (-999,-999) find-B
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c2<100)*c3+(c2>100)*(-999)"
+mf3 xxa func="c4=(c2<100)*c4+(c2>100)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+! testing gridded input case, has (-999,-999) find C
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c2>2)*c3+(c2<2)*(-999)"
+mf3 xxa func="c4=(c2>2)*c4+(c2<2)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+
+
+! testing gridded input case, has (-999,-999) find A
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c1+c2>3)*c3+(c1+c2<3)*(-999)"
+mf3 xxa func="c4=(c1+c2>3)*c4+(c1+c2<3)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+! testing gridded input case, has (-999,-999) find E
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c1>52)*c3+(c1<52)*(-999)"
+mf3 xxa func="c4=(c1>52)*c4+(c1<52)*(-999)"
+mf3 xxa func="c3=(c2<100)*c3+(c2>100)*(-999)"
+mf3 xxa func="c4=(c2<100)*c4+(c2>100)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+curr>
+
+! testing gridded input case, has (-999,-999) find D
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c1<52)*c3+(c1>52)*(-999)"
+mf3 xxa func="c4=(c1<52)*c4+(c1>52)*(-999)"
+mf3 xxa func="c3=(c2>2)*c3+(c2<2)*(-999)"
+mf3 xxa func="c4=(c2>2)*c4+(c2<2)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+goto theend
+
+
+! testing gridded input case, has (-999,-999) fail case, 2 corner
+
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c1+c2>3)*c3+(c1+c2<3)*(-999)"
+mf3 xxa func="c4=(c1+c2>3)*c4+(c1+c2<3)*(-999)"
+mf3 xxa func="c3=(c1+c2<250)*c3+(c1+c2>250)*(-999)"
+mf3 xxa func="c4=(c1+c2<250)*c4+(c1+c2>250)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+
+! testing gridded input case, has (-999,-999) fail case, corner but no more
+
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+ibis-list xxa 'format
+
+gengrid out=xxa ncol=4 nah=2 nav=3 hbase=1.0 hsize = 100.0 +
+                                    vbase=1.0 vsize = 150.0
+mf3 xxa func="c3=c1+@rand$c4=c2+@rand" seed=2
+mf3 xxa func="c3=(c1+c2<3)*c3+(c1+c2>3)*(-999)"
+mf3 xxa func="c4=(c1+c2<3)*c4+(c1+c2>3)*(-999)"
+ibis-list xxa 'format
+
+tieconv INP=xxa COLS=(3,4,1,2)  OUT=xxb 'geomv +
+      NAH=7,NAV=7,MINL=1.,MINS=1.,MAXL=100.,MAXS=100.
+
+! list the IBIS file
+!ibis-list xxb 'format
+
+
+theend>
+end-proc

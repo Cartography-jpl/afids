@@ -1,0 +1,202 @@
+procedure help=*
+parm key type=string default="qfth"
+parm inp1 type=(string,99) count=(1:1)
+parm inp2 type=(string,99) count=(0:1) default=("")
+parm inp3 type=(string,99) count=(0:1) default=("")
+parm inp4 type=(string,99) count=(0:1) default=("")
+parm inp5 type=(string,99) count=(0:1) default=("")
+parm inp6 type=(string,99) count=(0:1) default=("")
+parm inp7 type=(string,99) count=(0:1) default=("")
+parm inp8 type=(string,99) count=(0:1) default=("")
+parm inp9 type=(string,99) count=(0:1) default=("")
+parm inp10 type=(string,99) count=(0:1) default=("")
+parm inp11 type=(string,99) count=(0:1) default=("")
+parm inp12 type=(string,99) count=(0:1) default=("")
+parm inp13 type=(string,99) count=(0:1) default=("")
+parm inp14 type=(string,99) count=(0:1) default=("")
+parm inp15 type=(string,99) count=(0:1) default=("")
+parm inp16 type=(string,99) count=(0:1) default=("")
+parm inp17 type=(string,99) count=(0:1) default=("")
+parm inp18 type=(string,99) count=(0:1) default=("")
+parm inp19 type=(string,99) count=(0:1) default=("")
+parm inp20 type=(string,99) count=(0:1) default=("")
+parm inp21 type=(string,99) count=(0:1) default=("")
+parm inp22 type=(string,99) count=(0:1) default=("")
+parm inp23 type=(string,99) count=(0:1) default=("")
+parm inp24 type=(string,99) count=(0:1) default=("")
+parm inp25 type=(string,99) count=(0:1) default=("")
+parm inp26 type=(string,99) count=(0:1) default=("")
+parm inp27 type=(string,99) count=(0:1) default=("")
+parm inp28 type=(string,99) count=(0:1) default=("")
+parm inp29 type=(string,99) count=(0:1) default=("")
+parm inp30 type=(string,99) count=(0:1) default=("")
+parm out type=(string,99) count=1
+parm toler type=real count=1 default=0.01
+parm mooreopt type=real count=(0:1) default=1.0
+parm dfeather type=int default=700
+parm moorefac type=int default=3
+
+local iloop int
+local curfile string
+local firstfile string
+local mosrec type=string
+local mosfile type=string
+local gtfile type=string
+local mostemp type=string
+local offset type=string
+
+local parmstr string
+local ushstring string
+local tmpstring string
+local moorestring type=string
+
+local minsl int
+local minss int
+local maxnl int
+local maxns int
+local curnl int
+local curns int
+local fcurol real
+local fcuros real
+local curol int
+local curos int
+local tval int
+
+refgbl $echo
+body
+let $echo="yes"
+
+!  FTHMOS HANDYPROC
+
+let mosrec = "xxx" // "&key" // "fmosrec"
+let mosfile = "xxx" // "&key" // "fmosfile"
+let mostemp = "xxx" // "&key" // "fmostemp"
+let offset = "xxx" // "&key" // "foffset"
+
+! first, dispense with the single file case
+
+if (inp2="")
+   gtcopy &inp1 &out
+   goto theend
+end-if
+
+! now the multi file case
+
+let iloop = 0
+let parmstr = "("
+loop
+   let iloop = iloop+1
+   if (iloop>30) goto iloopdone
+   let tmpstring = "inp" // "&iloop"
+   let curfile = &tmpstring
+   write "curfile &curfile"
+   if (curfile="") goto iloopdone
+  
+   if (iloop=1)
+      let firstfile = "&inp1"
+      lab2tcl &curfile v1=maxnl v2=maxns keyword=(nl,ns) 'system
+      let minsl = 0
+      let minss = 0
+   else
+      lab2tcl &curfile v1=curnl v2=curns keyword=(nl,ns) 'system
+      gtoffset &firstfile &curfile &offset
+      ibis2tcl &offset v1=fcurol v2=fcuros vartype=(-1,-1) ibisloc=(1,7,1,8)
+      if (fcurol>0.0) let fcurol = fcurol+0.5
+      if (fcurol<0.0) let fcurol = fcurol-0.5
+      if (fcuros>0.0) let fcuros = fcuros+0.5
+      if (fcuros<0.0) let fcuros = fcuros-0.5
+      let curol = $fix(fcurol)
+      let curos = $fix(fcuros)
+      if (curol<minsl) let minsl = curol
+      if (curos<minss) let minss = curos
+      let tval = curol+curnl-1
+      if (tval>maxnl) let maxnl = tval
+      let tval = curos+curns-1
+      if (tval>maxns) let maxns = tval
+   end-if
+      
+   let ushstring = "xxx" // "&key" // "&iloop"
+   ush /bin/rm  -f &ushstring
+   ush ln -s &curfile &ushstring 
+   
+   ibis-gen &mosrec nr=1 nc=6 format=("A99","FULL","FULL","FULL","FULL","DOUB") +
+      data=(0,0,0,0,1.0) datacols=(2,3,4,5,6) +
+      string=("&ushstring") strcols=(1)
+   
+   if (iloop=1) 
+      ibis-copy &mosrec &mosfile
+   else
+      icat (&mosfile,&mosrec) &mostemp 'v
+      ibis-copy &mostemp &mosfile
+   end-if
+   
+   let parmstr = parmstr // "&ushstring" // ","
+end-loop
+
+iloopdone>
+
+if (mooreopt<1.001)
+   let moorestring = "moorepow=1.0"
+else-if (mooreopt>8.1)
+   let moorestring = "'mooremax"
+else
+   let moorestring = "moorepow=" // "&mooreopt"
+end-if
+
+ibis-l &mosfile cols=(1,6) cfor="%45s%11.5f"
+let maxnl = maxnl-minsl+1
+let maxns = maxns-minss+1
+
+featherv +
+ inp=&parmstr +
+ &mosfile,&firstfile) +
+ out=&out sl=&minsl ss=&minss nl=&maxnl ns=&maxns toler=&toler +
+ dfeather=&dfeather  moorefac=&moorefac 'factor 'progress 'noramp 'geotiff +
+ &moorestring
+
+let ushstring = "xxx" // "&key" // "*"
+ush /bin/rm -f &ushstring
+
+theend>
+end-proc
+.TITLE
+FTHMOS - automatically mosaic and feather a bunch of GeoTIFF images
+.HELP
+PURPOSE
+     
+     
+CALL
+
+      
+  
+OPERATION
+
+
+PERFORMANCE
+
+
+.PAGE
+
+Restrictions
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 03 Jan, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+ 
+.level1
+.var key
+used to make temp files unique
+.var inp
+input images, require GeoTIFF labels
+.var out
+output image with GeoTIFF label
+.var toler
+passed to featherv (see)
+.var mooreopt
+1.0 does linear feather in overlap
+1.1 to 8.0 nonlinear feather power
+9.0 applies mooremax in featherv
+.END

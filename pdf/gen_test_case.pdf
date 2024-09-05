@@ -1,0 +1,55 @@
+procedure	! gen_test_case
+
+local found integer
+
+body
+
+let $switch=512
+let _onfail="continue"
+file2tcl scratch val=found
+if (found=0) ush mkdir scratch
+file2tcl temp.txt val=found
+if (found=0) ush date > temp.txt
+file2tcl rawtst val=found
+if (found=0) ush mkdir rawtst
+file2tcl finaltst val=found
+if (found=0) ush mkdir finaltst
+!goto start
+
+!-----------------------------------------------------------------
+
+!	Call AFIDS procedures to establish the master scene
+!	and co-register the additional bands for the master scene
+!	along with 1 additional scene (refer to JPL datasets O & N)
+
+master_setup					! Create master
+additionals_part1 L5155038_03820090906		! other bands
+
+!	Second dataset
+secondary L71155038_03820090914			! band 3
+additionals_part1 L71155038_03820090914		! other bands
+
+!-----------------------------------------------------------------
+
+!	Generate the ndvi, cloud mask (BG and BFRAC not used)
+
+gen_5classes L5155038_03820090906
+gen_5classes L71155038_03820090914
+
+!-----------------------------------------------------------------
+!	Generate the files that contains the points of interest (136-140)
+!start>
+gen_classes_35 L5155038_03820090906 L71155038_03820090914
+
+!-----------------------------------------------------------------
+
+!	Connected components & final long-lat text file
+
+gen_ll_file L5155038_038 20090906 _L71155038_038 20090914
+
+!------------------------------------------------------------------------------
+
+adrg_pts L5155038_03820090906_L71155038_03820090914
+
+theend>
+end-proc

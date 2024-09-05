@@ -1,0 +1,146 @@
+procedure	! coregprimwv2
+
+parm pan string def="10MAY16183214-P1BS-052366900030_01_P001"
+parm ms string def="10MAY16183214-M1BS-052366900030_01_P001"
+parm elevdata string def="/mnt/vd1/wlb/svn_1069/install/data/vdev/port_gaston_elv.hlf"
+parm basedata string def="/mnt/vd1/wlb/svn_1069/install/data/vdev/port_gaston_doq.img"
+
+local raw string init="_raw"
+local img string init=".img"
+local txt string init=".txt"
+local ps string init="_ps"
+local o string init="_o"
+
+local b1 string init="_b1"
+local b2 string init="_b2"
+local b3 string init="_b3"
+local b4 string init="_b4"
+local b5 string init="_b5"
+local b6 string init="_b6"
+local b7 string init="_b7"
+local b8 string init="_b8"
+
+local found integer
+local failed string init="failed"
+
+body
+
+write "coregprimwv2 version Wed Jun 22 2011"
+
+write "pan &pan"
+write "ms &ms"
+write "elevdata &elevdata"
+write "basedata &basedata"
+
+file2tcl &pan&o&img val=found
+if (found=1) goto checkms
+
+! coregister pan
+
+ush ln -fs ../&pan&raw&img rawtst/&pan&raw&img
+
+! was      mpix=0.5 mpixf=1.0 +
+ikqbcall2 key=tst +
+     rawimg="ignore" +
+     rawmeta="" rawhdr="" +
+     reuselog="&pan&raw" +
+     outimg=&pan&o&img +
+     nah=950 nav=950 rtype=master +
+     dted="&elevdata" +
+     base="&basedata" rawtype=nitf senstype=q +
+     mpix=0.61 mpixf=1.22 +
+     maptype=pc xvdonly=n +
+     rastype=area
+
+checkms>
+
+file2tcl &pan&o&img val=found
+if (found=0)
+  ush date > &ms&failed
+  goto theend
+end-if
+
+file2tcl &ms&failed val=found	! Check to see if this image failed in the past
+if (found=1) ush rm &ms&failed	! Since we are had success ... delete the old 'failed' file
+
+file2tcl &ms&o&b1&img val=found
+if (found=1)
+  goto theend
+else
+  write "coregistering bands 1-8"
+end-if
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b1&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=1 +
+     outimg= &ms&o&b1&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b2&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=2 +
+     outimg= &ms&o&b2&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b3&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=3 +
+     outimg= &ms&o&b3&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b4&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=4 +
+     outimg= &ms&o&b4&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b5&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=5 +
+     outimg= &ms&o&b5&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b6&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=6 +
+     outimg= &ms&o&b6&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b7&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=7 +
+     outimg= &ms&o&b7&img
+
+ikqbwarpad2 key=tst +
+     fnamein="&pan&o&img" +
+     reuselog="&ms&ps&b8&img" +
+     usebob="&pan&raw" +
+     rawimg="ignore" +
+     rawmeta="" +
+     senstype="w" rawtype="nitf" nitfband=8 band=8 +
+     outimg= &ms&o&b8&img
+
+theend>
+end-proc

@@ -1,0 +1,77 @@
+process help=*
+PARM INP         TYPE=(STRING,99) COUNT=(1:2)
+PARM START       TYPE=INTEGER DEFAULT=1
+PARM COUNT       TYPE=INTEGER DEFAULT=0
+PARM ENUM        TYPE=INTEGER DEFAULT=-1
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+EXECUTION:
+
+Example
+
+lplist inp=A start=B count=C enum=D
+
+TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim          26 Apr 2007
+
+.LEVEL1
+.VARIABLE INP
+The user needs to specify
+the .slp to list.  The user
+can also specify the
+corresponding .dlp file
+to list together.  The
+".slp" MUST be specified
+whereas the .dlp file
+is optional.  The .slp
+file must be specified
+before the .dlp file.
+
+For example:
+inp=(lake.slp)
+inp=(lake.slp, lake.dlp)
+.VARIABLE START
+This variable specifies the
+entity number to start
+listing.  Default is the
+1st entity if not user
+specified.  FIRST ENTITY
+STARTS AT 1.
+
+For example:
+to start listing at entity
+20 - 
+start=20
+.VARIABLE COUNT
+This variable specifies
+how many entities to
+list.  0 value for
+count means list all
+entities.
+
+For example:
+to list 10 entities - 
+count=10
+to list ALL entities - 
+count=0
+.VARIABLE ENUM
+This variable specifies
+the number of vertices to
+list for each entity.
+Default is -1 (list all
+vertices.)
+
+For example:
+to list 5 vertices per
+entity - 
+enum=5
+to list all vertices
+for each entity - 
+enum=-1
+
+.END

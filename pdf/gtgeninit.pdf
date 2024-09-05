@@ -1,0 +1,18 @@
+procedure	! gtgeninit
+
+parm f1 string
+parm f2 string
+
+body
+
+gtgen &f1 &f2 'tiecnvrt 'add +
+      geotiff=("ModelTiePointTag=(0.0,0.0,0,-112.0,35.0,0.0)", +
+      "ModelTiePointTag=(100000.0,0.0,0,-111.0,35.0,0.0)", +
+      "ModelTiePointTag=(0.0,100000.0,0,-112.0,34.0,0.0)", +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+      "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+end-proc

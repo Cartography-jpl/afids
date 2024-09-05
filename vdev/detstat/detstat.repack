@@ -1,0 +1,6 @@
+$ vpack detstat.com -mixed -
+	-s detstat.c -
+	-i detstat.imake -
+	-p detstat.pdf -
+	-t tstdetstat.pdf
+$ Exit

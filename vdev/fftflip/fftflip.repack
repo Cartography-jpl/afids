@@ -1,0 +1,6 @@
+$ vpack fftflip.com -mixed -
+	-s fftflip.f -
+	-i fftflip.imake -
+	-p fftflip.pdf -
+	-t tstfftflip.pdf tstfftflip.log
+$ Exit

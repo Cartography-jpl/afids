@@ -1,0 +1,46 @@
+procedure
+refgbl $echo
+body
+let _onfail="return"
+let $echo="yes"
+!
+
+gen x1 100 100 'byte
+gen x2 100 100 ival=5 'byte
+difpica (../test_data/alcase1314s.img, ~/vdev_test_data_backup/alcase1314s.img)
+difpica inp=(../test_data/alcase1314s.img, ~/vdev_test_data_backup/alcase1314s.img)
+difpica inp=(../test_data/alcase1314su.img, ~/vdev_test_data_backup/alcase1314su.img)
+difpica inp=(../test_data/alcase2244m.img, ~/vdev_test_data_backup/alcase2244m.img)
+difpica inp=(../test_data/alcase2244mu.img, ~/vdev_test_data_backup/alcase2244mu.img)
+difpica inp=(../test_data/bob.img, ~/vdev_test_data_backup/bob.img)
+difpica inp=(../test_data/qb1_cib.img, ~/vdev_test_data_backup/qb1_cib.img)
+difpica inp=(../test_data/qb1_iraq_dem84.hlf, ~/vdev_test_data_backup/qb1_iraq_dem84.hlf)
+difpica inp=(../test_data/qb1_iraq_dem.hlf, ~/vdev_test_data_backup/qb1_iraq_dem.hlf)
+difpica inp=(../test_data/xxchip2.img, ~/vdev_test_data_backup/xxchip2.back)
+difpica inp=(x1, x2)
+!
+!gen x1 100 100 'half
+!gen x2 100 100 ival=5 'half
+!difpic (x1, x2)
+!
+!gen x1 10 10 linc=2 sinc=2
+!gen x2 10 10 ival=6
+!difpic (x1, x2)
+!
+!gen x1 100 100 'full
+!gen x2 100 100 ival=5 'full
+!difpic (x1, x2)
+!
+!gen x1 100 100 'real4
+!gen x2 100 100 ival=5 'real4
+!difpic (x1, x2)
+!
+!gen x1 100 100 'real8
+!gen x2 100 100 ival=5 'real8
+!difpic (x1, x2)
+!
+!gen x1 100 100 'comp
+!gen x2 100 100 ival=5 'comp
+!difpic (x1, x2) difpicc
+!
+end-proc

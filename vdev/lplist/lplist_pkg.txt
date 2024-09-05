@@ -1,0 +1,184 @@
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    1884 Aug  7  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    1781 Jul  5  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    1526 Jul  4  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1781 Jul  5  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1526 Jul  4  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1781 Jul  5  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1526 Jul  4  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1801 Jul 24  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1776 Jul 18  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1781 Jul  5  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	1526 Jul  4  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1884 Aug 28  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1884 Aug 24  2007 lplist.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	1884 Aug 28  2007 lplist.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1884 Aug  5  2007 lplist.c
+raid20.dir:-rw-r--r-- 1 rjb nobody  		2418 May 10  2007 lplist.c
+raid20.dir:-rw-r--r-- 1 rjb nobody  		2439 May 10  2007 lplist.c~
+raid27.dir:-rwxrwxrwx 1 rkf users    		1564 May  1  2007 lplist.c*
+raid27.dir:-rwxrwxrwx 1 rkf users  		1466 May 14  2007 lplist.c*
+raid27.dir:-rwxrwxrwx 1 rkf users  		2418 May 10  2007 lplist.c*
+raid27.dir:-rwxrwxrwx 1 rkf users  		2439 May 10  2007 lplist.c~*
+tahat_home_pkim.dir:-rw-r--r--  1 pkim users  	2418 May 10  2007 lplist.c
+tahat_home_pkim.dir:-rw-r--r--  1 pkim users  	2439 May 10  2007 lplist.c~
+
+
+raid19_home.dir:-r--r--r-- 1 azobrist nobody    9655 Aug  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim     nobody    8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody   	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody    	8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	8675 Jul 18  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8675 Jul 18  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	8679 Jul  5  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	8425 Jul  4  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       11237 Aug 28  2007 lplist.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	9655 Aug  5  2007 lplist.com
+raid27.dir:-rwxrwxrwx 1 rkf users     		5269 Jul  2  2007 lplist.com*
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    1322 Aug  7  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody     479 Jul  4  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	 479 Jul  4  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	 479 Jul  4  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       	 479 Jul 16  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	 479 Jul  4  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	2589 Aug 24  2007 lplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1322 Aug  5  2007 lplist.pdf
+raid20.dir:-rw-r--r-- 1 rjb nobody   		 418 May  7  2007 lplist.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users   		 479 Jul  2  2007 lplist.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users   		 418 May  7  2007 lplist.pdf*
+tahat_home_pkim.dir:-rw-r--r--  1 pkim users   	 418 May  7  2007 lplist.pdf
+
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    163 Aug  7  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    143 Jul  4  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	143 Jul  4  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        143 Jul  4  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        149 Jul 26  2007 #tstlplist.pdf#
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        148 Jul 24  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        148 Jul 24  2007 tstlplist.pdf~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        143 Jul  4  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        477 Aug 24  2007 tstlplist.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        163 Aug 23  2007 tstlplist.pdf~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        163 Aug  5  2007 tstlplist.pdf
+raid20.dir:-rw-r--r-- 1 rjb nobody   		143 May 10  2007 tstlplist.pdf
+raid20.dir:-rw-r--r-- 1 rjb nobody   		143 May 10  2007 tstlplist.pdf~
+raid27.dir:-rwxrwxrwx 1 rkf users     		154 May  3  2007 tstlplist.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users   		143 Jul  2  2007 tstlplist.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users   		143 May 10  2007 tstlplist.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users   		143 May 10  2007 tstlplist.pdf~*
+tahat_home_pkim.dir:-rw-r--r--  1 pkim users   	143 May 10  2007 tstlplist.pdf
+tahat_home_pkim.dir:-rw-r--r--  1 pkim users   	143 May 10  2007 tstlplist.pdf~
+
+
+
+
+
+
+
+
+
+
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff  	1781 Jul  5  2007 lplist.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1801 Jul 24  2007 lplist.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1776 Jul 18  2007 lplist.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	1781 Jul  5  2007 lplist.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	1884 Aug 28  2007 lplist.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1884 Aug 24  2007 lplist.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   	1884 Aug 28  2007 lplist.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1884 Aug  5  2007 lplist.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	1884 Aug  7  2007 lplist.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	1781 Jul  5  2007 lplist.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	1781 Jul  5  2007 lplist.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	1884 Aug  7  2007 lplist.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	1781 Jul  5  2007 lplist.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	1781 Jul  5  2007 lplist.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	1526 Jul  4  2007 lplist.c~
+Data5_dir.txt:-rw-r--r--  1 rjb  staff   	2418 May 10  2007 lplist.c
+Data5_dir.txt:-rw-r--r--  1 rjb  staff   	2439 May 10  2007 lplist.c~
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    1564 May  1  2007 lplist.c*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator   	1466 May 14  2007 lplist.c*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator   	2418 May 10  2007 lplist.c*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator   	2439 May 10  2007 lplist.c~*
+
+Data0_dir.txt:-rw-r--r--   1 rjb  staff     	8679 Jul  5  2007 lplist.com
+Data0_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data0_dir.txt:-rw-r--r--   1 rjb  staff       	8675 Jul 18  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8675 Jul 18  2007 lplist.com
+Data0_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data0_dir.txt:-rw-r--r--    1 rjb  staff       11237 Aug 28  2007 lplist.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	9655 Aug  5  2007 lplist.com
+Data2_dir.txt:-r--r--r--  1 rjb  staff       	9655 Aug  5  2007 lplist.com
+Data2_dir.txt:-rw-r--r--   1 rjb  staff     	8679 Jul  5  2007 lplist.com
+Data2_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data2_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data4_dir.txt:-r--r--r--  1 rjb  staff       	9655 Aug  5  2007 lplist.com
+Data4_dir.txt:-rw-r--r--   1 rjb  staff     	8679 Jul  5  2007 lplist.com
+Data4_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data4_dir.txt:-rw-r--r--    1 rjb  staff      	8425 Jul  4  2007 lplist.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	8679 Jul  5  2007 lplist.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	8425 Jul  4  2007 lplist.com
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    5269 Jul  2  2007 lplist.com*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	 479 Jul 16  2007 lplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	2589 Aug 24  2007 lplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1322 Aug  5  2007 lplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	1322 Aug  7  2007 lplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	1322 Aug  7  2007 lplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	 479 Jul  4  2007 lplist.pdf
+Data5_dir.txt:-rw-r--r--  1 rjb  staff    	 418 May  7  2007 lplist.pdf
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator     479 Jul  2  2007 lplist.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator     418 May  7  2007 lplist.pdf*
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	149 Jul 26  2007 #tstlplist.pdf#
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	148 Jul 24  2007 tstlplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	148 Jul 24  2007 tstlplist.pdf~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	477 Aug 24  2007 tstlplist.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	163 Aug 23  2007 tstlplist.pdf~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	163 Aug  5  2007 tstlplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff        	163 Aug  7  2007 tstlplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff        	163 Aug  7  2007 tstlplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	143 Jul  4  2007 tstlplist.pdf
+Data5_dir.txt:-rw-r--r--  1 rjb  staff    	143 May 10  2007 tstlplist.pdf
+Data5_dir.txt:-rw-r--r--  1 rjb  staff    	143 May 10  2007 tstlplist.pdf~
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    154 May  3  2007 tstlplist.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    143 Jul  2  2007 tstlplist.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    143 May 10  2007 tstlplist.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    143 May 10  2007 tstlplist.pdf~*
+

@@ -1,0 +1,12 @@
+dist_afidsdoc_DATA =
+if WITH_AFIDS_A
+dist_afidsdoc_DATA+= $(srcdoc)/AFIDS_Server_Rack.pdf
+dist_afidsdoc_DATA+= $(srcdoc)/AFIDS_User_Guide_v4p.pdf
+dist_afidsdoc_DATA+= $(srcdoc)/NLC_User_Guide_v12.doc
+dist_afidsdoc_DATA+= $(srcdoc)/NLC_User_Guide_v12.pdf
+dist_afidsdoc_DATA+= $(srcdoc)/Readme_VICAR_Install_copy.txt 
+dist_afidsdoc_DATA+= $(srcdoc)/Software_Release_Update_4d.pdf
+dist_afidsdoc_DATA+= $(srcdoc)/help.html
+dist_afidsdoc_DATA+= $(srcdoc)/help_nlc.htm
+endif
+dist_afidsdoc_DATA+= $(srcdoc)/vug.tar

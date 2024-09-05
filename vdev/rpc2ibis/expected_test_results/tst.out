@@ -1,0 +1,285 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+ibis-gen xxxa nr=80 nc=2 format=("DOUB","DOUB")
+Beginning VICAR task ibis
+label-list ../test_data/xxchip2.img
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File ../test_data/xxchip2.img ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a SUN-SOLR host
+                1 bands
+                1085 lines per band
+                1088 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+NITF_IMAGEDATIM='05072951ZMAY03'
+NITF_CETAG='RPC00B'
+NITF_ACQ_DATE='20030505072952'
+NITF_OBL_ANG='28.55'
+NITF_ANGLE_TO_NORTH='270'
+NITF_SUN_EL='+62.5'
+NITF_SUN_AZ='129.6'
+NITF_MEAN_GSD='029.8'
+NITF_DYNAMIC_RANGE='02047'
+NITF_ROLL_ANG='-28.03'
+RPC_FIELD1='1'
+RPC_FIELD2='0019.88'
+RPC_FIELD3='0000.15'
+RPC_FIELD4='1280'
+RPC_FIELD5='13062'
+RPC_FIELD6='+35.8606'
+RPC_FIELD7='+044.9534'
+RPC_FIELD8='+1017'
+RPC_FIELD9='002921'
+RPC_FIELD10='14238'
+RPC_FIELD11='+00.0209'
+RPC_FIELD12='+000.1239'
+RPC_FIELD13='+0634'
+RPC_FIELD141='+0.132748E-1'
+RPC_FIELD142='-0.147510E+0'
+RPC_FIELD143='-0.113465E+1'
+RPC_FIELD144='-0.138959E-1'
+RPC_FIELD145='+0.200180E-2'
+RPC_FIELD146='+0.635242E-4'
+RPC_FIELD147='+0.115861E-3'
+RPC_FIELD148='-0.286551E-2'
+RPC_FIELD149='-0.778726E-2'
+RPC_FIELD1410='+0.388308E-5'
+RPC_FIELD1411='-0.126487E-5'
+RPC_FIELD1412='+0.788107E-5'
+RPC_FIELD1413='+0.365929E-4'
+RPC_FIELD1414='+0.232154E-5'
+RPC_FIELD1415='-0.225421E-4'
+RPC_FIELD1416='-0.208933E-4'
+RPC_FIELD1417='+0.180910E-4'
+RPC_FIELD1418='+0.363930E-6'
+RPC_FIELD1419='-0.939815E-6'
+RPC_FIELD1420='-0.431269E-7'
+RPC_FIELD151='+0.100000E+1'
+RPC_FIELD152='+0.380256E-2'
+RPC_FIELD153='+0.643151E-2'
+RPC_FIELD154='+0.314790E-3'
+RPC_FIELD155='+0.184958E-4'
+RPC_FIELD156='-0.198243E-5'
+RPC_FIELD157='-0.116422E-5'
+RPC_FIELD158='-0.192637E-4'
+RPC_FIELD159='+0.722401E-4'
+RPC_FIELD1510='-0.161779E-4'
+RPC_FIELD1511='+0.495049E-5'
+RPC_FIELD1512='+0.126794E-5'
+RPC_FIELD1513='+0.190771E-3'
+RPC_FIELD1514='-0.157429E-6'
+RPC_FIELD1515='+0.246815E-4'
+RPC_FIELD1516='+0.491660E-3'
+RPC_FIELD1517='-0.541022E-6'
+RPC_FIELD1518='+0.320900E-6'
+RPC_FIELD1519='+0.181401E-4'
+RPC_FIELD1520='+0.143592E-6'
+RPC_FIELD161='-0.104025E-1'
+RPC_FIELD162='+0.968850E+0'
+RPC_FIELD163='-0.487887E-3'
+RPC_FIELD164='-0.325142E-1'
+RPC_FIELD165='-0.710444E-3'
+RPC_FIELD166='+0.217572E-3'
+RPC_FIELD167='-0.654969E-4'
+RPC_FIELD168='+0.107384E-1'
+RPC_FIELD169='-0.519453E-5'
+RPC_FIELD1610='-0.176761E-4'
+RPC_FIELD1611='-0.121058E-5'
+RPC_FIELD1612='+0.106017E-3'
+RPC_FIELD1613='+0.541226E-5'
+RPC_FIELD1614='-0.389680E-5'
+RPC_FIELD1615='+0.103307E-4'
+RPC_FIELD1616='+0.584016E-4'
+RPC_FIELD1617='+0.380777E-7'
+RPC_FIELD1618='+0.901765E-5'
+RPC_FIELD1619='+0.165988E-5'
+RPC_FIELD1620='-0.119374E-6'
+RPC_FIELD171='+0.100000E+1'
+RPC_FIELD172='-0.319831E-3'
+RPC_FIELD173='+0.681092E-3'
+RPC_FIELD174='-0.549762E-3'
+RPC_FIELD175='-0.267977E-5'
+RPC_FIELD176='-0.619388E-5'
+RPC_FIELD177='+0.267975E-7'
+RPC_FIELD178='+0.476371E-5'
+RPC_FIELD179='-0.147985E-4'
+RPC_FIELD1710='-0.423457E-5'
+RPC_FIELD1711='+0.144009E-7'
+RPC_FIELD1712='-0.107213E-5'
+RPC_FIELD1713='+0.110590E-6'
+RPC_FIELD1714='+0.410217E-7'
+RPC_FIELD1715='-0.169482E-6'
+RPC_FIELD1716='+0.108104E-5'
+RPC_FIELD1717='+0.000000E+0'
+RPC_FIELD1718='-0.233038E-6'
+RPC_FIELD1719='+0.186413E-7'
+RPC_FIELD1720='-0.135637E-7'
+CHIP_PARENT_OFFS_LINE=''
+CHIP_PARENT_OFFS_SAMP=''
+NITF_CORNERLON1='44.83170930595'
+NITF_CORNERLAT1='35.87172707408'
+NITF_CORNERELV1='3.766367775586E+02'
+NITF_CORNERLON2='44.8412822999'
+NITF_CORNERLAT2='35.87150787181'
+NITF_CORNERELV2='4.323969211227E+02'
+NITF_CORNERLON3='44.84115327505'
+NITF_CORNERLAT3='35.86525567113'
+NITF_CORNERELV3='4.088602900966E+02'
+NITF_CORNERLON4='44.83174717856'
+NITF_CORNERLAT4='35.86546526031'
+NITF_CORNERELV4='3.769057829475E+02'
+NITF_CENTERLON='4.483647301486E+01'
+NITF_CENTERLAT='3.586848896933E+01'
+NITF_CENTERELV='4.124234325431E+02'
+NITF_CENTER_GSD='8.816892077020E-01'
+NITF_CENTER_ELEV_LOOK_ANG='5.820481361276E+01'
+NITF_CENTER_AZIM='3.207458726385E-01'
+NITF_CENTER_UPISUP='9.004806560992E+01'
+MODELTRANSFORMATIONTAG=
+'(0.00000938738,-0.0000001377059,0,44.831894043966,-0.0000002082474,-0.0000062516683,0,35.871719164913,0,0,0,0,0,0,0,1)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GEOGANGULARUNITSGEOKEY='9102(Angular_Degree)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: VTIFF3 -- User: alz -- Tue Mar 15 18:57:34 2005 ----
+---- Task: GEOMV -- User: alz -- Fri Aug 18 15:05:29 2006 ----
+ 
+************************************************************
+rpc2ibis (../test_data/xxchip2.img,xxxa)
+Beginning VICAR task rpc2ibis
+rpc2ibis version Wed Jan  2 2008
+processing RPC00B
+ibis-l xxxa  csiz=(18,18) cfor="%16.14 f%16.9f"
+Beginning VICAR task ibis
+ 
+Number of Rows:80  Number of Columns: 2       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:30
++-------+---------------
+     C:1             C:2
++-------+---------------
+%16.14 f     1.000000000
+%16.14 f  1041.000000000
+%16.14 f     1.000000000
+%16.14 f    19.880000000
+%16.14 f     0.150000000
+%16.14 f  1280.000000000
+%16.14 f 13062.000000000
+%16.14 f    35.860600000
+%16.14 f    44.953400000
+%16.14 f  1017.000000000
+%16.14 f  2921.000000000
+%16.14 f 14238.000000000
+%16.14 f     0.020900000
+%16.14 f     0.123900000
+%16.14 f   634.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+ 
+Rows: 31:60
++-------+---------------
+     C:1             C:2
++-------+---------------
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+ 
+Rows: 61:80
++-------+---------------
+     C:1             C:2
++-------+---------------
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+%16.14 f     0.000000000
+end-proc

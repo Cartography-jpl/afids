@@ -1,0 +1,34 @@
+procedure
+parm key string
+parm band string
+parm path int
+parm row int
+parm area string
+
+local pathrow int
+local zfile string
+local cfile string
+local areafile string
+body
+
+let pathrow = path*100+row
+let zfile = "&key" // "_&band" // "_zfile"
+let cfile = "&key" // "_&band" // "_cfile"
+let areafile = "scratch/&key" // "&area" // "&band" // "fmosfile"
+
+rowop2 &cfile xxxanalz keycol=5 range=(&pathrow,&pathrow) 'select
+mf3 xxxanalz f="c14=c14*100+c15"
+ibis-l xxxanalz cols=(2,5,14,22,12,18) 'format
+ibis-l xxxanalz 'format
+
+rowop2 &zfile xxxanalz keycol=5 range=(&pathrow,&pathrow) 'select
+mf3 xxxanalz f="c11=@rand"
+sort xxxanalz sortcol=11
+ibis-l xxxanalz nr=60 cols=(2,5,8,9,12,13) 'format
+
+rowop2 &areafile xxxanalz keycol=8 range=(&pathrow,&pathrow) 'select
+ibis-l xxxanalz cols=(1,6,8,9,10,11,12) 'format
+ibis-l xxxanalz 'format
+
+end-proc
+ 

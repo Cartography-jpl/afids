@@ -1,0 +1,6 @@
+$ vpack cvdnorm.com -mixed -
+	-s cvdnorm.c -
+	-i cvdnorm.imake -
+	-p cvdnorm.pdf -
+	-t tstcvdnorm.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack medimg.com -mixed -
+	-s medimg.c ImageUtils.c ImageUtils.h -
+	-i medimg.imake -
+	-p medimg.pdf -
+	-t tstmedimg.pdf
+$ Exit

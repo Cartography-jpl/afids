@@ -1,0 +1,4 @@
+$ vpack rpcinv.com -mixed -
+	-p rpcinv.pdf -
+	-t tstrpcinv.pdf
+$ Exit

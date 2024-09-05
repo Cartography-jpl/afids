@@ -1,0 +1,6 @@
+$ vpack imlog.com -mixed -
+	-s imlog.c -
+	-i imlog.imake -
+	-p imlog.pdf -
+	-t tstimlog.pdf
+$ Exit

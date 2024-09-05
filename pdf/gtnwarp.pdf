@@ -1,0 +1,237 @@
+procedure help=*
+parm inp type=(string,99) count=1
+parm out type=(string,99) count=1 default=""
+parm ref type=(string,99) count=1
+parm dem type=(string,99) count=1 default=""
+parm tiedata real count=1:600 default=0
+parm tie type=(string,99) count=1 default=""
+parm cols type=integer count=4 default=(1,2,3,4)
+parm func type = (string,20) count = 1 default="RPCN10" +
+ valid=("RPCN20","RPCN10","RPCN11","RPCNZT","RPCNZ2", +
+ "RPCNZ1","RPCROLL", "THREEPOINT", "TRIANGLE", "LINEAR", "KEYSTONE", +
+ "QUAD", "CUBIC")
+parm typref type=keyword count=(0:1) valid=(coverref,coverinp,maponly) +
+     default=coverinp
+parm seq type=string def="q"
+
+! This will hold the IBIS file we use to maintain the RPC,
+! both from the input file and the final fitted one.
+local xxrpc type=(string,99)
+
+! This will hold the resulting RPC, as a 1x1 image with the RPC
+! label
+local xxrpc2 type=(string,99)
+
+! This holds the data that we fit for, the longitude, latitude, height,
+! line and sample
+local xxf type=(string,99)
+
+! Scratch variable for reading in the RPC type
+local cetag type=(string,7)
+
+! Type of RPC we are working with, either "A" or "B"
+local rpctype type=(string,2)
+
+body
+write "gtnwarp version 24-mar-09"
+
+let xxrpc = "xxrpc" // "&seq"
+let xxrpc2 = "xxrpc2" // "&seq"
+let xxf = "xxf" // "&seq"
+!--------------------------------------------------------------------------
+! Error checks for functions we don't have yet.
+!--------------------------------------------------------------------------
+
+if ("&typref" <> "maponly")
+   write "We currently only work with 'maponly"
+   goto theend
+end-if
+
+if (tie="")
+   write "We currently support only IBIS files for tiepoints"
+   goto theend
+end-if
+
+if (func="THREEPOINT" or func="TRIANGLE" or func="LINEAR" or +
+    func="KEYSTONE" or func="QUAD" or func="CUBIC")
+   write "We currently only work the RPC functions"
+   goto theend
+else
+
+!==========================================================================
+! Process RPC functions.
+!==========================================================================
+
+!--------------------------------------------------------------------------
+! Read the type of the RPC, needed by ibislsqf later.
+!--------------------------------------------------------------------------
+
+plab2tcl &inp property=Geotiff val=cetag keyword=NITF_CETAG vtype=0
+if (cetag="RPC00B")
+   let rpctype = "B"
+else-if (cetag="RPC00A")
+   let rpctype = "A"
+else
+   write "MSG: NO CETAG ON THE LOGGED IMAGE"
+   goto theend
+end-if
+
+!--------------------------------------------------------------------------
+! Copy the input tie point data into a larger ibis file that we run pixmap
+! on.
+!
+! The file xxf contains the data we are fitting the RPC to. We have the
+! following columns in it:
+! C1 : Input line
+! C2 : Input sample
+! C3 : Reference line
+! C4 : Reference sample
+! C5 : Dem line
+! C6 : Dem sample
+! C7 : Reference location as longitude
+! C8 : Reference location as latitude
+! C9 : Reference location height.
+!--------------------------------------------------------------------------
+
+ibis-copy &tie &xxf incols=&cols outcols=(1,2,3,4) nc=9
+
+!--------------------------------------------------------------------------
+! Convert reference line and sample to longitude and latitude, then to
+! Dem pixel, then read the height. This fills in C5 - C9
+!--------------------------------------------------------------------------
+
+pixmap (&xxf, &ref) mapcols=(7,8) pixcols=(3,4) 'PIXTOMAP
+pixmap (&xxf, &dem) mapcols=(7,8) pixcols=(5,6) 'MAPTOPIX
+getzval (&dem, &xxf) cols=(5,6,9) win=2
+
+!--------------------------------------------------------------------------
+! Put RPC from input file into a temporary ibis file.
+!
+! The file xxrpc contains the RPC. We have the following columns in it:
+! C1 : The 80 RPC coefficients that we get from the input file.
+! C2 : The scaling we do, also comes from the input file.
+! C3 : After fitting the line portion, contains the RPC
+! C4 : Final RPC, after we have fit the sample portion.
+!--------------------------------------------------------------------------
+
+ibis-gen &xxrpc nr=80 nc=4 deffmt=DOUB
+rpc2ibis (&inp, &xxrpc) cols=(1,2)
+
+!--------------------------------------------------------------------------
+! Scale the lon, lat, height, line, samp file by the RPC. This is needed
+! before doing ibislsqf
+!--------------------------------------------------------------------------
+
+rpcscale (&xxrpc, &xxf) rpccol=2 cols=(7,8,9,1,2) 'scale
+
+!--------------------------------------------------------------------------
+! Fit the rpc for both the line and the sample.
+!--------------------------------------------------------------------------
+
+ibislsqf (&xxf, &xxrpc) func=&func datacol=(7,8,9) depcol=1 +
+  solcol=(1,3) rpctype=&rpctype rpcls=L
+
+ibislsqf (&xxf, &xxrpc) func=&func datacol=(7,8,9) depcol=2 +
+  solcol=(3,4) rpctype=&rpctype rpcls=S
+
+! Make sure that the leading denominator term is still 1.0
+rpcfix21 &xxrpc col=4
+
+!--------------------------------------------------------------------------
+! Write the resulting rpc back to the input file
+!--------------------------------------------------------------------------
+
+ibis2rpc &xxrpc &xxrpc2 ccol=4 scol=2
+gtgenup (&inp, &xxrpc2)
+
+end-if  ! End of process RPC functions
+
+theend>
+end-proc
+.TITLE
+GTNWARP - Warp an image to a reference based on tie points
+.HELP
+PURPOSE
+   This is a variation of gtwarp that takes a set of tie points between a
+   reference image an an input image. The input image is warped to match the
+   reference image.
+
+   This can be used in two modes. Either we can create an output image that
+   is warped to register with  the reference image, or we can update the
+   labels in the input image to supply the information needed for registering
+   without actually do the warping. 
+
+   If we are updating the image, we can either add GeoTIFF labels to map 
+   register the data (the THREEPOINT case), or we can update RPC parameters
+   so that rpcwarp would produce an image registered to the reference image.
+
+   The type of fit we do is controlled by func. This can be "THREEPOINT",
+   meaning we doing a 3 point affine fit, "TRIANGLE" meaning we do a
+   triangulation, "LINEAR", "KEYSTONE", "QUAD" or "CUBIC" meaning we 
+   do a polynomial fit, or any of the RPC fits taken by ibislsqf (e.g., 
+   "RPCN10").
+
+   typeref controls what we do with the fit. A value of 'maponly means we
+   update the input image (only valid for RPC or THREEPOINT fits), while
+   'coverref and 'coverinp produce a warped output image registered to
+   the reference data.
+CALL
+   If we are updating the input file without warping:
+
+   gtnwarp INPUT REF=refile DEM=demfile TIE=ibisifile FUNC=func 'MAPONLY
+     INPUT       is the input data set
+     REF         is the reference data set (must have a GeoTIFF label)
+     DEM         is the elevation data (must be relative to WGS-84). This
+                 is only required for the RPC fits, you can leave this off
+                 if you are doing a THREEPOINT fit.
+     TIE         IBIS file with tie points
+     FUNC        Must be an RPC function or THREEPOINT
+
+  If desired as an alternative to supplying the tie point data set you
+  can list the tiepoints and supply at TIEDATA. This is ordered 
+  (input image line 1, image sample 1, reference line 1, reference sample 1,
+   image line 2 ...).
+
+  If we are warping to produce an output image:
+
+   gtnwarp INPUT OUT REF DEM TIE=ibisifile FUNC=func 'QUALIFIERS
+     INPUT       is the input data set
+     OUT         output data set (will have a GeoTIFF label)
+     REF         is the reference data set (must have a GeoTIFF label)
+     DEM         is the elevation data (must be relative to WGS-84). Only 
+                 needed for RPC functions.
+     TIE         IBIS file with tie points
+     FUNC        Any valid function
+.PAGE
+Original Programmer: Mike Smyth, 30 Mar, 2009
+Current Cognizant Programmer: Mike Smyth
+.LEVEL1
+.VARI INP
+Input file name. If we are using a RPC function, this must contain RPC labels
+.VARI OUT
+Output file name. Will have GeoTIFF label.
+.VARI REF
+Reference file name with GeoTIFF label.
+.VARI DEM
+Elevation data. Must be relative to WGS-84 ellipsoid. Only needed for
+RPC functions.
+.VARI TIEDATA
+Tiepoint data
+.VARI TIE
+IBIS file with tiepoint data.
+.VARI COLS
+Columns of IBIS file for tie points. This give input image line,
+image sample, reference line and reference sample.
+.VARI FUNC
+Function to fit.
+.VARI TYPREF
+'COVERINP - output minimally covers
+         the input data
+'COVERREF - output matches the ref
+         image exactly
+'MAPONLY - add geotiff or RPC label to 
+         input image, but don't warp.
+.VARI SEQ
+Sequence number to use for temporary files.
+.end
+

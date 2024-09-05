@@ -1,0 +1,6 @@
+$ vpack nitflog.com -mixed -
+	-s nitflog.c nitftools.h nitftools.c -
+	-i nitflog.imake -
+	-p nitflog.pdf -
+	-t tstnitflog.pdf devnitflog.pdf
+$ Exit

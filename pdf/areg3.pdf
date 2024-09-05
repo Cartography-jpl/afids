@@ -1,0 +1,336 @@
+!Map Project
+!Produces map-projected images, connected components images, and text file.
+!1) Exactly 12 consective images must be FIRST put into a separate directory.
+!2) Parm1 (key) is a prefix for output files. Keep it short.
+!3) Parm2 (dir) is the path/directory name to the 12 images.
+!4) Parm3 (ref) is the name of one file in the directory, usually a quality middle image.
+procedure
+parm   key        string def="fake"
+parm   dir        string def="/raid4/tll/stat/raw/"
+parm   ref        string def="fake6.ntf"
+parm   dted       type=(string,128) default=""
+parm   base       type=(string,128) default=""
+local  strname    string    !Returned string name variable (with dir path)
+local  strnam2    string    !Returned string name variable (no dir path)
+local  I          integer   !counter
+local  nlr        real      !number of lines (real)
+local  nsr        real      !number of samples (real)
+local  slr        real      !starting line (real)
+local  ssr        real      !starting sample (real)
+local  nl         integer   !number of lines (int)
+local  ns         integer   !number of samples (int)
+local  sl         integer   !starting line (int)
+local  ss         integer   !starting sample (int)
+local  rnlr       real      !rpc image number of lines (real)
+local  rnsr       real      !rpc image number of samples (real)
+local  rslr       real      !rpc image starting line (real)
+local  rssr       real      !rpc image starting sample (real)
+local  rnl        integer   !rpc image number of lines (int)
+local  rns        integer   !rpc image number of samples (int)
+local  rsl        integer   !rpc image starting line (int)
+local  rss        integer   !rpc image starting sample (int)
+local  dtedfile   type=(string,99)
+local  basefile   type=(string,99)
+local  adrgfile   type=(string,99)
+local  outnsuffix type=(string,99)
+local  outn       type=(string,99)
+local  qexist     integer
+local  mosstring  type=(string,128)
+local  mosstring2 type=(string,128)
+local  ullon real
+local  ullat real
+local  urlon real
+local  urlat real
+local  lllon real
+local  lllat real
+local  lrlon real  
+local  lrlat real
+local  afidsroot  type=(string,128)
+local  moslon int
+local  moslat int
+local  moslon2 int
+local  moslat2 int
+
+body
+
+!goto  start
+
+!Make linknames
+ush  ln -s     &"dir"/*.ntf .
+
+vextract2      inp=&ref out=xxtmp_ref
+
+!Start Master Loop
+let            I = 0        !Loop Counter
+
+loop
+
+let            I = I + 1
+write         "I = &I *************************************************"
+!Get the first/top linkname in a directory and return the path/linkname
+!as the string variable "strname". Also remove the linkname's suffix.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "getFMFRS *.ntf") strvar=strname
+
+!If no linkname was found, stop the loop
+if            ("&strname" = "NOMATCH") write "strname = &strname "
+if            ("&strname" = "NOMATCH") break
+
+!Remove directory/path from linkname
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "removePath &strname") strvar=strnam2
+write         "I = &I Input File = &strnam2 "
+
+!Processing
+vextract2      inp=&"strnam2".ntf out=xxtmp0
+gtpwarp        inp=xxtmp0 +
+               out=xxtmp&I +
+               ref=xxtmp_ref +
+               'coverref nah=200 nav=200 fftgrid=(20,20) +
+               fftsize=128 magnify=2 magmin=1 toler=1.5 polyfit=quad accoff=y
+ush rm         &"strnam2".ntf
+end-loop
+f2             inp=(xxtmp1,xxtmp2,xxtmp3,xxtmp4,xxtmp5,xxtmp6,xxtmp7, +
+               xxtmp8,xxtmp9,xxtmp10,xxtmp11,xxtmp12) +
+               out=xxtmp_average +
+               func="(in1+in2+in3+in4+in5+in6+in7+in8+in9+in10+in11+in12)/12"
+f2             inp=(xxtmp1,xxtmp2,xxtmp3,xxtmp4) +
+               out=xxtmp_first4 +
+               func="(in1+in2+in3+in4)/4"
+f2             inp=(xxtmp5,xxtmp6,xxtmp7,xxtmp8) +
+               out=xxtmp_second4 +
+               func="(in1+in2+in3+in4)/4"
+f2             inp=(xxtmp9,xxtmp10,xxtmp11,xxtmp12) +
+               out=xxtmp_third4 +
+               func="(in1+in2+in3+in4)/4"
+!end-proc
+!start>
+
+!Prepare base and dem files
+   if ("&dted"="" or "&base"="")
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLON1 val=ullon vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLAT1 val=ullat vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLON2 val=urlon vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLAT2 val=urlat vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLON3 val=lrlon vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLAT3 val=lrlat vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLON4 val=lllon vtype=8
+      plab2tcl xxtmp_average property=GEOTIFF keyword=NITF_CORNERLAT4 val=lllat vtype=8
+   end-if
+
+   if ("&dted"="" or "&base"="")
+      if (lllon>0.0)
+         let moslon = $fix(lllon-0.2)
+      else
+         let moslon = $fix(-lllon+1.2)*(-1)
+      end-if
+      if (lrlat>0.0)
+         let moslat = $fix(lrlat-0.2)
+      else
+         let moslat = $fix(-lrlat+1.2)*(-1)
+      end-if
+      if (urlon>0.0)
+         let moslon2 = $fix(urlon+1.2)
+      else
+         let moslon2 = $fix(-urlon+0.2)*(-1)
+      end-if
+      if (ullat>0.0)
+         let moslat2 = $fix(ullat+1.2)
+      else
+         let moslat2 = $fix(-ullat+0.2)*(-1)
+      end-if
+
+   write "ullon &ullon ullat &ullat"
+   write "urlon &urlon urlat &urlat"
+   write "lllon &lllon lllat &lllat"
+   write "lrlon &lrlon lrlat &lrlat"
+   write "moslon &moslon moslat &moslat"
+   write "moslon2 &moslon2 moslat2 &moslat2"
+   end-if
+
+   if ("&dted"<>"")
+      let dtedfile = "&dted"
+   else
+      let dtedfile = "d&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2"
+      let outn = "dtedmos/&dtedfile"
+      let outnsuffix = "&outn" // "_dem.img"
+      file2tcl &outnsuffix val=qexist
+      write "qexist &qexist"
+      if (qexist=0)
+         translog AFIDS_ROOT afidsroot
+         let mosstring = "&afidsroot" // "/data/srtmL2_filled"
+         mos_l2_dem slon=&moslon slat=&moslat elon=&moslon2 + 
+            elat=&moslat2 DIRin="&mosstring" +
+            out="&outn" DIRout="./"
+         compresschk &outnsuffix   
+      end-if
+      let dtedfile = "&outnsuffix"
+  end-if
+
+if ("&base"<>"")
+   let basefile = "&base"
+else
+   let basefile = "b&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // ".combo"
+   let outn = "basemos/&basefile"
+   file2tcl &outn val=qexist
+   if (qexist=0)
+      translog AFIDS_ROOT afidsroot
+!      let mosstring = "&afidsroot" // "/data/lsat_band3/"
+!      let mosstring2= "&afidsroot" // "/data/lsat_band4/"
+      let mosstring = "/raid22/lsat_band3/"
+      let mosstring2= "/raid22/lsat_band4/"
+      subset_combo slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 dir1="&mosstring" +
+         outn="&outn" dir2="./" dir3=&"mosstring2"
+   end-if
+   let basefile = "basemos/&basefile"
+end-if
+
+!Make adrg base
+   let adrgfile = "a&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // "_adrg"
+   let outn = "basemos/&adrgfile"
+   file2tcl &outn val=qexist
+   if (qexist=0)
+      translog AFIDS_ROOT afidsroot
+!      let mosstring = "&afidsroot" // "/data/adrg/"
+      let mosstring = "/raid7/adrg_final_maps/"
+      subset_adrg slon=&moslon slat=&moslat elon=&moslon2 +
+         elat=&moslat2 redonly="Y" dir1="&mosstring" +
+         outn="&outn" dir2="./"
+   end-if
+   let adrgfile = "basemos/&adrgfile"
+
+!end-proc
+
+!start>
+
+!let dtedfile = "dtedmos/d-118_34_-116_36_dem.img"
+!let basefile = "basemos/b-118_34_-116_36.combo"
+rpcwarp        inp=(xxtmp_average,&dtedfile) +
+               out=xxtmp_rpc savegrid=rpc1grid +
+               ref=&basefile +
+               'coverinp nah=200 nav=200
+!util6          xxtmp_rpc &basefile
+!gtmove         xxtmp_rpc xxtmp_rpc2 shift=(0,0)
+!gtcopy         xxtmp_rpc2 xxtmp_rpc
+!Muting and filling appears to improve fft matching
+stretch        xxtmp_rpc xxtmp0 table=(0,0.,1,1.,100,100.,101,-100.,9999,-100.) +
+               dnmin=-100 dnmax=9999
+demfix         xxtmp0 xxtmp1 thresh=-1
+!Save grid to apply to orginal image
+gtpwarp        inp=xxtmp1 out=xxtmp0 +
+               ref=&basefile +
+               'coverinp nav=200 nav=200 fftgrid=(19,19) +
+               fftsize=256 magnify=2 magmin=0.25 toler=1.5 polyfit=quad accoff=y +
+               gridout=cor1grid
+!util6          inp=xxtmp0 alt=&basefile
+!start>
+!Get bounding coordinates; offset by 1 to adjust for rounding error
+ibis-l         cor1grid2
+ibis2tcl       cor1grid2 v1=slr v2=ssr v3=nlr v4=nsr +
+               ibisloc=(1,1,1,2,1,3,1,4) vartype=(-1,-1,-1,-1)
+write          "sl= &slr  ss= &ssr  nl= &nlr  ns= &nsr "
+let            sl = $fix(&slr)+1    !rounding offset
+let            ss = $fix(&ssr)+1    !rounding offset
+let            nl = $fix(&nlr)
+let            ns = $fix(&nsr)
+write          "sl= &sl  ss= &ss  nl= &nl  ns= &ns "
+
+!Apply grid to average imputs
+!Average
+geomv         (xxtmp_rpc, cor1grid1,cor1grid3) +
+               out=&"key"_average.hlf size=(&sl,&ss,&nl,&ns) 'znoin
+util6          inp=&"key"_average.hlf +
+               alt=&basefile
+cform         &"key"_average.hlf &"key"_average.byt iran=(0,255) oran=(0,255) 'byte
+!First4
+ibis2tcl       rpc1grid2 v1=rslr v2=rssr v3=rnlr v4=rnsr +
+               ibisloc=(1,1,1,2,1,3,1,4) vartype=(-1,-1,-1,-1)
+ibis-l         rpc1grid2
+let            rsl = $fix(&rslr)+1    !rounding offset
+let            rss = $fix(&rssr)+1    !rounding offset
+let            rnl = $fix(&rnlr)
+let            rns = $fix(&rnsr)
+geomv         (xxtmp_first4,rpc1grid1,rpc1grid3) +
+               out=xxtmp0 size=(&rsl,&rss,&rnl,&rns) 'znoin
+geomv         (xxtmp0,cor1grid1,cor1grid3) +
+              out=&"key"_first4.hlf size=(&sl,&ss,&nl,&ns) 'znoin
+!Second4
+geomv         (xxtmp_second4,rpc1grid1,rpc1grid3) +
+               out=xxtmp0 size=(&rsl,&rss,&rnl,&rns) 'znoin
+geomv         (xxtmp0,cor1grid1,cor1grid3) +
+              out=&"key"_second4.hlf size=(&sl,&ss,&nl,&ns) 'znoin
+!Third4
+geomv         (xxtmp_third4,rpc1grid1,rpc1grid3) +
+               out=xxtmp0 size=(&rsl,&rss,&rnl,&rns) 'znoin
+geomv         (xxtmp0,cor1grid1,cor1grid3) +
+               out=&"key"_third4.hlf size=(&sl,&ss,&nl,&ns) 'znoin
+
+!start>
+!Connected Components Analysis
+!Based on ALZ's comptb2.pdf
+!Make an edge mask (to remove remray filter noise along ragged image edges)
+stretch       &"key"_average.hlf xxtmp0 table=(0,0.,1,128.,4095,128.)
+cform         xxtmp0 xxtmp1 iran=(0,255) oran=(0,255) 'byte
+stretch       xxtmp1 xxtmp0 table=(0,128.,128,0.)
+tfilt         xxtmp0 (xxtmp1,xxtmp2) nsw=29 nlw=29 'low
+stretch       xxtmp1 xxmask table=(0,1.,1,0.,255,0.)
+
+!Set the background threshold. DN above "100" are set to 1, everything below goes to 0.
+!Or try an inverse cosmic ray/noise approach
+median        &"key"_average.hlf out=xxtmp0 nlw=11 nsw=11
+remray       (&"key"_average.hlf,xxtmp0) out=xxtmp1 tol=14
+f2           (&"key"_average.hlf,xxtmp1) out=xxtmp0 func="in1-in2"
+!f2            &"key"_average.hlf out=xxtmp0 func="in1>90" form=byte
+hist          xxtmp0
+concomp       xxtmp0 (&"key"_concomp.hlf,xxtmp1)
+xvd          (&"key"_concomp.hlf,&"key"_concomp.hlf,&"key"_concomp.hlf)
+comptab2     (&"key"_concomp.hlf,&"key"_average.hlf,&"key"_first4.hlf, +
+              &"key"_second4.hlf,&"key"_third4.hlf) xxtmp1
+!ibis-l        xxtmp1
+mf3           xxtmp1 func="c20=(c14>29)*(c16>29)*(c18>29)"  !Normally 70
+!ibis-l        xxtmp1 nr=4
+!ush           xxtmp1 temp.int
+rowop2        xxtmp1 xxtmp0 keycol=20 range=(0.5,1.5) 'select
+ibis-l        xxtmp0 nr=10
+
+gtlist        &"key"_average.hlf
+pixmap       (xxtmp0,&"key"_average.hlf) mapcol=(8,9) pixcol=(6,7) 'pixtomap
+ibis-l        xxtmp0 cols=(1,2,8,9,5,12) +
+              cfor="%5d %5d %11.5f %9.5f %8.2f %8.2f" 'nocol 'nohead +
+              pream=("  comp  size     lon       lat      diameter brightness")
+!Output text file
+ibis-l        xxtmp0 cols=(1,2,8,9,5,12) outfile=&"key"_concomp.txt +
+              cfor="%5d %5d %11.5f %9.5f %8.2f %8.2f" 'nocol 'nohead +
+              pream=("  comp  size     lon       lat      diameter brightness")
+
+cform        &"key"_concomp.hlf &"key"_concompflat.img +
+              irange=(0,1) orange=(0,255) oform=byte
+!xvd          (&"key"_concompflat.img,&"key"_concompflat.img,&"key"_concompflat.img)
+!start>
+!let basefile = "basemos/b-118_34_-116_36.combo"
+!let adrgfile = "basemos/a-118_34_-116_36_adrg_red.img"
+!Make GeoTiff map images and products
+util6         &"key"_average.byt &adrgfile
+stretch       &"key"_average.byt xxtmp2 'gauss
+gtwarp        &adrgfile xxtmp1 ref=xxtmp2 nah=400 nav=400 'coverref
+stretch       xxtmp1 xxtmp3
+vtiff3-fr     (xxtmp3,xxtmp2,xxtmp2) &"key"_ave_map.tif
+vtiff3-fr     xxtmp1 &"key"_map.tif
+vtiff3-fr     &"key"_concompflat.img &"key"_concompflat.tif
+vtiff3-fr     &"key"_average.byt &"key"_ave_image.tif
+vtiff3-fr     &"key"_concomp.hlf &"key"_concomp16bit.tif
+util6         &"key"_average.byt &basefile
+gtwarp        &basefile xxtmp1 ref=xxtmp2 nah=400 nav=400 'coverref
+stretch       xxtmp1 xxtmp3
+vtiff3-fr    (xxtmp3,xxtmp2,xxtmp2) +
+              &"key"_ave_landsat.tif
+
+end-proc
+let           _onfail="continue"
+ush rm        xxtmp*
+ush rm        rpc1grid*
+ush rm        cor1grid*
+ush rm        *.rev*
+end-proc
+

@@ -1,0 +1,4 @@
+$ vpack sclrat.com -mixed -
+	-p sclrat.pdf -
+	-t devsclrat.pdf
+$ Exit

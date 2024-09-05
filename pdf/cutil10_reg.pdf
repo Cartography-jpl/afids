@@ -1,0 +1,249 @@
+!cutil10_reg.pdf
+!L1 AMT Image Processing Subsystem, Build 4.9
+!Latest Change Date: 17APR2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 10 - Register NITF Images
+
+!This VICAR procedure registers one image to a reference image using
+!the gtlabel. (An optional fake gtlabel and also be used.)  Then, the
+!look angle and azimuth (degrees from north) are calculated and printed,
+!and the histogram of a subarea is generated. The purpose is support
+!the MSI calibration effort, but the registration process is generic.
+!Both NITF and VICAR-formatted images are output. !NOTE, this is NOT an 
+!orthorectification. Use cutil11_ortho for orthorectification.
+
+!This code should be executed from the "run10_reg.pdf" program. 
+!**********************************************************************
+
+!Notes on this VICAR procedure:
+!Temporary Files:
+!xx1tmp&id 
+!xx2tmp&id   id is a date/time stamp
+!xx3tmp&id
+!xx4tmp&id
+!xx5tmp&id
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name     Format   Description
+parm  inp      string   !Input NITF filename to be registered
+parm  ref      string   !Reference image
+parm  out      string   !Output filename
+parm  vicgt    integer  def=1 !Input has vicargt label (Y=1; N=0)
+parm  rdir     string   def=/dev/shm/  !use "" for local disk
+parm  area     string   !(sl,ss,nl,ns) (in Parenthesis) for mean/std calculation 
+parm  fftsize  string   def=64   !Size of the fft
+parm  magnify  string   def=4.0  !Initial enlargement of FFT size. Range 1-6 Def=4.0
+parm  polyfit  string   def=quad !Polynominal or triangulation fit. Def=quad
+parm  toler    string   def=3.0  !Controls the number of correlation points. Def=3.0
+parm  seed     string   def=19368400 !Random seed for specifying the order of corr locations.  
+parm  fgrid    string   def=24   !Size of the FFT grid; 24 means 24x24; Range 16-32
+parm  ngrid    string   def=100  !Size of the ultra-fine grid; 100 means 100x100
+!Parameters used within this program
+local id       integer  !Datetime stamp for deleting temporary files
+local found    integer  !File found (1) or not found (1)
+local lon1     string   !Registered lon1 update coordinate
+local lat1     string   !Registered lat1 update coordinate
+local lon2     string   !Registered lon2 update coordinate
+local lat2     string   !Registered lat2 update coordinate
+local lon3     string   !Registered lon3 update coordinate
+local lat3     string   !Registered lat3 update coordinate 
+local lon4     string   !Registered lon4 update coordinate
+local lat4     string   !Registered lat4 update coordinate
+local time     string   !Image Date/Time
+local looka    real     !Look Angle
+local azim     real     !Azimuth (angle from north)
+local gsd      real     !Ground Sample Distance
+local upisup   real     !Up-Is-Up angle
+local acc      real     init=-998.0 !Accuracy Statistic in pixels from gtpwarp
+local cep      real     init=-998.0 !CEP Accuracy Statistic in pixels from gtpwarp
+local lmean    real     !Local mean of the "area" parameter
+local lsigma   real     !Local std of the "area" parameter
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=id 
+write         "***Initial Time = &id Seconds"
+
+!Convert Input image (to be registered) and the Reference images to vicar format
+vextract2    inp=&inp out=&"rdir"xx3tmp&id      !input image
+vextract2    inp=&ref out=&"rdir"xx1tmp&id      !reference image
+
+write         "vicgt = &vicgt"
+!Some test data may NOT have a VALID vicar/geotiff label that is
+!required by this program. If not, create a fake georeference and
+!Lat/Long corner values. Set vicgt=0 to create FAKE labels (in UPF).
+!The following vicgt "if" should be removed from this program (six places,
+!but keep the gtcopy) when the VALID test data becomes available.
+if            (&vicgt = 1) 
+gtcopy        &"rdir"xx3tmp&id &"rdir"xx2tmp&id  !input image
+gtcopy        &"rdir"xx1tmp&id &"rdir"xx5tmp&id  !reference image
+else
+!Add fake input image  georeference
+gtgeninit     &"rdir"xx3tmp&id &"rdir"xx2tmp&id
+label-delete  &"rdir"xx2tmp&id property=geotiff + 
+               keys=(NITF_CORNERLON1=,NITF_CORNERLAT1=,NITF_CORNERLON2=)
+label-delete  &"rdir"xx2tmp&id property=geotiff + 
+               keys=(NITF_CORNERLAT2=,NITF_CORNERLON3=,NITF_CORNERLAT3=)
+label-delete  &"rdir"xx2tmp&id property=geotiff + 
+               keys=(NITF_CORNERLON4=,NITF_CORNERLAT4=)
+label-add     &"rdir"xx2tmp&id property=geotiff +
+               items="NITF_CORNERLON1='144.836',NITF_CORNERLAT1='-59.282',+
+               NITF_CORNERLON2='144.568',NITF_CORNERLAT2='-59.185' "
+label-add     &"rdir"xx2tmp&id property=geotiff +
+               items="NITF_CORNERLON3='144.323',NITF_CORNERLAT3='-59.041',+
+               NITF_CORNERLON4='144.601',NITF_CORNERLAT4='-59.144' "
+!Add fake reference image georeference
+gtgeninit     &"rdir"xx1tmp&id &"rdir"xx5tmp&id   
+label-delete  &"rdir"xx5tmp&id property=geotiff + 
+               keys=(NITF_CORNERLON1=,NITF_CORNERLAT1=,NITF_CORNERLON2=)
+label-delete  &"rdir"xx5tmp&id property=geotiff + 
+               keys=(NITF_CORNERLAT2=,NITF_CORNERLON3=,NITF_CORNERLAT3=)
+label-delete  &"rdir"xx5tmp&id property=geotiff + 
+               keys=(NITF_CORNERLON4=,NITF_CORNERLAT4=)
+label-add     &"rdir"xx5tmp&id property=geotiff +
+               items="NITF_CORNERLON1='144.836',NITF_CORNERLAT1='-59.282',+
+               NITF_CORNERLON2='144.568',NITF_CORNERLAT2='-59.185' "
+label-add     &"rdir"xx5tmp&id property=geotiff +
+               items="NITF_CORNERLON3='144.323',NITF_CORNERLAT3='-59.041',+
+               NITF_CORNERLON4='144.601',NITF_CORNERLAT4='-59.144' "
+end-if
+
+!Registration
+gtpwarp        inp=&"rdir"xx2tmp&id ref=&"rdir"xx5tmp&id +
+               out=&"rdir"xx4tmp&id toler=&toler seed=&seed seq=&id echo=no +
+               nav=&ngrid nah=&ngrid fftsize=&fftsize +
+               fftgrid=(&"fgrid",&"fgrid") magnify=&magnify +
+               magmin=1 polyfit=&polyfit accoff=n autofit=20 redo=40 'coverref
+
+!Output the registered file
+!Vicar output Format
+gtcopy        &"rdir"xx4tmp&id out=&"out".hlf
+
+!Create NITF output File
+vicar2ntf      inp=&"rdir"xx4tmp&id out=&"out".ntf pvtype="SI"
+!**********************************************************************
+
+let           _onfail="continue"
+!Extract Accuracy Information
+!A reported value of -998 or -999 means the accuracy check failed, but not necessarily 
+!the registration process. It may have succeeded.
+plab2tcl      &"rdir"xx4tmp&id property=COREG_META_DATA val=acc +
+               keyword=ACCURACY vtype=7
+plab2tcl      &"rdir"xx4tmp&id property=COREG_META_DATA val=cep + 
+               keyword=ACCURACY_CEP vtype=7
+write         " "
+write         "MSG: ACCURACY CHECK is &acc PIXELS"
+write         "MSG: ACCURACY CHECK is &cep PIXELS CEP"
+write         " "
+
+!INPUT IMAGE DETAILS
+!Get File Time
+plab2tcl       &"rdir"xx3tmp&id vtype=0 val=time +
+               property="GEOTIFF" keyword=AMT_FILE_TIME
+
+!Get Look Angle and Azimuth of the Input image
+rpccorn      (&"rdir"xx3tmp&"id",/data/afids5/data/vdev/etop02nobath.hlf)
+plab2tcl       &"rdir"xx3tmp&id vtype=8 val=looka +
+               property="GEOTIFF" keyword=NITF_CENTER_ELEV_LOOK_ANG
+plab2tcl       &"rdir"xx3tmp&id vtype=8 val=azim +
+               property="GEOTIFF" keyword=NITF_CENTER_AZIM
+plab2tcl       &"rdir"xx3tmp&id vtype=8 val=gsd +
+               property="GEOTIFF" keyword=NITF_CENTER_GSD
+plab2tcl       &"rdir"xx3tmp&id vtype=8 val=upisup +
+               property="GEOTIFF" keyword=NITF_CENTER_UPISUP
+
+write          " "
+write          "MSG: Parameters of the Input Image"
+write          "MSG: Image Time= &time "
+write          "MSG: NITF_CENTER_ELEV_LOOK_ANG= &looka "
+write          "MSG: NITF_CENTER_AZIM= &azim "
+write          "MSG: NITF_CENTER_GSD= &gsd "
+write          "MSG: NITF_CENTER_UPISUP= &upisup "
+write          " "
+
+!Get Mean and STD of Area of Interest
+!Coordinates are from the Reference image (since they should be registered)
+hist           inp=&"rdir"xx4tmp&id mean=lmean sigma=lsigma 'nohi
+
+write          " "
+write          "MSG: For Input Image Area= &area "
+write          "MSG: The Input Image Mean= &lmean "
+write          "MSG: The Input Image STD= &lsigma "
+write          " "
+
+
+!REFERENCE IMAGE DETAILS
+!Get File Time
+plab2tcl       &"rdir"xx1tmp&id vtype=0 val=time + 
+               property="GEOTIFF" keyword=AMT_FILE_TIME
+
+!Get Look Angle and Azimuth of the Reference image
+rpccorn      (&"rdir"xx1tmp&"id",/data/afids5/data/vdev/etop02nobath.hlf)
+plab2tcl       &"rdir"xx1tmp&id vtype=8 val=looka +
+               property="GEOTIFF" keyword=NITF_CENTER_ELEV_LOOK_ANG
+plab2tcl       &"rdir"xx1tmp&id vtype=8 val=azim +
+               property="GEOTIFF" keyword=NITF_CENTER_AZIM
+plab2tcl       &"rdir"xx1tmp&id vtype=8 val=gsd +
+               property="GEOTIFF" keyword=NITF_CENTER_GSD
+plab2tcl       &"rdir"xx1tmp&id vtype=8 val=upisup +
+               property="GEOTIFF" keyword=NITF_CENTER_UPISUP
+
+write          " "
+write          "MSG: Parameters of the Reference Image"
+write          "MSG: Image Time= &time "
+write          "MSG: NITF_CENTER_ELEV_LOOK_ANG= &looka "
+write          "MSG: NITF_CENTER_AZIM= &azim "
+write          "MSG: NITF_CENTER_GSD= &gsd "
+write          "MSG: NITF_CENTER_UPISUP= &upisup "
+write          " "
+
+!Get Mean and STD of Area of Interest
+!Coordinates are from the Reference image (since they should be registered)
+hist           inp=&"rdir"xx1tmp&id mean=lmean sigma=lsigma 'nohi
+
+write          " "
+write          "MSG: For Reference Image Area= &area "
+write          "MSG: The Input Image Mean= &lmean "
+write          "MSG: The Input Image STD= &lsigma "
+write          " "
+!**********************************************************************
+
+!SUCCESSFUL Proc Ending Maintenance Module+++++++++++++++++++++++++++++
+!Print Closing Messages and Delete Temporary Files
+write        " "
+write        "*** Multi-Image Registration Processing Successfully Completed ***"
+write        " "
+
+file2tcl      &"rdir"xx1tmp&id val=found
+if           (found = 1) tush rm &"rdir"xx1tmp&id
+file2tcl      &"rdir"xx2tmp&id val=found
+if           (found = 1) tush rm &"rdir"xx2tmp&id
+file2tcl      &"rdir"xx3tmp&id val=found
+if           (found = 1) tush rm &"rdir"xx3tmp&id
+file2tcl      &"rdir"xx4tmp&id val=found
+if           (found = 1) tush rm &"rdir"xx4tmp&id
+file2tcl      &"rdir"xx5tmp&id val=found
+if           (found = 1) tush rm &"rdir"xx5tmp&id
+tush         rm &"rdir"xq*&"id"*
+tush         rm &"rdir"xx*
+
+write        ""
+write        "Cutil10_reg COMPLETED SUCCESSFULLY"
+write        ""
+
+let           $SFI=1
+goto          theend
+!End Successful Module+++++++++++++++++++++++++++++++++++++++++++++++++
+
+theend>
+!                ***Job Finished***
+!End END Module++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+end-proc

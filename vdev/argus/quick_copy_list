@@ -1,0 +1,3 @@
+#!/bin/sh
+
+$RUBY ${AFIDS_ROOT}/vdev/argus/quick_copy_list.rb "$1"

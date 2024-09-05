@@ -1,0 +1,39 @@
+PROCESS      HELP=*
+PARM INP       TYPE=(STRING) COUNT=2
+PARM OUT       TYPE=(STRING) COUNT=1
+PARM IOFF      TYPE=INTEGER  COUNT=1
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "vnitfmos"
+.HELP
+PURPOSE
+
+ This program will copy the entire first image into the
+ output image and also copy the non-overlapping part of
+ the second image into the output image.  It will then
+ modify the igeolog tag to account for the overlapping.
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+
+.VARIABLE OUT
+ Output image file
+
+.VARIABLE IOFF
+ Line overlap between the
+ two input images
+
+.END
+
+
+
+
+
+
+
+
+
+
+

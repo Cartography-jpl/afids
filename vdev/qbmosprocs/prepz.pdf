@@ -1,0 +1,37 @@
+procedure
+
+parm key string
+parm band type=string
+
+local fname type=string
+local uu string init="_"
+local found integer
+
+body
+
+let fname = "&key&uu" // "&band" // "_zfile"
+
+rowop2 &fname xxxttt keycol=3 +
+   range=(-999998,-999998) 'select
+ibis-l xxxttt
+ibis-copy xxxttt &fname
+
+let fname = "&key&uu" // "&band" // "_cfile"
+file2tcl &fname val=found
+if (found=1)
+  rowop2 &fname xxxttt keycol=3 +
+    range=(-999998,-999998) 'select
+  ibis-l xxxttt
+  ibis-copy xxxttt &fname
+end-if
+
+let fname = "&key&uu" // "&band" // "_nfile"
+file2tcl &fname val=found
+if (found=1)
+  rowop2 &fname xxxttt keycol=3 +
+    range=(-999998,-999998) 'select
+  ibis-l xxxttt
+  ibis-copy xxxttt &fname
+end-if
+
+end-proc

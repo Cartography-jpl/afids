@@ -1,0 +1,6 @@
+$ vpack hist.com -mixed -
+	-s hist.f  -
+	-i hist.imake -
+	-p hist.pdf -
+	-t tsthist.pdf tsthist.log
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack xform.com -mixed -
+	-s xform.f -
+	-p xform.pdf -
+	-i xform.imake -
+	-t tstxform.pdf tstxform.log
+$ Exit

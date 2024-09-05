@@ -1,0 +1,60 @@
+procedure
+body
+
+goto curr
+
+! setup
+
+gtwarp cibstat.img cibstatpc.img +
+     ref=/home/alz/ikapp/basemos/iraqcib5 'coverinp
+gtmove cibdyn.img cibdyn2.img shift=(-14,-12)
+gtmove cibdyn2.img cibdyn3.img shift=(3,7)
+vtiff3-fromvic cibdyn2.img cibdyn2.tif
+vtiff3-fromvic cibdyn3.img cibdyn3.tif
+vtiff3-fromvic cibstat.img cibstat.tif
+vtiff3-fromvic cibstatpc.img cibstatpc.tif
+
+goto theend
+!curr>
+
+adjust inp=cibdyn3.tif +
+ ref=cibstatpc.tif out=cibout0.tif
+
+vtiff3-tovic cibout0.tif cibout0.img
+
+accck cibout0.img cibstatpc.img outfile=accplot.img +
+  fftsize=128 outnl=1200 remap="n"
+
+goto theend
+curr>
+
+adjust1rs inp=cibdyn3.tif raw=cibdyn2.tif +
+ ref=cibstatpc.tif out=cibout.tif +
+ rpfnx=(0,0,0,0,0,0,0,0,0,0,0,0,1,0,3) +
+ rpfny=(0,0,0,0,0,0,0,0,0,0,0,0,0,1,7) +
+ rpfdx=(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1) +
+ rpfdy=(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1)
+
+vtiff3-tovic cibout.tif cibout.img
+
+accck cibout.img cibstatpc.img outfile=accplot.img +
+  fftsize=128 outnl=1200 remap="n"
+
+goto theend
+!curr>
+
+adjust1rsc inp=cibdyn3.tif raw=cibdyn2.tif +
+ ref=cibstatpc.tif out=cibout2.tif +
+ rpfnx=(0,0,0,0,0,0,0,0,0,0,0,0,1,0,3) +
+ rpfny=(0,0,0,0,0,0,0,0,0,0,0,0,0,1,7) +
+ rpfdx=(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1) +
+ rpfdy=(0,0,0,0,0,0,0,0,0,0,0,0,0,0,1)
+
+vtiff3-tovic cibout2.tif cibout2.img
+
+accck cibout2.img cibstatpc.img outfile=accplot.img +
+  fftsize=128 outnl=1200 remap="n"
+
+
+theend>
+end-proc

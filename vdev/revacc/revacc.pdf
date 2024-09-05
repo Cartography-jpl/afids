@@ -1,0 +1,16 @@
+procedure
+parm file1 type=(string,99)
+
+local temp1 type=(string,99)
+local fexist int
+body
+
+let temp1 = "&file1" // ".accplot"
+file2tcl &temp1 val=fexist
+if (fexist=1)
+   xvd &temp1
+else
+   write "MSG: There is no plot; probably used ephemeris in place of correlation"
+end-if
+
+end-proc

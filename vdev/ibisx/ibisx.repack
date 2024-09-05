@@ -1,0 +1,6 @@
+$ vpack ibisx.com -mixed -
+	-s ibisx.c ibishelper.c ibishelper.h -
+	-i ibisx.imake -
+	-p ibisx.pdf -
+	-t tstibisx.pdf
+$ Exit

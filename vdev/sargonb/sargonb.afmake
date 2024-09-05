@@ -1,0 +1,17 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = sargonb
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#CPPFLAGS += -I$(AFIDSTOP)/include -I.
+#FFLAGS += -Wunused -Wuninitialized -Wsurprising
+FFLAGS += -Wunused -Wuninitialized -Wsurprising -Wno-globals -fbounds-check
+
+# Extra files sargonb depends on
+
+sargonb: ../sub/rangen_big.o  
+
+

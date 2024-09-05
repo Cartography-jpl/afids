@@ -1,0 +1,6 @@
+$ vpack vexlab.com -mixed -
+	-s vexlab.c -
+	-i vexlab.imake -
+	-p vexlab.pdf -
+	-t tstvexlab.pdf devvexlab.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack concomp1.com -mixed -
+	-s concomp1.f -
+	-i concomp1.imake -
+	-p concomp1.pdf -
+	-t tstconcomp1.pdf tstconcomp1.log
+$ Exit

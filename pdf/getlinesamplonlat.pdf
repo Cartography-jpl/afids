@@ -1,0 +1,8 @@
+procedure
+body
+
+ibis-l fadetab cols=(3,4,9,10) +
+  cfor="%7d %7d %13.8f %13.8f" +
+  'noheader 'nocol outfile=linesamplonlat.dat
+
+end-proc

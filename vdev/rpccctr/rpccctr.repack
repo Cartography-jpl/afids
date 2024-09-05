@@ -1,0 +1,4 @@
+$ vpack rpccctr.com -mixed -
+	-p rpccctr.pdf rpccctrz.pdf -
+	-t tstrpccctr.pdf
+$ Exit

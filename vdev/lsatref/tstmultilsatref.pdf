@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+multilsatref (../test_data/b2, ../test_data/b2, ../test_data/b3, +
+             ../test_data/b4, ../test_data/b5) (regression_output/ref1, +
+             regression_output/ref2, regression_output/ref3, +
+             regression_output/ref4, regression_output/ref5) +
+             ../test_data/met.txt
+
+END-PROC
+
+

@@ -1,0 +1,5 @@
+$ vpack adjust.com -mixed -
+	-p adjust.pdf adjust1rs.pdf adjust1rsc.pdf gtpmwarp.pdf gtrpfwarp.pdf -
+	   gtrpfwarp2.pdf -
+	-t devadjust.pdf
+$ Exit

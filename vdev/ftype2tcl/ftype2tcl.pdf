@@ -1,0 +1,64 @@
+process help=*
+LOCAL DUMINT  TYPE=INTEGER
+parm inp      type=string
+parm val      type=name default="DUMINT"
+parm ftype    type=name default="DUMINT"
+parm fsubtype type=name default="DUMINT"
+parm fsize    type=name default="DUMINT"
+END-PROC
+.TITLE
+ftype2tcl - determine file existance, type, subtype and size
+.HELP
+PURPOSE:
+ftype2tcl determine file existance, type, subtype and size
+of a file and stores the information in parameters.
+
+EXECUTION:
+
+Example:
+
+ftype2tcl inp=xfoo.bar val=val ftype=ftype fsubtype=fsubtype fsize=fsize
+            where val, ftype, fsubtype, fsize are TAE TCL variables of type int
+          
+TIMING: 
+
+Instantaneous.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist      07 Jan 2003
+ COGNIZANT PROGRAMMER:   W Bunch     Mon Jun  7 2004
+Wed Jan  2 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+ 
+ REVISION HISTORY
+  03-01-07        AZ  Initial version
+  Mon Jun  7 2004 WLB Added file type detection
+ 
+.LEVEL1
+.variable inp
+Input file name
+
+.variable val
+TAE TCL variable name, integer, 
+set to 0 if inp does not exist, or 1 if it does
+
+.variable ftype
+Variable set to indicate inp type:
+-3 => Read-protected file
+-2 => Empty file
+-1 => Unknown file type
+0 => No such file
+1 => VICAR
+2 => TIFF
+
+.variable fsubtype
+Variable set to indicate inp subtype:
+0=> Unspeficied subtype
+1=> Unknown subtype
+2=> GeoTIFF
+3=> Vanilla TIFF
+4=> VICAR with GeoTIFF label
+5=> Vanilla VICAR
+
+.variable fsize
+Size of inp in bytes, if it exists, 0 otherwise
+
+.END

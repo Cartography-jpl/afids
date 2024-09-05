@@ -1,0 +1,6 @@
+$ vpack ccdnoise.com -
+	-s ccdnoise.f -
+	-i ccdnoise.imake -
+	-p ccdnoise.pdf -
+	-t tstccdnoise.pdf tstccdnoise.log
+$ Exit

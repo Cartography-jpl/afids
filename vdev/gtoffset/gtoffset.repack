@@ -1,0 +1,4 @@
+$ vpack gtoffset.com -
+	-p gtoffset.pdf -
+	-t tstgtoffset.pdf
+$ Exit

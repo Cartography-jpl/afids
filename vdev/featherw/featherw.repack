@@ -1,0 +1,6 @@
+$ vpack featherw.com -mixed -
+	-s featherw.c -
+	-i featherw.imake -
+	-p featherw.pdf -
+	-t tstfeatherw.pdf devfeatherw.pdf
+$ Exit

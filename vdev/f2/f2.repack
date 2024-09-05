@@ -1,0 +1,6 @@
+$ vpack f2.com -mixed -
+	-s f2.f f2.fin -
+	-i f2.imake -
+	-p f2.pdf -
+	-t tstf2.pdf new_session.log
+$ Exit

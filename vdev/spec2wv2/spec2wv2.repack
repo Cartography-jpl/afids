@@ -1,0 +1,6 @@
+$ vpack spec2wv2.com -mixed -
+	-s spec2wv2.c -
+	-i spec2wv2.imake -
+	-p spec2wv2.pdf -
+	-t tstspec2wv2.pdf
+$ Exit

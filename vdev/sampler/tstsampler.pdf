@@ -1,0 +1,78 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Aug 22, 2013 - RJB
+! TEST SCRIPT FOR SAMPLER
+!   and ibis TABULAR files
+!
+! Vicar Programs:
+!       translog label-list 
+!
+! External programs
+!   <none> 
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+refgbl $echo
+refgbl $autousage
+body
+let _onfail="stop"
+let $autousage="none"
+let $echo="yes"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/test_data nn
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data nn
+    else
+        ush ln -s $AFIDS_TESTDATA nn
+    end-if
+end-if
+
+! trivial test
+sampler inp=(nn/spot6_blu.hlf, nn/spot6_grn.hlf, nn/spot6_nir.hlf, nn/spot6_red.hlf) +
+    out=subsamples.ibis ngridx=200 ngridy=200 seed=30
+ibis-list subsamples.ibis nr=10 nc=6
+
+! complex test
+
+
+
+let $echo="no"
+ush rm nn
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

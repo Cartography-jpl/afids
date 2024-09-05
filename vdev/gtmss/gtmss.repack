@@ -1,0 +1,6 @@
+$ vpack gtmss.com -mixed -
+	-s gtmss.c -
+	-i gtmss.imake -
+	-p gtmss.pdf -
+	-t tstgtmss.pdf devgtmss.pdf
+$ Exit

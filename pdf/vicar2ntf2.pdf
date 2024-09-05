@@ -1,0 +1,17 @@
+procedure
+parm  inp   string
+parm  out   string
+local afidsroot type=(string,128)
+local found string
+body
+write      "vicar2ntf2 JUN 21 2015"
+translog    AFIDS_ROOT afidsroot
+write      "converting &inp to &out"
+tcl2tcl     script="format $env(SHELL)" strvar=found
+if         (found="/bin/tcsh")
+ ush        source &"afidsroot"/../setup_afids_env.csh ; gdal_to_nitf &inp &out
+else
+ ush        . &"afidsroot"/../setup_afids_env.sh ; gdal_to_nitf &inp &out
+end-if
+!ush        rm &"out".aux.xml
+end-proc

@@ -1,0 +1,37 @@
+PROCESS      HELP=*
+PARM INP       TYPE=(STRING) COUNT=1
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "plotbkrd"
+.HELP
+PURPOSE
+    Create output ibis files of classes contained in INP ibis file.
+
+Ibis file format 
+    col     1
+    col     2
+    col     3   CLASS NAME
+    col     4   mean
+    col     5   stddev
+
+History:
+    10-09-2019 - Ray Bambery -fixed warnings by casting
+    11-21-2011 - P. Kim  - original release
+
+.LEVEL1
+.VARIABLE INP
+ Input ibis file
+
+.END
+
+
+
+
+
+
+
+
+
+
+

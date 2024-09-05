@@ -1,0 +1,559 @@
+tstgtmove
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+ mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(2.550000000000e+01,2.5+
+50000000000e+01,0,-1.174900000000e+02,3.449000000000e+0+
+1,0.0)",            "ModelTiePointTag=(-5.000000000000e-01,-5.000000000000e-01,0,-1.180100000000e+02,3.501000000000e+01,0.0)",     +
+       "ModelTiePointTag=(4.950000000000e+01,-5.000000000000e-01,0,-1.170100000000e+02,3.501000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtoffset xxxim2 xxxim3
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqmap1,xxxim3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxqqmap1,xxxim2) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       -0.000000        0.000000        1.000000        1.000000
+end-proc
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(2.500000000000e+01,2.5+
+00000000000e+01,0,-1.175000000000e+02,3.450000000000e+0+
+1,0.0)",            "ModelTiePointTag=(-1.000000000000e+00,-1.000000000000e+00,0,-1.180200000000e+02,3.502000000000e+01,0.0)",     +
+       "ModelTiePointTag=(4.900000000000e+01,-1.000000000000e+00,0,-1.170200000000e+02,3.502000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtoffset xxxim2 xxxim3
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqmap1,xxxim3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxqqmap1,xxxim2) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       -0.000000        0.000000        1.000000        1.000000
+end-proc
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3 scalefac=1.3
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.300000000000e+00)$c2=c2/(1.300000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+ mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(1.950000000000e+01,1.9+
+50000000000e+01,0,-1.174900000000e+02,3.449000000000e+0+
+1,0.0)",            "ModelTiePointTag=(-5.000000000000e-01,-5.000000000000e-01,0,-1.180100000000e+02,3.501000000000e+01,0.0)",     +
+       "ModelTiePointTag=(3.796153846154e+01,-5.000000000000e-01,0,-1.170100000000e+02,3.501000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3 rotation=15.0
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+   mf3 xxxgtmovetemp f="c5=c1-(26)$c6=c2-(26)$c7=@sqrt(c5*c5+c6*c6)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+   mf3 xxxgtmovetemp f="c8=@atan2(c6,c5)-(1.500000000000e+01)*3.14159265359/180.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+   mf3 xxxgtmovetemp f="c9=c7*@cos(c8)$c10=c7*@sin(c8)$c1=c9+(26)$c2=c10+(26)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+ mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(2.550000000000e+01,2.5+
+50000000000e+01,0,-1.174900000000e+02,3.449000000000e+0+
+1,0.0)",            "ModelTiePointTag=(7.115223689150e+00,-6.343366656182e+00,0,-1.180100000000e+02,3.501000000000e+01,0.0)",      +
+      "ModelTiePointTag=(5.541151500360e+01,6.597585598945e+00,0,-1.170100000000e+02,3.501000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3 shift=(1.9,3.1)
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+   mf3 xxxgtmovetemp f="c1=c1+(1.900000000000e+00)$c2=c2+(3.100000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+ mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(2.860000000000e+01,2.7+
+40000000000e+01,0,-1.174900000000e+02,3.449000000000e+0+
+1,0.0)",            "ModelTiePointTag=(2.600000000000e+00,1.400000000000e+00,0,-1.180100000000e+02,3.501000000000e+01,0.0)",       +
+     "ModelTiePointTag=(5.260000000000e+01,1.400000000000e+00,0,-1.170100000000e+02,3.501000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtoffset xxxim2 xxxim3
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqmap1,xxxim3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxqqmap1,xxxim2) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       -1.900000       -3.100000       -0.900000       -2.100000
+end-proc
+gen xxxim1 nl=50 ns=50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-118,35,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-117,35,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-118,34,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+gtmove xxxim2 xxxim3 hskew=15.0
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxim2 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(26,26,0.,0.,0.,50)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxim2) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+   mf3 xxxgtmovetemp f="c5=c1-(26)$c6=c2-(26)$c7=@sqrt(c5*c5+c6*c6)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+   mf3 xxxgtmovetemp f="c8=@atan2(c6,c5)-(1.500000000000e+01)*3.14159265359/180.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+   mf3 xxxgtmovetemp f="c9=c5*@tan(c8)$c2=c9+(26)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+end-if
+gt2tcl xxxim2 val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+ mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxim2 out=xxxim3 'add 'tiecnv+
+rt     geotiff=("ModelTiePointTag=(2.550000000000e+01,2.5+
+50000000000e+01,0,-1.174900000000e+02,3.449000000000e+0+
+1,0.0)",            "ModelTiePointTag=(1.048889300107e+01,-5.000000000000e-01,0,-1.180100000000e+02,3.501000000000e+01,0.0)",      +
+      "ModelTiePointTag=(6.664286003857e+01,-5.000000000000e-01,0,-1.170100000000e+02,3.501000000000e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+let $echo="no"
+exit
+slogoff

@@ -1,0 +1,6 @@
+$ vpack bowtie.com -mixed -
+	-s bowtie.c -
+	-i bowtie.imake -
+	-p bowtie.pdf -
+	-t tstbowtie.pdf
+$ Exit

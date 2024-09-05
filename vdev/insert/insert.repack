@@ -1,0 +1,6 @@
+$ vpack insert.com -mixed -
+	-s insert.f -
+	-i insert.imake -
+	-p insert.pdf -
+	-t tstinsert.pdf tstinsert.log
+$ Exit

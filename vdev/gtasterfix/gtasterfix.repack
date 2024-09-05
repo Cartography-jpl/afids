@@ -1,0 +1,6 @@
+$ vpack gtasterfix.com -mixed -
+	-s gtasterfix.c -
+	-i gtasterfix.imake -
+	-p gtasterfix.pdf -
+	-t tstgtasterfix.pdf
+$ Exit

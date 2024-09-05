@@ -1,0 +1,1075 @@
+tsteigen
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /media/sf_raid3/test_data/mipl/vgr vgr
+    end-if
+end-if
+  let $echo="no"
+ this is a test for procedure eigen
+ the input byte data (uvb,viob,blub) and halfword data (uvh,vioh,bluh)
+ are copied from /project/it/testdata/mipl/vgr for unix platforms, then
+ ftp the data to ALPHA using binary option for vms testing
+ test byte input
+ test parm inc
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) inc=10
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 10   SINC= 10
+
+
+COVARIANCE MATRIX
+
+    180.561
+
+    188.710     368.967
+
+    139.423     364.354     486.670
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    872.708      0.3148      0.6309      0.7091
+
+    137.469      0.7960      0.2315     -0.5593
+
+     26.021     -0.5170      0.7406     -0.4293
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm linc
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) linc=20
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    182.148
+
+    188.843     373.268
+
+    136.846     382.601     535.672
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    915.188      0.2952      0.6176      0.7290
+
+    151.022      0.7948      0.2647     -0.5461
+
+     24.877     -0.5302      0.7406     -0.4127
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm area and xform output
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) out=(x,y,z)  +
+ area=(20,1,10,20,40,11,10,20)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        20    1   10   20
+        40   11   10   20
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      6.836
+
+      2.308      10.329
+
+      5.940      25.828      71.204
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     81.232      0.0853      0.3435      0.9353
+
+      6.293      0.9961     -0.0089     -0.0876
+
+      0.845     -0.0218      0.9391     -0.3429
+
+IF ($COUNT(OUT)=0) RETURN
+XFORM @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS PARMS=@SAVE  +
+	MSS=@MSS USE=@USE  +
+	GAIN=@GAIN OFFSET=@OFFSET PRESET=@PRESET LINC=@LINC AREA=@AREA  +
+	PERCENT=@PERCENT LPERCENT=@LPERCENT HPERCENT=@HPERCENT  +
+	SPREAD=@SPREAD CENTER=@CENTER EXCLUDE=@EXCLUDE FORMAT=@FORMAT
+Beginning VICAR task XFORM
+XFORM version 18-JUL-2016 - (64bit) - RJB
+
+     ( 3, 3) TRANSFORMATION MATRIX
+
+     0.0853    0.3435    0.9353
+     0.9961   -0.0089   -0.0876
+    -0.0218    0.9391   -0.3429
+
+ *** AUTO-SCALE MODE ***
+     Desired Spread   255.0   Center   127.5   Percent Sat.  1.0
+     AREA SAMPLED (   20,    1,   10,   20)   LINC=  1   SINC=  1
+     AREA SAMPLED (   40,   11,   10,   20)   LINC=  1   SINC=  1
+ *** SCALING FACTORS ***
+     OFFSET    GAIN
+   -557.774    7.704
+    155.485   18.657
+    174.649   43.812
+END-PROC
+let $echo="no"
+ test parm exclud
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) exclud=11  +
+ area=(20,1,10,20,40,11,10,20)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        20    1   10   20
+        40   11   10   20
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN= 11 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+      6.836
+
+      2.308      10.329
+
+      5.940      25.828      71.204
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     81.232      0.0853      0.3435      0.9353
+
+      6.293      0.9961     -0.0089     -0.0876
+
+      0.845     -0.0218      0.9391     -0.3429
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm corr
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) 'corr inc=50
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 50   SINC= 50
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.747544    1.000000
+
+   0.520154    0.842609    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.415      0.5378      0.4461      0.3527
+
+      0.486     -0.7725      0.0673      0.3897
+
+      0.099      0.3377     -0.5567      0.3297
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm size
+eigen inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) size=(11,11,20,20)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   20   20
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      7.405
+
+      0.965       4.057
+
+      1.054      12.553      48.319
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     51.667      0.0286      0.2554      0.9664
+
+      7.434      0.9947      0.0882     -0.0527
+
+      0.679     -0.0987      0.9628     -0.2515
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test halfword data
+ test parm inc
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) 'half inc=100
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+ 525092.625
+
+ 589913.500 1345668.500
+
+ 496893.719 1294901.000 1864999.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3145960.167      0.2786      0.6193      0.7341
+
+ 431116.375      0.7029      0.3894     -0.5952
+
+ 158683.668     -0.6545      0.6818     -0.3268
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm linc
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) 'half linc=20
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 751408.562
+
+ 779199.438 1539877.750
+
+ 564333.188 1581488.625 2224324.750
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3785975.023      0.2941      0.6164      0.7305
+
+ 626665.111      0.7936      0.2684     -0.5460
+
+ 102970.926     -0.5326      0.7403     -0.4102
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm area
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) 'half  +
+      area=(400,1,10,10)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       400    1   10   10
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  16435.516
+
+   -100.501     765.364
+
+  -1153.479    1117.430   12192.370
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+  16737.637      0.9676     -0.0237     -0.2514
+
+  11998.502      0.2525      0.0935      0.9631
+
+    657.109     -0.0007      0.9953     -0.0965
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm exclud
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) 'half exclud=12  +
+ area=(101,11,10,10,201,11,10,10)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101   11   10   10
+       201   11   10   10
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN= 12 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+ 304443.531
+
+ 400370.625  576208.812
+
+ 214850.438  327080.938  211181.969
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+1046264.911      0.5222      0.7399      0.4241
+
+  38119.233     -0.6695      0.0475      0.7413
+
+   7450.128      0.5283     -0.6710      0.5202
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm corr
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) 'half inc=50 'corr
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 50   SINC= 50
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.746435    1.000000
+
+   0.518858    0.842855    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.414      0.5375      0.4457      0.3521
+
+      0.488     -0.7732      0.0678      0.3883
+
+      0.099     -0.3367      0.5559     -0.3297
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm size and xform mode (parm 'out')
+eigen inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) out=(x,y,z) 'half  +
+ size=(100,101,30,100)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       100  101   30  100
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  45028.703
+
+  21536.939   99585.289
+
+  52846.430  175323.547  379768.125
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 471700.186      0.1323      0.4287      0.8937
+
+  37954.415      0.9798     -0.1928     -0.0526
+
+  14727.507      0.1498      0.8826     -0.4456
+
+IF ($COUNT(OUT)=0) RETURN
+XFORM @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS PARMS=@SAVE  +
+	MSS=@MSS USE=@USE  +
+	GAIN=@GAIN OFFSET=@OFFSET PRESET=@PRESET LINC=@LINC AREA=@AREA  +
+	PERCENT=@PERCENT LPERCENT=@LPERCENT HPERCENT=@HPERCENT  +
+	SPREAD=@SPREAD CENTER=@CENTER EXCLUDE=@EXCLUDE FORMAT=@FORMAT
+Beginning VICAR task XFORM
+XFORM version 18-JUL-2016 - (64bit) - RJB
+
+     ( 3, 3) TRANSFORMATION MATRIX
+
+     0.1323    0.4287    0.8937
+     0.9798   -0.1928   -0.0526
+     0.1498    0.8826   -0.4456
+
+ *** AUTO-SCALE MODE ***
+     Desired Spread 65535.0   Center     0.0   Percent Sat.  1.0
+     AREA SAMPLED (  100,  101,   30,  100)   LINC=  1   SINC=  1
+ *** SCALING FACTORS ***
+     OFFSET    GAIN
+-111050.945   18.109
+  15357.695   66.197
+  55887.273   86.916
+END-PROC
+let $echo="no"
+ test parm data
+eigen nvar=3 data=(1.,33.,179.,991.,127.3,0.,341.0,987.6,99.3,111.,123., +
+ 50.,333.,15.,999.,1234.,378.,111.1,255.,678.,1911.)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+
+COVARIANCE MATRIX
+
+ 214255.281
+
+   4714.213  137845.109
+
+ -94345.773   57033.133  517337.781
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 551259.621     -0.2657      0.1288      0.9554
+
+ 193667.197      0.9285      0.3008      0.2177
+
+ 124511.346     -0.2594      0.9450     -0.1995
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+mss inp=(vgr/uvh.img, vgr/vioh.img, vgr/bluh.img) out=mssh
+Beginning VICAR task mss
+MSS - 14-JUL-2016 - 64bit - RJB
+* OUTPUT CONTAINS   3 INTERLEAVED DATA SETS **
+* ACTUAL OUTPUT RECORD LENGTH   5400 SAMPLES **
+mss inp=(vgr/uvb.img, vgr/viob.img, vgr/blub.img) out=mssb
+Beginning VICAR task mss
+MSS - 14-JUL-2016 - 64bit - RJB
+* OUTPUT CONTAINS   3 INTERLEAVED DATA SETS **
+* ACTUAL OUTPUT RECORD LENGTH   5400 SAMPLES **
+let $echo="no"
+ test mss mode of byte data
+ test parm inc
+eigen  mssb mss=3 inc=100
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+    127.521
+
+    143.552     326.212
+
+    121.169     313.573     450.408
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    761.917      0.2803      0.6198      0.7330
+
+    103.875      0.7025      0.3879     -0.5967
+
+     38.350     -0.6542      0.6821     -0.3267
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm linc
+eigen  mssb mss=3 linc=20
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    182.148
+
+    188.843     373.268
+
+    136.846     382.601     535.672
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    915.188      0.2952      0.6176      0.7290
+
+    151.022      0.7948      0.2647     -0.5461
+
+     24.877     -0.5302      0.7406     -0.4127
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm area
+eigen  mssb mss=3 area=(101,1,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   30   30
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      8.400
+
+      3.740      12.569
+
+      3.324      16.088      25.419
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     37.137      0.1667      0.5578      0.8131
+
+      7.822      0.9671      0.0681     -0.2450
+
+      1.429     -0.1920      0.8272     -0.5281
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm use
+eigen  mssb mss=3 use=(1,3) linc=100
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    153.690
+
+    109.443     621.199
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    645.551      0.2172      0.9761
+
+    129.338      0.9761     -0.2172
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm corr and area
+eigen  mssb mss=3 'corr area=(101,1,30,30,201,11,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   30   30
+       201   11   30   30
+
+     LINC=  1   SINC=  1
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.869953    1.000000
+
+   0.496926    0.800225    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.456      0.4787      0.4309      0.5376
+
+      0.506     -0.5635     -0.0368      0.7500
+
+      0.038      0.4287     -0.5295      0.3854
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm exclud and size
+eigen  mssb mss=3 exclud=8 size=(11,11,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   30   30
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN=  8 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+      9.430
+
+      0.742      10.477
+
+      0.215      25.659      73.052
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     82.231      0.0062      0.3368      0.9416
+
+      9.475      0.9971      0.0699     -0.0316
+
+      1.253     -0.0764      0.9390     -0.3353
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test mss mode of halfword data
+ test parm inc
+eigen  mssh mss=3 'half inc=100
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+ 525092.625
+
+ 589913.500 1345668.500
+
+ 496893.719 1294901.000 1864999.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3145960.167      0.2786      0.6193      0.7341
+
+ 431116.375      0.7029      0.3894     -0.5952
+
+ 158683.668     -0.6545      0.6818     -0.3268
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm linc
+eigen  mssh mss=3 'half linc=20
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 751408.562
+
+ 779199.438 1539877.750
+
+ 564333.188 1581488.625 2224324.750
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3785975.023      0.2941      0.6164      0.7305
+
+ 626665.111      0.7936      0.2684     -0.5460
+
+ 102970.926     -0.5326      0.7403     -0.4102
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm area
+eigen  mssh mss=3 'half area=(101,1,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   30   30
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  34145.348
+
+  15032.692   51376.145
+
+  13549.997   66520.711  104826.594
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 153040.043      0.1632      0.5570      0.8143
+
+  31807.098      0.9693      0.0635     -0.2377
+
+   5500.948     -0.1841      0.8281     -0.5295
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm use
+eigen  mssh mss=3 'half use=(1,3) linc=100
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 633665.500
+
+ 449855.750 2608433.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+2706082.459      0.2121      0.9772
+
+ 536016.143      0.9772     -0.2121
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parm corr and area
+eigen  mssh mss=3 'half 'corr area=(101,1,30,30,201,11,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   30   30
+       201   11   30   30
+
+     LINC=  1   SINC=  1
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.869828    1.000000
+
+   0.496765    0.802062    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.457      0.4785      0.4316      0.5379
+
+      0.506     -0.5649     -0.0357      0.7488
+
+      0.037      0.4274     -0.5303      0.3873
+
+IF ($COUNT(OUT)=0) RETURN
+ RETURN
+let $echo="no"
+ test parms byte and size and xform mode
+eigen  mssh (x,y) mss=3 'byte size=(11,11,30,30)
+EIGENVEC @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS LINC=@LINC INC=@INC  +
+	EXCLUDE=@EXCLUDE MSS=@MSS USE=@USE MSSO=@MSSO OUTPUT=@OUTPUT  +
+	SAVE=@SAVE TSAVE=@TSAVE AREA=@AREA NVAR=@NVAR DATA=@DATA  +
+	CORR=@CORR DSTRETCH=@DSTRETCH DSCALE=@DSCALE
+Beginning VICAR task EIGENVEC
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   30   30
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  38383.031
+
+   3372.594   42897.379
+
+   1132.803  105558.266  299558.719
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 337410.805      0.0074      0.3375      0.9413
+
+  38599.297      0.9965      0.0756     -0.0349
+
+   4829.023     -0.0830      0.9383     -0.3357
+
+IF ($COUNT(OUT)=0) RETURN
+XFORM @INP @OUT @SIZE SL=@SL SS=@SS NL=@NL NS=@NS PARMS=@SAVE  +
+	MSS=@MSS USE=@USE  +
+	GAIN=@GAIN OFFSET=@OFFSET PRESET=@PRESET LINC=@LINC AREA=@AREA  +
+	PERCENT=@PERCENT LPERCENT=@LPERCENT HPERCENT=@HPERCENT  +
+	SPREAD=@SPREAD CENTER=@CENTER EXCLUDE=@EXCLUDE FORMAT=@FORMAT
+Beginning VICAR task XFORM
+XFORM version 18-JUL-2016 - (64bit) - RJB
+ *** Output  NS =   30 ***
+
+     ( 2, 3) TRANSFORMATION MATRIX
+
+     0.0074    0.3375    0.9413
+     0.9965    0.0756   -0.0349
+
+ *** AUTO-SCALE MODE ***
+     Desired Spread   255.0   Center   127.5   Percent Sat.  1.0
+     AREA SAMPLED (   11,   11,   30,   30)   LINC=  1   SINC=  1
+ *** SCALING FACTORS ***
+     OFFSET    GAIN
+   -452.520    0.105
+      5.880    0.206
+END-PROC
+let $echo="no"
+exit
+slogoff

@@ -1,0 +1,4 @@
+$ vpack accck.com -mixed -
+	-p accck.pdf accovly.pdf accckpr.pdf -
+	-t tstaccck.pdf devaccck.pdf
+$ Exit

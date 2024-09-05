@@ -1,0 +1,6 @@
+$ vpack ibislsql.com -mixed -
+	-s ibislsql.c -
+	-i ibislsql.imake -
+	-p ibislsql.pdf -
+	-t tstibislsql.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack edibis.com -
+	-s edibis.f edibis_windows.c edibis_terminal.c edibis.fin -
+	-i edibis.imake -
+	-p edibis.pdf -
+	-t tstedibis.pdf new_session.log
+$ Exit

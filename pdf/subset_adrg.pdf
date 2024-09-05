@@ -1,0 +1,447 @@
+!subset_adrg.pdf (APR2009, by Thomas L. Logan, JPL)
+!Modification of subset_landsat for use with adrg tiles.
+!Generate an adrg map background mosaic according to user
+!dimensions, by extracting subsets from 10x10 input adrg tiles.
+!I.E., Mosaic adrg subsets into an AOI image.
+!Output is optionally three (rgb) 8bit vicar gt images, or just the red band.
+!adrg files are 20480x20480 pixels; 2048 pxl/degree; 0.00048828125 deg/pxl
+!Input Parameter info:
+!Input is lat/lon/lat/lon AOI lower left (start lat, start lon, end lat, end lon).
+!Works in all Hempispheres, including databases that cross the Equator
+!and Prime Meridian, but NOT Longitude -180/+180 (Int Dateline) or Poles.
+!
+procedure	! subset_adrg
+
+parm       slat    integer            !bottom lat (start) of AOI
+parm       slon    integer            !left lon (start) of AOI
+parm       elat    integer            !top (ending) lat of AOI
+parm       elon    integer            !right (ending) lon of AOI
+parm       dir1    string   def="/raid7/adrg_final_maps/" !Input band3 Tiles
+parm       dir2    string   def="/raid4/tll/combo/"   !Output vicar images
+parm       outn    string   def="xxx" !Output prefix, e.g, adrg
+parm       redonly string   def="N"   !Output the red band only. "Y" for yes.
+
+local      tllat   integer            !bot left tile, bot lat
+local      tllon   integer            !bot left tile, left lon
+local      trlat   integer            !top right tile, bot lat
+local      trlon   integer            !top right tile, left lon
+local      leng    integer            !width of database in degrees
+local      heig    integer            !height of database in degrees
+local      tleng   integer            !Num of 5x5 tiles horizontal
+local      theig   integer            !Num of 5x5 tiles vertical
+local      tnum    integer            !Total Num of 5x5 tiles
+local      lpxl    integer            !leng * pxl/deg (3790)
+local      hpxl    integer            !heig * pxl/deg (3790)
+local      lns     string   init="n"  !north or south in lowercase
+local      lew     string   init="e"  !east or west in lowercase
+local      xxa     real               !variable
+local      xxb     integer            !variable
+local      xxc     integer            !variable
+local      I       integer            !Inc count of tiles in lat direction
+local      J       integer            !Inc count of tiles in lon direction
+local      K       integer            !Current 5x5 bottom lat
+local      L       integer            !Current 5x5 left lon
+local      M       integer            !Inc count of the number of tiles
+local      N       integer            !Current 5x5 top lat
+local      P       integer            !Current 5x5 right lon
+local      subsl   integer            !Sub area Starting Line
+local      subss   integer            !Sub area Starting Sample
+local      subnl   integer            !Sub area Number of lines
+local      subns   integer            !Sub area Number of samples
+local      K2      integer            !This is K without the - sign
+local      L2      integer            !This is L without the - sign
+local      inl     integer            !Output adrg mosaic NL
+local      ins     integer            !Output adrg mosaic NS
+local      slatb   integer            !slat on 5deg bdy? 0=yes
+local      slonb   integer            !slon on 5deg bdy? 0=yes
+local      var1r   real               !real variable
+local      var2r   real               !real variable
+local      var3r   real               !real variable
+local      var3    integer            !integer variable
+body
+
+!Set n/s/e/w codes
+if             (slat >= 0) let lns = "n"
+if             (slat <  0) let lns = "s"
+if             (slon >= 0) let lew = "e"
+if             (slon <  0) let lew = "w"
+
+!Calculate AOI Database size in degrees (integer)
+if             (slat >= 0)
+   let          heig = elat - slat
+else
+   let          heig = (slat - elat) * (-1)
+end-if
+if             (slon >= 0)
+   let          leng = elon - slon
+else
+   let          leng = (slon - elon) * (-1)
+end-if
+
+!Check if slat, slon, elat, or elon are on a 10 degree boundary
+let             var1r = $float(slat)
+let             var2r = var1r/10
+let             var3  = $fix(var2r)
+let             var3r = var2r - $float(var3)  !Calulate remainder
+if             (var3r <> 0.000) 
+   let          slatb = 1                     !1 = Not a 10 degree boundary 
+ else
+   let          slatb = 0                     !0 = 10 degree boundary
+end-if
+write  "slatb = &slatb "
+
+let             var1r = $float(slon)  
+let             var2r = var1r/10 
+let             var3  = $fix(var2r)
+let             var3r = var2r - $float(var3)  !Calulate remainder 
+if             (var3r <> 0.000) 
+   let          slonb = 1                     !1 = Not a 10 degree boundary
+else
+   let          slonb = 0                     !0 = 10 degree boundary
+end-if
+write  "slonb = &slonb "
+
+!calculate the lower left corner of the LOWER LEFT 10x10 degree landsat tile
+!that encompases the AOI area.
+!latitude
+if             (slat >= 0)
+   let          xxa  = $float(slat)
+   let          tllat= $fix(xxa/10) * 10 
+else-if        (slatb= 1)
+   let          xxa  = $float(slat)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 10) - 1
+   let          tllat= $fix(xxa) * 10
+else
+   let          tllat= slat
+end-if
+!longitude
+if             (slon >= 0) 
+   let          xxa   = $float(slon)
+   let          tllon= $fix(xxa/10) * 10
+else-if        (slonb= 1)
+   let          xxa  = $float(slon)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 10) - 1
+   let          tllon= $fix(xxa) * 10
+else
+   let          tllon= slon
+end-if
+
+!calcualte the lower left corner of the UPPER RIGHT 10x10 degree landsat tile
+!that encompases the AOI area.
+!latitude
+if             (elat > 0)
+   let          xxa  = $float(elat)
+   let          xxa  = xxa - 0.1
+   let          trlat= $fix(xxa/10) * 10
+else
+   let          xxa  = $float(elat)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 10) - 1
+   let          trlat= $fix(xxa) * 10
+end-if
+!longitude
+if             (elon > 0)
+   let          xxa   = $float(elon)
+   let          xxa   = xxa - 0.1
+   let          trlon= $fix(xxa/10) * 10
+else
+   let          xxa  = $float(elon)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 10) - 1
+   let          trlon= $fix(xxa) * 10
+end-if
+
+!Calculate the number of lengthXwidth 10x10 tiles
+if             (slat >= 0)
+   let          theig = ((trlat - tllat) + 10) / 10
+else
+   let          theig = (((tllat - trlat) * (-1)) + 10) / 10
+end-if
+if             (slon >= 0)
+   let          tleng = ((trlon - tllon) + 10) / 10
+else
+   let          tleng = (((tllon - trlon) * (-1)) + 10) / 10
+end-if
+   let          tnum  = theig * tleng
+
+!Verify Parameters
+write  "slat= &slat"
+write  "elat= &elat"
+write  "slon= &slon"
+write  "elon= &elon"
+write  "lns= &lns"
+write  "lew= &lew"
+write  "heig= &heig"
+write  "leng= &leng"
+write  "tllat= &tllat"
+write  "tllon= &tllon"
+write  "trlat= &trlat"
+write  "trlon= &trlon"
+write  "theig= &theig"
+write  "tleng= &tleng"
+write  "tnum= &tnum"
+
+!Calculate and extract subarea from 10x10 degree tiles
+   let          I = 0             !Inc count of 10x10 tiles in lat direction
+   let          J = 0             !Inc count of 10x10 tiles in lon direction
+   let          K = tllat - 10    !Current 10x10 tile bottom lat
+   let          L = tllon - 10    !Current 10x10 tile left lon
+   let          M = 0             !Inc count of the number of 10x10 tiles
+   let          N = 0             !Current 10x10 tile top lat
+   let          P = 0             !Current 10x10 tile right lon
+loop
+   let          I = I + 1 
+   if          (I > theig) break
+   let          K = K + 10
+   loop
+      let       J = J + 1
+      if       (J > tleng) break  !---N---!
+      let       M = M + 1         !       !
+      let       L = L + 10     !  L 10x10 P
+   !subsl                         ! tile  !
+      let       N = K + 10        !---K---!
+      let       P = L + 10
+      if       (N >= elat)
+        let     subsl = ((N - elat) * 2048) + 1
+        else
+        let     subsl = 1
+      end-if
+   !subss
+      if       (L <= slon)
+        let     subss = ((slon - L) * 2048) + 1
+        else
+        let     subss = 1
+      end-if
+   !subnl
+      if       (K < slat)
+        let     subnl = (N - slat) * 2048
+        else
+        let     subnl = (20480 - subsl)
+      end-if
+      if       (theig = 1) let subnl = (heig * 2048)
+   !subns
+      if       (P > elon)
+        let     subns = (elon - L) * 2048
+        else
+        let     subns = (20480 - subss) 
+      end-if
+      if       (tleng = 1) let subns = (leng * 2048)
+   !Extract the subarea
+      write     "subsl= &subsl"
+      write     "subss= &subss"
+      write     "subnl= &subnl"
+      write     "subns= &subns"
+   !Remove negative signs from K and L for use in filenames
+      if       (K < 0)
+        let     K2 = K * (-1)
+        else
+         let    K2 = K
+      end-if
+      if       (L < 0)
+        let     L2 = L * (-1)
+        else
+         let    L2 = L
+      end-if
+   !Reset n/s/e/w codes for crossing the Equator/Prime Meridian
+       if      (K >= 0) let lns = "n"
+       if      (K <  0) let lns = "s"
+       if      (L >= 0) let lew = "e"
+       if      (L <  0) let lew = "w"
+
+      gtcopy    inp=&"dir1"&"lns"&"K2"&"lew"&"L2"_adrg_red.img out=xr&"M" +
+                size=(&subsl,&subss,&subnl,&subns)
+      if       (redonly = "Y") goto skip1
+
+      gtcopy    inp=&"dir1"&"lns"&"K2"&"lew"&"L2"_adrg_grn.img out=xi&"M" +
+                size=(&subsl,&subss,&subnl,&subns)
+
+      gtcopy    inp=&"dir1"&"lns"&"K2"&"lew"&"L2"_adrg_blu.img out=xb&"M" +
+                size=(&subsl,&subss,&subnl,&subns)
+      skip1>
+   end-loop
+   let          J = 0
+   let          L = tllon - 10
+end-loop
+
+!mosaic xr (red) subareas into one adrg mosaic
+if            (tnum = 1)
+   fthmos xxfth xr1 out=xred
+else-if       (tnum = 2)
+   fthmos xxfth xr1 xr2 out=xred toler=.4
+else-if       (tnum = 3)
+   fthmos xxfth xr1 xr2 xr3 out=xred toler=.4
+else-if       (tnum = 4)            
+   fthmos xxfth xr1 xr2 xr3 xr4 out=xred toler=.4
+else-if       (tnum = 5)                   
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 out=xred toler=.4
+else-if       (tnum = 6)                          
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 out=xred toler=.4
+else-if       (tnum = 7)                                 
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 out=xred toler=.4
+else-if       (tnum = 8)                                        
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 out=xred toler=.4
+else-if       (tnum = 9)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 out=xred toler=.4
+else-if       (tnum = 10)                                                 
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 out=xred +
+          toler=.4
+else-if       (tnum = 11)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 +
+          out=xred toler=.4
+else-if       (tnum = 12)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          out=xred toler=.4
+else-if       (tnum = 13)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 out=xred toler=.4
+else-if       (tnum = 14)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 out=xred toler=.4
+else-if       (tnum = 15)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 xr15 out=xred toler=.4
+else-if       (tnum = 16)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 xr15 xr16 out=xred toler=.4
+end-if
+
+if       (redonly = "Y") goto skip2
+
+!mosaic xi (grn) subareas into one adrg mosaic
+if            (tnum = 1)
+   fthmos xxfth xi1 out=xnir
+else-if       (tnum = 2)
+   fthmos xxfth xi1 xi2 out=xnir toler=.4
+else-if       (tnum = 3)
+   fthmos xxfth xi1 xi2 xi3 out=xnir toler=.4
+else-if       (tnum = 4)            
+   fthmos xxfth xi1 xi2 xi3 xi4 out=xnir toler=.4
+else-if       (tnum = 5)                   
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 out=xnir toler=.4
+else-if       (tnum = 6)                          
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 out=xnir toler=.4
+else-if       (tnum = 7)                                 
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 out=xnir toler=.4    
+else-if       (tnum = 8)                                             
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 out=xnir toler=.4    
+else-if       (tnum = 9)                                             
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 out=xnir toler=.4
+else-if       (tnum = 10)                                          
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 out=xnir +
+          toler=.4
+else-if       (tnum = 11)                                      
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 +     
+          out=xnir toler=.4                                         
+else-if       (tnum = 12)                                           
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          out=xnir toler=.4       
+else-if       (tnum = 13)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 out=xnir toler=.4  
+else-if       (tnum = 14)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 out=xnir toler=.4
+else-if       (tnum = 15)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 xi15 out=xnir toler=.4
+else-if       (tnum = 16)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 xi15 xi16 out=xnir toler=.4
+end-if
+
+!mosaic xb (blu) subareas into one adrg mosaic
+if            (tnum = 1)
+   fthmos xxfth xb1 out=xblu
+else-if       (tnum = 2)
+   fthmos xxfth xb1 xb2 out=xblu toler=.4
+else-if       (tnum = 3)
+   fthmos xxfth xb1 xb2 xb3 out=xblu toler=.4
+else-if       (tnum = 4)            
+   fthmos xxfth xb1 xb2 xb3 xb4 out=xblu toler=.4
+else-if       (tnum = 5)                   
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 out=xblu toler=.4
+else-if       (tnum = 6)                          
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 out=xblu toler=.4
+else-if       (tnum = 7)                                 
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 out=xblu toler=.4        
+else-if       (tnum = 8)                                             
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 out=xblu toler=.4    
+else-if       (tnum = 9)                                             
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 out=xblu toler=.4
+else-if       (tnum = 10)                                          
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 out=xblu +
+          toler=.4
+else-if       (tnum = 11)                                           
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 +     
+          out=xblu toler=.4                                         
+else-if       (tnum = 12)                                           
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 xb12 +
+          out=xblu toler=.4       
+else-if       (tnum = 13)         
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 xb12 +
+          xb13 out=xblu toler=.4  
+else-if       (tnum = 14)         
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 xb12 +
+          xb13 xb14 out=xblu toler=.4
+else-if       (tnum = 15)         
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 xb12 +
+          xb13 xb14 xb15 out=xblu toler=.4
+else-if       (tnum = 16)         
+   fthmos xxfth xb1 xb2 xb3 xb4 xb5 xb6 xb7 xb8 xb9 xb10 xb11 xb12 +
+          xb13 xb14 xb15 xb16 out=xblu toler=.4
+end-if
+skip2>
+
+!The Output size MUST be a multiple of 2048, if not change it.
+form      xred nl=inl ns=ins
+let       xxb = heig * 2048
+let       xxc = leng * 2048
+if       (xxb <> inl OR xxc <> ins)
+  write  "NL = &inl should be &xxb"
+  write  "NS = &ins should be &xxc"
+  let     inl = xxb
+  let     ins = xxc 
+  gtcopy  xred &"dir2"/&"outn"_red.img size=(1,1,&inl,&ins)
+else
+ush       cp  xred &"dir2"/&"outn"_red.img
+end-if
+
+if        (redonly = "Y") goto skip3
+
+form      xnir nl=inl ns=ins
+let       xxb = heig * 2048 
+let       xxc = leng * 2048 
+if       (xxb <> inl OR xxc <> ins)
+  write  "NL = &inl should be &xxb"
+  write  "NS = &ins should be &xxc"
+  let     inl = xxb
+  let     ins = xxc
+  gtcopy  xnir &"dir2"/&"outn"_grn.img size=(1,1,&inl,&ins)
+else
+ush       cp  xnir &"dir2"/&"outn"_grn.img
+end-if
+
+form      xblu nl=inl ns=ins
+let       xxb = heig * 2048 
+let       xxc = leng * 2048 
+if       (xxb <> inl OR xxc <> ins)
+  write  "NL = &inl should be &xxb"
+  write  "NS = &ins should be &xxc"
+  let     inl = xxb
+  let     ins = xxc
+  gtcopy  xblu &"dir2"/&"outn"_blu.img size=(1,1,&inl,&ins)
+else
+ush       cp  xblu &"dir2"/&"outn"_blu.img
+end-if
+
+ush       rm xb*
+ush       rm xi*
+ush       rm xni*
+skip3>
+ush       rm xr*
+
+write "MSG: ADRG PROCESSING COMPLETED"
+
+end-proc

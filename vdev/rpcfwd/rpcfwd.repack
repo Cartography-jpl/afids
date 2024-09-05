@@ -1,0 +1,6 @@
+$ vpack rpcfwd.com -mixed -
+	-s rpcfwd.c -
+	-i rpcfwd.imake -
+	-p rpcfwd.pdf -
+	-t tstrpcfwd.pdf
+$ Exit

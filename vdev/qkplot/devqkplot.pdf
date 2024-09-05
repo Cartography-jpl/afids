@@ -1,0 +1,13 @@
+procedure
+body
+
+!   TEST qkplot HANDYPROC
+
+
+qkplot xd.int xx2 nl=800 ns=800 cols=(1,2,10,11,3,4) mag=1.2 +
+     sl=1 ss=1
+
+
+
+
+end-proc

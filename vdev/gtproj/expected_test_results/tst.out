@@ -1,0 +1,251 @@
+gtgen out=xxxlab1  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)",  +
+          "GeogPrimeMeridianGeoKey=40.0")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtgen out=xxxlab2  +
+   geotiff=("ProjectionGeoKey=8(CT_LambertConfConic_2sp)",  +
+          "PROJCENTERLATGEOKEY=40",  +
+          "PROJCENTERLONGGEOKEY=30.5",  +
+          "PROJSTDPARALLEL1GEOKEY=33.0",  +
+          "PROJSTDPARALLEL2GEOKEY=45",  +
+          "PROJFALSENORTHINGGEOKEY=0",  +
+          "PROJFALSEEASTINGGEOKEY=0",  +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xx1 f="c1=30.0+@index$c2=40.0$c3=333.33"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+           31.00000000            40.00000000           333.33000000 
+           32.00000000            40.00000000           333.33000000 
+ 
+Rows: 1:2
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+        42468.97064653           116.83493344           333.33000000
+       127401.76928796          1051.49317929           333.33000000
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+           31.00000000            40.00000000           333.33000000 
+           32.00000000            40.00000000           333.33000000 
+ 
+Rows: 1:2
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+        42468.97064653           116.83493344           333.33000000
+       127401.76928796          1051.49317929           333.33000000
+gtgen out=xxxlab1  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)",  +
+          "GeogPrimeMeridianGeoKey=40.0")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtgen out=xxxlab2  +
+   geotiff=("ProjectionGeoKey=11(CT_AlbersEqualArea)",  +
+          "PROJCENTERLATGEOKEY=40",  +
+          "PROJCENTERLONGGEOKEY=30.5",  +
+          "PROJSTDPARALLEL1GEOKEY=33.0",  +
+          "PROJSTDPARALLEL2GEOKEY=45",  +
+          "PROJFALSENORTHINGGEOKEY=3000000",  +
+          "PROJFALSEEASTINGGEOKEY=1000000",  +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xx1 f="c1=30.0+@index$c2=40.0$c3=333.33"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+           31.00000000            40.00000000           333.33000000 
+           32.00000000            40.00000000           333.33000000 
+ 
+Rows: 1:2
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+      1042467.35911820       3000115.98064290           333.33000000
+      1127397.00944017       3001043.80502493           333.33000000
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+           31.00000000            40.00000000           333.33000000 
+           32.00000000            40.00000000           333.33000000 
+ 
+Rows: 1:2
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+      1042467.35911820       3000115.98064290           333.33000000
+      1127397.00944017       3001043.80502493           333.33000000
+gtgen out=xxxlab1  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtgen out=xxxlab2  +
+   geotiff=("ProjectedCSTypeGeoKey=32637(PCS_WGS84_UTM_zone_37N)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xx1 f="c1=39.77000000000123$c2=15.20000000000123$c3=333.33"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+    39.770000000001232     15.200000000001230           333.33000000 
+ 
+Rows: 1:1
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+       582705.46828536       1680592.79119847           333.33000000
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+    39.770000000001232     15.200000000001227           333.33000000 
+ 
+Rows: 1:1
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+       582705.46828536       1680592.79119847           333.33000000
+gtgen out=xxxlab1  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+gtgen out=xxxlab2  +
+   geotiff=("ProjectedCSTypeGeoKey=32237(PCS_WGS72_UTM_zone_37N)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xx1 f="c1=39.77000000000123$c2=15.20000000000123$c3=333.33"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+    39.770000000001232     15.200000000001230           333.33000000 
+ 
+Rows: 1:1
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+       582688.92771136       1680587.89241485           333.33000000
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+ibis-list xx1 csiz=(22,22,22,22,22,22)  +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 6       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++----------------------+----------------------+----------------------
+                    C:1                    C:2                    C:3
++----------------------+----------------------+----------------------
+    39.770000000001232     15.200000000018697           333.33000000 
+ 
+Rows: 1:1
++----------------------+----------------------+---------------------
+                    C:4                    C:5                   C:6
++----------------------+----------------------+---------------------
+       582688.92771136       1680587.89241485           333.33000000
+goto skip_ep
+END-PROC
+disable-log

@@ -1,0 +1,4 @@
+$ vpack fthymos.com -mixed -
+	-p fthymos.pdf -
+	-t tstfthymos.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack mvecall.com -mixed -
+	-s mvecall.c -
+	-i mvecall.imake -
+	-p mvecall.pdf -
+	-t tstmvecall.pdf devmvecall.pdf
+$ Exit

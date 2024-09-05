@@ -1,0 +1,26 @@
+/***********************************************************************
+
+                     IMAKE FILE FOR PROGRAM lab2asc
+
+   To Create the build file give the command:
+
+		$ vimake lab2asc			(VMS)
+   or
+		% vimake lab2asc			(Unix)
+
+
+************************************************************************/
+
+
+#define PROGRAM	lab2asc
+
+#define MODULE_LIST lab2asc.c
+
+#define MAIN_LANG_C
+#define USES_ANSI_C
+
+#define LIB_CARTO
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB
+/************************* End of Imake file ***************************/

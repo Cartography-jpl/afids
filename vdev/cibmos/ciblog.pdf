@@ -1,0 +1,27 @@
+procedure help=*
+parm key type=string
+parm qlon type=string count=2
+parm qlat type=string count=2
+parm rawdir type=string
+parm diskimg type=string default="/cdrom/cdrom0"
+parm res type=(string,3) default="5M"
+
+local lon1 string
+local lat1 string
+local lon2 string
+local lat2 string
+local filelog string
+body
+
+let lon1 = qlon(1)
+let lon2 = qlon(2)
+let lat1 = qlat(1)
+let lat2 = qlat(2)
+let filelog = "&key" // "filelog"
+
+!! order is south north west east
+
+write "diskimg &diskimg"
+ush ./rasimpcl -cd &diskimg -datt CIB -extt 2 -parm &lat1 &lat2 &lon1 &lon2 1 -outt 5 -intt 1 -rpfScale &res -o &rawdir -fn &filelog
+
+end-proc

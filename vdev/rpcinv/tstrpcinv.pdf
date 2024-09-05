@@ -1,0 +1,77 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR RPCINV, NOTE USE OF VICAR COORDS FOR AREA TYPE IMAGE
+
+ibis-gen xxxb nc=5 nr=1 format=(DOUB,DOUB,DOUB,DOUB,DOUB) +
+  datacol=(4,5) data=(0.5,0.5)
+!label-list /home/alz/ikapp/xxchip3.img
+
+rpcinv (xxxb,../test_data/xxchip2.img, +
+   ../test_data/qb1_iraq_dem.hlf) +
+   thresh=0.0000000001
+ibis-l xxxb  csiz=(16,16,16,16,16) +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+!  confirm
+
+write "CONFIRM, BUT CAN ONLY GET 7 DIGITS (INHERENT)"
+rpcfwd (xxxb,../test_data/xxchip2.img)
+ibis-l xxxb  csiz=(16,16,16,16,16) 'format +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+!  also look at original point
+
+write "ORIGINAL POINT"
+ibis-gen xxxb nc=5 nr=1 format=(DOUB,DOUB,DOUB,DOUB,DOUB)
+mf3 xxxb f="c1=44.825279$c2=35.881943$c3=371.41830100580"
+rpcfwd (xxxb,../test_data/xxchip2.img)
+ibis-l xxxb  csiz=(16,16,16,16,16) +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+
+! TEST SCRIPT FOR RPCINV, REPEAT FOR LOWER LEFT CORNER
+
+ibis-gen xxxb nc=5 nr=1 format=(DOUB,DOUB,DOUB,DOUB,DOUB) +
+  datacol=(4,5) data=(5764.5,27552.5)
+!label-list ../test_data/xxchip3.img
+
+rpcinv (xxxb,../test_data/xxchip2.img, +
+   ../test_data/qb1_iraq_dem.hlf) +
+   thresh=0.0000000001
+ibis-l xxxb  csiz=(16,16,16,16,16) +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+!  confirm
+
+write "CONFIRM, BUT CAN ONLY GET 7 DIGITS (INHERENT)"
+rpcfwd (xxxb,../test_data/xxchip2.img)
+ibis-l xxxb  csiz=(16,16,16,16,16) 'format +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+!  also look at original point
+
+write "ORIGINAL POINT"
+ibis-gen xxxb nc=5 nr=1 format=(DOUB,DOUB,DOUB,DOUB,DOUB)
+mf3 xxxb f="c1=45.075832$c2=35.84$c3=769.3379806594"
+rpcfwd (xxxb,../test_data/xxchip2.img)
+ibis-l xxxb  csiz=(16,16,16,16,16) +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+goto theend
+from the label
+NITF_CORNERLAT1='35.881943'
+NITF_CORNERLON1='44.825279'
+NITF_CORNERLAT2='35.87611'
+NITF_CORNERLON2='45.080002'
+NITF_CORNERLAT3='35.84'
+NITF_CORNERLON3='45.075832'
+NITF_CORNERLAT4='35.845833'
+NITF_CORNERLON4='44.825832'
+
+theend>
+end-proc

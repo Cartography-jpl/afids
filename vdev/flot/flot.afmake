@@ -1,0 +1,21 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = flot
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#CPPFLAGS += -I$(AFIDSTOP)/include -I.
+FFLAGS += -Wunused -Wuninitialized -Wsurprising
+
+#==============================================================
+# Extra files stretch depends on.
+
+#FLOT_SOURCE = flot_unix.F 
+
+flot:  ../sub/stacka_big.o  
+# $(FLOT_SOURCE:%.F=%._f.o)
+#flot: $(FLOT_SOURCE:%.F=%._f.o)
+
+

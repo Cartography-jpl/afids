@@ -1,0 +1,6 @@
+$ vpack gtlabfix.com -mixed -
+	-s gtlabfix.c -
+	-i gtlabfix.imake -
+	-p gtlabfix.pdf -
+	-t tstgtlabfix.pdf
+$ Exit

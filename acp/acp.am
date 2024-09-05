@@ -1,0 +1,13 @@
+bin_PROGRAMS+= acp
+# This doesn't change often. Rather than requiring that any machine we
+# build on as flex and bison, we just run them on our development machines
+# when acpf.l or acpb.y changes.
+
+acp_SOURCES = @srcacp@/acpf.c @srcacp@/acpb.c 
+EXTRA_DIST += @srcacp@/acpb.h
+
+#AM_YFLAGS = -d
+#acp_SOURCES= @srcacp@/acpf.l @srcacp@/acpb.y
+#BUILT_SOURCES+= @srcacp@/acpb.h
+
+#src/acp/acpb.c: $(BISON_TARGET)

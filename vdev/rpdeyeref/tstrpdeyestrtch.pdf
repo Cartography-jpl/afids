@@ -1,0 +1,25 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+gen x
+rpdeyestrtch (regression_output/ref.img, ../test_data/rapideye1.img) regression_output/refstrtch.img
+
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

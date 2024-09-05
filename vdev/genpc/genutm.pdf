@@ -1,0 +1,52 @@
+procedure
+parm out type=(string,99)
+parm mpix type=real default=1.0
+parm east type=real
+parm north type=real
+parm round type=real default=100000.0
+parm utmzone type=int
+parm rastypstr type=string default="1(RasterPixelIsArea)" +
+   valid=("1(RasterPixelIsArea)","2(RasterPixelIsPoint)")
+
+local utmstring string
+local uln real
+local ule real
+local intuln int
+local intule int
+local urn real
+local ure real
+local lln real
+local lle real
+
+body
+
+! calculate ule,uln
+
+
+let east = east+10000000.0+round/2.0
+let north = north+10000000.0+round/2.0
+let intule = $fix(east/round)
+let intuln = $fix(north/round)
+let ule = $float(intule)
+let uln = $float(intuln)
+let ule = ule*round-10000000.0
+let uln = uln*round-10000000.0
+
+let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+
+let ure = ule + 100.0*&mpix
+let urn = uln
+let lle = ule
+let lln = uln - 100.0*&mpix
+
+gtgen out=&out 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&ule,&uln,0.0)", +
+     "ModelTiePointTag=(100,0,0,&ure,&urn,0.0)", +
+     "ModelTiePointTag=(0,100,0,&lle,&lln,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+     "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+     "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+     "GTRasterTypeGeoKey=&rastypstr")
+
+end-proc

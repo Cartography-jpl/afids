@@ -1,0 +1,203 @@
+get_elv 45 45
+let $echo="no"
+Beginning VICAR task ibis
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+       45.00       45.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
++-----------+-----------+-----------+-----------+-----------
+          45          45        0.00        0.00        0.00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
+        DOUB        DOUB        DOUB        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------+-----------
+       45.00       45.00     3600.99        1.01       33.00       45.00
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
+        FULL        FULL        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------
+          45          45        0.64       45.64       33.64
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ 
+longitude = 4.500000000000e+01    latitude = 4.500000000000e+01
+ 
+etopo (EGM96) = 3.299999998921e+01
+srtm  (EGM96) = 4.500000000000e+01
+ 
+EGM96 to WGS84 correction    = 6.374999999989e-01
+ 
+etopo  (WGS84) = 3.363749998921e+01
+srtm   (WGS84) = 4.563750000000e+01
+Beginning VICAR task ibis
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+       75.00       20.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
++-----------+-----------+-----------+-----------+-----------
+          75          20        0.00        0.00        0.00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
+        DOUB        DOUB        DOUB        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------+-----------
+       75.00       20.00     3600.99        1.01      527.00      522.01
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
+        FULL        FULL        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------
+          75          20      -66.63      455.38      460.37
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ 
+longitude = 7.500000000000e+01    latitude = 2.000000000000e+01
+ 
+etopo (EGM96) = 5.269999999825e+02
+srtm  (EGM96) = 5.220100000000e+02
+ 
+EGM96 to WGS84 correction    = -6.663250000000e+01
+ 
+etopo  (WGS84) = 4.603674999825e+02
+srtm   (WGS84) = 4.553775000000e+02
+Beginning VICAR task ibis
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+      -75.00      -13.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
++-----------+-----------+-----------+-----------+-----------
+          76          14        0.00        0.00        0.00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
+        DOUB        DOUB        DOUB        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------+-----------
+      -75.00      -13.00        1.01     3600.99     4614.00     4732.95
+ 
+Rows: 1:1
++-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11
+        FULL        FULL        DOUB        DOUB        DOUB
++-----------+-----------+-----------+-----------+-----------
+          76          14       35.76     4768.71     4649.76
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ 
+longitude = -7.500000000000e+01    latitude = -1.300000000000e+01
+ 
+etopo (EGM96) = 4.613999998842e+03
+srtm  (EGM96) = 4.732949900000e+03
+ 
+EGM96 to WGS84 correction    = 3.576500000000e+01
+ 
+etopo  (WGS84) = 4.649764998842e+03
+srtm   (WGS84) = 4.768714900000e+03

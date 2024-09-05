@@ -1,0 +1,246 @@
+!cutil3_ave.pdf version 2.0
+!L1 AMT Image Processing Subsystem, Build 4.7
+!Latest Change Date: 06MAR2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 3 - Average and Preprocess Source Data
+
+!This VICAR procedure reads PRC and SHC L1N AMT Dark Current and Flat
+!Field imagery PREPARED by cutil1_log or cutil2_fil, applies the 11-line
+!Correction (PRC only), can optionally remove Zeros and Cosmic Rays (PRC
+!only), then averages 2 to 8 (max) Repeat Data Takes into a single file.
+
+!This code should be executed from the "run3_cutil.pdf" program.      
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  inpdir string   def="/raid12/amt/sw/vic/"
+parm  outdir string   def="/raid12/amt/sw/vic/"
+parm  clock  string   def="8" !Clock rate specified 8 (for filename use)
+parm  gain   string   def="4" !gain value (1,4,6)
+parm  subt   string   def="PRC" !Product Subtypte (PRC or SHC)
+parm  filt   string   !filter number (e.g., 001=Open; 007=Closed)
+parm  coll   string   !Collection ID
+parm  zwidth integer  def=304  !Width of 11-line correction zone
+parm  zfil   string   def="N"  !Specify Y for yes 
+parm  cosray string   def="N"  !Specify Y for yes
+parm  line   string   def="Y"  !Specify Y for PRC and N for SHC
+parm  numint integer  !Number of Integration Times to Process
+parm  int1   string   def=0 !1st  integration time in ms
+parm  int2   string   def=0 !2nd  integration time in ms
+parm  int3   string   def=0 !3rd  integration time in ms
+parm  int4   string   def=0 !4th  integration time in ms
+parm  int5   string   def=0 !5th  integration time in ms
+parm  int6   string   def=0 !6th  integration time in ms
+parm  int7   string   def=0 !7th  integration time in ms
+parm  int8   string   def=0 !8th  integration time in ms
+parm  int9   string   def=0 !9th  integration time in ms
+parm  int10  string   def=0 !10th integration time in ms
+parm  int11  string   def=0 !11th integration time in ms
+parm  int12  string   def=0 !12th integration time in ms
+parm  int13  string   def=0 !13th integration time in ms
+parm  int14  string   def=0 !14th integration time in ms
+parm  int15  string   def=0 !15th integration time in ms
+parm  int16  string   def=0 !16th integration time in ms
+parm  int17  string   def=0 !17th integration time in ms
+parm  int18  string   def=0 !18th integration time in ms
+parm  int19  string   def=0 !19th integration time in ms
+parm  int20  string   def=0 !20th integration time in ms
+parm  int21  string   def=0 !21st integration time in ms
+parm  int22  string   def=0 !22nd integration time in ms
+!Parameters used within this program
+local I      integer  !Index Counter
+local J      integer  !Index Counter
+local K      integer  !Index Counter
+local found  integer  !File found (1) or not found (1)
+local sec    integer  !Clock Seconds for temporary variable names
+local intr1  integer  !Starting Line for First 11-line correction
+local intr2  integer  !Starting Line for Second 11-line correction
+local rowt   integer  !Integration Rows
+local int    string   !Integration Time variable
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl    &inpdir val=found
+if          (found=0) goto error1
+file2tcl    &outdir val=found   
+if          (found=0) goto error1
+!**********************************************************************
+
+!Read and Process Each Image Group by their Integration Time
+!Begin Main Loop
+let          I = 0              !Loop Counter  
+
+loop
+let          I = I + 1
+write       "I = &I"
+if          (I > numint) break
+let          int = int&I
+write       "Integration Time  = &int"
+write       " "
+!**********************************************************************
+
+gen         &"outdir"xx9tmp&sec nl=3375 ns=3648 ival=0 linc=0 sinc=0 'half
+
+!Loop to Count the Number of Repeat Files (to average). Eight Maximum.
+let          J = 0              !Loop Counter
+  loop
+  let        J = J + 1
+  if        (J = 9) break
+  file2tcl  &"inpdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf +
+             val=found
+  if        (found = 0) goto next1
+  end-loop
+
+ next1>
+let          J = J - 1
+write       "*** Found &J Files for AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll" "
+if          (J = 0) goto error2
+!**********************************************************************
+
+!Loop to Average the Repeat Files.
+let          K = 0              !Loop Counter
+  loop
+  let        K = K + 1
+  if        (K = J) break
+  f2        (&"inpdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"K".hlf, +
+            &"outdir"xx9tmp&"sec") out=&"outdir"xx9tmp&"sec" func="in1+in2"
+end-loop
+
+!One-image Only case (no averaging)
+if          (K = J) 
+  gtcopy    &"inpdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"K".hlf +
+            &"outdir"xx10tmp&sec
+  goto       next2
+else
+end-if
+
+f2           inp=&"outdir"xx9tmp&sec out=&"outdir"xx10tmp&sec func="(in1/&"J")"
+next2>
+!**********************************************************************
+
+!Box Filters CAN NOT be applied to SHC imagery. Skip 11-line correction,
+!zero-fill, and cosmic ray corrections, even if specified.
+if          (subt = "SHC")
+  gtcopy    &"outdir"xx10tmp&sec =&"outdir"xx9tmp&sec
+  goto      skip2
+else
+end-if
+!**********************************************************************
+
+!Optionally Remove/Fill bad packet data (zero values) that could distort
+!the 11-line correction.
+If          ("&zfil" = "Y")
+  zfill      inp=&"outdir"xx10tmp&sec out=&"outdir"xx9tmp&sec replace=0 'dense 
+  gtcopy     inp=&"outdir"xx9tmp&sec out=&"outdir"xx10tmp&sec
+  write     "*** Zero Values Filled ***"
+else
+end-if
+!**********************************************************************
+
+!Get the number of Integration Rows from the metadata.
+plab2tcl    &"outdir"xx10tmp&sec vtype=2 val=rowt +
+             property="GEOTIFF" keyword=AMT_INTEGRATION_ROWS
+write       "Number of Integration Rows = &rowt"
+!**********************************************************************
+
+!Remove 11-line artifacts from the images.
+If          ("&line" = "Y")
+!Calculate Line positions of the two strips.
+  if        ((&rowt < 13) OR (&rowt > 3363)) goto skip1 !Full Frame Edge
+  let        intr1 = &rowt - 12
+  write     "Starting Line for First 11-line Correction = &intr1"
+  let        intr2 = 3377 - &rowt
+  write     "Starting Line for Second 11-line Correction = &intr2"
+  if        ((intr1 < 1) OR (intr1 > 3375)) goto skip1
+  if        ((intr2 < 1) OR (intr2 > 3375)) goto skip1
+!For all interior 11-line cases, divide the 11-line artifact into 12 parts.
+  amtlnfx2   inp=&"outdir"xx10tmp&sec +
+             out=&"outdir"xx9tmp&sec blemln=(&intr1,&intr2) blemwid=11 mode=add +
+             sampwid=&zwidth
+end-if
+skip1>
+!**********************************************************************
+
+!Apply Optional Cosmic Ray Correction
+!Requires generation of a median image to identify spikes from the background.
+if          ("&cosray" = "Y")
+  median    &"outdir"xx9tmp&sec &"outdir"xx10tmp&sec nlw=5 nsw=5
+  remray    (&"outdir"xx9tmp&sec,&"outdir"xx10tmp&sec) &"outdir"xx11tmp&sec +
+             tol=200
+  gtcopy    &"outdir"xx11tmp&sec &"outdir"xx9tmp&sec
+  write     "*** Cosmic Ray Removal Performed ***"
+else
+end-if
+skip2>
+!**********************************************************************
+
+!Write out the averaged image with the proper filename
+gtcopy       inp=&"outdir"xx9tmp&sec +
+             out=&"outdir"ave_AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf
+write        "*** out=ave_AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf "
+end-loop
+!**********************************************************************
+
+!Delete Temporary Files, Handle Errors,  and Print Closing Message
+file2tcl      &"outdir"xx1tmp&sec val=found 
+if           (found = 1) ush rm &"outdir"xx1tmp&sec
+file2tcl      &"outdir"xx2tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx2tmp&sec
+file2tcl      &"outdir"xx3tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx3tmp&sec
+file2tcl      &"outdir"xx4tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx4tmp&sec
+file2tcl      &"outdir"xx5tmp&sec val=found 
+if           (found = 1) ush rm &"outdir"xx5tmp&sec
+file2tcl      &"outdir"xx6tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx6tmp&sec
+file2tcl      &"outdir"xx7tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx7tmp&sec
+file2tcl      &"outdir"xx8tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx8tmp&sec
+file2tcl      &"outdir"xx9tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx9tmp&sec
+file2tcl      &"outdir"xx10tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx10tmp&sec
+file2tcl      &"outdir"xx11tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx11tmp&sec
+goto          theend1
+
+error1>
+!Error Messages
+write        " "
+write        "*** ERROR: Specified Directory Not Found ***"
+goto          next3
+error2>
+write        " "
+write        "*** ERROR: The Expected Input Data was NOT Found ***"
+next3>
+write        "*** Calibration Utility-3 Averaging Program Stopped Due to Errors ***"
+write        " "
+file2tcl      &"outdir"xx9tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx9tmp&sec
+file2tcl      &"outdir"xx10tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx10tmp&sec
+file2tcl      &"outdir"xx11tmp&sec val=found
+if           (found = 1) ush rm &"outdir"xx11tmp&sec
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-3 Averaging Successfully Completed ***"
+write        " "
+theend2>
+!**********************************************************************
+end-proc

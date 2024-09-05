@@ -1,0 +1,35 @@
+PROCESS      HELP=*
+
+PARM INP        TYPE=STRING  COUNT=1
+PARM OUT        TYPE=STRING  COUNT=1
+PARM MINSIZE    TYPE=INTEGER COUNT=0:1 DEFAULT=20
+PARM TRAINFILES TYPE=KEYWORD COUNT=0:1 VALID=TRAINFILES DEFAULT=--
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "geneprep"
+.HELP
+PURPOSE
+
+10-09-2019 - Ray Bambery - removed warning messages via casting
+                    modified cartolLinkedList.h
+.LEVEL1
+.VARIABLE INP
+ Input image file
+
+.VARIABLE OUT
+ Output ibis file
+
+.END
+
+
+
+
+
+
+
+
+
+
+

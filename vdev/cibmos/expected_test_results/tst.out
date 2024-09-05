@@ -1,0 +1,68 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+ush /bin/rm -f rasimpcl
+let ushstring = "/home/alz/vdev" // "/rasimpcl ."
+ush ln -s /home/alz/vdev/rasimpcl .
+ldir2tcl strvar=ldir
+Beginning VICAR task ldir2tcl
+ldir2tcl version Thu Jan  3 2008
+let rawdir = "/home/pkim/afids/trunk/src/vdev/cibmos" // "/scratch"
+let mosrec = "xxx" // "cbt" // "fmosrec"
+let mosfile = "xxx" // "cbt" // "fmosfile"
+let logfile = "scratch/cbt" // "filelog"
+let outfile = "basemos/cbtmos"
+let curfilemid = "scratch/cbt" // "_curfilemid"
+let mostemp = "xxx" // "cbt" // "fmostemp"
+let offset = "xxx" // "cbt" // "foffset"
+let _onfail="continue"
+ciblog key=cbt qlon=(42.0,42.3) qlat=(34.6,34.8) rawdir=/home/pkim/afid+
+s/trunk/src/vdev/cibmos/scratch diskimg=/cdrom/cdrom0     res=5M
+let lon1 = qlon(1)
+let lon2 = qlon(2)
+let lat1 = qlat(1)
+let lat2 = qlat(2)
+let filelog = "cbt" // "filelog"
+write "diskimg /cdrom/cdrom0"
+diskimg /cdrom/cdrom0
+ush ./rasimpcl -cd /cdrom/cdrom0 -datt CIB -extt 2 -parm 34.6 34.8 42.0 42.3 1 -outt 5 -intt 1 -rpfScale 5M -o /home/pkim/afids/tru+
+nk/src/vdev/cibmos/scratch -fn cbtfilelog
+./rasimpcl: Command not found.
+[TAE-ABNSHELL] Abnormal shell termination.;
+ proc 'ciblog', line 25
+RETURN
+continue
+let _onfail="return"
+asc2tcl scratch/cbtfilelog keyword="numfile=" val=nfile vtype=4
+Beginning VICAR task asc2tcl
+asc2tcl version Wed Jan  2 2008
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'cibmos', line 118
+return
+RETURN

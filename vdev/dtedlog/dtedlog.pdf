@@ -1,0 +1,160 @@
+procedure help=*
+PARM inp TYPE=STRING COUNT=1
+PARM altinp TYPE=STRING COUNT=1 default="wyz246pqrst753"
+PARM out TYPE=STRING COUNT=1
+PARM lon TYPE=INT COUNT=1
+PARM lat TYPE=INT COUNT=1
+PARM hemi1 TYPE=STRING DEFAULT="w" VALID=("w","e")
+PARM hemi2 TYPE=STRING DEFAULT="n" VALID=("n","s")
+PARM level TYPE=INT DEFAULT=1 VALID=1:2
+
+local slon int
+local slat int
+local slonp1 int
+local slatp1 int
+local nl int
+local nlm1 int
+local isfile1 int
+local isfile2 int
+local dns int
+local dnsm1 int
+
+refgbl $echo
+body
+let $echo="yes"
+
+!  DTEDLOG HANDYPROC
+
+write "in dtedlog, level &level"
+if (level=1) let dns = 1201
+if (level=2) let dns = 3601
+let dnsm1 = dns-1
+
+let slon = lon
+if (hemi1="w") let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+
+let slonp1 = slon+1
+let slatp1 = slat+1
+
+file2tcl &inp val=isfile1
+if (isfile1=1)
+   dtedvlog &inp xxxtmpfile &lon &lat &hemi1 &hemi2
+else
+   gen xxxtmpfile nl=&dns ns=&dns ival=0 linc=0 sinc=0 format=half
+end-if
+
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+let nlm1 = nl-1
+flot xxxtmpfile &out 'counter
+gtgen inp=&out 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&slon,&slatp1,0.0)", +
+          "ModelTiePointTag=(&nlm1,0,0,&slonp1,&slatp1,0.0)", +
+          "ModelTiePointTag=(0,&dnsm1,0,&slon,&slat,0.0)", +
+          "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+if (lat>49)
+   gtsize &out xxxtmpfile size=(1,1,&dns,&dns) +
+       itie=(1,1,&dns,&nl) otie=(1,1,&dns,&dns)
+   gtcopy xxxtmpfile &out
+end-if
+
+if (isfile1=0)
+   file2tcl &altinp val=isfile2
+   if (isfile2=1)
+      gtwarp inp=&altinp ref=&out out=xxxtmpfile 'coverref
+      gtcopy xxxtmpfile &out
+   end-if
+end-if
+
+end-proc
+.TITLE
+dtedlog - converts a DMA DTED file to VICAR with a GeoTIFF label
+.HELP
+PURPOSE
+The source DMA files are the standard files as they come on CD-ROM.
+This program converts the data to VICAR and adds a GeoTIFF label.  If
+the files are less than 1201 x 1201 (e.g. north of 50) then they are
+converted to 1201 x 1201.  There are two special cases for missing
+DTED files:
+1.  If there is no DTED file, a quadrangle of all 0's is created.
+2.  If no DTED but an alternate DTED source is provided, then that
+file is transformed into a substitute file by bilinear interp-
+olation.  The alternate file has to be named using the parameter
+ALTINP and has to have a geotiff label.
+   
+If the dted file is level 2, then the sizes are 3601 x 3601, or an
+appropriately reduced size north of 50 latitude.
+
+EXECUTION:
+
+Example
+
+dtedlog INP=A OUT=B LON=lon LAT=lat HEMI1=w HEMI2=n
+
+OPERATION
+
+The DMA DTED file can be on a CDROM or can be copied to a disk
+file with the FILE MANAGER or the unix dd command.
+
+It seems that the headers were of different sizes for the different 
+generations of DMA DTED, so the program reads the header to a
+characteristic set of four zero words, then starts reading the data.
+
+Other assumptions:
+
+1.  There are 5 halfword pixels between each line on the CD-ROM.
+
+ TIMING: 
+
+About 3 seconds on a SPARCstation.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          25 Sep 2002
+ COGNIZANT PROGRAMMER:   A. Zobrist          25 Sep 2002
+ 
+ REVISION HISTORY
+  02-09-24    AZ   Initial version
+  02-09-24    AZ   added 50 degree case
+  02-12-12    AZ   flot needs 'counter
+  03-01-08    AZ   zero fill if dted not there, use of alt dted
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image file
+.VARIABLE ALTINP
+STRING - Alternate input in
+case the first input file
+is not found
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE LON
+STRING - DMA DTED longitude
+.VARIABLE LAT
+STRING - DMA DTED latitude
+.VARIABLE HEMI1
+STRING - w OR e
+.VARIABLE HEMI2
+STRING - n OR s
+.VARIABLE LEVEL
+use 2 for level 2 dted
+.LEVEL2
+.VARIABLE ALTINP
+If the DTED is not missing then this file does nothing and
+does not have to be given.  If the DTED is missing then
+this file is still optional... the routine will zero fill the 
+output.  The third case is where the DTED is missing and there
+If there are no missing DTEDs then this file does nothing and
+does not have to be given.  If there are missing DTEDs then
+this file is still optional... the routine will zero fill any
+area where there is missing DTEDs.  The third case is where 
+DTEDs are missing and there is an alternate source of DTED,
+then the alternate will be remapped to cover the missing DTEDs.If there are no missing DTEDs then this file does nothing and
+does not have to be given.  If there are missing DTEDs then
+this file is still optional... the routine will zero fill any
+area where there is missing DTEDs.  The third case is where 
+DTEDs are missing and there is an alternate source of DTED,
+then the alternate will be remapped to cover the missing DTEDs.is an alternate source of DTED,
+then the alternate will be remapped to cover the output.
+.END

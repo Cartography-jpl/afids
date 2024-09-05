@@ -1,0 +1,501 @@
+procedure
+  RefGbl $echo
+  RefGbl $syschar
+body
+  let _onfail="continue"
+  let $echo="no"
+
+goto curr
+
+! DEVELOPER CASES, also all abend cases
+
+
+
+! simplest case using nl,ns default itie-otie, also nointerp var
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 'noin
+
+list xxxim2 'zeroes
+
+! simplest case using nl,ns default itie-otie (move tiepoint)
+
+gen xxxim0 nl=5 ns=4 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(102,3,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(2,103,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=12
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! simplest case using itie otie and nl,ns followed by sl,ss case
+! and sl,ss case with gores
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(.5,.5,5.5,6.5) +
+   otie=(.5,.5,10.5,15.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+gtsize xxxim1 xxxim2 sl=4 ss=5 nl=7 ns=11 itie=(.5,.5,5.5,6.5) +
+   otie=(.5,.5,10.5,15.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+gtsize xxxim1 xxxim2 sl=4 ss=5 nl=10 ns=15 itie=(.5,.5,5.5,6.5) +
+   otie=(.5,.5,10.5,15.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! simplest case using itie otie but default nl,ns
+
+gen xxxim0 nl=5 ns=5 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2  itie=(.5,.5,5.5,5.5) otie=(.5,.5,10.5,15.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! simplest case using itie otie and nl,ns (altering itie-otie),
+! and a case that inserts the image into a blank field
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(.75,.7,5.5,6.5) +
+   otie=(1.,1.,10.5,15.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(.5,.5,5.5,6.5) +
+   otie=(4.5,5.5,9.5,10.5)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! post mapping (but area geotiff)
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,4000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(1.0,1.0,5.0,6.0) +
+   otie=(1.,1.,10.0,15.0)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! post mapping (also point "post" geotiff)
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,4000,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(1.0,1.0,5.0,6.0) +
+   otie=(1.,1.,10.0,15.0)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+
+! post mapping, matrix model version
+
+gen xxxim0 nl=5 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(100,100,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(0,100,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+
+gtsize xxxim1 xxxim2 nl=10 ns=15 itie=(1.0,1.0,5.0,6.0) +
+   otie=(1.,1.,10.0,15.0)
+
+list xxxim2 'zeroes
+gtlist xxxim2
+
+! simplest case using GeoTIFF
+
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=15 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,4000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(102,3,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(2,103,0,1000,4000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+list xxxim2
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+list xxxim3 'zeroes
+gtlist xxxim3
+
+
+! GeoTIFF, expand by factor of two
+
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(202,3,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(2,203,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+list xxxim2
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+list xxxim3 'zeroes
+gtlist xxxim3
+
+! GeoTIFF, negative starting line cuts off top
+
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,-3,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(202,-3,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(2,197,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+list xxxim2
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+list xxxim3 'zeroes
+gtlist xxxim3
+
+
+
+! GeoTIFF flip case, works on matrix model
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(100,100,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(0,100,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(202,203,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,203,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+list xxxim2
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+list xxxim3 'zeroes
+gtlist xxxim3
+
+
+
+! GeoTIFF, coverinp case (was cutoff at top in coverref case above
+! with three gores, will see whole input here)
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=20
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,-3,0,1000,2000,0.0)", +
+          "ModelTiePointTag=(202,-3,0,2000,2000,0.0)", +
+          "ModelTiePointTag=(2,197,0,1000,3000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+list xxxim1
+gtlist xxxim1
+list xxxim2
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3 'coverinp
+
+list xxxim3 'zeroes
+gtlist xxxim3
+
+curr>
+! error cases, testing abort and error messages, can't put in tst.pdf
+
+gen xxxim1 nl=5 ns=5 ival=3 linc=10 sinc=10
+
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0) otie=(1.,1.,10.0,15.0)
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0,5.0) otie=(1.,1.,10.0)
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0,5.0)
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0,5.0) otie=(10.,1.,1.0,15.0)
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0,5.0) otie=(1.,15.,1.0,1.0)
+gtsize xxxim1 xxxim3 itie=(5.0,1.0,1.0,5.0) otie=(1.,1.,10.0,15.0)
+gtsize xxxim1 xxxim3 itie=(1.0,5.0,5.0,1.0) otie=(1.,1.,10.0,15.0)
+gtsize xxxim1 xxxim3 itie=(1.0,1.0,5.0,1.0) otie=(1.,1.,10.0,15.0)
+gtsize xxxim1 xxxim2 sl=4 ss=5 nl=6 ns=10
+gtsize xxxim1 xxxim2 sl=-4 ss=-5 nl=10 ns=15 itie=(.5,.5,5.5,5.5) +
+   otie=(.5,.5,10.5,15.5)
+gtsize xxxim1 xxxim2 sl=4 ss=5 itie=(.5,.5,5.5,5.5) otie=(.5,.5,10.5,15.5)
+gtsize xxxim1 xxxim2 size=(4,5,0,0) itie=(.5,.5,5.5,5.5) otie=(.5,.5,10.5,15.5)
+
+gen xxxim0 nl=5 ns=5 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(100,100,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(0,100,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+
+! more cases here, missing 2d mapping
+
+gen xxxim2 nl=6 ns=6 ival=3 linc=10 sinc=10
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+! more cases here, mapping disagrees
+
+gen xxxim0 nl=6 ns=6 ival=3 linc=10 sinc=10
+
+gtgen xxxim0 xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(100,100,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(0,100,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+
+! rotation disagrees
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abc(just a test)")
+
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abc(just a test)")
+
+gtlist xxxim1
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+! mapping compatible test, char mode
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abc(just a test)")
+
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abd(just a test)")
+
+gtlist xxxim1
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+! mapping compatible test, numeric mode, using the key
+! wrong but the code doesn't check for that anyway
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=27.8(just a test)")
+
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=27.9(just a test)")
+
+gtlist xxxim1
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+! mapping compatible test, numeric vector mode, using the key
+! wrong but the code doesn't check for that anyway
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,4000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,4000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "VERTICALUNITSGEOKEY=(0,27.8)(just a test)")
+
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,1000,1000,0.0)", +
+          "ModelTiePointTag=(100,0,0,2000,1000,0.0)", +
+          "ModelTiePointTag=(0,100,0,1000,2000,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "VERTICALUNITSGEOKEY=(0,27.9)(just a test)")
+
+gtlist xxxim1
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+
+! non-rectangular matrix model test case, aborts
+
+gen xxxima nl=5 ns=6 ival=3 linc=10 sinc=10
+gen xxximb nl=17 ns=16 ival=103 linc=10 sinc=10
+
+gtgen xxxima xxxim1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(100,100,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(0,100,0,351807.4,5317081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtgen xxximb xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(202,203,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,203,0,351807.4,5317081.4,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+
+
+gtlist xxxim2
+
+gtsize (xxxim1,xxxim2) xxxim3
+
+
+
+
+theend>
+END-PROC

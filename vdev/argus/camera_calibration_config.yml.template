@@ -1,0 +1,154 @@
+#=======================================================================
+# File that contains the intial camera calibration parameters. Often this
+# is the same as the file used during ground processing, but in some 
+# cases it might be a better guess than was available during the campaign.
+
+initial_camera: camera_initial.yml
+
+#====================================================================
+# We often use the 1 meter CIB as the reference image. However, 
+# sometimes we are working in an area without CIB data, or where a
+# better reference is available. If we should use a reference file
+# other than CIB, they specify that here.
+#
+# Right now, we assume that this is a single file that can be read
+# by GDAL. We can extend this in the future if needed.
+
+# reference_image: ref_file.tif
+
+#=======================================================================
+# After calibrating the individual cameras, you can look at the overlap
+# between cameras to finish the calibration. The list of rows and
+# cameras doesn't have to be the same as the indivual calibration, 
+# for example you can just do the overlap calibration without the
+# indivual calibration.
+
+overlap_rows: [5, 6]
+overlap_cameras: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+#=======================================================================
+# List of cameras
+
+1:
+
+#=======================================================================
+# Indicate if we are going to calibration this camera. If this is 
+# false, then we just copy the initial parameters over to the calibrated
+# camera file without change.
+
+  do_calibration: true
+
+#=======================================================================
+# Often, there is a nearly constant offset between the reference image
+# and the initial orthorectified image based on initial_camera. If this
+# offset is too large, we may not have any successful image matching. You
+# can look at the offset in ERDAS imagine or other tool, and pass it here
+# if desired. If left out, we assume a offset in the initial image matching
+# guess of 0. This gets added to go from reference to image, so if the
+# reference data is south of the orthorectified image than the line_offset
+# will be negative.
+
+#  line_offset: 0
+#  sample_offset: 0
+
+#=======================================================================
+# Indicate if we are doing a manual collection of tie points
+
+  do_manual: false
+
+#=======================================================================
+# Row that manual calibration was done for (can leave this out if you
+# aren't doing manual calibration)
+
+  manual_row: 0
+
+#=======================================================================
+# List of tiepoints. The first is the longitude/latitude from the ARGUS
+# images (i.e., they are off). The second is the actual longitude/latitude
+# of the point (i.e., measured from the CIB).
+# This field can be left out if you aren't doing manual calibration.
+
+  tiepoint: 
+  - [-7.50514150596626, 12.5125716489551, -7.50482410709109, 12.5126574624558]
+  - [-7.52230558865066, 12.5192500550778, -7.52352781087834, 12.5200648698963]
+
+#=======================================================================
+# Rows to do automatic calibration on
+
+  row_start: 0
+  row_end: 10
+
+2:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+3:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+4:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+5:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+6:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+7:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+8:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+9:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+10:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+11:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+12:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+13:
+  do_calibration: true
+  do_manual: false
+  row_start: 0
+  row_end: 10
+
+
+

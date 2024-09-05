@@ -1,0 +1,6 @@
+$ vpack lpscrb.com -mixed -
+	-s lpscrb.c -
+	-i lpscrb.imake -
+	-p lpscrb.pdf -
+	-t tstlpscrb.pdf
+$ Exit

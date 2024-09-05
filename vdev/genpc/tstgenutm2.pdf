@@ -1,0 +1,14 @@
+procedure
+body
+
+genutm2 xxa lon=-118 lat=36 mpix=1
+gtlist xxa
+
+llutm2 lon=-118 lat=36
+
+genutm2 xxa lon=-118 lat=36 utmzoneoverride=10 +
+   mpix=30 rastypstr="2(RasterPixelIsPoint)"
+gtlist xxa
+
+end-proc
+

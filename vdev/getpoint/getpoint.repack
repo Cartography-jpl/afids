@@ -1,0 +1,4 @@
+$ vpack getpoint.com -mixed -
+	-p getpoint.pdf -
+	-t tstgetpoint.pdf
+$ Exit

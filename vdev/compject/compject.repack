@@ -1,0 +1,6 @@
+$ vpack compject.com -mixed -
+	-s compject.c -
+	-i compject.imake -
+	-p compject.pdf -
+	-t tstcompject.pdf
+$ Exit

@@ -1,0 +1,73 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! TIMING TEST  I
+
+gen xxb nl=2048 ns=2048 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+ush date
+fft22 xxa xxb 'forward 'comp
+ush date
+fft2005 xxa xxb 'forward 'comp
+ush date
+
+! TIMING TEST  II
+
+gen xxb nl=1232 ns=1232 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+ush date
+fft22 xxa xxb 'forward 'comp
+ush date
+fft2005 xxa xxb 'forward 'comp
+ush date
+
+! TIMING TEST  III
+
+gen xxb nl=3375 ns=3648 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+ush date
+fft22 xxa xxb 'forward 'comp
+ush date
+fft2005 xxa xxb 'forward 'comp
+ush date
+
+! ACCURACY TEST  I
+
+gen xxb nl=2048 ns=2048 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+fft22 xxa xxb 'forward 'comp
+fft22 xxb xxc 'inverse 'real
+f2 inp=(xxa,xxc) out=xxd func="abs(im1-im2)"
+hist xxd
+
+! ACCURACY TEST  II
+
+gen xxb nl=2048 ns=2048 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+fft2005 xxa xxb 'forward 'comp
+fft2005 xxb xxc 'inverse 'real
+f2 inp=(xxa,xxc) out=xxd func="abs(im1-im2)"
+hist xxd
+
+! ACCURACY TEST  III - odd factor set
+
+gen xxb nl=29 ns=1155 ival=3 linc=20 sinc=3 'real
+f2 inp=xxb out=xxa func="sqrt(im1)"
+
+fft2005 xxa xxb 'forward 'comp
+fft2005 xxb xxc 'inverse 'real
+f2 inp=(xxa,xxc) out=xxd func="abs(im1-im2)"
+hist xxd
+
+end-proc

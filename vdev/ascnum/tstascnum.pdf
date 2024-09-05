@@ -1,0 +1,86 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+local tclint int
+local tclint2 int
+local tclreal real
+local tclstr (string,20)
+! Oct 01, 2013 - RJB
+! TEST SCRIPT FOR ASCNUM
+!
+! Vicar Programs:
+!   translog 
+!
+! External Programs:
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+
+body
+let $autousage = "none"
+let _onfail="stop"
+let $echo="no"
+
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid3/testdata ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+let $echo="yes"
+typetext ct/ascnum.dat
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="lat"
+let $echo="no"
+write "lat = &tclreal"
+let $echo="yes"
+
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="lon"
+let $echo="no"
+write "lon = &tclreal"
+let $echo="yes"
+
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="VALUE"
+let $echo="no"
+write "VALUE  seq 1 = &tclreal"
+let $echo="yes"
+
+ascnum ct/ascnum.dat seq=4 val=tclreal lineno=1 keyword="VALUE"
+let $echo="no"
+write "VALUE  seq 4 = &tclreal"
+
+rm>
+let $echo="no"
+
+ush rm ct
+end-proc

@@ -1,0 +1,6 @@
+$ vpack sampler.com -mixed -
+	-s sampler.c -
+	-i sampler.imake -
+	-p sampler.pdf -
+	-t tstsampler.pdf
+$ Exit

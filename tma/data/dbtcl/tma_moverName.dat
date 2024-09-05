@@ -1,0 +1,155 @@
+pdc 0 {Passenger Car/Light Truck, Uncongested, Day} 0
+pdc 1 {Passenger Car/Light Truck, Rush Hour, Day} 0
+pdc 2 {Passenger Car/Light Truck, Traffic Incident Delays} 0
+pdc 3 {Passenger Car/Light Truck, Night} 0
+pdc 4 {Heavy Truck, Uncongested, Day} 0
+pdc 5 {Heavy Truck, Rush Hour, Day} 0
+pdc 6 {Heavy Truck, Traffic Incident Delays} 0
+pdc 7 {Heavy Truck, Night} 0
+pdc 8 {Bus, Uncongested, Day} 0
+pdc 9 {Bus, Rush Hour, Day} 0
+pdc 10 {Bus, Traffic Incident Delays} 0
+pdc 11 {Bus, Night} 0
+pdc 12 {SUV/Off-Road Vehicle, Uncongested, Day} 0
+pdc 13 {SUV/Off-Road Vehicle, Night} 0
+pdc 14 {Ambulance, Uncongested, Day} 0
+pdc 15 {Ambulance, Rush Hour, Day} 0
+pdc 16 {Ambulance, Night} 0
+pdc 17 {Fire Truck, Uncongested, Day} 0
+pdc 18 {Fire Truck, Rush Hour,	Day} 0
+pdc 19 {Fire Truck, Night} 0
+pdc 20 {Pedestrians, Day} 0
+pdc 21 {Pedestrians, Night} 0
+pdc 22 {Bicycle, Uncongested, Day} 0
+pdc 23 {Bicycle, Rush Hour, Day} 0
+pdc 24 {Bicycle, Night} 0
+mil ARMEC02 {Armored & Mechanized, unopposed,night} 0
+mil ARMEC03 {Armored & Mechanized 2:1 opposed, prepared defense} 0
+mil ARMEC04 {Armored & Mechanized 3:1 opposed, prepared defense} 0
+mil ARMEC05 {Armored & Mechanized 4:1 opposed, prepared defense} 0
+mil ARMEC06 {Armored & Mechanized 5:1 opposed, prepared defense} 0
+mil ARMEC07 {Armored & Mechanized 2:1 opposed, hasty defense} 0
+mil ARMEC08 {Armored & Mechanized 3:1 opposed, hasty defense} 0
+mil ARMEC09 {Armored & Mechanized 4:1 opposed, hasty defense} 0
+mil ARMEC10 {Armored & Mechanized 5:1 opposed, hasty defense} 0
+mil FAPHSA {US M-1 Tank Transporter} 0
+mil FATUCA {US M-1 Tank} 0
+mil INF01 {Infantry, unopposed, day} 0
+mil INF02 {Infrantry, unopposed, night} 0
+mil INF03 {Infantry, 2:1 opposed, prepared defense} 0
+mil INF04 {Infantry, 3:1 opposed, prepared defense} 0
+mil INF05 {Infantry, 4:1 opposed, prepared defense} 0
+mil INF06 {Infantry, 5:1 opposed, prepared defense} 0
+mil INF07 {Infantry, 2:1 opposed, hasty defense} 0
+mil INF08 {Infantry, 3:1 opposed, hasty defense} 0
+mil INF09 {Infantry, 4:1 opposed, hasty defense} 0
+mil INF10 {Infantry, 5:1 opposed, hasty defense} 0
+mil RDCON01 {Road Convoy, mixed colums, day} 0
+mil RDCON02 {Road Convoy, mixed colums, night} 0
+mil RDCON03 {Road Convoy, wheeled colums, day} 0
+mil RDCON04 {Road Convoy, wheeled colums, night} 0
+mil TDA01 {Tractor-drawn artillery, day} 0
+mil TDA02 {Tractor-drawn artillery, night} 0
+mil TDA03 {Truck-drawn artillery, day} 0
+mil TDA04 {Truck-drawn artillery, night} 0
+mil Truck01 {Trucks, general, day} 0
+mil Truck02 {Trucks, general, night} 0
+mil UAAACF {Soviet Artillery Regiment} 0
+mil UAARCE {Soviet Motorized Rifle Battalion} 0
+mil UABUBG {Soviet Chemical Battalion} 0
+mil UACRCG {Soviet Reconnaisance Battalion} 0
+mil UADDCG {Soviet SAM Brigade} 0
+mil UADECE {Soviet SAM Regiment} 0
+mil UADGCF {Soviet AAA Regiment} 0
+mil UAEUCG {Soviet Engineering Battalion} 0
+mil UAIDCG {Soviet Motorized Rifle Brigade} 0
+mil UAIDCH {Soviet Motorized Rifle Regiment} 0
+mil UAIFC- {Soviet Foot Infantry} 0
+mil UAMFCE {Soviet FROG Battalion} 0
+mil UAMSCF {Soviet SCUD Brigade} 0
+mil UATUCE {Soviet Tank Battalion} 0
+mil UATUCF {Soviet Tank Regiment} 0
+mil UAYUCE {Soviet Antitank Battalion} 0
+pdc 25 {Passenger Car/Light Truck, Uncongested, Day} 1
+pdc 26 {Passenger Car/Light Truck, Rush Hour, Day} 1
+pdc 27 {Passenger Car/Light Truck, Traffic Incident Delays} 1
+pdc 28 {Passenger Car/Light Truck, Night} 1
+pdc 29 {Heavy Truck, Uncongested, Day} 1
+pdc 30 {Heavy Truck, Rush Hour, Day} 1
+pdc 31 {Heavy Truck, Traffic Incident Delays} 1
+pdc 32 {Heavy Truck, Night} 1
+pdc 33 {Bus, Uncongested, Day} 1
+pdc 34 {Bus, Rush Hour, Day} 1
+pdc 35 {Bus, Traffic Incident Delays} 1
+pdc 36 {Bus, Night} 1
+pdc 37 {SUV/Off-Road Vehicle, Uncongested, Day} 1
+pdc 38 {SUV/Off-Road Vehicle, Night} 1
+pdc 39 {Ambulance, Uncongested, Day} 1
+pdc 40 {Ambulance, Rush Hour, Day} 1
+pdc 41 {Ambulance, Night} 1
+pdc 42 {Fire Truck, Uncongested, Day} 1
+pdc 43 {Fire Truck, Rush Hour,	Day} 1
+pdc 44 {Fire Truck, Night} 1
+pdc 45 {Pedestrians, Day} 1
+pdc 46 {Pedestrians, Night} 1
+pdc 47 {Bicycle, Uncongested, Day} 1
+pdc 48 {Bicycle, Rush Hour, Day} 1
+pdc 49 {Bicycle, Night} 1
+mil 50 HUMVEE 0
+mil 51 HUMVEE2 0
+mil 52 FATUCA 0
+mil 53 ARTY 0
+mil 54 GCT 0
+mil 55 billm 0
+mil 57 Prophet 0
+pdc 56 {Passenger Car/Light Truck, Uncongested, Day} 3
+pdc 58 {Passenger Car/Light Truck, Rush Hour, Day} 3
+pdc 59 {Passenger Car/Light Truck, Traffic Incident Delays} 3
+pdc 60 {Passenger Car/Light Truck, Night} 3
+pdc 61 {Heavy Truck, Uncongested, Day} 3
+pdc 62 {Heavy Truck, Rush Hour, Day} 3
+pdc 63 {Heavy Truck, Traffic Incident Delays} 3
+pdc 64 {Heavy Truck, Night} 3
+pdc 65 {Bus, Uncongested, Day} 3
+pdc 66 {Bus, Rush Hour, Day} 3
+pdc 67 {Bus, Traffic Incident Delays} 3
+pdc 68 {Bus, Night} 3
+pdc 69 {SUV/Off-Road Vehicle, Uncongested, Day} 3
+pdc 70 {SUV/Off-Road Vehicle, Night} 3
+pdc 71 {Ambulance, Uncongested, Day} 3
+pdc 72 {Ambulance, Rush Hour, Day} 3
+pdc 73 {Ambulance, Night} 3
+pdc 74 {Fire Truck, Uncongested, Day} 3
+pdc 75 {Fire Truck, Rush Hour,	Day} 3
+pdc 76 {Fire Truck, Night} 3
+pdc 77 {Pedestrians, Day} 3
+pdc 78 {Pedestrians, Night} 3
+pdc 79 {Bicycle, Uncongested, Day} 3
+pdc 80 {Bicycle, Rush Hour, Day} 3
+pdc 81 {Bicycle, Night} 3
+mil CARUDAY {Passenger Car/Light Truck, Uncongested, Day} 0
+mil CARCDAY {Passenger Car/Light Truck, Rush Hour, Day} 0
+mil CARSLOW {Passenger Car/Light Truck, Traffic Incident Delays} 0
+mil CARDARK {Passenger Car/Light Truck, Night} 0
+mil TRUCKUD {Heavy Truck, Uncongested, Day} 0
+mil TRUCKCD {Heavy Truck, Rush Hour, Day} 0
+mil TRUCKSW {Heavy Truck, Traffic Incident Delays} 0
+mil TRUCKDK {Heavy Truck, Night} 0
+mil BUSUDAY {Bus, Uncongested, Day} 0
+mil BUSCDAY {Bus, Rush Hour, Day} 0
+mil BUSSLOW {Bus, Traffic Incident Delays} 0
+mil BUSDARK {Bus, Night} 0
+mil SUVUDAY {SUV/Off-Road Vehicle, Uncongested, Day} 0
+mil SUVDARK {SUV/Off-Road Vehicle, Night} 0
+mil AMBUDAY {Ambulance, Uncongested, Day} 0
+mil AMBCDAY {Ambulance, Rush Hour, Day} 0
+mil AMBDARK {Ambulance, Night} 0
+mil FIREUDY {Fire Truck, Uncongested, Day} 0
+mil FIRECDY {Fire Truck, Rush Hour,	Day} 0
+mil FIREDRK {Fire Truck, Night} 0
+mil PEDEDAY {Pedestrians, Day} 0
+mil PEDDARK {Pedestrians, Night} 0
+mil BIKEUDY {Bicycle, Uncongested, Day} 0
+mil BIKECDY {Bicycle, Rush Hour, Day} 0
+mil BIKEDRK {Bicycle, Night} 0
+mil 82 noRoad 0

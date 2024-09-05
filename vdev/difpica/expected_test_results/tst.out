@@ -1,0 +1,87 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /raid1/afids64oc/vdev
+Disabling interrupts ...
+
+gen x1 100 100 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen x2 100 100 ival=5 'byte
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+difpica (../test_data/alcase1314s.img, ~/vdev_test_data_backup/alcase1314s.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/alcase1314s.img, ~/vdev_test_data_backup/alcase1314s.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/alcase1314su.img, ~/vdev_test_data_backup/alcase1314su.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/alcase2244m.img, ~/vdev_test_data_backup/alcase2244m.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/alcase2244mu.img, ~/vdev_test_data_backup/alcase2244mu.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/bob.img, ~/vdev_test_data_backup/bob.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/qb1_cib.img, ~/vdev_test_data_backup/qb1_cib.img)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/qb1_iraq_dem84.hlf, ~/vdev_test_data_backup/qb1_iraq_dem84.hlf)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/qb1_iraq_dem.hlf, ~/vdev_test_data_backup/qb1_iraq_dem.hlf)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+***** The two files do not differ. *****
+
+difpica inp=(../test_data/xxchip2.img, ~/vdev_test_data_backup/xxchip2.back)
+Beginning VICAR task difpica
+difpica version Fri Apr 18 2008
+ ** ABEND called **
+return

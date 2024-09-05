@@ -1,0 +1,13 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $echo="yes"
+let $autousage="none"
+
+lpscrb inp=(lpxxx2.slp) out=lpxxximg2 spacing=1 sline=1 ssamp=1 nline=3674 nsamp=5295 autozoom=0 nolong=0.0 dn=255 bdn=0 pdn=0 outside=0 tag=0 refl=0
+
+xvd lpxxximg2
+
+theend>
+end-proc

@@ -1,0 +1,4 @@
+$ vpack egm2wgs.com -mixed -
+	-p egm2wgs.pdf -
+	-t tstegm2wgs.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack fft22.com -mixed -
+	-s fft22.f -
+	-i fft22.imake -
+	-p fft22.pdf -
+	-t tstfft22.pdf tstfft22.log
+$ Exit

@@ -1,0 +1,8 @@
+$ vpack ibisnlsq.com -mixed -
+	-s ibisnlsq.c -
+	-i ibisnlsq.imake -
+	-p ibisnlsq.pdf -
+	-t tstibisnlsq.pdf devibisnlsq.pdf devibisnlsq2.pdf devibisnlsq3.pdf -
+	   devibisnlsq4.pdf devibisnlsq5.pdf devibisnlsq6.pdf -
+	   devibisnlsq2s.pdf
+$ Exit

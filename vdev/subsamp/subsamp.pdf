@@ -1,0 +1,111 @@
+process help=*
+parm inp     type=string    count=1
+parm out     type=string    count=1
+parm zoom    type=integer   count=0:1 valid=(-20:0) default=0
+parm lzoom   type=integer   count=0:1 valid=(-20:-1) default=--
+parm szoom   type=integer   count=0:1 valid=(-20:-1) default=--
+parm lloc    type=integer   count=0:1 valid=(1:20) default=1
+parm sloc    type=integer   count=0:1 valid=(1:20) default=1
+end-proc
+.title
+vicar program SUBSAMP
+.help
+PURPOSE:
+    A vicar applications program to reduce the size of an image by
+an integer aspect ratio. By default it will copy only the top left
+hand corner pixel of the input image to the output of the selected 
+aspect ratio. 
+
+OPERATION
+
+    This program reduces the size of the input image by a preselected
+aspect ratio. It copies the selected pixel from the input image to the
+output image. The selected pixel is within the small kernel of the
+aspect ratio. If an image is to be reduced by one half in lines and
+samples, it will copy the top left hand pixel from the upper leftmost
+2x2 kernel in the input image, to the output image. Specifically,
+pixel 1,1, of the input image is copied to pixel 1,1 of the output,
+pixel 1,3 to pixel 1,2 of the output, pixel 3,3 to pixel 2,2 of the
+output, etc. No averaging or interpolation is done.
+
+    The parameter ZOOM chooses a square aspect ratio. Possible values
+range from -2 to -20. The value 0 is interpreted to mean that lzoom
+and szoom are to be used. The value of -1 is illegal.
+
+    The parameter LZOOM is the zoom in the line direction. Valid values
+are -1 to -20.
+
+    The parameter SZOOM is the zoom in the sample direction. Valid values
+are -1 to -20.
+
+
+    The parameter LLOC is the line location in the aspect ratio kernel to use in 
+the line direction. Valid values are 1 to 20 (but not larger than the kernel
+ratio).
+
+   The parameter SLOC is the sample location in the aspect ratio kernel to use in 
+the sample direction. Valid values are 1 to 20 (but not larger than the kernel
+ratio).
+
+    This program is complementary to program SIZE. Program size for negative
+zooms always selects the top left hand corner when used in 'NOIN mode. The
+SUBSAMP algorithm is much like a fortran do loop or c for loop assignment construct.
+
+
+OPERATION
+
+    The internal format of the data is floating point. The output data set
+is in the same format as the input. If the file is not an exact multiple of
+the zoom factor, it will truncate the last line and sample. For example,
+if the size of the image is 111,111 and zoom=-1 then the output will be 27,27.
+
+
+RESTRICTIONS
+
+    1) This program does not preserve Map Projection label geometry.
+    2) This program does not work on multiband images
+    3) Maximum image size is 19000 x 19000. This is a 32-bit Linux
+        limitation. Max size in cartlab is 20000 x 20000 but that
+        is not a 64-bit Linux limitation under gfortran 4.6.3 
+
+Note: For delivery to MIPL have to work in both 32-bit and 64-bit versions
+    03 Jul 2012 - R. J. Bambery - Reduced max image size from 20000 x 20000
+                to 19000 x 19000 for 32-bit linux gfortran 4.1.2
+                gives an immediate message:
+            [TAE-PRCSTRM] Abnormal process termination; process status code = 9.;
+               if dimensions 20000 x 20000.
+                larger dimensions OK for gfortran 4.6.3 on 64-bit linux
+
+
+PROGRAM HISTORY:
+
+Written by: Ray Bambery, 09 November 2010
+Cognizant programmer: Ray Bambery
+Revision history:
+
+    09 Nov 2010 - R. J. Bambery - initial release
+    10 May 2011 - R. J. Bammery - Removed all warning messages from 
+                gfortran 4.4.4 compiler
+    03 Jul 2012 - R. J. Bambery - Created internal note to reduce internal image
+                dimensions to 19000 x 19000 ion delivery to MIPL
+                from whatever dimensions cartlab uses
+.LEVEL1
+.VARI INP
+Input image.
+.VARI OUT
+Output image.
+.VARI ZOOM
+Specifies the ZOOM factor.
+.VARI LZOOM
+Vertical zoom factor.
+.VARI SZOOM
+Horizontal zoom factor.
+.VARI LLOC
+Specifies the line location
+in the aspect kernel
+to be copied.
+.VARI SLOC
+Specifies the sample location
+in the aspect kernel
+to be copied.
+

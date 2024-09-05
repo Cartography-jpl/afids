@@ -1,0 +1,57 @@
+procedure	! wv2master.pdf
+
+parm fname string
+parm elevdata string
+parm domspec int default=0
+
+local img string init=".img"
+local ntf string init=".NTF"
+local suf string init="_2mm"
+local found integer
+
+local afidsvdevdata string
+!local elevdata string
+
+body
+
+write "wv2master version Sat May  7 2011"
+
+write "fname &fname"
+write "elevdata &elevdata"
+
+file2tcl &fname&img val=found
+if (found=1) goto checkms
+
+!translog AFIDS_VDEV_DATA afidsvdevdata
+!let elevdata = "&afidsvdevdata/middle_east_elv.hlf"
+
+ikqbcall2 key=tst +
+     rawimg=&fname&ntf +
+     rawmeta="" rawhdr="" +
+     outimg=&fname&img +
+     nah=950 nav=950 rtype=master +
+     dted="&elevdata" +
+     base="" rawtype=nitf senstype=q +
+     mpix=0.5 mpixf=1.0 maptype=pc xvdonly=n +
+     outrpc="" outrpctp="ntf" +
+     linesamp=(-999.0,-999.0,-999.0,-999.0,,) +
+     lsatls=(-999.0,-999.0,-999.0,-999.0,,) +
+     usermapref="" interp=bilin rastype=area +
+     siteref="" siteout="" +
+     line_upper="" line_lower="" samp_left="" samp_right=""
+
+! Make a 2 meter version of the PAN master (this will be the master for bands 1-8)
+gtsize &fname&img &fname&suf&img  azoom=.25
+
+checkms>
+
+write "domspec &domspec"
+write "fname &fname"
+write "elevdata &elevdata"
+
+if (domspec = 1)
+  wv2addbands &fname &fname "&elevdata"
+end-if
+
+theend>
+end-proc

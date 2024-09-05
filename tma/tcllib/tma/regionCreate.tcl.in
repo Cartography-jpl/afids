@@ -1,0 +1,27 @@
+#! /usr/bin/env wish@tcl_version@
+
+package require TMASRV
+# Region creation
+frame .menubar -relief raised -borderwidth 2
+
+menubutton .menubar.region \
+	-text "Region Create" \
+	-underline 0 \
+	-menu .menubar.region.menu
+
+menu .menubar.region.menu
+
+.menubar.region.menu add command \
+	-label "Import ..." \
+	-command "MUSESRV_Init" \
+	-underline 0
+
+.menubar.region.menu add command \
+	-label "Exit" \
+	-command "exit" \
+	-underline 0
+
+# Pack main menu bar items.
+pack .menubar.region -side left
+pack .menubar -side top -fill x -expand true
+wm title . "Region Create"

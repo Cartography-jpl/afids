@@ -1,0 +1,22 @@
+# This is a sample configuration file
+
+# First we describe the camera orientation relative to the Applanix unit.
+# We may fit for this using ground truth at some point in the future, but
+# for now we just give these values.
+#
+# Note that we currently hardwire the camera to fix in a 36.0 x 24.0 mm
+# image size, figuring out the line and sample pitch form this. According
+# to Canon, this is the actual sensor size.
+#
+# If you don't otherwise know it, the program exiv2 will print out the
+# EXIF metadata of a jpeg file. This contains the nominal focal length, 
+# although seeing variations in the real focal length from the nominal of as 
+# large as 10% aren't unusual. But unless we are fitting for this, you can
+# just guess the nominal value.
+#
+# Yaw, pitch and roll are in degrees. Focal length is in mm.
+
+yaw:          0.0
+pitch:        0.0
+roll:         0.0
+focal_length: 85

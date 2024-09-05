@@ -1,0 +1,56 @@
+procedure help=*
+parm img type=(string,99)
+body
+
+gtgenup &img +
+   geotiff=("NITF_CORNERLON1=-999.0","NITF_CORNERLAT1=-999.0")
+
+gtgenup &img +
+   geotiff=("NITF_CORNERLON2=-999.0","NITF_CORNERLAT2=-999.0")
+
+gtgenup &img +
+   geotiff=("NITF_CORNERLON3=-999.0","NITF_CORNERLAT3=-999.0")
+
+gtgenup &img +
+   geotiff=("NITF_CORNERLON4=-999.0","NITF_CORNERLAT4=-999.0")
+
+
+end-proc
+.TITLE
+rpccctrz - put -999.0 lon,lat corners in image for off-Earth case
+.HELP
+PURPOSE
+    
+Uses an output from Program sc2rpc to generate corner points and
+put them into a vicar label prior to calling program vicar2ntf to 
+make the nitf format.  Or the corners can be seen in the vicar
+label.
+
+A GEOTiff label in geographic coordinates is also added to the
+label for possible use by sc2rpc.  (It is usually approximate).
+
+   
+CALL
+
+  rpccctr image=xxximg
+  
+    
+OPERATION
+
+puts (-999.0,-999.0) in the nitf corner labels (in VICAR-GeoTIFF format)
+
+PERFORMANCE
+
+about 1 second on a SUN blade 2000.
+
+Restrictions
+------------
+
+Original Programmer: A. L. Zobrist, 05 Apr, 2006
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 05 Apr, 2006
+
+.LEVEL1
+parm img type=(string,99)
+.END
+

@@ -1,0 +1,464 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 93000 TIMES
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:05:22 2008
+ Task:GTCOPY    User:pkim      Date_Time:Tue Apr  8 14:05:22 2008
+     Samp     1       3       5       7       9      11      13      15
+   Line
+      1       7 205 147  89  31 229 171 113  55 253 195 137  79  21 219
+      2      84  27 226 169 112  55 254 197 140  83  26 225 168 111  54
+      3     161 105  49 249 193 137  81  25 225 169 113  57   1 201 145
+      4     238 183 128  73  18 219 164 109  54 255 200 145  90  35 236
+      5      59   5 207 153  99  45 247 193 139  85  31 233 179 125  71
+      6     136  83  30 233 180 127  74  21 224 171 118  65  12 215 162
+      7     213 161 109  57   5 209 157 105  53   1 205 153 101  49 253
+      8      34 239 188 137  86  35 240 189 138  87  36 241 190 139  88
+      9     111  61  11 217 167 117  67  17 223 173 123  73  23 229 179
+     10     188 139  90  41 248 199 150 101  52   3 210 161 112  63  14
+     11       9 217 169 121  73  25 233 185 137  89  41 249 201 153 105
+     12      86  39 248 201 154 107  60  13 222 175 128  81  34 243 196
+     13     163 117  71  25 235 189 143  97  51   5 215 169 123  77  31
+     14     240 195 150 105  60  15 226 181 136  91  46   1 212 167 122
+     15      61  17 229 185 141  97  53   9 221 177 133  89  45   1 213
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   32x1.0 (   -0.0,    0.0)    0.481
+
+
+final line fit     1.000000 x    -0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 124.4722 146.0000 145.0000 124.4722
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4805   0.0000   0.0000
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   96x1.0 (   -4.0,   -5.0)    0.128
+
+
+final line fit     1.000000 x    -0.000000 y    -0.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y     0.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 124.4722 146.0146 144.9828 124.3479
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.1282  -3.9854  -5.0172
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   96x1.0 (   -0.0,    0.0)    0.107
+
+
+final line fit     0.974026 x    -0.000000 y     0.025974     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     0.974026 y    -0.948052     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 124.4722 146.1013 145.1749 124.2038
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.1073  -0.0286   0.0191
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  211.0   226.0)   32x1.0 (   -0.0,    0.0)    0.481
+
+
+final line fit     1.000000 x     0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+   0.4500   0.4400 211.0000 226.0000 125.5278 207.0000 221.0000 125.5278
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4805  -0.0000   0.0000
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   32x7.0 (   -0.0,    0.0)    0.481
+
+
+final line fit     1.000000 x    -0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 136.0278 146.0000 145.0000 136.0278
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4805   0.0000   0.0000
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   64x1.0 (   -0.5,   -0.0)    0.315
+
+
+final line fit     1.003333 x    -0.000000 y    -4.016667     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 124.4722 145.9786 144.9949 124.6039
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.3153  -0.5047  -0.0051
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  150.0   150.0)   96x1.0 (   -0.0,   -0.0)    0.286
+
+
+final line fit     1.000000 x     0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 150.0000 150.0000 150.0000 150.0000 124.4722 145.9910 144.9979 124.5224
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.2862  -0.0090  -0.0021
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  211.0   226.0)   64x1.0 (   -0.0,    0.0)    0.479
+
+
+final line fit     1.000000 x     0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+   0.4500   0.4400 211.0000 226.0000 125.5278 207.0000 221.0000 125.5278
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4785  -0.0000   0.0000
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+
+Changing rotation 5 to rotation 2
+
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  211.0   226.0)   64x1.0 (   -0.0,    0.0)    0.479
+
+
+final line fit    -0.000000 x    -1.000000 y   310.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -1.000000 x     0.000000 y   300.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+   0.4500   0.4400 211.0000 226.0000 125.5278  84.0000  89.0000 125.5278
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4785   0.0000   0.0000
+Beginning VICAR task gtrot
+gtrot version Fri Jan 11 2008
+
+Changing rotation 5 to rotation 2
+
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  140.0   130.0)   64x1.0 (   -0.0,    0.0)    0.479
+    1 (  140.0   130.0)   64x1.0 (   -0.0,    0.0)    0.479
+
+
+final line fit    -0.000000 x    -1.000000 y   310.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -1.000000 x     0.000000 y   300.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 140.0000 130.0000 140.0000 130.0000 128.3611 180.0000 160.0000 128.3611
+ 
+Rows: 1:1
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4785   0.0000   0.0000
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 93000 TIMES
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+Beginning VICAR task ibis
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  240.0   238.0)   64x1.0 (   -0.0,    0.0)    0.479
+    2 (   30.0    30.0)   32x1.0 (   -0.0,    0.0)    0.481
+    3 (  270.0   270.0)   32x1.0 (   -0.0,    0.0)    0.481
+point outside second image
+    5 (  100.0   100.0)   64x1.0 (   -0.0,    0.0)    0.479
+
+
+final line fit     1.000000 x    -0.000000 y    -4.000000     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.000000 x     1.000000 y    -5.000000     0.000000 x2     0.000000 y2    0.000000 xy
+Beginning VICAR task ibis
+ 
+Number of Rows:5  Number of Columns: 11      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:5
++--------+--------+--------+--------+--------+--------+--------+--------
+      C:1      C:2      C:3      C:4      C:5      C:6      C:7      C:8
++--------+--------+--------+--------+--------+--------+--------+--------
+ 240.0000 238.0000 240.0000 238.0000 123.9167 236.0000 233.0000 123.9167
+  30.0000  30.0000  30.0000  30.0000 128.9167  26.0000  25.0000 128.9167
+ 270.0000 270.0000 270.0000 270.0000 127.1389 266.0000 265.0000 127.1389
+  20.0000  20.0000  20.0000  20.0000-9999.000   0.0000   0.0000-9999.000
+ 100.0000 100.0000 100.0000 100.0000 130.9167  96.0000  95.0000 130.9167
+ 
+Rows: 1:5
++--------+--------+--------
+      C:9     C:10     C:11
++--------+--------+--------
+   0.4785   0.0000   0.0000
+   0.4805   0.0000  -0.0000
+   0.4805   0.0000   0.0000
+-9999.000-9999.000-9999.000
+   0.4785   0.0000   0.0000
+Beginning VICAR task ibis
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/6)/7
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+5,6)/5
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(1.550000000000e+02-(1.450000000000e+02))+(1.450000000000e+02)$c6=c3*(1.550000000000e+02-(1.450000000000e+02))+(1.450000000000e+02)
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(1.550000000000e+02-(1.450000000000e+02))+(1.450000000000e+02)$c8=c4*(1.550000000000e+02-(1.450000000000e+02))+(1.450000000000e+02)
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+48 records in
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+48 records in
+Beginning VICAR task picmtch4
+picmtch4 version Tue Feb 19 2008
+  seq             point     srch       convergence     corr
+    1 (  145.0   145.0)   64x1.0 (   -0.0,    0.0)    0.180
+    2 (  145.0   147.0)   64x1.0 (   -0.0,   -0.0)    0.170
+    3 (  145.0   149.0)   64x1.0 (   -0.0,    0.0)    0.179
+    4 (  145.0   151.0)   64x1.0 (   -0.0,    0.0)    0.179
+    5 (  145.0   153.0)   64x1.0 (   -0.0,   -0.0)    0.181
+    6 (  145.0   155.0)   64x1.0 (   -0.0,   -0.0)    0.186
+    7 (  146.0   145.0)   64x1.0 (    0.0,   -0.0)    0.176
+    8 (  146.0   147.0)   64x1.0 (    0.0,   -0.0)    0.169
+    9 (  146.0   149.0)   64x1.0 (   -0.0,    0.0)    0.175
+   10 (  146.0   151.0)   64x1.0 (   -0.0,    0.0)    0.173
+   11 (  146.0   153.0)   64x1.0 (   -0.0,    0.0)    0.180
+   12 (  146.0   155.0)   64x1.0 (    0.0,   -0.0)    0.184
+***auto thresh  =   0.1795 ***
+   13 (  148.0   145.0)   64x1.0 (   -0.0,    0.0)    0.169
+   14 (  148.0   147.0)   64x1.0 (   -0.0,    0.0)    0.171
+   15 (  148.0   149.0)   64x1.0 (   -0.0,   -0.0)    0.170
+   16 (  148.0   151.0)   64x1.0 (   -0.0,    0.0)    0.174
+   17 (  148.0   153.0)   64x1.0 (   -0.0,    0.0)    0.179
+   18 (  148.0   155.0)   64x1.0 (   -0.0,    0.0)    0.187
+   19 (  149.0   145.0)   64x1.0 (    0.0,    0.0)    0.161
+   20 (  149.0   147.0)   64x1.0 (    0.0,   -0.0)    0.164
+   21 (  149.0   149.0)   64x1.0 (    0.0,   -0.0)    0.174
+   22 (  149.0   151.0)   64x1.0 (   -0.0,    0.0)    0.179
+   23 (  149.0   153.0)   64x1.0 (   -0.0,    0.0)    0.183
+   24 (  149.0   155.0)   64x1.0 (   -0.0,    0.0)    0.194
+   25 (  151.0   145.0)   64x1.0 (    0.0,    0.0)    0.169
+   26 (  151.0   147.0)   64x1.0 (   -0.0,   -0.0)    0.175
+   27 (  151.0   149.0)   64x1.0 (    0.0,   -0.0)    0.175
+   28 (  151.0   151.0)   64x1.0 (   -0.0,   -0.0)    0.179
+   29 (  151.0   153.0)   64x1.0 (    0.0,    0.0)    0.182
+   30 (  151.0   155.0)   64x1.0 (   -0.0,    0.0)    0.187
+***auto fit:neq =       10 ***
+   31 (  152.0   145.0)   58x1.0 (    0.0,   -0.0)    0.190
+   32 (  152.0   147.0)   58x1.0 (   -0.0,    0.0)    0.184
+   33 (  152.0   149.0)   58x1.0 (    0.0,   -0.0)    0.188
+   34 (  152.0   151.0)   58x1.0 (    0.0,   -0.0)    0.199
+   35 (  152.0   153.0)   52x1.0 (   -0.0,    0.0)    0.220
+   36 (  152.0   155.0)   48x1.0 (    0.0,    0.0)    0.242
+   37 (  154.0   145.0)   44x1.0 (    0.0,   -0.1)    0.253
+   38 (  154.0   147.0)   42x1.0 (   -0.0,   -0.0)    0.279
+   39 (  154.0   149.0)   40x1.0 (    0.0,   -0.0)    0.286
+   40 (  154.0   151.0)   38x1.0 (   -0.0,   -0.0)    0.300
+   41 (  154.0   153.0)   36x1.0 (   -0.0,   -0.0)    0.333
+   42 (  154.0   155.0)   36x1.0 (   -0.0,   -0.0)    0.324
+   43 (  155.0   145.0)   36x1.0 (   -0.0,   -0.0)    0.325
+   44 (  155.0   147.0)   36x1.0 (   -0.0,   -0.0)    0.319
+   45 (  155.0   149.0)   36x1.0 (   -0.0,   -0.0)    0.332
+   46 (  155.0   151.0)   36x1.0 (   -0.0,   -0.0)    0.336
+   47 (  155.0   153.0)   36x1.0 (   -0.0,   -0.0)    0.326
+   48 (  155.0   155.0)   36x1.0*
+
+
+final line fit     0.998583 x     0.000477 y    -3.866009     0.000000 x2     0.000000 y2    0.000000 xy
+final samp fit    -0.001050 x     1.001312 y    -5.036497     0.000000 x2     0.000000 y2    0.000000 xy
+inv line fit     1.001407 x    -0.000484 y     3.871752     0.000000 x2     0.000000 y2    0.000000 xy
+inv samp fit     0.001034 x     0.998653 y     5.041650     0.000000 x2     0.000000 y2    0.000000 xy
+

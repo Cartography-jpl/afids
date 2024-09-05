@@ -1,0 +1,6 @@
+$ vpack rowop2.com -mixed -
+	-s rowop2.c -
+	-i rowop2.imake -
+	-p rowop2.pdf -
+	-t tstrowop2.pdf rowop2.dat
+$ Exit

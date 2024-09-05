@@ -1,0 +1,6 @@
+$ vpack qsar.com -mixed -
+	-s qsar.f -
+	-i qsar.imake -
+	-p qsar.pdf -
+	-t tstqsar.pdf new_session.log
+$ Exit

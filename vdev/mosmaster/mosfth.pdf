@@ -1,0 +1,131 @@
+procedure
+parm numin int
+parm key string
+parm in1 string
+parm in2 string
+parm in3 string default=""
+parm in4 string default=""
+parm in5 string default=""
+parm in6 string default=""
+parm in7 string default=""
+parm in8 string default=""
+parm in9 string default=""
+parm in10 string default=""
+parm in11 string default=""
+parm out string
+
+local parfile string
+local pathout string
+local m1 string
+local m2 string
+local m3 string
+local m4 string
+local m5 string
+local m6 string
+local m7 string
+local m8 string
+local m9 string
+local m10 string
+local m11 string
+local outfile string
+body
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="pathout=" val=pathout vtype=0
+let m1 = "&pathout" // "/&in1"
+let m2 = "&pathout" // "/&in2"
+let m3 = "&pathout" // "/&in3"
+let m4 = "&pathout" // "/&in4"
+let m5 = "&pathout" // "/&in5"
+let m6 = "&pathout" // "/&in6"
+let m7 = "&pathout" // "/&in7"
+let m8 = "&pathout" // "/&in8"
+let m9 = "&pathout" // "/&in9"
+let m10 = "&pathout" // "/&in10"
+let m11 = "&pathout" // "/&in11"
+let outfile = "&pathout" // "/&out"
+
+if (numin=2)
+ fthmos "xxxfth" +
+  &m1 &m2 +
+  out=&outfile
+
+else-if (numin=3)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  out=&outfile
+
+else-if (numin=4)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 +
+  out=&outfile
+
+else-if (numin=5)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 +
+  out=&outfile
+
+else-if (numin=6)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  out=&outfile
+
+else-if (numin=7)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 +
+  out=&outfile
+
+else-if (numin=8)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 +
+  out=&outfile
+
+else-if (numin=9)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 &m9 +
+  out=&outfile
+
+else-if (numin=10)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 &m9 +
+  &m10 +
+  out=&outfile
+
+else-if (numin=11)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 &m9 +
+  &m10 &m11 +
+  out=&outfile
+
+else-if (numin=2)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 &m9 +
+  &m10 &m11 +
+  out=&outfile
+
+else-if (numin=2)
+ fthmos "xxxfth" +
+  &m1 &m2 &m3 +
+  &m4 &m5 &m6 +
+  &m7 &m8 &m9 +
+  &m10 &m11 +
+  out=&outfile
+end-if
+
+end-proc
+ 

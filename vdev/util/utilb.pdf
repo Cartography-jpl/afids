@@ -1,0 +1,9 @@
+procedure
+parm inp type=(string,99)
+body
+
+! utility to display RMS 90% vectors
+
+revacc &inp
+
+end-proc

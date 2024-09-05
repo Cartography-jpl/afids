@@ -1,0 +1,162 @@
+procedure help=*
+ !
+ parm inp      type=string count=1
+ parm out      type=string count=1
+ parm scalefac type=real count=1 default=1.0
+ parm hskew    type=real count=1 default=0.0
+ parm rotation type=real count=1 default=0.0
+ parm shift    type=real count=2 default=(0.0,0.0)
+ !
+
+local nline type=int
+local nsamp type=int
+local nl2 type=int
+local ns2 type=int
+local xxibis type=string
+
+local l1 type=real
+local s1 type=real
+local e1 type=real
+local n1 type=real
+local l2 type=real
+local s2 type=real
+local e2 type=real
+local n2 type=real
+local l3 type=real
+local s3 type=real
+local e3 type=real
+local n3 type=real
+local lineshift type=real
+local sampshift type=real
+local rastype type=int
+
+body
+
+write "gtmove 11/22/05"
+
+let xxibis = "xxxgtmovetemp"
+
+lab2tcl &inp v1=nline v2=nsamp keyword=(nl,ns) 'system
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+
+ibis-gen &xxibis version=ibis-2 org=column nr=3 nc=10 deff="DOUB" +
+      datacols=(1,2) data=(&nl2,&ns2,0.,0.,0.,&nsamp)
+pixmap (&xxibis,&inp) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+
+! scale
+
+mf3 &xxibis f="c1=c1/(&scalefac)$c2=c2/(&scalefac)"
+
+! horizontal skew about center
+
+if (hskew <> 0.0)
+   mf3 &xxibis f="c5=c1-(&nl2)$c6=c2-(&ns2)$c7=@sqrt(c5*c5+c6*c6)"
+   mf3 &xxibis f="c8=@atan2(c6,c5)-(&hskew)*3.14159265359/180.0"
+   mf3 &xxibis f="c9=c5*@tan(c8)$c2=c9+(&ns2)"
+end-if
+
+! rotate about center
+
+if (rotation <> 0.0)
+   mf3 &xxibis f="c5=c1-(&nl2)$c6=c2-(&ns2)$c7=@sqrt(c5*c5+c6*c6)"
+   mf3 &xxibis f="c8=@atan2(c6,c5)-(&rotation)*3.14159265359/180.0"
+   mf3 &xxibis f="c9=c7*@cos(c8)$c10=c7*@sin(c8)$c1=c9+(&nl2)$c2=c10+(&ns2)"
+end-if
+
+! now do the shift
+
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+   mf3 &xxibis f="c1=c1+(&lineshift)$c2=c2+(&sampshift)"
+end-if
+
+! need to adjust vicar coordinates of pixmap to geotiff coord
+
+gt2tcl &inp val=rastype keyword=GTRasterTypeGeoKey vtype=4
+if (rastype = 1) mf3 &xxibis f="c1=c1-0.5$c2=c2-0.5"
+if (rastype = 2) mf3 &xxibis f="c1=c1-1.0$c2=c2-1.0"
+
+! move the label
+
+ibis2tcl &xxibis v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4)
+ibis2tcl &xxibis v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1,-1) +
+    ibisloc=(2,1,2,2,2,3,2,4)
+ibis2tcl &xxibis v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1,-1) +
+    ibisloc=(3,1,3,2,3,3,3,4)
+
+gtgen inp=&inp out=&out 'add 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&s1,&l1,0,&e1,&n1,0.0)", +
+          "ModelTiePointTag=(&s2,&l2,0,&e2,&n2,0.0)", +
+          "ModelTiePointTag=(&s3,&l3,0,&e3,&n3,0.0)")
+
+end-proc
+!
+! HELP TEXT FOR GTMOVE
+.TITLE
+GTMOVE - Procedure to move or adjust the map label of a GeoTIFF image.
+.HELP
+PURPOSE
+
+     GTMOVE allows for the move or adjustment of a GeoTIFF map label
+without moving the data in the image.  A possible use is to change
+the scale of an image to attempt a PICMTCH3 correlation.  This allows
+correlation to search for a fit in scale and rotation as well as 
+translation.
+
+A shift can also be specified.  It will be applied after the scale and
+rotation.  If you want the shift to be applied before the scale and 
+rototation, then do this shift by itself and then use a second call of
+this routine with the scale and rotation (the operations are not
+commutative).
+	   
+CALL
+     gtmove input output scalefac rotation shift
+  WHERE:
+     input        is the input data set with a GeoTIFF label
+     output       is the output data set with a "moved" GeoTIFF label
+     scalefac     is a factor to change the scale (relative to the center)
+     hskew        is a horizontal skew about the center
+     rotation     is a rotation angle about the center
+     shift        is a shift, appplied after the scale and rotation
+
+
+  
+OPERATION
+
+Three points are generated for the input image.  Their mapping
+is calculated by routine pixmap.  Mf2 is used to change the scale of
+the three points and their rotation.  The resulting points are put
+into gtgen to output the newly mapped image, maintaining the other
+GeoTIFF parts of the label.
+
+PERFORMANCE
+
+About the speed of image copy.
+
+.PAGE
+Restrictions
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 24 Jan. 2001
+Current Cognizant Programmer: B. A. McGuffie
+.LEVEL1
+.VARI INP
+Input file name with GeoTIFF label
+.VARI OUT
+Output file name
+.VARI scalefac
+factor for scale change
+.VARI hskew
+horizontal skew about center
+in degrees
+.VARI rotation
+rotation clockwise in degrees
+.VARI shift
+shift (line,samp) in pixels of
+the geographic tiepoint
+.END

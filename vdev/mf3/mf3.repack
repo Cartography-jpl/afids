@@ -1,0 +1,6 @@
+$ vpack mf3.com -mixed -
+	-s mf3.c -
+	-i mf3.imake -
+	-p mf3.pdf -
+	-t tstmf3.pdf devmf3.pdf
+$ Exit

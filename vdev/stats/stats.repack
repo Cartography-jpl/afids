@@ -1,0 +1,6 @@
+$ vpack stats.com -mixed -
+	-s stats.f -
+	-i stats.imake -
+	-p stats.pdf -
+	-t tststats.pdf new_session.log
+$ Exit

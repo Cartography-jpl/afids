@@ -1,0 +1,216 @@
+PROCESS       HELP=*
+PARM INP TYPE=(STRING)
+PARM INDCOL TYPE=INTEGER COUNT=1 
+PARM DEPCOL TYPE=INTEGER COUNT=1 
+PARM SLOPECOL TYPE=INTEGER COUNT=1 DEFAULT=0
+PARM YINTCOL TYPE=INTEGER COUNT=1  DEFAULT=0
+PARM RESCOL TYPE=INTEGER COUNT=1 DEFAULT=0
+PARM CONCOL TYPE=INTEGER DEFAULT=0
+PARM SSIGCOL TYPE=INTEGER DEFAULT=0
+PARM ISIGCOL TYPE=INTEGER DEFAULT=0
+PARM NOPRINT TYPE=KEYWORD COUNT=0:1 VALID=(--,NOPRINT) DEFAULT=--
+END-PROC
+.TITLE
+VICAR/IBIS Program "ibislsq4"
+.HELP
+PURPOSE
+
+   "ibislsq4" performs least squares fits on data in an IBIS interface
+(tabular) file.  The solutions and/or residuals can be placed in 
+specified columns of the file.  The solutions can also be output
+to the terminal.  Multiple fits can be done on different parts of
+one file.
+
+
+EXECUTION
+
+    This program is significantly different internally from ibislsq,
+ibislsq2, ibislsq3, and ibislsq9. It is designed only for simple
+linear relations of the form:
+
+                        y = mx + b
+
+It computes the full statistical values for the relationship,
+namely, the slope, the y-intercept, the std dev of slope, the std dev
+of the intercept and the residuals from the measured y values and 
+those from the fitted slope.
+
+It currently doesn't utilize weights.
+
+Like the other least squares routines it allows for a conrol column.
+
+For example,
+
+     ibislsq4 INP=DATA.INT  INDCOL=1 DEPCOL=4 CONCOL=7 +
+	     RESCOL=8  SLOPECOL=21 YINTCOL=22 SSIGCOL=10 ISIGCOL=11 'NOPRINT
+
+    This example shows the use of all of the parameters.  The input
+file, DATA.INT, is an IBIS interface file having enough columns
+to handle the output columns:
+The data for the independent variable is in column 1.
+The data for the dependent variable is in column 4.
+The control column 7 is used for multiple fits to be done in one run.
+
+    The least square fits are done on sets of rows; a new set is 
+started whenever the value in the control column changes.  If no
+control column is specified then one fit is done on the whole file.
+
+    The SLOPECOL, YINTCOL and RESCOL parameters specify in which columns, 
+of the input file, the results will be put.  If either or both are
+not specified then they will not be output.
+The residual column can be used to 
+easily calculate the deviation of the data points from the fitted line.
+
+    Normally the solution for each set is printed to the terminal,
+is printed to the terminal, but this can be turned off with the
+'NOPRINT keyword.  
+
+    The length of each set should, of course, be longer than the
+number of independent variables (columns).  If it is not then the
+least squares fit will not be called and values of -999.0 will be
+put out for the solution.  If some columns of the independent data
+are dependent then the error MATRIX RANK TOO SMALL be be printed,
+and -999.0's will be put out for the solution.  If there is no
+solution then zeros will be put out for the residuals.
+
+
+
+EXAMPLES
+
+   Suppose that columns 1 and 2 contain points (x,y) in a plane 
+   and  column  7 contains a function  f(x,y).   The  following 
+   sequence  will perform a quadratic least squares fit  h(x,y) 
+   and place the residuals in column 8.
+
+ibis-gen xxA nc=9 nr=9 datacols=(1,2,3) +
+    data=(1.0,7.63,1.0, 5.0,7.11,1.0, 10.0,6.34,1.0,+
+    15.0,5.74,1.0, 20.0,5.11,1.0, 25.0,4.52,1.0,+
+    30.0,3.86,1.0, 35.0,3.19,1.0, 40.0,2.55,1.0)
+ibislsq4 xxA indcol=1 depcol=2 concol=3 slopecol=4 yintcol=5 rescol=6 ssigcol=7 isigcol=8
+ibis-l xxA cform="%10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f" screen=132
+
+will produce
+
+!Number of Rows:9  Number of Columns: 9       
+!File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+! 
+!Rows: 1:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!        C:1        C:2        C:3        C:4        C:5        C:6        C:7        C:8       C:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!   1.00000    7.63000    1.00000   -0.12923    7.71557    0.04366    0.00110    0.02607    0.00000
+!   5.00000    7.11000    1.00000   -0.12923    7.71557    0.04057    0.00110    0.02607    0.00000
+!  10.00000    6.34000    1.00000   -0.12923    7.71557   -0.08330    0.00110    0.02607    0.00000
+!  15.00000    5.74000    1.00000   -0.12923    7.71557   -0.03716    0.00110    0.02607    0.00000
+!  20.00000    5.11000    1.00000   -0.12923    7.71557   -0.02103    0.00110    0.02607    0.00000
+!  25.00000    4.52000    1.00000   -0.12923    7.71557    0.03511    0.00110    0.02607    0.00000
+!  30.00000    3.86000    1.00000   -0.12923    7.71557    0.02125    0.00110    0.02607    0.00000
+!  35.00000    3.19000    1.00000   -0.12923    7.71557   -0.00262    0.00110    0.02607    0.00000
+!  40.00000    2.55000    1.00000   -0.12923    7.71557    0.00352    0.00110    0.02607    0.00000
+
+
+
+RESTRICTIONS
+
+Used only for least squares fits to y=mx+b.
+
+Therefore, the maximum number of independent columns (variables) is 1.
+
+REVISION HISTORY
+
+Original Programmer: R. J. Bambery, 22 Jun, 2010
+Current Cognizant Programmer: R. J. Bambery
+
+Built under 64-bit linux
+    2012-07-02 - RJB - replaced cartlab's zifmessage with zvmessage
+                    and removed cartoVicarProto.h to make compatible
+                    with transfer to MIPL
+
+
+REFERENCE
+
+John R. Taylor, "An Introduction to Error Analysis", 2nd Ed, University Science Books, 
+Sausalito CA, 1997, Chapter 8, "Least Squares Fitting".
+
+.LEVEL1
+.VARIABLE INP
+ Input IBIS interface file
+.VARIABLE INDCOL
+ Independent variable columns
+.VARIABLE DEPCOL
+ Dependent variable column
+.VARIABLE SLOPECOL
+ Column to place the value
+ of the slope
+.VARIABLE YINTCOL
+ Column to place the value
+ of the y-intercept
+
+.VARIABLE RESCOL
+ Colum to place the values of
+ the Residuals of Ycalculated vs.
+ Y mesaured.
+.VARIABLE CONCOL
+ Control column
+.VARIABLE SSIGCOL
+ Column to place slope sigma
+.VARIABLE ISIGCOL
+ Column to place intercept sigma
+.VARIABLE NOPRINT
+Keyword to suppress printout
+
+.LEVEL2
+.VARIABLE INP
+   INP=file           Input IBIS interface file
+.VARIABLE INDCOL
+   INDCOL=N1         The   integer   N1  specifies   the 
+                     column  which contain the data  for  the 
+                     independent variable.  Each row contains 
+                     one data point.
+
+.VARIABLE DEPCOL
+   DEPCOL=M1          The integer M1  specifies   the column
+                      which contains the data  for  the 
+                      dependent variable.  Each row contains 
+                      one data point.
+
+.VARIABLE SLOPECOL
+   SLOPECOL=S        The   integer  S   specifies   the 
+                     column  which will receive the value of    
+                     of the slope which can be applied to other
+                     data).
+		      
+		      Note that there is a lot of repetition of the
+		      coefficients in the columns, but this allows
+		      the coefficients to be used in a row-oriented
+		      arithmetic operation by routine MF, MF3 or MF4.
+
+.VARIABLE RESCOL
+   RESCOL=R1          The  integer R1 specifies the  column which 
+                      will  receive the residuals corresponding 
+		      to the dependent variable for each data
+		      point.  
+.VARIABLE CONCOL
+   CONCOL=C           The integer C specifies a control column 
+                      which produces a separate fit for each 
+                      group of identical numbers in the control 
+                      column.  If this keyword is omitted, then 
+                      the whole file is used in one least 
+                      squares fit.
+.VARIABLE SSIGCOL
+  SSIGCOL=S         The integer S specifies the column which 
+                    will hold a slope std deviation for each
+                    group of of identical numbers in the
+                    control column. If this keyword is omitted,
+                    then the whole file is used in one least
+                    squares fit. 
+.VARIABLE ISIGCOL
+  ISIGCOL=I         The integer I specifies the column which
+                    will hold an intercept std deviation for each
+                    group of of identical numbers in the
+                    control column. If this keyword is omitted,
+                    then the whole file is used in one least
+                    squares fit.
+.VARIABLE NOPRINT
+    'NOPRINT	      Keyword to suppress printout of solution.
+.END

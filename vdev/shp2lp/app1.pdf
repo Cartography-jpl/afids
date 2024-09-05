@@ -1,0 +1,17 @@
+procedure
+body
+
+shp2lp inp=testShapes.shp out=lpTest2 fmt=8
+
+lpscrb inp=(lpTest2.slp) out=someimage spacing=1 sline=1 ssamp=1 nline=3674 nsamp=5295 autozoom=0 nolong=0.0 dn=255 bdn=0 pdn=0 outside=0 tag=0 refl=0
+multovly3 inp=(someimage, xx3) out=xxc
+sort inp=xxc sortcol=(1,2)
+ibis-gen xxtmp nc=3 nr=1 format=("A12", "DOUB", "DOUB")
+icat inp=(xxc, xxtmp) out=xxd 'h
+mf3 xxd f="c5=1"
+ibis-list xxd nr=10
+aggrg2 inp=xxd out=xxf agcol=1 sumcol=(5)
+mf3 xxf f="c4=@cat('road',@i2str(c1))"
+ilist inp=xxf cols=(4,5) sr=1 nr=20 labels=("road name", "car count")
+
+end-proc

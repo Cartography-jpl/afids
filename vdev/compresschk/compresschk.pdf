@@ -1,0 +1,91 @@
+procedure help=*
+
+parm inp string
+
+local compress string init="NONE"
+local special string init="99337"
+local failed string init="-failed"
+local found integer
+local afidsroot type=(string,128)
+local script string
+
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+! speedup
+goto done
+
+translog AFIDS_ROOT afidsroot
+let script="llength [glob &afidsroot/vdist/vrh4/rtl/source/comp*.c]"
+tcl2tcl script="&script" intvar=found
+write "afidsroot &afidsroot found &found"
+if (found<1) goto done
+
+file2tcl &inp val=found
+if (found = 0) goto done
+
+let _onfail="goto branch"
+lab2tcl &inp v1=compress keyword="compress" type="SYSTEM"
+write "&compress"
+
+branch>
+if ((compress <> "BASIC") and (compress <> "BASIC2"))
+
+   comprs &inp &inp&special compress="BASIC"
+   let _onfail="goto diffail"
+   difpica (&inp, &inp&special)
+   ush rm -f &inp
+   ush mv &inp&special &inp
+   goto done
+
+   diffail>
+   ush date > &inp&special&failed
+
+end-if
+done>
+
+end-proc
+.TITLE
+compresschk - Compresses a file (if not compressed, and if in compressed env)
+.HELP
+PURPOSE
+     This routine will check two things
+     1.  Is the user in the compressed environment (as of May 2008 there were
+         two environments and two VICARS)
+     2.  Is the file uncompressed (the label is checked)
+
+     If both checks are positive, then the file is compressed.
+	   
+CALL
+     compresschk INP
+  WHERE:
+     INP          is the image to be compressed
+    
+OPERATION
+
+The file is compressed to a temporary filename.  The temporary file is then
+diffed with the original to be sure that compression worked (as of 2008 the
+programmers wanted extra assurance).  Then the original is deleted and the
+compressed is moved (ush mv) to the original name.
+
+PERFORMANCE
+
+as fast as the compress copy program.
+
+.PAGE
+Restrictions
+------------
+
+None
+
+
+.PAGE
+Original Programmer: P. Kim, 12 May, 2008
+Current Cognizant Programmer: A. L. Zobrist, 12 May, 2008
+.LEVEL1
+.VARI INP
+File to be compressed
+.END

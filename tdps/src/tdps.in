@@ -1,0 +1,1392 @@
+#! /usr/bin/env wish@tcl_version@
+# -*-Tcl-*-
+
+set tdpsRoot $env(AFIDS_ROOT)
+set tdpsGraphics $env(AFIDS_DATA)/tdps/graphics
+set tdpsSrc $env(AFIDS_ROOT)/tdps_tcl
+set tdpsDataRoot $env(AFIDS_DATA)/tdps/data
+set adrgRoot $env(AFIDS_DATA)/adrg
+set srtmRoot $env(AFIDS_DATA)/srtmL1_filled
+set demRoot $srtmRoot
+set vmap0Root ${tdpsDataRoot}/tdps_vmap0
+set vmap1Root $env(AFIDS_DATA)/vmap1
+
+load shapeUtils.so
+load ossimTcl.so
+source ${tdpsSrc}/database.tcl
+source ${tdpsSrc}/aoi.tcl
+source ${tdpsSrc}/attribute.tcl
+source ${tdpsSrc}/canvasMouse.tcl
+source ${tdpsSrc}/colors.tcl
+source ${tdpsSrc}/debug.tcl
+source ${tdpsSrc}/globals.tcl
+source ${tdpsSrc}/html_library.tcl
+source ${tdpsSrc}/loadUnload.tcl
+source ${tdpsSrc}/misc.tcl
+source ${tdpsSrc}/options.tcl
+source ${tdpsSrc}/propEd.tcl
+source ${tdpsSrc}/selection.tcl
+source ${tdpsSrc}/statusWin.tcl
+source ${tdpsSrc}/vecEdit.tcl
+source ${tdpsSrc}/vectorEditor.tcl
+source ${tdpsSrc}/vectorProcessing.tcl
+source ${tdpsSrc}/view.tcl
+source ${tdpsSrc}/vmap.tcl
+
+proc createMainWindow {} {
+    global env
+
+    wm title . "CBS TDPS"
+    wm iconname . "CBS TDPS"
+    wm protocol . WM_DELETE_WINDOW "exitTdps"
+
+    set f .frame
+    catch {destroy $f}
+    frame $f
+    pack $f -fill both -expand true -anchor n
+    grid columnconfigure $f 0 -weight 1
+    grid rowconfigure $f 100 -weight 1
+
+    set row 0
+
+    set tg $f.topButtonGrid
+    frame $tg
+    grid $tg -row $row -column 0 -sticky news
+    grid columnconfigure $tg 0 -weight 0
+    grid columnconfigure $tg 1 -weight 1
+    grid columnconfigure $tg 2 -weight 0
+
+    set l $tg.label${row}
+    button $l -text "ABOUT TDPS ..." -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #about"
+    grid $l -row 0 -column 0 -sticky w
+
+    set rf $tg.rightFrame
+    frame $rf
+    grid $rf -row 0 -column 2 -sticky e
+
+    set hb $rf.label${row}_util
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #utilities"
+    pack $hb -anchor e -side right
+
+    set b $rf.utilities
+    set menu ${b}.menu
+    menubutton $b -text "UTILITIES" -direction left -menu $menu -relief raised
+    pack $b -anchor e -side right
+    menu $menu -tearoff 0
+    $menu add command -label "Update CADRG ..." -command "updateSourceData CADRG"
+    $menu add command -label "Update VMAP ..." -command "updateSourceData VMAP1"
+    $menu add command -label "Update DEM ..." -command "updateSourceData DEM"
+    $menu add command -label "Mosaic DEM ..." -command "updateSourceData MOSAIC_DEM"
+    $menu add command -label "Export CADRG ..." -command "updateSourceData EXPORT_CADRG"
+
+    incr row
+
+    set l $tg.label${row}
+    button $l -text "INTRODUCTION ..." -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #intro"
+    grid $l -row 1 -column 0 -sticky w
+
+    set l $tg.cbsImage
+    label $l -image cbsImage
+    grid $l -row 0 -column 1
+    grid configure $l -rowspan 2
+
+    incr row
+
+    set l $f.label${row}
+    label $l -text " "
+    grid $l -row $row -column 0 -sticky w
+
+    incr row
+
+    set subf $f.f_${row}
+    frame $subf
+    grid $subf -row $row -column 0 -sticky news
+
+    set l $subf.label${row}
+    label $l -text "STEP 1: OPEN OR CREATE A DATABASE"
+    pack $l -anchor w -side left
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step1"
+    pack $hb -anchor e -side left -expand true
+
+    incr row
+
+    set selectCreateDatabaseFrame [createSelectCreateDatabaseFrame $f]
+    grid $selectCreateDatabaseFrame -row $row -column 0 -sticky news
+    grid configure $selectCreateDatabaseFrame
+
+    incr row
+
+    set l $f.label${row}
+    label $l -text " "
+    grid $l -row $row -column 0 -sticky w
+
+    incr row
+
+    set subf $f.f_${row}
+    frame $subf
+    grid $subf -row $row -column 0 -sticky news
+
+    set l $subf.label${row}
+    label $l -text "STEP 2: DEFINE AREA OF INTEREST"
+    pack $l -anchor w -side left
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step2"
+    pack $hb -anchor e -side left -expand true
+
+    incr row
+
+    set l $f.label${row}
+    label $l -text "Use (-) degrees for West Longitudes and South Latitudes."
+    grid $l -row $row -column 0 -sticky w
+
+    incr row
+
+    #      set aoiFrame $f.aoiFrame
+    #      frame $aoiFrame
+    #      grid $aoiFrame -row $row -column 0 -sticky news
+    #      grid columnconfigure $aoiFrame 0 -weight 0
+    #      grid columnconfigure $aoiFrame 1 -weight 1
+    #      grid columnconfigure $aoiFrame 2 -weight 0
+
+    set areaOfInterestFrame [createAreaOfInterestFrame "PLAYBOX" playbox $f]
+    grid $areaOfInterestFrame -row $row -column 0 -sticky news
+
+    #      set l $aoiFrame.spacer
+    #      label $l -text " "
+    #      grid $l -row 0 -column 1 -sticky news
+
+    #      set areaOfInterestFrame [createAreaOfInterestFrame "FIGHTING AREA" fightingArea $aoiFrame]
+    #      grid $areaOfInterestFrame -row 0 -column 2 -sticky e
+
+    incr row
+
+    set l $f.label${row}
+    label $l -text " "
+    grid $l -row $row -column 0 -sticky w
+
+    incr row
+
+    set subf $f.f_${row}
+    frame $subf
+    grid $subf -row $row -column 0 -sticky news
+
+    set saveRow $row
+    set row 0
+
+    set l $subf.label${row}
+    label $l -text "STEP 3:"
+    grid $l -row $row -column 0 -sticky news
+
+    set hb $subf.label${row}_extract
+    button $hb -text "EXTRACT" -command "extractVectorsAndMap"
+    grid $hb -row $row -column 1 -sticky news
+
+    set l $subf.label${row}_rest
+    label $l -text "VECTOR DATA AND MAP BACKGROUND"
+    grid $l -row $row -column 2 -sticky w
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step3"
+    grid $hb -row $row -column 3 -sticky e
+
+    incr row
+
+    ######################################
+
+    set checkFrame $subf.checkFrame
+    frame $checkFrame
+    grid $checkFrame -row $row -column 1 -sticky news
+    grid configure $checkFrame -columnspan 2
+
+    set cb $checkFrame.vectorCheckbox
+    checkbutton $cb -text "Vectors" -variable doExtractVectors -command checkQuantityOptionMenuState
+    grid $cb -row 0 -column 0
+    global doExtractVectors -sticky w
+    set doExtractVectors 1
+
+    set m [tk_optionMenu $checkFrame.options dataVolume "High" "Low"]
+    global quantityOptionMenu
+    set quantityOptionMenu $checkFrame.options
+    grid $checkFrame.options -row 0 -column 1 -sticky e
+    bind $m <<MenuSelect>> "writeDatabase"
+    registerDatabaseVar dataVolume High "Vector extraction data volume"
+
+    set l42 $checkFrame.label
+    label $l42 -text "Data Quantity" -anchor w
+    grid $l42 -row 0 -column 2 -sticky w
+
+    set cb $checkFrame.mapCheckbox
+    checkbutton $cb -text "Map" -variable doExtractMap
+    grid $cb -row 1 -column 0 -sticky w
+    global doExtractMap
+    set doExtractMap 1
+
+
+    ######################################
+
+    incr row
+
+    set l $subf.label${row}
+    label $l -text "STEP 4:"
+    grid $l -row $row -column 0 -sticky news
+
+    set hb $subf.label${row}_extract
+    button $hb -text "PREPARE" -command "prepareTrafficability"
+    grid $hb -row $row -column 1 -sticky news
+
+    set l $subf.label${row}_rest
+    label $l -text "TRAFFICABILITY DATA"
+    grid $l -row $row -column 2 -sticky w
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step5"
+    grid $hb -row $row -column 3 -sticky e
+
+    incr row
+
+    set l $subf.label${row}
+    label $l -text "STEP 5:"
+    grid $l -row $row -column 0 -sticky news
+
+    set hb $subf.label${row}_startVectorEditor
+    button $hb -text "VIEW/EDIT" -command "startVectorEditor"
+    grid $hb -row $row -column 1 -sticky news
+
+    set l $subf.label${row}_rest
+    label $l -text "VECTOR DATA (optional)"
+    grid $l -row $row -column 2 -sticky w
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step4"
+    grid $hb -row $row -column 3 -sticky e
+
+    incr row
+
+    set l $subf.label${row}
+    label $l -text "STEP 6:"
+    grid $l -row $row -column 0 -sticky news
+
+    set hb $subf.label${row}_extract
+    button $hb -text "PREPARE" -command "runQuadtree"
+    grid $hb -row $row -column 1 -sticky news
+
+    set l $subf.label${row}_rest
+    label $l -text "QUADTREE/DEM FILES"
+    grid $l -row $row -column 2 -sticky w
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step6"
+    grid $hb -row $row -column 3 -sticky e
+
+    incr row
+
+    set l $subf.label${row}
+    label $l -text "STEP 7:"
+    grid $l -row $row -column 0 -sticky news
+
+    set hb $subf.label${row}_extract
+    button $hb -text "PREPARE" -command "prepareCbsFiles"
+    grid $hb -row $row -column 1 -sticky news
+
+    set l $subf.label${row}_rest
+    label $l -text "CBS TERRAIN OUTPUT FILES"
+    grid $l -row $row -column 2 -sticky w
+
+    set hb $subf.label${row}_help
+    button $hb -image helpButton -command "help $env(AFIDSTOP)/share/doc/tdps/help.html #step7"
+    grid $hb -row $row -column 3 -sticky e
+
+    incr row
+
+    set m [tk_optionMenu $subf.options_${row} trafficabilityBackground 501 502 503 504 505 506]
+    grid $subf.options_${row} -row $row -column 1 -sticky e
+    bind $m <<MenuSelect>> "writeDatabase"
+    registerDatabaseVar trafficabilityBackground 502 "Trafficability background code"
+
+    set l42 $subf.label_${row}
+    label $l42 -text "Trafficability Background Code" -anchor w
+    grid $l42 -row $row -column 2 -sticky w
+
+    set row $saveRow
+    incr row
+
+    set l $f.label${row}
+    label $l -text " "
+    grid $l -row $row -column 0 -sticky w
+
+    incr row
+
+    set b $f.exitButton
+    button $b -text "Exit" -command "exitTdps"
+    grid $b -row $row -column 0
+}
+
+proc checkQuantityOptionMenuState {} {
+    global doExtractVectors
+    global quantityOptionMenu
+
+    if { $doExtractVectors } {
+	$quantityOptionMenu configure -state normal
+    } else {
+	$quantityOptionMenu configure -state disabled
+    }
+}
+
+proc runQuadtree {} {
+    global databaseRead databaseWritten
+    if {! $databaseRead && ! $databaseWritten} {
+	tk_messageBox -message "Select/Create Database First"
+	return
+    }
+
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+    global demRoot
+
+    set file [open "dem.dat" w]
+
+    puts $file "LatBot $playbox_aoiMinLat"
+    puts $file "LonLft $playbox_aoiMinLon"
+    puts $file "LatTop $playbox_aoiMaxLat"
+    puts $file "LonRgt $playbox_aoiMaxLon"
+    puts $file "DemDir ${demRoot}/"
+    puts $file "EarthRad    6367000"
+
+    close $file
+
+    global tdpsDatabaseDir tdpsDatabaseName
+    global tdpsRoot
+
+    puts [exec ${tdpsRoot}/vdev/quadtree ${tdpsDatabaseDir}/${tdpsDatabaseName}.qt &]
+}
+
+#  array set cbsOutput { \
+#  	101 Loose_Surface_Road_101.txt \
+#  	102 Hard_Surface_Road_102.txt  \
+#  	103 Dual_Highways_103.txt      \
+#  	201 Small_River_201.txt        \
+#  	202 Medium_River_202.txt       \
+#  	203 Large_River_203.txt        \
+#  	300 Vegetation_3xx.txt         \
+#  	400 Urbanization_4xx.txt       \
+#  	500 Trafficability_5xx.txt     }
+
+array set cbsOutput { \
+	101 roads1.txt  \
+	102 roads2.txt  \
+	103 roads3.txt  \
+	201 rivers1.txt \
+	202 rivers2.txt \
+	203 rivers3.txt \
+	300 veg.txt     \
+	400 urban.txt   \
+	500 traff.txt   }
+
+proc prepareCbsFiles {} {
+    global databaseRead databaseWritten
+    if {! $databaseRead && ! $databaseWritten} {
+	tk_messageBox -message "Select/Create Database First"
+	return
+    }
+
+    openStatus "Preparing CBS Files" cbsFilePreparation
+
+    global tdpsDatabaseDir tdpsDatabaseName
+
+    file delete -force ${tdpsDatabaseDir}/cbsFileIndexing
+    set indexFile [open ${tdpsDatabaseDir}/cbsFileIndexing "w"]
+
+    array set cbsInput { \
+	    101 Roads1_Loose_Surface \
+	    102 Roads2_Hard_Surface  \
+	    103 Roads3_Dual_Highways \
+	    201 Rivers1_Small_River  \
+	    202 Rivers2_Medium_River \
+	    203a Rivers3_Large_River \
+	    203l Rivers3_Large_River \
+	    302 Vegetation_Sparse    \
+	    303 Vegetation_Moderate  \
+	    304 Vegetation_Dense  \
+	    401 Urbanization_Village \
+	    402 Urbanization_Town    \
+	    403 Urbanization_City    \
+	    501 Trafficability       \
+	    502 Trafficability       \
+	    503 Trafficability       \
+	    504 Trafficability       \
+	    505 Trafficability       \
+	    506 Trafficability       }
+
+    global cbsOutput
+
+    array set cbsOutputRecordCount { \
+	    101 100001 \
+	    102 0 \
+	    103 0 \
+	    201 200001 \
+	    202 0 \
+	    300 300001 \
+	    400 400001 \
+	    500 500001 }
+
+    foreach cbsClass [lsort [array names cbsOutput]] {
+	file delete -force ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsClass)
+	addStatus "Creating ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsClass)"
+	exec touch ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsClass)
+    }
+
+    set holesToProcess {}
+
+    # cbsInput includes ... 201 202 203a 203l 302 303 ...
+    foreach cbsClass [lsort [array names cbsInput]] {
+	set cbsClassName $cbsInput($cbsClass)
+
+	switch [string range $cbsClass 0 0] {
+	    3 - 4 - 5 {
+		set cbsOutputClass "[string range $cbsClass 0 0]00"
+	    }
+	    default {
+		# roads and rivers stay in separate cbs output files
+		set cbsOutputClass $cbsClass
+		switch $cbsClass {
+		    102 {
+			set cbsOutputRecordCount(102) $cbsOutputRecordCount(101)
+		    }
+		    103 {
+			set cbsOutputRecordCount(103) $cbsOutputRecordCount(102)
+		    }
+		    202 {
+			set cbsOutputRecordCount(202) $cbsOutputRecordCount(201)
+		    }
+		    203a {
+			set cbsOutputClass 203
+			set cbsOutputRecordCount(203) $cbsOutputRecordCount(202)
+		    }
+		    203l {
+			set cbsOutputClass 203
+		    }
+		}
+	    }
+	}
+
+	set shapeName ${tdpsDatabaseDir}/CBS_${cbsClassName}_${cbsClass}
+
+	if {[file exists ${shapeName}_nh_trm.shp]} {
+	    addStatus "Appending ${cbsClassName}_${cbsClass} to ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) with code $cbsClass starting at id $cbsOutputRecordCount($cbsOutputClass)"
+	    lappend classComponentOffsets(${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass)) [fileFromPath ${shapeName}_nh_trm] $cbsOutputRecordCount($cbsOutputClass)
+
+	    global tdpsRoot
+	    exec ${tdpsRoot}/vdev/shp2cbs ${shapeName}_nh_trm ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) $cbsClass $cbsOutputRecordCount($cbsOutputClass)
+	    set shpHandle [SHPOpen ${shapeName}_nh_trm]
+	    incr cbsOutputRecordCount($cbsOutputClass) [SHPGetEntityCount $shpHandle]
+	    SHPClose $shpHandle
+
+	    if {$cbsClass != "203a"} {
+		# don't process islands in rivers
+		lappend holesToProcess $cbsClassName $cbsClass ${shapeName}_ho_trm ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) $cbsOutputClass
+	    }
+
+	} elseif {[file exists ${shapeName}_trm.shp]} {
+  	    addStatus "Appending ${cbsClassName}_${cbsClass} to ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) with code $cbsClass starting at id $cbsOutputRecordCount($cbsOutputClass)"
+	    lappend classComponentOffsets(${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass)) [fileFromPath ${shapeName}_trm] $cbsOutputRecordCount($cbsOutputClass)
+
+	    global tdpsRoot
+  	    exec ${tdpsRoot}/vdev/shp2cbs ${shapeName}_trm.shp ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) $cbsClass $cbsOutputRecordCount($cbsOutputClass)
+  	    set shpHandle [SHPOpen ${shapeName}_trm.shp]
+  	    incr cbsOutputRecordCount($cbsOutputClass) [SHPGetEntityCount $shpHandle]
+  	    SHPClose $shpHandle
+
+  	} elseif {[file exists ${shapeName}.shp]} {
+  	    # 50X trafficability isn't trimmed
+	    # don't export a trafficability background polygon unless it's contained with another polygon
+	    # cbsClass should be one of 501 .. 506
+	    # cbsClassName should be Trafficability
+	    # cbsOutputClass should be 500
+	    # cbsOutput(500) should be traff.txt
+	    # shapeName should be ${tdpsDatabaseDir}/CBS_${cbsClassName}_${cbsClass}
+
+	    addStatus "Appending ${cbsClassName}_${cbsClass} to ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) with code $cbsClass starting at id $cbsOutputRecordCount($cbsOutputClass)"
+	    # the cbsOutputRecordCount appended here records the *starting* index of this group of shapes
+	    lappend classComponentOffsets(${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass)) [fileFromPath $shapeName] $cbsOutputRecordCount($cbsOutputClass)
+
+	    global trafficabilityBackground
+	    if {$cbsClass == $trafficabilityBackground} {
+		global tdpsRoot
+		set cmd "exec ${tdpsRoot}/vdev/rmFreeBg ${shapeName}.shp ${shapeName}_bk.shp"
+
+		foreach aClass {501 502 503 504 505 506} {
+		    if {$cbsClass != $aClass} {
+			lappend cmd ${tdpsDatabaseDir}/CBS_${cbsClassName}_${aClass}
+		    }
+		}
+	
+		global argv
+		if {[lsearch $argv "expert"] >= 0} {
+		    puts $cmd
+		}
+
+		eval $cmd
+
+		set shapeName ${shapeName}_bk
+	    }
+
+	    global tdpsRoot
+	    exec ${tdpsRoot}/vdev/shp2cbs ${shapeName}.shp ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsOutputClass) $cbsClass $cbsOutputRecordCount($cbsOutputClass)
+	    set shpHandle [SHPOpen ${shapeName}.shp]
+	    incr cbsOutputRecordCount($cbsOutputClass) [SHPGetEntityCount $shpHandle]
+	    SHPClose $shpHandle
+  	}
+    }
+
+    foreach {cbsClassName cbsClass inputShape outputCBS cbsOutputClass} $holesToProcess {
+	if {$cbsOutputClass == "300"} {
+	    set actualCbsOutputClass "301"
+	} else {
+	    set actualCbsOutputClass $cbsOutputClass
+	}
+	addStatus "Appending ${cbsClassName}_${cbsClass} Holes (from $inputShape) to ${outputCBS}.shp with code $actualCbsOutputClass starting at id $cbsOutputRecordCount($cbsOutputClass)"
+	lappend classComponentOffsets($outputCBS) [fileFromPath $inputShape] $cbsOutputRecordCount($cbsOutputClass)
+
+	global tdpsRoot
+	exec ${tdpsRoot}/vdev/shp2cbs $inputShape $outputCBS $actualCbsOutputClass $cbsOutputRecordCount($cbsOutputClass)
+	set shpHandle [SHPOpen $inputShape]
+	incr cbsOutputRecordCount($cbsOutputClass) [SHPGetEntityCount $shpHandle]
+	SHPClose $shpHandle
+    }
+
+    foreach cbsClass [lsort [array names cbsOutput]] {
+	addStatus "Closing ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsClass) with last record ID [expr $cbsOutputRecordCount($cbsClass) - 1]"
+	set file [open  ${tdpsDatabaseDir}/${tdpsDatabaseName}_$cbsOutput($cbsClass) a]
+	puts $file "END"
+	close $file
+    }
+
+    foreach class [lsort [array names classComponentOffsets]] {
+	puts $indexFile [list [fileFromPath $class] $classComponentOffsets($class)]
+    }
+    close $indexFile
+
+    global trafficabilityBackground
+
+    addStatus "VEGETATION.PLAYBOX.DEFAULT = .trps.vegt.BARREN (301)"
+    addStatus "VEGETATION.POLYGON.DEFAULT = .trps.vegt.MODERATE (303)"
+    addStatus "URBANIZATION.PLAYBOX.DEFAULT = .trps.urbn.NONE (400)"
+    switch $trafficabilityBackground {
+	501  {set trafText ".trps.trff.WATER"}
+	502  {set trafText ".trps.trff.IMPASSABLE"}
+	503  {set trafText ".trps.trff.SMOOTH"}
+	504  {set trafText ".trps.trff.GENTLY.ROLLING"}
+	505  {set trafText ".trps.trff.MOUNTAINOUS"}
+	506  {set trafText ".trps.trff.MARSH"}
+	default {set trafText ""}
+    }
+    addStatus "TRAFFICABILITY.PLAYBOX.DEFAULT = ${trafText} (${trafficabilityBackground})"
+    
+    set receiptFilename ${tdpsDatabaseDir}/${tdpsDatabaseName}_receipt.txt
+    addStatus "Writing receipt file $receiptFilename"
+
+    set receiptFile [open  $receiptFilename w]
+
+    puts $receiptFile "Database index file: ${tdpsDatabaseName}.tdps"
+    puts $receiptFile "Database directory:  ${tdpsDatabaseDir}"
+    puts $receiptFile "Date/Time:           [clock format [clock seconds]]"
+    puts $receiptFile "Machine, O/S:        [exec uname -a]"
+    puts $receiptFile "User:                [exec whoami]"
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+    puts $receiptFile "Playbox Min Lat:     $playbox_aoiMinLat"
+    puts $receiptFile "Playbox Max Lat:     $playbox_aoiMaxLat"
+    puts $receiptFile "Playbox Min Lon:     $playbox_aoiMinLon"
+    puts $receiptFile "Playbox Max Lon:     $playbox_aoiMaxLon"
+    global dataVolume
+    puts $receiptFile "Data volume:         $dataVolume"
+    puts $receiptFile "VEGETATION.PLAYBOX.DEFAULT = .trps.vegt.BARREN (301)"
+    puts $receiptFile "VEGETATION.POLYGON.DEFAULT = .trps.vegt.MODERATE (303)"
+    puts $receiptFile "URBANIZATION.PLAYBOX.DEFAULT = .trps.urbn.NONE (400)"
+    puts $receiptFile "TRAFFICABILITY.PLAYBOX.DEFAULT = ${trafText} (${trafficabilityBackground})"
+    puts $receiptFile "Output manifest:"
+    puts $receiptFile [eval [concat exec ls -l [glob ${tdpsDatabaseDir}/*.txt] | grep -v receipt]]
+    close $receiptFile
+
+    addStatus "*** Done preparing CBS terrain output files ***"
+}
+
+proc fileFromPath {path} {
+    set split [split $path "/"]
+    set last [lindex $split [expr [llength $split] - 1]]
+}
+
+proc prepareTrafficability {} {
+    global databaseRead databaseWritten
+    if {! $databaseRead && ! $databaseWritten} {
+	tk_messageBox -message "Select/Create Database First"
+	return
+    }
+
+    openStatus "Preparing trafficability" trafficabilityPreparation
+
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+    global tdpsDatabaseDir srtmRoot
+    
+    file delete -force databaseDir
+    exec ln -s $tdpsDatabaseDir databaseDir
+
+    # rasterize water
+    addStatus "Rasterizing CBS_Trafficability_Water_501"
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Water_501.shp inp.shp
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Water_501.shx inp.shx
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Water_501.dbf inp.dbf
+
+    # generates a bunch of files like n34e40_water.img
+    catch {exec vicarb "shp2rast.pdf inp=inp.shp out=databaseDir/ suffix=water fg=0 bg=1 minLat=$playbox_aoiMinLat maxLat=$playbox_aoiMaxLat minLon=$playbox_aoiMinLon maxLon=$playbox_aoiMaxLon"}
+
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Water_501.shp
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Water_501.shx
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Water_501.dbf
+    }
+
+    # rasterize mountainous
+    addStatus "Rasterizing CBS_Trafficability_Mountainous_505"
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.shp inp.shp
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.shx inp.shx
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.dbf inp.dbf
+
+    puts "shp2rast.pdf inp=inp.shp out=databaseDir/ suffix=lava fg=0 bg=1 minLat=$playbox_aoiMinLat maxLat=$playbox_aoiMaxLat minLon=$playbox_aoiMinLon maxLon=$playbox_aoiMaxLon"
+    catch {exec vicarb "shp2rast.pdf inp=inp.shp out=databaseDir/ suffix=lava fg=0 bg=1 minLat=$playbox_aoiMinLat maxLat=$playbox_aoiMaxLat minLon=$playbox_aoiMinLon maxLon=$playbox_aoiMaxLon"}
+
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.shp
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.shx
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Mountainous_505.dbf
+    }
+
+    # rasterize marsh
+    addStatus "Rasterizing CBS_Trafficability_Marsh_506"
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.shp inp.shp
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.shx inp.shx
+    exec ln -s $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.dbf inp.dbf
+
+    puts "shp2rast.pdf inp=inp.shp out=databaseDir/ suffix=swamp fg=0 bg=1 minLat=$playbox_aoiMinLat maxLat=$playbox_aoiMaxLat minLon=$playbox_aoiMinLon maxLon=$playbox_aoiMaxLon"
+    catch {exec vicarb "shp2rast.pdf inp=inp.shp out=databaseDir/ suffix=swamp fg=0 bg=1 minLat=$playbox_aoiMinLat maxLat=$playbox_aoiMaxLat minLon=$playbox_aoiMinLon maxLon=$playbox_aoiMaxLon"}
+
+    file delete -force inp.shp
+    file delete -force inp.shx
+    file delete -force inp.dbf
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.shp
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.shx
+	#file delete -force $tdpsDatabaseDir/CBS_Trafficability_Marsh_506.dbf
+    }
+
+    file delete -force databaseDir
+
+    # run ras_traf
+    addStatus "Running ras_traf"
+    set script [open ras_traf_driver.pdf w]
+    puts $script "procedure\nbody\nras_traf +"
+    puts $script "  slat=$playbox_aoiMinLat +"
+    puts $script "  elat=$playbox_aoiMaxLat +"
+    puts $script "  slon=$playbox_aoiMinLon +"
+    puts $script "  elon=$playbox_aoiMaxLon +"
+    puts $script "  dir1=${srtmRoot}/ +"
+    puts $script "  dir2=${tdpsDatabaseDir}/ +"
+    puts $script "  dir3=${tdpsDatabaseDir}/ +"
+    puts $script "  dir4=${tdpsDatabaseDir}/ +"
+    puts $script "  dir5=${tdpsDatabaseDir}/"
+    puts $script "end-proc"
+    close $script
+
+    puts [exec vicarb ras_traf_driver.pdf]
+
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#file delete -force ras_traf_driver.pdf
+    }
+
+    set file ${tdpsDatabaseDir}/cbs_traf
+    set shpFileIn [SHPOpen $file]
+    set dbfFileIn [DBFOpen $file]
+
+    # split cbs_traf.shp into 501..506
+    foreach cbsClass {501 502 503 504 505 506} {
+	# get the filter prefix and suffixes for the cbs class
+	set filterPrefix "Trafficability"
+
+	# create the cbs class shape file
+	global tdpsDatabaseDir
+	addStatus "Creating ${tdpsDatabaseDir}/CBS_${filterPrefix}_${cbsClass}"
+
+	set shpFileOut [SHPCreate ${tdpsDatabaseDir}/CBS_${filterPrefix}_${cbsClass} "POLYGON"]
+	set dbfFileOut [DBFCreate ${tdpsDatabaseDir}/CBS_${filterPrefix}_${cbsClass}]
+
+	set newVector 0
+
+	DBFAddField $dbfFileOut "FCODE" "FTString" 15 0
+
+	# calculate the filter name
+	set filterName ${filterPrefix}_FCODE_${cbsClass}
+
+	addStatus "Filtering $file with $filterName ... " true
+	flush stdout
+	set vectorCountForFile 0
+
+	set vectorCount [DBFGetRecordCount $dbfFileIn]
+
+	for {set vector 0} {$vector < $vectorCount} {incr vector} {
+	    if {[catch {set vectorProperties [getVectorPropertiesFromOpenFile $dbfFileIn $vector]} postMortem]} {
+		error "caught an error: $postMortem\nwith dbfFileIn==$dbfFileIn vector==$vector"
+	    }
+
+	    if {[applyFilter $filterName $vectorProperties] && [shapeTouchesBox $shpFileIn $vector $playbox_aoiMinLat $playbox_aoiMaxLat $playbox_aoiMinLon $playbox_aoiMaxLon]} {
+		incr vectorCountForFile
+
+		SHPCopyVector $shpFileIn $vector $shpFileOut
+
+		DBFCopyString $dbfFileIn $vector 0 $dbfFileOut $newVector 0
+
+		incr newVector
+	    }
+	}
+
+	addStatus "$vectorCountForFile vectors pass"
+
+	DBFClose $dbfFileOut
+	SHPClose $shpFileOut
+    }
+
+    DBFClose $dbfFileIn
+    SHPClose $shpFileIn
+
+    # delete cbs_traf file
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#file delete $file
+    }
+
+    global argv
+    if {[lsearch $argv "expert"] < 0} {
+	#eval [concat file delete [glob ${file}.*]]
+    }
+
+    addStatus "*** Done preparing trafficability ***"
+}
+
+proc extractVectorsAndMap {} {
+    global doExtractVectors
+    global doExtractMap
+    global tdpsDatabaseDir
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+
+
+    global databaseRead databaseWritten
+    if {! $databaseRead && ! $databaseWritten} {
+	tk_messageBox -message "Select/Create Database First"
+	return
+    }
+
+    openStatus "Extracting VMAP vectors and ADRG map" vectorExtraction
+
+    if {$doExtractVectors} {
+
+	# canvas may not exist yet
+	#    setAppCursor watch
+
+	global argv
+	if {[lsearch $argv "expert"] < 0} {
+	    addStatus "Clearing previous extraction data (if any) from $tdpsDatabaseDir"
+	    catch {eval [concat file delete [glob ${tdpsDatabaseDir}/*.shp] [glob ${tdpsDatabaseDir}/*.shx] [glob ${tdpsDatabaseDir}/*.dbf]]}
+	}
+
+	# extract from raw vmap to cbs categories by vmap feature classes
+	addStatus "Extracting VMAP within playbox to TDPS database $tdpsDatabaseDir"
+	extractCbsClassShapeFiles $playbox_aoiMinLat $playbox_aoiMaxLat $playbox_aoiMinLon $playbox_aoiMaxLon
+
+	foreach shapeName {CBS_Urbanization_City_403 CBS_Urbanization_Town_402 CBS_Urbanization_Village_401} {
+	    #  	if {[file exists ${tdpsDatabaseDir}/${shapeName}_trm]} {
+	    #  	    addStatus "********** This should never happen (1) $shapeName **********"
+	    #  	    set shapeName ${shapeName}_trm
+	    #  	}
+	    addStatus "Reclassifying holes in $shapeName"
+	    CopyBreakingHoles ${tdpsDatabaseDir}/${shapeName} ${tdpsDatabaseDir}/${shapeName}_nh ${tdpsDatabaseDir}/${shapeName}_ho f_code
+	    global argv
+	    if {[lsearch $argv "expert"] < 0} {
+		eval [concat file delete [glob ${tdpsDatabaseDir}/${shapeName}.*]]
+	    }
+	}
+
+	foreach shapeName {CBS_Vegetation_Moderate_303 CBS_Vegetation_Sparse_302} {
+	    #  	if {[file exists ${tdpsDatabaseDir}/${shapeName}_trm]} {
+	    #  	    addStatus "******* This should never happen (2) $shapeName *************"
+	    #  	    set shapeName ${shapeName}_trm
+	    #  	}
+	    addStatus "Reclassifying holes in $shapeName"
+	    CopyBreakingHoles ${tdpsDatabaseDir}/${shapeName} ${tdpsDatabaseDir}/${shapeName}_nh ${tdpsDatabaseDir}/${shapeName}_ho f_code
+	    global argv
+	    if {[lsearch $argv "expert"] < 0} {
+		eval [concat file delete [glob ${tdpsDatabaseDir}/${shapeName}.*]]
+	    }
+	}
+
+	addStatus "Trimming extracted vectors to playbox"
+	# trim to playbox
+	global cbsTerrainClasses
+	foreach cbsClass [array names cbsTerrainClasses] {
+	    set list $cbsTerrainClasses($cbsClass)
+	    set filterPrefix [lindex $list 0]
+
+	    set trimInput "${tdpsDatabaseDir}/CBS_${filterPrefix}_${cbsClass}"
+
+	    if {[string first "Rivers" $trimInput] >= 0 || [string first "Roads" $trimInput] >= 0} {
+
+		# if it's a polygon, delete islands first
+		if {"CBS_${filterPrefix}_${cbsClass}" == "CBS_Rivers3_Large_River_203a"} {
+		    addStatus "Removing islands from CBS_Rivers3_Large_River_203a"
+		    CopyBreakingHoles $trimInput ${trimInput}_nh ${trimInput}_ho f_code
+		    global argv
+		    if {[lsearch $argv "expert"] < 0} {
+			eval [concat file delete [glob ${trimInput}.*]]
+			eval [concat file delete [glob ${trimInput}_ho.*]]
+		    }
+		    set trimInput ${trimInput}_nh
+		}
+
+		addStatus "Trimming $trimInput"
+		global argv
+		if {[lsearch $argv "expert"] >= 0} {
+		    puts "trimShapes $trimInput ${trimInput}_trm $playbox_aoiMaxLat $playbox_aoiMaxLon $playbox_aoiMinLon $playbox_aoiMinLat"
+		}
+		catch {trimShapes $trimInput ${trimInput}_trm $playbox_aoiMaxLat $playbox_aoiMaxLon $playbox_aoiMinLon $playbox_aoiMinLat}
+		global argv
+		if {[lsearch $argv "expert"] < 0} {
+		    eval [concat file delete [glob ${trimInput}.*]]
+		}
+	    } elseif {[string first "Urban" $trimInput] >= 0 || [string first "Vegetation" $trimInput] >= 0} {
+		addStatus "Trimming $trimInput"
+		catch {trimShapes ${trimInput}_nh ${trimInput}_nh_trm $playbox_aoiMaxLat $playbox_aoiMaxLon $playbox_aoiMinLon $playbox_aoiMinLat}
+		global argv
+		if {[lsearch $argv "expert"] < 0} {
+		    eval [concat file delete [glob ${trimInput}_nh.*]]
+		}
+		catch {trimShapes ${trimInput}_ho ${trimInput}_ho_trm $playbox_aoiMaxLat $playbox_aoiMaxLon $playbox_aoiMinLon $playbox_aoiMinLat}
+		global argv
+		if {[lsearch $argv "expert"] < 0} {
+		    eval [concat file delete [glob ${trimInput}_ho.*]]
+		}
+	    } else {
+		addStatus "NOT trimming $trimInput"
+	    }
+	}
+    }
+
+    if {$doExtractMap} {
+	addStatus "Extracting ADRG map background"
+	# extract playbox ADRG
+	# produces adrg.red, adrg.grn, adrg.blu
+	global adrgRoot
+	# should make a temp.pdf instead of links
+	file delete -force adrgRoot
+	file delete -force databaseDir
+	puts "ln -s $adrgRoot adrgRoot"
+	puts [exec -- ln -s $adrgRoot adrgRoot]
+	exec -- ln -s $tdpsDatabaseDir databaseDir
+	global argv
+        puts "tdps_subset_adrg.pdf slat=$playbox_aoiMinLat slon=$playbox_aoiMinLon elat=$playbox_aoiMaxLat elon=$playbox_aoiMaxLon dir1=adrgRoot/ dir2=databaseDir outn=adrg"
+
+	catch {exec -- vicarb "subset_adrg.pdf slat=$playbox_aoiMinLat slon=$playbox_aoiMinLon elat=$playbox_aoiMaxLat elon=$playbox_aoiMaxLon dir1=adrgRoot/ dir2=databaseDir outn=adrg"} var
+	puts $var
+	#file delete -force adrgRoot
+	#file delete -force databaseDir
+	global adrgN adrgE adrgW adrgS
+	set adrgN $playbox_aoiMaxLat
+	set adrgE $playbox_aoiMaxLon
+	set adrgW $playbox_aoiMinLon
+	set adrgS $playbox_aoiMinLat
+	writeDatabase
+
+	# canvas may not exist yet
+	# restoreCursor
+    }
+
+    addStatus "*** Vector/ADRG Map extraction complete ***"
+}
+
+registerDatabaseVar adrgN "" "Northern edge of ADRG extracted for playbox"
+registerDatabaseVar adrgE "" "Eastern edge of ADRG extracted for playbox"
+registerDatabaseVar adrgW "" "Western edge of ADRG extracted for playbox"
+registerDatabaseVar adrgS "" "Southern edge of ADRG extracted for playbox"
+
+proc acceptLatLon {} {
+    global playbox_aoiMinLat_displayed playbox_aoiMaxLat_displayed playbox_aoiMinLon_displayed playbox_aoiMaxLon_displayed
+
+    if {$playbox_aoiMaxLat_displayed <= $playbox_aoiMinLat_displayed || $playbox_aoiMaxLon_displayed <= $playbox_aoiMinLon_displayed} {
+	tk_messageBox -message "Invalid Playbox Limits"
+	return
+    }
+
+    global tdpsDatabase tdpsDatabaseDir
+
+    if {$tdpsDatabase == ""} {
+	global databaseRead databaseWritten
+	if {! $databaseRead && ! $databaseWritten} {
+	    tk_messageBox -message "Select/Create Database First"
+	    return
+	}
+    }
+
+    if {[llength [glob -nocomplain $tdpsDatabaseDir/*]] > 0} {
+  	if {[promptUser "Erase Current Database?" "Changing the AOI will force erasure of data\ngenerated in Steps 3-7. Continue erasing database?" {Yes No}] != "Yes"} {
+  	    return
+  	} else {
+  	    set files [list $tdpsDatabaseDir/adrg.blu $tdpsDatabaseDir/adrg.grn $tdpsDatabaseDir/adrg.red]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.shp]]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.shx]]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.dbf]]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.img]]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.txt]]
+  	    set files [concat $files [glob -nocomplain $tdpsDatabaseDir/*.shp]]
+	    
+  	    foreach file $files {
+  		file delete $file
+  	    }
+  	}
+    }
+
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+    global playbox_aoiMinLat_displayed playbox_aoiMaxLat_displayed playbox_aoiMinLon_displayed playbox_aoiMaxLon_displayed
+
+    set playbox_aoiMinLat $playbox_aoiMinLat_displayed
+    set playbox_aoiMaxLat $playbox_aoiMaxLat_displayed
+    set playbox_aoiMinLon $playbox_aoiMinLon_displayed
+    set playbox_aoiMaxLon $playbox_aoiMaxLon_displayed
+
+    catch writeDatabase
+}
+
+proc revertLatLon {} {
+    global tdpsDatabase tdpsDatabaseDir
+
+    if {$tdpsDatabase == ""} {
+	global databaseRead databaseWritten
+	if {! $databaseRead && ! $databaseWritten} {
+	    tk_messageBox -message "Select/Create Database First"
+	    return
+	}
+    }
+
+    global playbox_aoiMinLat playbox_aoiMaxLat playbox_aoiMinLon playbox_aoiMaxLon
+    global playbox_aoiMinLat_displayed playbox_aoiMaxLat_displayed playbox_aoiMinLon_displayed playbox_aoiMaxLon_displayed
+
+    set playbox_aoiMinLat_displayed $playbox_aoiMinLat
+    set playbox_aoiMaxLat_displayed $playbox_aoiMaxLat
+    set playbox_aoiMinLon_displayed $playbox_aoiMinLon
+    set playbox_aoiMaxLon_displayed $playbox_aoiMaxLon
+}
+
+proc fixLatLon {varToSet val min max defVar} {
+    global $varToSet
+    global $defVar
+
+    if {[catch {set val [expr 0.0 + $val]}]} {
+  	set val [set $defVar]
+    }
+
+    if {$val < 0.0} {
+  	set val [expr int(floor($val))]
+    } else {
+  	set val [expr int(ceil($val))]
+    }
+
+    if {$val < $min} {
+  	set val $min
+    }
+    
+    if {$val > $max} {
+  	set val $max
+    }
+
+    set $defVar $val
+
+    set $varToSet $val
+}
+
+proc createAreaOfInterestFrame {title type w} {
+    set f $w.${type}_aoiFrame
+
+    frame $f -bd 1 -relief solid
+    grid columnconfigure $f 0 -weight 1
+    #      grid columnconfigure $f 1 -weight 0
+    #      grid columnconfigure $f 2 -weight 1
+    #      grid columnconfigure $f 3 -weight 0
+    grid columnconfigure $f 4 -weight 1
+    #      grid columnconfigure $f 5 -weight 0
+
+    set row 0
+
+    set l $f.label${row}_n
+    label $l -text "Max Lat"
+    grid $l -row $row -column 2
+
+    incr row
+
+    set e $f.aoiN
+    entry $e -textvariable ${type}_aoiMaxLat_displayed -width 9
+    global ${type}_aoiMaxLat_displayed ${type}_aoiMaxLat_last
+    registerDatabaseVar ${type}_aoiMaxLat 90 "${type} Max Lat"
+    set ${type}_aoiMaxLat_displayed "90"
+    set ${type}_aoiMaxLat_last "90"
+    grid $e -row $row -column 2 -sticky news
+    set cmd "fixLatLon ${type}_aoiMaxLat_displayed \[set ${type}_aoiMaxLat_displayed\] -90 90 ${type}_aoiMaxLat_last"
+    bind $e <FocusOut> $cmd
+    bind $e <Leave> $cmd
+
+    incr row
+
+    set l $f.label${row}_w
+    label $l -text "Min Lon"
+    grid $l -row $row -column 0 -sticky e
+
+    set e $f.aoiW
+    entry $e -textvariable ${type}_aoiMinLon_displayed -width 9
+    global ${type}_aoiMinLon_displayed ${type}_aoiMinLon_last
+    registerDatabaseVar ${type}_aoiMinLon -180 "${type} Min Lon"
+    set ${type}_aoiMinLon_last "-180"
+    set ${type}_aoiMinLon_displayed "-180"
+    grid $e -row $row -column 1 -sticky news
+    set cmd "fixLatLon ${type}_aoiMinLon_displayed \[set ${type}_aoiMinLon_displayed\] -180 180 ${type}_aoiMinLon_last"
+    bind $e <FocusOut> $cmd
+    bind $e <Leave> $cmd
+
+    set l $f.aoiLabel
+    label $l -text $title
+    grid $l -row $row -column 2
+
+    set e $f.aoiE
+    entry $e -textvariable ${type}_aoiMaxLon_displayed -width 9
+    global ${type}_aoiMaxLon_displayed ${type}_aoiMaxLon_last
+    registerDatabaseVar ${type}_aoiMaxLon 180 "${type} Max Lon"
+    set ${type}_aoiMaxLon_last "180"
+    set ${type}_aoiMaxLon_displayed "180"
+    grid $e -row $row -column 3 -sticky news
+    set cmd "fixLatLon ${type}_aoiMaxLon_displayed \[set ${type}_aoiMaxLon_displayed\] -180 180 ${type}_aoiMaxLon_last"
+    bind $e <FocusOut> $cmd
+    bind $e <Leave> $cmd
+
+    set l $f.label${row}_e
+    label $l -text "Max Lon"
+    grid $l -row $row -column 4 -sticky w
+
+    incr row
+
+    set e $f.aoiS
+    entry $e -textvariable ${type}_aoiMinLat_displayed -width 9
+    global ${type}_aoiMinLat_displayed ${type}_aoiMinLat_last
+    registerDatabaseVar ${type}_aoiMinLat -90 "${type} Min Lat"
+    set ${type}_aoiMinLat_last "-90"
+    set ${type}_aoiMinLat_displayed "-90"
+    grid $e -row $row -column 2 -sticky news
+    set cmd "fixLatLon ${type}_aoiMinLat_displayed \[set ${type}_aoiMinLat_displayed\] -90 90 ${type}_aoiMinLat_last"
+    bind $e <FocusOut> $cmd
+    bind $e <Leave> $cmd
+
+    incr row
+
+    set l $f.label${row}_s
+    label $l -text "Min Lat"
+    grid $l -row $row -column 2
+
+    set bf $f.buttonFrame
+    frame $bf
+    grid $bf -row $row -column 3
+    grid configure $bf -columnspan 2
+
+    set b $bf.accept
+    button $b -text "Accept" -command acceptLatLon
+    pack $b -side left
+
+#     set b $bf.revert
+#     button $b -text "Revert" -command revertLatLon
+#     pack $b -side left
+
+    return $f
+}
+
+proc createSelectCreateDatabaseFrame {w} {
+    set f $w.dirInitFrame
+
+    frame $f -bd 1 -relief solid
+    grid columnconfigure $f 0 -weight 0
+    grid columnconfigure $f 1 -weight 1
+    grid columnconfigure $f 2 -weight 0
+    grid columnconfigure $f 3 -weight 0
+
+    set row 0
+
+    set l $f.label${row}
+    label $l -text "TDPS Database:"
+    grid $l -row $row -column 0 -sticky w
+
+    set e $f.entry${row}
+    entry $e -textvariable tdpsDatabase
+    global tdpsDatabase
+    set tdpsDatabase ""
+    grid $e -row $row -column 1 -sticky news
+
+    incr row
+
+    set bf $f.buttonFrame
+    frame $bf
+    grid $bf -row $row -column 0 -sticky news
+    grid configure $bf -columnspan 2
+
+    set mb $bf.accept
+    button $mb -text "Accept" -command "acceptTdpsDatabase"
+    pack $mb -side left -expand 1 -fill both
+
+    set mb $bf.browse
+    button $mb -text "Select ..." -command "selectTdpsDatabase"
+    pack $mb -side left -expand 1 -fill both
+
+    set b $bf.create
+    button $b -text "Create ..." -command "createTdpsDatabase"
+    pack $b -side left -expand 1 -fill both
+
+    return $f
+}
+
+set tdpsDatabaseDir "."
+proc acceptTdpsDatabase {} {
+    global tdpsDatabase    
+
+    if {[catch {readDatabase}]} {
+	tk_messageBox -message "Error loading $tdpsDatabase"
+
+	catch {unloadAll}
+
+	set split [split $tdpsDatabase "."]
+	if {[lindex $split end] == "tdps"} {
+	    set split [lrange $split 0 [expr [llength $split] - 2]]
+	}
+	global tdpsDatabaseDir
+	set tdpsDatabaseDir [join $split "."]
+
+	global tdpsDatabaseName
+	set split [split $tdpsDatabase "/"]
+	set last [lindex $split [expr [llength $split] - 1]]
+	set split [split $last "."]
+	set tdpsDatabaseName [lindex $split 0]
+    }
+}
+
+proc selectTdpsDatabase {} {
+    set file [getFileForOpen tdps]
+
+    openTdpsDatabase $file
+}
+
+proc openTdpsDatabase {file} {
+    if [string compare $file ""] {
+	global tdpsDatabase
+	set tdpsDatabase $file
+
+	set split [split $tdpsDatabase "."]
+	if {[lindex $split end] == "tdps"} {
+	    set split [lrange $split 0 [expr [llength $split] - 2]]
+	}
+	global tdpsDatabaseDir
+	set tdpsDatabaseDir [join $split "."]
+
+	global tdpsDatabaseName
+	set split [split $tdpsDatabase "/"]
+	set last [lindex $split [expr [llength $split] - 1]]
+	set split [split $last "."]
+	set tdpsDatabaseName [lindex $split 0]
+
+	readDatabase
+
+	catch {unloadAll}
+    }
+}
+
+proc createTdpsDatabase {} {
+    set file [getFileForSave tdps]
+
+    if [string compare $file ""] {
+	global tdpsDatabase
+	set tdpsDatabase $file
+
+	set split [split $tdpsDatabase "."]
+	if {[lindex $split end] == "tdps"} {
+	    set split [lrange $split 0 [expr [llength $split] - 2]]
+	}
+	global tdpsDatabaseDir
+	set tdpsDatabaseDir [join $split "."]
+
+	if {[catch {exec mkdir $tdpsDatabaseDir} postMortem]} {
+	    tk_messageBox -message "Error creating database directory \"${tdpsDatabaseDir}\":\n${postMortem}"
+	    return
+	}
+	set file ${tdpsDatabaseDir}.tdps
+	exec touch $file
+
+	set tdpsDatabase $file
+
+	writeDatabase
+
+	catch {unloadAll}
+
+	global tdpsDatabaseName
+	set split [split $tdpsDatabase "/"]
+	set last [lindex $split [expr [llength $split] - 1]]
+	set split [split $last "."]
+	set tdpsDatabaseName [lindex $split 0]
+    }
+}
+
+proc getFileForSave {ext} {
+    set initialDir ""
+
+    switch $ext {
+	shp {
+	    set types {
+		{"Shape files" {.shp}}
+	    }
+	}
+	tdps {
+	    set types {
+		{"TDPS Database" {.tdps}}
+		{"All files"     *}
+	    }
+	}
+	MOSAIC_DEM {
+	    set types {
+		{"TIFF file" {.tiff}}
+		{"TIFF file" {.TIFF}}
+		{"Vicar file" {.img}}
+		{"All files"     *}
+	    }
+	}
+	EXPORT_CADRG {
+	    set types {
+		{"TIFF file" {.tiff}}
+		{"TIFF file" {.TIFF}}
+		{"All files"     *}
+	    }		
+	}
+	default {
+	    set types {
+		{"All files"		*}
+	    }
+	}
+    }
+
+    if {$initialDir == ""} {
+	set file [tk_getSaveFile -filetypes $types -parent .]
+    } else {
+	set file [tk_getSaveFile -filetypes $types -parent . -initialdir $initialDir]
+    }
+
+    string trim $file
+}
+
+proc getFileForOpen {ext} {
+    set initialDir ""
+
+    switch $ext {
+	txt {
+	    set types {
+		{"Text file" {.txt}}
+	    }
+	}
+	shp {
+	    set types {
+		{"Shape files" {.shp}}
+	    }
+	}
+	tdps {
+	    set types {
+		{"TDPS Database" {.tdps}}
+		{"All files"     *}
+	    }
+	}
+	VMAP1 {
+	    set types {
+		{"VMAP1 dht File" "dht"}
+		{"VMAP1 dht File" "DHT"}
+		{"All files"     *}
+	    }
+	}
+	CADRG {
+	    set types {
+		{"CADRG a.toc File" "a.toc"}
+		{"CADRG a.toc File" "A.TOC"}
+	    }
+	}
+	DEM {
+	    set types {
+		{"DEM dt1 File" ".dt1"}
+		{"DEM dt1 File" ".DT1"}
+		{"All files"     *}
+	    }
+	}
+	EXPORT_CADRG {
+	    set types {
+		{"Red Channel File" "adrg.red"}
+		{"Red Channel File" "*_adrg_red.img"}
+		{"All files"     *}
+	    }
+	    global tdpsDatabaseDir
+	    if {[glob -nocomplain ${tdpsDatabaseDir}/adrg.red] != ""} {
+		set initialDir $tdpsDatabaseDir
+	    }
+	}
+	default {
+	    set types {
+		{"All files"		*}
+	    }
+	}
+    }
+
+    if {$initialDir == ""} {
+	set file [tk_getOpenFile -filetypes $types -parent .]
+    } else {
+	set file [tk_getOpenFile -filetypes $types -parent . -initialdir $initialDir]
+    }
+
+    return $file
+}
+
+proc startTdps {argv} {
+    loadOptions
+
+    global tdpsRoot tdpsGraphics tdpsSrc
+    loadFilters ${tdpsSrc}/filters.tcl
+
+    image create photo helpButton -file ${tdpsGraphics}/helpicon.gif
+    image create photo cbsImage -file ${tdpsGraphics}/cbs_logo_small.gif
+
+    createMainWindow
+
+    openTdpsDatabase $argv
+}
+
+startTdps $argv

@@ -1,0 +1,50 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+The local directory is /home/pkim/afids/trunk/src/vdev/tcl2tcl.
+ 
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+The local time is Tue Mar 25 17:52:21 2008.
+ 
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+The resistor color band for 3 is orange.
+ 
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+Hello world!
+ 
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+[TAE-EXPR] Unexpected characters in expression at or near  ': " // "co';
+ proc 'tsttcl2tcl', line 50
+

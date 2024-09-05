@@ -1,0 +1,113 @@
+procedure
+
+! inp must be a half-word VICAR image
+! out is the nitf file to be generated
+
+parm inp type=(string,250)
+parm inp2 type=(string,250) default=""
+parm inp3 type=(string,250) default=""
+parm inp4 type=(string,250) default=""
+parm inp5 type=(string,250) default=""
+parm inp6 type=(string,250) default=""
+parm inp7 type=(string,250) default=""
+parm inp8 type=(string,250) default=""
+parm inp9 type=(string,250) default=""
+parm pvtype type=(string,3) count=1 valid=("si","int") default="int"
+parm out type=(string,250)
+
+local retval type=string
+local compress string init="NONE"
+local b integer init=1
+body
+
+write "vicar2ntf.pdf version Sat May 10 2014"
+
+let _onfail="goto branch"
+lab2tcl &inp v1=compress keyword="compress" type="SYSTEM"
+branch>
+
+write "type &compress"
+
+if (compress <> "NONE")
+  write "uncompressing to inp1.lnk ..."
+  ush rm -f inp1.lnk
+  comprs inp=&inp out=inp1.lnk compress="NONE"
+else
+  write "creating link"
+  ush rm -f inp1.lnk
+  ush ln -s &inp inp1.lnk
+end-if
+if ("&inp2" <> "")
+  ush rm -f inp2.lnk
+  ush ln -s &inp2 inp2.lnk
+  let b=2
+end-if
+if ("&inp3" <> "")
+  ush rm -f inp3.lnk
+  ush ln -s &inp3 inp3.lnk
+  let b=3
+end-if
+if ("&inp4" <> "")
+  ush rm -f inp4.lnk
+  ush ln -s &inp4 inp4.lnk
+  let b=4
+end-if
+if ("&inp5" <> "")
+  ush rm -f inp5.lnk
+  ush ln -s &inp5 inp5.lnk
+  let b=5
+end-if
+if ("&inp6" <> "")
+  ush rm -f inp6.lnk
+  ush ln -s &inp6 inp6.lnk
+  let b=6
+end-if
+if ("&inp7" <> "")
+  ush rm -f inp7.lnk
+  ush ln -s &inp7 inp7.lnk
+  let b=7
+end-if
+if ("&inp8" <> "")
+  ush rm -f inp8.lnk
+  ush ln -s &inp8 inp8.lnk
+  let b=8
+end-if
+if ("&inp9" <> "")
+  ush rm -f inp9.lnk
+  ush ln -s &inp9 inp9.lnk
+  let b=9
+end-if
+
+if (pvtype="int")
+  ush gdal_to_nitf --unsigned "inp1:"&b".lnk" &out
+else
+  ush gdal_to_nitf "inp1:"&b".lnk" &out
+end-if
+
+ush rm -f inp1.lnk
+if ("&inp2" <> "")
+   ush rm -f inp2.lnk
+end-if
+if ("&inp3" <> "")
+   ush rm -f inp3.lnk
+end-if
+if ("&inp4" <> "")
+   ush rm -f inp4.lnk
+end-if
+if ("&inp5" <> "")
+   ush rm -f inp5.lnk
+end-if
+if ("&inp6" <> "")
+   ush rm -f inp6.lnk
+end-if
+if ("&inp7" <> "")
+   ush rm -f inp7.lnk
+end-if
+if ("&inp8" <> "")
+   ush rm -f inp8.lnk
+end-if
+if ("&inp9" <> "")
+   ush rm -f inp9.lnk
+end-if
+
+end-proc

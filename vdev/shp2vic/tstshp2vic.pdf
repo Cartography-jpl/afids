@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="yes"
+
+!shp2vic shpinp=block8_3_areals2a out=block8_3_areals2a.int
+
+! 3-d example
+!shp2vic shpinp=OBL_Rivers_V1.shp ibisout=three-d.int 'doz
+
+! alameda
+shp2vic shpinp=alameda_dual_highways.shp ibisout=alameda_dual_highways.int
+shp2vic shpinp=alameda_hard_surface.shp ibisout=alameda_hard_surface.int
+shp2vic shpinp=alameda_loose_surface.shp ibisout=alameda_loose_surface.int
+
+END-PROC

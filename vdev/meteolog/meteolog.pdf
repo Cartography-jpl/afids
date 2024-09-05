@@ -1,0 +1,195 @@
+process help=*
+parm inp           type=(string,99) count=1
+parm out           type=(string,99) count=0:2 default=""
+parm outprefix     type=(string,99) count=1 default="meteosat"
+parm nonav         type=keyword count=(0:1) valid=nonav default=--
+parm echometa      type=keyword count=(0:1) valid=echometa default=--
+parm skip          type=int default=1
+parm nadlon        type=real default=0.0
+parm sl            type=int  default=-999
+parm ss            type=int  default=-999
+parm nl            type=int  default=-999
+parm ns            type=int  default=-999
+parm minlat        type=real default=-999.0
+parm maxlat        type=real default=-999.0
+parm minlon        type=real default=-999.0
+parm maxlon        type=real default=-999.0
+parm sunlat        type=real default=-999.0
+parm sunlon        type=real default=-999.0
+parm riseoff       type=real default=0.0
+parm setoff        type=real default=0.0
+end-proc
+
+.title
+VICAR Program meteolog - logs Meteosat archive file to VICAR/IBIS
+
+.help
+PURPOSE:
+
+	METEOLOG logs a user-specified sub-area of a EUMETSAT OpenMTP
+	format Meteosat archive file to VICAR/IBIS.
+
+EXECUTION:
+
+ 	meteolog INP=(A) OUTPREFIX=(B) OUT=(C,D) optional-parameters
+     
+	where
+
+	A	is a Meteosat archive file
+		Typical Meteosat archive filenames, as distributed by EUMETSAT, are
+			OpenMTP_2001-12-16_16_144955_1_1_16.VIS
+			OpenMTP_2001-12-16_16_145142_1_1_16.IR
+
+	B	is a path/filename prefix used to generate output filenames. Defaults
+		to "meteosat". Output image is named by adding ".img" to prefix
+		Output IBIS navdata is named by adding ".int" to prefix (only for IR).
+		Output metadata is named by adding ".txt" to prefix; the metadata
+		is added to the VICAR label, as well as saved in the metadata file.
+	
+	C	is the output VICAR image. Overrides any outprefix name.
+ 	D	is the output IBIS navadata. Overrides any outprefix name.
+
+	Optional Parameters
+		nonav    keyword requesting that nav data file not be generated
+		navskip  nav data sampling period
+		nadlon   longitude of satelite nadir point, usually either 0 or 63
+
+		AOI selection -- specify either (sl, ss, nl, ns) or
+			(minLat, maxLat, minLon, maxLon), but not both
+
+		AOI selection by line/sample:
+		These values specify an AOI within the full 2500x2500 (IR) or 5000x5000 (VIS)
+		sized image. If the input dataset is not a full disk, the missing region
+		will be zero filled.
+ 		sl       start line (one based value with (1,1) pixel in nw corner
+		ss       start sample (one based value)
+		nl       number of lines to extract
+		ns       number of samples to extract
+
+		AOI selection by lat/lon:
+		minlat   minimum latitude in signed decimal degrees
+		maxlat   maximum latitude in signed decimal degrees
+		minlon   minimum longitude in signed decimal degrees
+		maxlon   maximum longitude in signed decimal degrees
+
+		Sunrise/set calculation and daytime indication: if sunlat and
+		sunlon are specified, adds three items to metadata:
+			CALC_UTC_SUNRISE indicates sunrise time for point
+			CALC_UTC_SUNSET indicates sunset time for point
+			CALC_DAYTIME indicates whether it was daytime at point
+				when image was acquired
+
+		sunlat   latitude of point of interest
+		sunlon   longitude of point of interest
+		riseoff  offset value added to actual sunrise time when calculating
+				CALC_DAYTIME flag
+		setoff   offset value added to actual sunset time when calculating
+				CALC_DAYTIME flag
+
+                echometa requests that meta data be echoed to stdout
+.PAGE
+OPERATION
+
+     METEOLOG logs a user-specified sub-area of a EUMETSAT OpenMTP
+     format Meteosat archive file to VICAR/IBIS. The extracted image
+     will have 8 bits per pixel. The IBIS file will contain a table of
+     (line, sample, lat, lon) double precision float quadruples, used to
+     navigate the extracted image. Lat and lon values are -999.0 for
+     pixels located beyond the edge of the disk.
+   
+.PAGE
+
+RESTRICTIONS
+
+     The input Meteosat archive file format must be compativle with
+     the description in The Meteosat Archive Format Guide No. 1 Basic
+     Imagery OpenMTP Format EUM FG 1 Revision 2.1 April 2000 
+
+     Navigation of the image must agree with Meteosat Archive User
+     Handbook Issue 2.5, March 2001
+
+     Navigation data generation is not supported for VIS images.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Mon Mar 17 2008
+    Ported to ANSI-C, added 64-bit support
+  Wed Mar 16 2005
+    Added support for providing just the inp parameter
+    Added zifmessages indicating actual output filenames
+  Fri Feb 11 2005
+    Cleaned up user interface.
+  Wed Jul  7 2004
+    Added support for sub-area archives.
+  Mon May 24 2004
+    Added skip parm.
+  Mon Apr 22 2002
+    Added VICAR labeling.
+  Sun Mar 17 2002
+    Added meta data file generation.
+    Added min/max line/sample calculation from Lat/Lon.
+    Added autonaming.
+    Added CALC_DAYTIME flag.
+  Mon Dec  3 2001
+    Reversed lat/lon column order in IBIS nav output file
+    Factored out IBIS generation code
+  2 nov 2001
+    Initial version
+
+.level1
+.var inp
+Input Meteosat archive file
+.var out
+FILE1 is the output VICAR image. Overrides any outprefix name.
+FILE1 is the output IBIS navadata. Overrides any outprefix name.
+.var outprefix
+Path/filename prefix used to generate output files
+.var nonav
+Keyword requesting that nav data file not be generated
+.var echometa
+keyword requesting that meta data be echoed to stdout
+.var navskip
+Navigation data sampling period
+.var nadlon
+Longitude of satelite nadir point
+.var sl
+AOI starting line
+.var ss
+AOI starting sample
+.var nl
+AOI number of lines to extract
+.var ns
+AOI number of samples to extract
+.var minLat
+AOI min latitude in signed decimal degrees
+.var maxLat
+AOI max latitude in signed decimal degrees
+.var minLon
+AOI min longitude in signed decimal degrees
+.var maxLon
+AOI max longitude in signed decimal degrees
+.var sunlat
+Latitude of point of interest
+.var sunlon
+Longitude of point of interest
+.var riseoff
+Offset value added to actual sunrise time when calculating CALC_DAYTIME flag
+.var setoff
+Offset value added to actual sunset time when calculating CALC_DAYTIME flag
+.level2
+.var sl
+AOI selection start line. This is a one-based value where the origin is in nw corner.
+.var ss
+AOI selection start sample. This is a one-based value where the origin is in nw corner.
+.var navskip
+Navigation data sampling period. A value of 1 means generate
+navigation information for every pixel. A value of 2 means every other
+row and sample.
+.var nadlon
+Longitude of satelite nadir point, usually either 0 or 63.
+
+.end

@@ -1,0 +1,4 @@
+$ vpack gtmove.com -mixed -
+	-p gtmove.pdf -
+	-t tstgtmove.pdf
+$ Exit

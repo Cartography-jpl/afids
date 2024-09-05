@@ -1,0 +1,6 @@
+$ vpack rotate2.com -
+	-s rotate2.f -
+	-i rotate2.imake -
+	-p rotate2.pdf -
+	-t tstrotate2.pdf new_session.log
+$ Exit

@@ -1,0 +1,73 @@
+!update_cadrg.pdf
+!Update a tdps 10x10 degree ADRG map background tile with new
+!map data from a NGA CADRG cd-rom.
+
+!This vicar procedure is called by WLB's "Utility Update CADRG"
+!from the tdps main menu. 
+
+!Input Parameters:
+!slat - Bottom (south) lat of 10x10 tile
+!slon - Left (west) lon of 10x10 tile
+!sl - Starting line of the cadrg zone extraction
+!ss - Starting sample of the cadrg zone extraction
+!el - Ending line of the cadrg zone extraction
+!es - Ending sample of the cadrg zone extraction
+!inp - Input cadrg zone extraction Directory & PARTIAL file name
+!adir - TDPS input cadrg directory; Example: /data/tdps_adrg
+!outdir - Output Directory path where file will be written
+
+!Calling Examples:
+!update_cadrg  30 60 1 1 1536 27385
+!update_cadrg  -30 -60 1 1 1536 27385  !with negative lat/lon
+!update_cadrg  30 60 1 1 1536 27385 /home/tll/tdps/cadrgUpdate_0 +
+!              /data/tdps_adrg/ /home/tll/work
+!*********************************************************************
+procedure
+parm       slat    integer            !bottom lat of 10x10 tile (+/-)
+parm       slon    integer            !left lon of 10x10 tile (+/-)
+parm       sl      integer            !starting line of extract
+parm       ss      integer            !starting sample of extract
+parm       el      integer            !ending line of extract
+parm       es      integer            !ending sample of extract
+parm       inp     string    def="/home/tll/tdps/cadrgUpdate_0" !Input Zone file & Dir
+parm       adir    string    def="/data/tdps_adrg/" !Directory of adrg 10x10 tiles
+parm       outdir  string    def="/home/tll/work/"  !Ouput 10x10 dir
+local      nl      integer            !calculated number of lines
+local      ns      integer            !calculated number of samples
+local      lns     string    init="n" !north or south in lowercase
+local      lew     string    init="e" !east or west in lowercase
+body
+
+!calculations
+let         nl = (el - sl) + 1
+let         ns = (es - ss) + 1
+
+!Set n/s/e/w codes
+if         (slat >= 0) let lns = "n"
+if         (slat <  0) let lns = "s"
+if         (slon >= 0) let lew = "e"
+if         (slon <  0) let lew = "w"
+if         (slat <  0) let slat = (slat * (-1))
+if         (slon <  0) let slon = (slon * (-1))    
+
+gtcopy      &"inp"_r.img xxxr size=(&sl,&ss,&nl,&ns)
+gtsize      inp=(xxxr,&"adir"&"lns"&"slat"&"lew"&"slon"_adrg_red.img) +
+            out=xxxr1 'coverinp
+fthfastmos  xxxfth xxxr1 &"adir"&"lns"&"slat"&"lew"&"slon"_adrg_red.img +
+            out=&"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_red.img toler=.4
+
+gtcopy      &"inp"_g.img xxxg size=(&sl,&ss,&nl,&ns)
+gtsize      inp=(xxxg,&"adir"&"lns"&"slat"&"lew"&"slon"_adrg_grn.img) +
+            out=xxxg1 'coverinp
+fthfastmos  xxxfth xxxg1 &"adir"&"lns"&"slat"&"lew"&"slon"_adrg_grn.img +
+            out=&"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_grn.img toler=.4
+
+gtcopy      &"inp"_b.img xxxb size=(&sl,&ss,&nl,&ns)
+gtsize      inp=(xxxb,&"adir"&"lns"&"slat"&"lew"&"slon"_adrg_blu.img) +
+            out=xxxb1 'coverinp
+fthfastmos  xxxfth xxxb1 &"adir"&"lns"&"slat"&"lew"&"slon"_adrg_blu.img +
+            out=&"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_blu.img toler=.4
+xvd        (&"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_red.img, +
+            &"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_grn.img, +
+            &"outdir"&"lns"&"slat"&"lew"&"slon"_adrg_blu.img)
+end-proc

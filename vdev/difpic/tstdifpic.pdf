@@ -1,0 +1,369 @@
+procedure
+local diffpix type=integer count=1 
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! TEST SCRIPT FOR DIFPIC
+!   Tests all formats: BYTE, HALF, FULL, REAL, DOUB, COMP
+!
+! Vicar Programs:
+!   gen list copy ccomp label-list
+!
+! External programs
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! External test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+    
+refgbl $echo
+
+body
+let _onfail="stop"
+let $echo="no"
+
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto theend"
+
+
+write " "
+write "Test on all formats"
+write " "
+let $echo="yes"
+
+! Test Byte images
+gen difpica 100 100 'byte
+gen difpicb 100 100 ival=5 'byte
+difpic (difpica,difpicb) difpicc 'mod
+list difpicc (1,1,10,20)
+difpic (difpicb,difpica) difpicc 
+list difpicc (1,1,10,20)
+difpic (difpicb,difpica) size=(2,2,9,9)
+let $echo="no"
+write "Differences should be 81"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+!
+! Test Half images
+gen difpica 100 100 'half
+gen difpicb 100 100 ival=5 'half
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,20)
+difpic (difpicb,difpica) difpicc 
+list difpicc (1,1,10,20)
+copy difpica difpicd
+difpic (difpica,difpicd) size=(2,2,9,9)
+let $echo="no"
+write "Differences should be 0"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+!
+! Test 
+gen difpica 10 10 linc=2 sinc=2
+gen difpicb 10 10 ival=6
+difpic (difpica,difpicb) difpicc size=(2,3,8,6) 'mod
+list difpicc
+difpic (difpica,difpicb) size=(2,3,8,6) 
+let $echo="no"
+write "Differences should be 44"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+!
+! Test Full images
+gen difpica 100 100 'full
+gen difpicb 100 100 ival=5 'full
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+copy difpica difpicd
+difpic (difpica,difpicd) 
+let $echo="no"
+write "Differences should be 0"
+write "------------------------------------------"
+write " "
+let $echo="yes" 
+
+!
+! Test Real images
+gen difpica 100 100 'real4
+gen difpicb 100 100 ival=5 'real4
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+copy difpica difpicd
+difpic (difpica,difpicd)
+let $echo="no"
+write "Differences should be 0"
+write "------------------------------------------"
+write " "
+let $echo="yes" 
+
+!
+! Test Double images
+
+gen difpica 100 100 'real8
+gen difpicb 100 100 ival=5 'real8
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+copy difpica difpicd
+difpic (difpica,difpicd) 
+let $echo="no"
+write "Differences should be 0"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+!
+! Test complex images
+gen difpica 100 100 'comp
+gen difpicb 100 100 ival=5 'comp
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+copy difpica difpicd
+difpic (difpica,difpicd) 
+
+let $echo="no"
+write "Differences should be 0"
+write "------------------------------------------"
+write " "
+write " Test handling of max and min DNs"
+write "  "
+let $echo="yes"
+!
+!check for handling of max and min DNs
+!
+gen difpica 100 100 ival=0 linc=0 sinc=0 'byte
+gen difpicb 100 100 ival= 255 linc=0 sinc=0 'byte
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5) 'zero
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+!
+let $echo="no"
+write "Differences should be 81"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+
+gen difpica 100 100 ival=-32768 'half
+gen difpicb 100 100 ival= 32500 'half
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+!
+let $echo="no"
+write "Differences should be 81"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 100 100 ival=-2147483648 'full
+gen difpicb 100 100 ival= 2147483000 'full
+list difpica (1,1,10,5)
+list difpicb (1,1,10,5)
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5)
+difpic (difpicb,difpica) difpicc size=(2,2,9,9)
+list difpicc (1,1,9,5)
+!
+let $echo="no"
+write "Differences should be 81"
+write "------------------------------------------"
+write " "
+write "Check number of differences in diffpix return"
+write " "
+let $echo="yes"
+difpic (difpica,difpicb) difpicc diffpix=diffpix
+let $echo="no"
+write " "
+write "return value of diffpix = &diffpix"
+write "                should be 10000"
+write "------------------------------------------"
+write " "
+write "Test difpic on multiband images"
+write " "
+let $echo="yes"
+
+
+gen a 10 20 30 ORG="BSQ"
+gen b 10 20 30 ORG="BSQ" ival=1
+!write "Should get 6000 differences."
+difpic (a b)
+!
+let $echo="no"
+write "Differences should be 6000"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+gen a 10 20 30 ORG="BIL" 'HALF
+gen b 10 20 30 ORG="BIL" 'HALF ival=1
+!write "Should get 3000 differences."
+difpic (a b) NB=15
+!
+let $echo="no"
+write "Differences should be 3000"
+write "------------------------------------------"
+write " "
+let _onfail="continue"
+let $echo="yes"
+
+gen a 10 20 30 ORG="BIP" 'REAL
+gen b 10 20 30 ORG="BIP" 'REAL ival=1
+!write "Should get error message about BIP files"
+difpic (a b) NB=15
+!
+let $echo="no"
+write "Should get error message about BIP files"
+write "------------------------------------------"
+write " "
+let _onfail="goto theend"
+write "Test difpic on multiband images with output file"
+write " "
+let $echo="yes"
+
+!
+gen difpica 40 40 10 'byte
+gen difpicb 40 40 10 ival=5 'byte
+difpic (difpica,difpicb) difpicc 'mod
+list difpicc (1,1,10,20) nb=2
+!
+let $echo="no"
+write "Values should all be 251"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 40 40 10 'half
+gen difpicb 40 40 10 ival=5 'half
+difpic (difpicb,difpica) difpicc 
+list difpicc (1,1,10,20) nb=2
+!
+
+let $echo="no"
+write "Values should all be 5"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 40 40 10 'full
+gen difpicb 40 40 10 ival=5 'full
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5) nb=2
+!
+let $echo="no"
+write "Values should all be -5"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 40 40 10 'real4
+gen difpicb 40 40 10 ival=5 'real4
+difpic (difpica,difpicb) difpicc nb=4 sb=3
+list difpicc (1,1,10,5) nb=2
+!
+let $echo="no"
+write "Values should all be -5.000E+00"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 40 40 10 'real8
+gen difpicb 40 40 10 ival=5 'real8
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5) nb=2
+!
+let $echo="no"
+write "Values should all be -5.000E+00"
+write "------------------------------------------"
+write " "
+let $echo="yes"
+
+gen difpica 40 40 10 'comp
+gen difpicb 40 40 10 ival=5 'comp
+difpic (difpica,difpicb) difpicc
+list difpicc (1,1,10,5) nb=2
+!
+let $echo="no"
+write "Values should all be -5.000E+00"
+write "------------------------------------------"
+write " "
+write "test that COMPLEX format treated properly"
+write "  "
+let $echo="yes"
+
+
+! test that COMPLEX format treated properly:
+gen difpica 40 40 'comp
+gen difpicb 40 40 ival=5 'comp
+ccomp difpica (cr ci) 'rect 'forw
+ccomp (cr ci) difpicb 'rect 'inv   
+label-l difpica
+label-l difpicb
+difpic (difpica,difpicb) difpicc
+
+let $echo="no"
+write "Values should all be -5.000E+00 0.000E+00"
+write "------------------------------------------"
+write "  "
+write "Test difpic on very large images:"
+write "HALF - 32885 lines by 38550 samples"
+write " "
+let $echo="yes"
+
+
+difpic (ct/pre_reg.hlf,ct/post_reg.hlf) diffpix=diffpix
+
+let $echo="no"
+write " "
+write "Return value of diffpix = &diffpix"
+write " "
+write "Value should all be 1053044027"
+write "------------------------------------------"
+write "  "
+
+theend>
+!
+ush rm ct
+let $echo="no"
+end-proc

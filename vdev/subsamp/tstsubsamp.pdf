@@ -1,0 +1,96 @@
+procedure
+
+refgbl $echo
+
+! Jun 26, 2012 - RJB
+! TEST SCRIPT FOR SUBSAMP
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list label-list   
+! 
+! External Programs:
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+body
+! first all formats
+let _onfail="stop"
+let $echo="yes"
+gen a nl=128 ns=128 format=byte ival=0 linc=1 sinc=1 
+list a ss=1 sl=1 nl=10 ns=10
+!
+! Test 1 - Subsamp Even sized image
+subsamp a b zoom=-4
+label-li b
+list b ss=1 sl=1 nl=10 ns=10
+! Test 2 - Subsamp odd sized image
+gen a1 nl=111 ns=111 format=byte ival=0 linc=1 sinc=1
+subsamp a1 c zoom=-4
+label-li c
+list c ss=1 sl=1 nl=10 ns=10
+! Test 3 - Even half-word image
+gen a2 nl=128 ns=128 format=half ival=1 linc=1 sinc=1
+subsamp a2 d zoom=-4
+label-li d
+list d ss=1 sl=1 nl=10 ns=10
+! Test 4 - Half-word 
+gen a3 nl=128 ns=128 format=half ival=1000 linc=1 sinc=1
+subsamp a3 e zoom=-4
+label-li e
+list e ss=1 sl=1 nl=10 ns=10
+! Test 5 - Fullword image
+gen a4 nl=128 ns=128 format=full ival=2 linc=1 sinc=1
+subsamp a4 f zoom=-4
+label-li f
+list f ss=1 sl=1 nl=10 ns=10
+! Test 6 - Real image
+gen a5 nl=128 ns=128 format=real ival=2 linc=1 sinc=1
+subsamp a5 g zoom=-4
+label-li g
+list g ss=1 sl=1 nl=10 ns=10
+
+! Now use varying zoom
+! Test 7 - Byte -8 Zoom 
+subsamp a1 h zoom=-8
+label-li h
+list h ss=1 sl=1 nl=10 ns=10
+! Test 8 - Byte: line -2, samp -4
+subsamp a1 i lzoom=-2 szoom=-4
+label-li i
+list i ss=1 sl=1 nl=10 ns=10
+! Test 9 - Byte: line -1, samp -4
+subsamp a1 j lzoom=-1 szoom=-4
+label-li j
+list j ss=1 sl=1 nl=10 ns=10
+! Test 10 - Byte: line -5, sample -3
+subsamp a1 k lzoom=-5 szoom=-3
+label-li k
+list k ss=1 sl=1 nl=10 ns=10
+
+! Now varying starting locations
+! Test 11 - Byte: start location: Line 1,sample 2, zoom -2
+subsamp a1 l lloc=1 sloc=2 zoom=-2
+label-li l
+list l ss=1 sl=1 nl=10 ns=10
+! Test 12 - Byte: start location: Line 2,sample 2, zoom -4
+subsamp a1 m lloc=2 sloc=2 zoom=-4
+label-li m
+list m ss=1 sl=1 nl=10 ns=10
+! Test 13 - Byte: start location: Line 3,sample 6, zoom -8 
+subsamp a1 m lloc=3 sloc=6 zoom=-8
+label-li m
+list m ss=1 sl=1 nl=10 ns=10
+! Test 14 - Byte: start location: Line 6, sample 3, zoom -4
+subsamp a1 m lloc=6 sloc=3 lzoom=-8 szoom=-4
+label-li m
+list m ss=1 sl=1 nl=10 ns=10
+
+
+
+let $echo="no"
+end-proc
+

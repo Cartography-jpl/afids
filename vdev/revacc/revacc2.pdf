@@ -1,0 +1,95 @@
+procedure
+parm file1 type=(string,99)
+
+local file1v type=(string,99)
+local file2 type=(string,99)
+
+local temp type=(string,99)
+local temp1 type=(string,99)
+local temp2 type=(string,99)
+local temp3 type=(string,99)
+local fmt string
+local demag real
+local nl int
+local ns int
+local fnl real
+local fns real
+local vicortif int
+local fexist int
+
+body
+
+file2tcl &file1 ftype=vicortif
+if (vicortif=2)
+   let temp = "&file1" // "temp"
+   vtiff3-tovic &file1 &temp
+else-if (vicortif=1)
+   let temp = "&file1"
+else
+   write "MSG: File Problem"
+   write "MSG: See VICAR Program file2tcl for ftype=&vicortif"
+end-if
+
+let file2 = "&file1" // ".accplot"
+let temp1 = "&file1" // ".rev1"
+let temp2 = "&file1" // ".rev2"
+let temp3 = "&file1" // ".rev3"
+
+file2tcl &file2 val=fexist
+if (fexist=0)
+   write "MSG: There is no plot; probably used ephemeris in place of correlation"
+   goto theend
+end-if
+
+lab2tcl &temp v1=fmt keyword=format 'system
+if (fmt="BYTE")
+   gtcopy &temp +
+     &temp1
+else
+   f2 &temp +
+     &temp1 +
+     fun="in1*0.022" format=byte
+end-if
+
+stretch inp=&temp1 +
+  out=&temp2 +
+  'gauss
+
+lab2tcl &temp v1=nl v2=ns keyword=(nl,ns) 'system
+let fnl = $float(nl)
+let demag = 1200.0/fnl
+let fns = $float(ns)*demag
+let ns = $fix(fns)
+
+gtsize &temp2 +
+  &temp1 +
+  itie=(0.0,0.0,&fnl,&fnl) +
+  otie=(0.0,0.0,1200.0,1200.0) +
+  size=(1,1,1200,&ns)
+
+gtgen (&file2, +
+  &temp1) +
+  &temp2
+
+lab2tcl &temp1 v1=nl v2=ns keyword=(nl,ns) 'system
+gtcopy &temp2 +
+  &temp3 +
+   nl=&nl ns=&ns
+
+f2 &temp3 +
+  &temp2 +
+  fun="255-in1"
+
+xvd (&temp2, +
+    &temp1, +
+    &temp1)
+
+! cleanup doesn't work, xvd asynch
+
+!gtcopy &temp1 +
+!  &temp2 nl=1 ns=1
+!gtcopy &temp2 +
+!  &temp1
+
+theend>
+end-proc

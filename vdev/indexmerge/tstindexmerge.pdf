@@ -1,0 +1,145 @@
+procedure                   !
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+local ctr       int         count=1
+
+local format      string    count=1  !returned format from form command
+local fnl         int       count=1  !returned nl from form command
+local fns         int       count=1  !returned ns from form command
+local fnb         int       count=1
+local nnl         int       count=1
+local xxA         string    count=1 init="xxA"
+!
+! demonstrate indexcopy by adding watermask and altitude
+! to image stack
+!
+! Sep 17, 2013 - RJB
+! TEST SCRIPT FOR INDEXMERGE
+! tests IBIS tabular files
+!
+! Vicar Programs:
+!       translog ibis-copy ibis-list 
+! 
+! External Programs:
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!
+refgbl $echo
+
+body
+let _onfail = "stop"
+let $echo="yes"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+let $echo="yes"
+!
+!   Get two ibis tables and explanation of their fields
+
+! zzA1 - zeroed out MASTER DATA SET
+!===================================================================================
+!100x100x17 rows - 30 columns
+!C1=0; C2=ORIGINAL ROW NUMBER FOR ALL OBSD DATA (INDEX);
+!C3=PIXEL #; C4=0's;
+!C5=TIME (UNITS OF HOURS); C6->C7=0's;
+!C8=ELEVATION (METERS); C9=WATERMASK (0/1);
+!C10->C40=0's;
+!===================================================================================
+
+ibis-copy ct/bam_3year_nmodel_zA1.tbl zzA1
+ibis-li  zzA1 nr=10 nc=10 sr=1657 cols=(1,2,3,6,7,8,9,12,16,28) screen=132
+
+! xxA
+!===================================================================================
+!100x100x15 rows - 40 columns
+!C1=MAX TEMP FOR PIXEL; C2=ORIGINAL ROW NUMBER FOR ALL OBSD DATA (INDEX);
+!C3=PIXEL #; C4=0's;
+!C5=TIME (UNITS OF HOURS); C6=COUNT OF TEMPS USED;
+!C7=COUNT OF IMAGES (PIXELS); C8=ELEVATION (METERS); C9=WATERMASK (0/1);
+!C10->C12=0's; C13=SLOPE SIGMA; C14=Y-INT SIGMA;
+!C15=0's; C16=SLOPE (DEG/HOUR); C17=Y-INTERCEPT (TEMP@HOUR=0)
+!C18=SIGMA OF FITTED SLOPE (FROM LSQ FIT); C19=WEIGHTS FOR SLOPE;
+!C20=MIN TEMP; 
+!C21=FLAG FOR SLOPE>=0.0; C22=FLAG FOR SLOPE=0.0; C23=FLAG FOR SLOPE<0.0;
+!C24=AVG TEMP; C25=SLOPE NUMERATOR; C26=SUM OF SLOPE WEIGHTS; C27=SUM OF SLOPE NUMERATOR;
+!C28=SLOPE MEAN = RATIO (C27/C28); 
+!C29->C30=0's; C31=WEIGHTED SLOPE SIGMA; 
+!C32=Y-INT WEIGHTS; C33=Y-INT NUMERATOR; C34=SUM OF Y-INT WEIGHTS; C35=SUM OF Y-INT NUMERATOR;
+!C36=Y-INT MEAN; 
+!C37->C38=0's; C39=WEIGHTED Y-INT SIGMA; C40=0;
+!===================================================================================
+
+ibis-copy ct/bam_3year_nmodel_xA.tbl xxA
+ibis-li     xxA nr=30 nc=10 cols=(2,3,13,14,16,17,28,31,36,39) screen=132
+let $echo="no"
+write " TEST 1 - indexmerge #1  "
+let $echo="yes"
+!
+!  TEST 1 - merge the 2 data sets using the index columns
+!
+indexmerge (zzA1,xxA) zzL index=2
+ibis-li  zzL nr=50 nc=10 sr=1657 cols=(2,6,7,8,9,21,23,25,28,30) screen=132
+
+
+   ! zzZ2
+    !===================================================================================
+    !100x100x17 rows - 40 columns
+    !C1=MAX TEMP FOR PIXEL; C2=ORIGINAL ROW NUMBER FOR ALL OBSD DATA (INDEX);
+    !C3=PIXEL #; C4=0's;
+    !C5=IMAGE NUMBER FOR PIXEL; C6=COUNT OF TEMPS USED;
+    !C7=0's; C8=ELEVATION (METERS); C9=WATERMASK (0/1);
+    !C10=0's; C11->C12=0's; C13=SLOPE SIGMA; C14=Y-INT SIGMA;
+    !C15=0's; C16=SLOPE (DEG/HOUR); C17=Y-INTERCEPT (TEMP@HOUR=0)
+    !C18=SIGMA OF FITTED SLOPE (FROM C15); C19=0's;
+    !C20=MIN TEMP FOR PIXEL;
+    !C21=FLAG FOR SLOPE>=0.0; C22=FLAG FOR SLOPE=0.0; C23=FLAG FOR SLOPE<0.0;
+    !C24=AVERAGE TEMP FOR PIXEL; C25->C29=0's; C30=ITER; C31->C40=0's;
+    !===================================================================================
+ibis-copy ct/bam_3year_nmodel_zZ2.tbl zzZ2
+
+let $echo="no"
+write "TEST 2 - indexmerge #2  "
+let $echo="yes"
+!
+!  TEST 2 - 
+!
+indexmerge (zzL,zzZ2) xxE index=1
+
+ibis-li  xxE nr=50 sr=1  screen=132
+
+rm>
+let $echo="no"
+ush rm ct    
+
+end-proc
+
+

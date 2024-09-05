@@ -1,0 +1,81 @@
+process help=*
+PARM INP TYPE=STRING count=1
+PARM OUT TYPE=STRING count=1
+PARM BLEMLN TYPE=INTEGER COUNT=2
+PARM BLEMWID TYPE=INTEGER DEFAULT=11
+PARM MODE TYPE=KEYWORD VALID=(ADD,MULT) COUNT=(0:1) DEFAULT=ADD
+PARM SAMPOFF TYPE=INTEGER COUNT=2 default=(0,0)
+END-PROC
+.TITLE
+amtlnfix - fix line blemish for amt data
+.HELP
+PURPOSE:
+The AMT data can have 11 line bands of lightening or darkening at a
+known location in the image or subimage.  This routine corrects the
+blemish in the input image, writing a corrected output.
+
+The correction is determined by looking at neighbor lines (usually the
+line before and after, but one of the two can be off the image)
+comparing with the top or bottom line of the blemish area.  The comp-
+arison is calculated as an average difference (add mode) or as an
+average factor (mult mode).  The difference factor is then added or
+multiplied in the blemish area.
+
+The blemish areas can be overlapping (e.g. near the middle) or at the
+edge or partially off the edge.  Totally off the edge is a do-nothing
+and the input image will be copied to the output.
+
+Parameter SAMPOFF can be used to restrict statistics sampling
+to a section near the middle of the image if the edges have a
+problem.  The statistics result will still be applied to the
+whole line.
+
+EXECUTION:
+
+Example
+
+amtlnfix a b blemln=(1023,2510) blemwid=11
+
+This will correct image a with blemishes of width 11 starting at line
+1023 and 2510.
+
+OPERATION:
+
+The whole image is read, the blemish fixed, and the whole output written.
+Virtual memory limits the size of the image, but any AMT image can
+easily be accomodated.
+
+ TIMING: 
+
+Esentially the time to read and write the image.  The virtual memory
+working set is small so paging is not a problem.
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          04 Oct 2005
+ COGNIZANT PROGRAMMER:   A. Zobrist          04 Oct 2005
+ 
+ REVISION HISTORY
+  05-10-04    AZ   Initial version
+Wed Jan  2 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image file
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE BLEMLN
+INTEGER - Two start lines
+of the blemish areas
+.VARIABLE BLEMWID
+INTEGER - Width of the
+blemish areas
+.VAR MODE
+Keyword: Correction mode.
+Valid: ADD,MULT.
+.VARIABLE SAMPOFF
+INTEGER - Starting sample
+and number of samples to
+collect statistics; default
+uses whole line for statis-
+tics; statistics always
+applies to whole line
+.END

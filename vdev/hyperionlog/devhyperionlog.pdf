@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR HYPERIONLOG
+
+hyperionlog inp=(hyperionSample) +
+	out=(xxxHyperionImage_1,xxxHyperionImage_2,xxxHyperionImage_3,xxxHyperionImage_4,xxxHyperionImage_5,xxxHyperionIBIS) +
+	sl=500 ss=200 nl=400 ns=400
+
+!ibis-list xxxHyperionIBIS nr=10
+
+end-proc

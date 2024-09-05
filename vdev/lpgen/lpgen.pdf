@@ -1,0 +1,28 @@
+process help=*
+PARM INP         TYPE=(STRING,99)
+PARM OUT         TYPE=(STRING,99)
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+This proc is to call the c program lpgen.
+EXECUTION:
+
+Example
+
+lpgen inp=A out=B
+
+TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim          26 Apr 2007
+
+.LEVEL1
+.VARIABLE INP
+This variable specifies the
+".slp" file.
+.VARIABLE OUT
+This variable specifies the
+generated ".dlp" file.
+.END

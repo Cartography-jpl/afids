@@ -1,0 +1,6 @@
+$ vpack gtgenup.com -mixed -
+	-s gtgenup.c -
+	-i gtgenup.imake -
+	-p gtgenup.pdf -
+	-t tstgtgenup.pdf gtgenup.tstdat
+$ Exit

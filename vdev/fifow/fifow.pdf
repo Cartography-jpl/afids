@@ -1,0 +1,43 @@
+process help=*
+parm pipename    type=(string,99)
+parm value       type=(string,99) default=""
+end-proc
+.title
+VICAR Program fifow - writes value to named pipe
+.help
+PURPOSE
+
+     FIFOW writes the value parameter to the named pipe
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     fifow pipename=<thePipeName> value="some value to write"
+
+.PAGE
+OPERATION
+
+     FIFOW writes the value parameter to the named pipe
+
+.PAGE
+     
+RESTRICTIONS
+
+     The named pipe must exist and be writable. This program will block
+     until the written value is read.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch, Wed Feb 21 2007
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Wed Feb 21 2007    Initial version
+  Sat Dec 29 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.level1
+.var pipename
+The pipe name (created with system command "mkfifo").
+.var value
+The value to write to the pipe.
+.end

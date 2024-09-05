@@ -1,0 +1,29 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST RPC2CUBE HANDYPROC
+
+rpc2cube in=/home/alz/ikapp/xxchip2.img +
+   out=xxxgrid nah=2 nav=2 naz=1 dz=200.0
+
+ibis-l xxxgrid
+
+! test the geographic input
+
+rpc2cube in=/home/alz/ikapp/xxchip2.img +
+   out=xxxgrid nah=2 nav=2 naz=1 dz=200.0 +
+   lon1=44.82 lat1=35.87 +
+   lon2=44.84 lat2=35.87 +
+   lon3=44.84 lat3=35.85 +
+   lon4=44.82 lat4=35.85
+   
+ibis-l xxxgrid
+
+theend>
+end-proc

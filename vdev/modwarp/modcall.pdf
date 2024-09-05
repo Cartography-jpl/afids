@@ -1,0 +1,91 @@
+procedure
+refgbl $echo
+parm key string
+parm fnamein string
+parm fnamein2 string default=""
+parm nah int def=100
+parm nav int def=100
+parm rtype string +
+   valid=("master","secondary","nightmaster","nightsecondary")
+parm dted string default=""
+parm lsat string default=""
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+
+parm maptype type=string valid=("pc","utm") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="noelvcor"
+parm angcor type=string valid=("noangcor","angcor") default="noangcor"
+
+parm corband string default="20"
+
+local outfile1 string
+local outfile2 string
+local outfile string
+local master1 string
+local master2 string
+local master string
+local found int
+
+body
+let $echo="yes"
+
+if (fnamein2="")
+   modcallb key=&key fnamein=&fnamein +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower +
+      samp_left=&samp_left samp_right=&samp_right +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=0 corband=&corband
+else
+   modcallb key=&key fnamein=&fnamein +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower +
+      samp_left=&samp_left samp_right=&samp_right +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=1 corband=&corband
+   modcallb key=&key fnamein=&fnamein2 +
+      nah=&nah nav=&nav rtype=&rtype +
+      dted="&dted" +
+      lsat="&lsat" +
+      line_upper=&line_upper line_lower=&line_lower +
+      samp_left=&samp_left samp_right=&samp_right +
+      maptype=&maptype modelfit=&modelfit angcor=&angcor +
+      modiscase=2 corband=&corband
+      
+   let outfile1 = "final&key" // "/&fnamein" // "_map4.&corband" // "x1"
+   let outfile2 = "final&key" // "/&fnamein2" // "_map4.&corband" // "x2"
+   let outfile = "final&key" // "/&fnamein" // "_map4.&corband"
+   file2tcl &outfile1 val=found
+   if (found=0)
+      let outfile1 = "scratch/&fnamein" // "_map1.&corband" // "x1"
+      let outfile2 = "scratch/&fnamein2" // "_map1.&corband" // "x2"
+      let outfile = "scratch/&fnamein" // "_map1.&corband"
+   end-if
+   if (rtype="master")
+      let master1 = "final&key" // "/&key" // "master.imgx1"
+      let master2 = "final&key" // "/&key" // "master.imgx2"
+      let master = "final&key" // "/&key" // "master.img"
+   else-if (rtype="nightmaster")
+      let master1 = "final&key" // "/&key" // "nightmaster.imgx1"
+      let master2 = "final&key" // "/&key" // "nightmaster.imgx2"
+      let master = "final&key" // "/&key" // "nightmaster.img"
+   end-if
+   
+   fthmos inp1=&outfile1 +
+       inp2=&outfile2 +
+       out=&outfile
+   if (rtype="master" or rtype="nightmaster")
+      fthmos inp1=&master1 +
+          inp2=&master2 +
+          out=&master
+   end-if
+
+end-if
+
+end-proc

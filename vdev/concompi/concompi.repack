@@ -1,0 +1,6 @@
+$ vpack concompi.com -mixed -
+	-s concompi.c -
+	-i concompi.imake -
+	-p concompi.pdf -
+	-t tstconcompi.pdf
+$ Exit

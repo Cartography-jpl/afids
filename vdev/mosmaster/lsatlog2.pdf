@@ -1,0 +1,267 @@
+procedure help=*
+parm inroot type=string
+parm outroot type=string
+parm frame type=string
+parm band type=string
+parm maptype type=string valid=("pc","utm") default="pc"
+parm hdrtype type=string valid=("met","early","GT","etm") default="met"
+parm master string
+
+local infile string
+local outfile string
+local metfile string
+local scratchfile string
+local scratchfile2 string
+
+local utmzone int
+local refrow real
+local refcol real
+local refn real
+local refe real
+local ninc real
+local einc real
+local utmstring string
+!local llmaster string
+local ilon int
+local ilat int
+local mlon real
+local mlat real
+local mlonp1 real
+local mlatm1 real
+
+local ull real
+local uls real
+local url real
+local urs real
+local lll real
+local lls real
+
+local uln real
+local ule real
+local urn real
+local ure real
+local lln real
+local lle real
+
+local sl int
+local ss int
+local nl int
+local ns int
+body
+
+! set up file names and log to VICAR
+
+let scratchfile =  "scratch/" // "xxx" // ".templsat"
+let scratchfile2 =  "scratch/" // "xxx" // ".templsat2"
+!let llmaster =  "scratch/" // "xxx" // ".llmaster"
+
+let outfile =  "&outroot" // "/&frame" // "_&band" // ".img"
+if (hdrtype="etm")
+   let infile = "&inroot" // "/&frame" // "_&band" // ".FST"
+   let metfile =  "&inroot" // "/&frame" // "_MTL.FST"
+   asc2tcl &metfile keyword="PRODUCT_LINES_REF = " val=nl vtype=4
+   asc2tcl &metfile keyword="PRODUCT_SAMPLES_REF = " val=nS vtype=4
+   label-create &infile &scratchfile nl=&nl ns=&ns
+else
+   let infile = "&inroot" // "/&frame" // "_&band" // ".tif"
+   let metfile =  "&inroot" // "/&frame" // ".met"
+   vtiff3-tovic &infile &scratchfile
+end-if
+
+! get info from .met file and attach VICAR GeoTIFF label
+! plan is to detect type and get rid of hdrtype kwd
+
+if (hdrtype="met")
+   asc2tcl &metfile keyword=ZONEIDENTIFIER val=utmzone vtype=4 'met
+   asc2tcl &metfile keyword=ReferencePixelRowNumber val=refrow vtype=8 'met
+   asc2tcl &metfile keyword=ReferencePixelColumnNumber val=refcol vtype=8 'met
+   asc2tcl &metfile keyword=ReferencePixelNorthing val=refn vtype=8 'met
+   asc2tcl &metfile keyword=ReferencePixelEasting val=refe vtype=8 'met
+   asc2tcl &metfile keyword=NorthingIncrement val=ninc vtype=8 'met
+   asc2tcl &metfile keyword=EastingIncrement val=einc vtype=8 'met
+else-if (hdrtype="early")
+   asc2tcl &metfile keyword="PROJECTION UTM" val=utmzone vtype=4
+   asc2tcl &metfile keyword=ROW_START val=refrow vtype=8
+   asc2tcl &metfile keyword=COL_START val=refcol vtype=8
+   asc2tcl &metfile keyword=Y_START val=refn vtype=8
+   asc2tcl &metfile keyword=X_START val=refe vtype=8
+   asc2tcl &metfile keyword=Y_INCREMENT val=ninc vtype=8
+   asc2tcl &metfile keyword=X_INCREMENT val=einc vtype=8
+else-if (hdrtype="etm")
+   asc2tcl &metfile keyword="ZONE_NUMBER = " val=utmzone vtype=4
+   let refrow = 1.0
+   let refcol = 1.0
+   asc2tcl &metfile keyword="PRODUCT_UL_CORNER_MAPX = " val=refe vtype=8
+   asc2tcl &metfile keyword="PRODUCT_UL_CORNER_MAPY = " val=refn vtype=8
+   asc2tcl &metfile keyword="GRID_CELL_SIZE_REF = " val=einc vtype=8
+   let ninc = -einc
+else-if (hdrtype="GT")
+   goto GTentry
+end-if
+
+write "utmzone &utmzone"
+write "refrow &refrow"
+write "refcol &refcol"
+write "refn &refn"
+write "refe &refe"
+write "ninc &ninc"
+write "einc &einc"
+   
+if (utmzone<(-900))
+   write "check hdrtype parameter ('met' vs 'early')"
+   goto theend
+end-if
+
+let ull = refrow-1
+let uls = refcol-1
+let url = ull
+let urs = uls+1
+let lll = ull+1
+let lls = uls
+write "ull,uls &ull,&uls"
+write "url,urs &url,&urs"
+write "lll,lls &lll,&lls"
+
+if (refn>0.0)
+   if (utmzone<10)
+      let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+   else
+      let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+   end-if
+else
+   if (utmzone<10)
+      let utmstring = "3270" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+   else
+      let utmstring = "327" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "S)"
+   end-if
+   let refn = refn+10000000.0
+end-if
+
+let ule = refe
+let uln = refn
+let ure = ule + einc
+let urn = uln
+let lle = ule
+let lln = uln + ninc
+write "ule,uln &ule,&uln"
+write "ure,urn &ure,&urn"
+write "lle,lln &lle,&lln"
+
+if (maptype="utm")
+   gtgen in=&scratchfile out=&outfile 'tiecnvrt 'rectfit +
+      geotiff=("ModelTiePointTag=(&uls,&ull,0,&ule,&uln,0.0)", +
+      "ModelTiePointTag=(&urs,&url,0,&ure,&urn,0.0)", +
+      "ModelTiePointTag=(&lls,&lll,0,&lle,&lln,0.0)", +
+      "ProjectedCSTypeGeoKey=&utmstring", +
+      "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   gtlist &outfile
+   goto theend
+end-if
+
+gtgen in=&scratchfile 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(&uls,&ull,0,&ule,&uln,0.0)", +
+     "ModelTiePointTag=(&urs,&url,0,&ure,&urn,0.0)", +
+     "ModelTiePointTag=(&lls,&lll,0,&lle,&lln,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+gtlist &scratchfile
+
+let mlon = ($float(&utmzone)-31.0)*6.0+((&ule)-180000.0)*0.0000075
+let mlat = &uln*.0000091
+let ilon = $fix(mlon+0.5)
+let ilat = $fix(mlat+0.5)
+let mlon = $float(ilon)
+let mlat = $float(ilat)
+let mlonp1 = mlon+1.0
+let mlatm1 = mlat-1.0
+write "&mlon &mlat"
+
+!gtgen out=&llmaster 'tiecnvrt 'rectfit +
+!   geotiff=("ModelTiePointTag=(0,0,0,&mlon,&mlat,0.0)", +
+!     "ModelTiePointTag=(3600,0,0,&mlonp1,&mlat,0.0)", +
+!     "ModelTiePointTag=(0,3600,0,&mlon,&mlatm1,0.0)", +
+!     "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+!     "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+!     "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+gtlist &master
+
+GTentry>
+
+gtwarp &scratchfile &scratchfile2 ref=&master 'coverinp
+gtcopy &master &scratchfile   !cleanup
+
+! reduce the blank gore areas around image
+
+imcorner &scratchfile2 sldat=sl ssdat=ss nldat=nl nsdat=ns +
+      inside=-15
+gtcopy &scratchfile2 &outfile size=(&sl,&ss,&nl,&ns)
+gtcopy &master &scratchfile2   !cleanup large image
+
+theend>
+end-proc
+.TITLE
+LSATLOG2 - log a LANDSAT image to VICAR and add GeoTIFF mapped label.
+.HELP
+PURPOSE
+     
+	   
+CALL
+     lsatlog inroot outroot band 
+  WHERE:
+     inroot         is path/name of input file up to the band number
+     outroot        is path/name of output (sans band and suffixes)
+     band           is the desired band suffix (such as nn3).
+
+  
+OPERATION
+
+
+
+PERFORMANCE
+
+
+.PAGE
+Restrictions
+------------
+
+The landsat files must be stored in a subdirectory named "landsatraw"
+The files must be named "&source" // ".&bandname" and 
+"&source" // ".&bandname"
+
+The output will go into a subdirectory named landsatmos.
+
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 21 Oct, 2002
+Current Cognizant Programmer: A. L. Zobrist
+Change History:
+ 20 Dec, 2002  ALZ added utm option
+ 09 Jan, 2003  ALZ utm option operate on scratchfile
+.LEVEL1
+.vari key
+aplication name or keyword
+.vari source
+root name for LANDSAT
+.vari band
+the band that will be processed
+.vari maptype
+pc  - will convert to Plate Caree
+      mapped output
+utm - will leave as utm but add
+      VICAR GeoTIFF label
+.var hdrtype
+met - object oriented file that
+      comes with landsat-7
+early - name=value file that
+      comes with older releases
+.level 2
+.vari maptype
+The pc maptype will place the grid so that a pixel center will lie
+on a whole degree intersection, either in the image or by an extension 
+of the image.  The utm maptype will preserve the gridding provided
+with the raw data set.
+.var hdrtype
+We plan to obsolete this parameter by developing a program that
+recognizes the type of file.
+.END

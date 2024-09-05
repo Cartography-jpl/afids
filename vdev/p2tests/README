@@ -1,0 +1,4 @@
+We don't run most of the p2 unit tests, but it is useful to run a few.
+For now, we collect them here rather than cluttering the core-vicar file
+with the test and results. If we end up running a lot of stuff, we can
+perhaps worry about doing something more clever.

@@ -1,0 +1,6 @@
+$ vpack feathery.com -mixed -
+	-s feathery.c -
+	-i feathery.imake -
+	-p feathery.pdf -
+	-t tstfeathery.pdf devfeathery.pdf
+$ Exit

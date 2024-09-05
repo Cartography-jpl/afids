@@ -1,0 +1,6 @@
+$ vpack chipper2.com -mixed -
+	-s chipper2.c -
+	-i chipper2.imake -
+	-p chipper2.pdf -
+	-t tstchipper2.pdf
+$ Exit

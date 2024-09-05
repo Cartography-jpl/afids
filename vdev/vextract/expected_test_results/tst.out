@@ -1,0 +1,86 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+vextract inp=qbsamp.ntf outpre=./foo
+let _onfail="continue"
+local afidsroot type=(string,128)
+local osname type=(string,20)
+translog AFIDS_ROOT afidsroot
+translog OS_NAME osname
+ush /data/afids5/vdev/vextract.csh qbsamp.ntf ./foo -1 -1
+vextract version Tue Mar 13 2007
+error opening image file "qbsamp.ntf"
+[TAE-ABNSHELL] Abnormal shell termination.;
+ proc 'vextract', line 16
+continue
+local nitfnl int
+local nitfns int
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ",  +
+	"fileVar2DecVal ", ./foo.txt, " NITF_ROWS=")  	int+
+var=nitfnl
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+no such file: ./foo.txt
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ",  +
+	"fileVar2DecVal ", ./foo.txt, " NITF_COLUMNS=")  	int+
+var=nitfns
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+no such file: ./foo.txt
+if (force8="force8")
+else
+  if (osname="SunOS")
+  else
+    write "osname: Linux"
+osname: Linux
+    write "using host=sun-4"
+using host=sun-4
+    label-create inp=./foo.hlf out=./foo.img nl=0 ns=0 nb=1 format=half host=sun-4
+Beginning VICAR task label
+[VIC2-GENERR] Exception in XVOPEN, processing file: ./foo.hlf
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+continue
+  end-if
+end-if
+ush rm ./foo.hlf
+rm: cannot remove `./foo.hlf': No such file or directory
+[TAE-ABNSHELL] Abnormal shell termination.;
+ proc 'vextract', line 41
+continue
+vexlab inp=./foo.img meta=./foo.txt
+Beginning VICAR task vexlab
+vexlab version Thu Jan  3 2008
+[VIC2-GENERR] Exception in XVOPEN, processing file: ./foo.img
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+continue
+end-proc
+continue
+end-proc

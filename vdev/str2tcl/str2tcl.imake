@@ -1,0 +1,27 @@
+/***********************************************************************
+
+                     IMAKE FILE FOR PROGRAM str2tcl
+
+   To Create the build file give the command:
+
+		$ vimake str2tcl			(VMS)
+   or
+		% vimake str2tcl			(Unix)
+
+
+************************************************************************/
+
+
+#define PROGRAM	str2tcl
+
+#define MODULE_LIST str2tcl.c
+
+#define MAIN_LANG_C
+#define R2LIB
+#define USES_ANSI_C
+
+#define LIB_CARTO
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB
+/************************* End of Imake file ***************************/

@@ -1,0 +1,5 @@
+$ vpack modwarp.com -mixed -
+	-p modwarp.pdf modcall.pdf modcall2.pdf modcallb.pdf modwarpad.pdf -
+	   modwpadb.pdf modwarp2.pdf modcallb2.pdf modwarpad2.pdf -
+	   modwpadb2.pdf
+$ Exit

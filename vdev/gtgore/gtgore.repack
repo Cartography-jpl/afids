@@ -1,0 +1,6 @@
+$ vpack gtgore.com -mixed -
+	-s gtgore.c -
+	-i gtgore.imake -
+	-p gtgore.pdf -
+	-t tstgtgore.pdf
+$ Exit

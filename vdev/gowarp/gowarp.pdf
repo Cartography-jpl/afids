@@ -1,0 +1,461 @@
+procedure help=*
+parm inroot type=string
+parm outroot type=string
+parm dted type=string
+parm master type=string
+
+parm seq type=string def="q"
+parm pixdeg type=real default=25
+
+parm sensE type=real
+parm sensN type=real
+parm senselv type=real
+parm sensunit type=int
+
+parm quad1 type=real
+parm quad2 type=real
+parm quadsiz1 type=real
+parm quadsiz2 type=real
+parm quadunit type=int
+
+parm loff type=real default=0.
+parm soff type=real default=0.
+parm loff2 type=real default=0.
+parm soff2 type=real default=0.
+
+parm nah type=int default=600
+parm nav type=int default=400
+parm stopat type=int def=4
+
+refgbl $echo
+parm version string def="ibis-2"
+parm org string def="column"
+
+local quad3 type=real
+local quad4 type=real
+
+local xxxnav string
+local xxa string
+local xxb string
+local xxc string
+
+local xxe string
+local xxf string
+local xxg string
+local xxxcorfail string
+local xxxcora2 string
+
+local xxxlab2 string
+local xxxinp string
+local xxxtinp string
+local xxxrestore string
+
+local xxximageRAW string
+local xxximage string
+local xxximageout string
+local ufile string
+
+local sl type=int
+local ss type=int
+local nl type=int
+local ns type=int
+local t1l type=real
+local t1s type=real
+local t1e type=real
+local t1n type=real
+local t2l type=real
+local t2s type=real
+local t2e type=real
+local t2n type=real
+local t3l type=real
+local t3s type=real
+local t3e type=real
+local t3n type=real
+local tloff type=int
+local tsoff type=int
+
+local tnl type=int
+local tns type=int
+local ttl type=int
+local tts type=int
+
+local ixclosest int
+local ixc1 int
+local ixc2 int
+local ixc3 int
+local quadsum int
+
+local corfail int
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+body
+
+!let _onfail="continue"
+let $echo="yes"
+
+let xxa = "xxa" // "&seq"
+let xxb = "xxb" // "&seq"
+let xxc = "xxc" // "&seq"
+let xxe = "xxe" // "&seq"
+let xxf = "xxf" // "&seq"
+let xxg = "xxg" // "&seq"
+let xxxcorfail = "xxxcorfail" // "&seq"
+let xxxcora2 = "xxxcora2" // "&seq"
+let xxxlab2 = "xxxlab2" // "&seq"
+let xxxinp = "xxxtemp" // "&seq"
+let xxxtinp = "xxxttemp" // "&seq"
+let xxxrestore = "xxxrestore" // "&seq"
+
+let xxximageRAW = "&inroot" // ".img"
+let xxximage = "&outroot" // "_byte.image"
+let xxximageout = "&outroot" // "_map.image"
+let ufile = "&outroot" // "u_map.image"
+
+let xxxnav = "&inroot" // ".int"
+
+!   process the fullword image to byte, also B/W reversed
+!   new process, divide radiance by 4 to fit in halfword
+
+!f2 inp=&xxximageRAW out=&xxximage func="255-IN1*0.0015" format="BYTE"
+!list &xxximage linc=50 sinc=50
+
+f2 inp=&xxximageRAW out=&xxximage func="IN1*0.25" format="HALF"
+list &xxximage linc=50 sinc=50
+
+!   process the int file to a 10 column ibis file, be sure c3 is lon, c4 lat
+
+ibis-gen &xxa version=&version org=&org nc=10 nr=1 deffmt=DOUB
+ibis-copy &xxxnav &xxa nc=10
+! the next line is not needed, vicar pixel produced by logger
+!mf3 &xxa func="c1=c1+1.0$c2=c2+1.0" the .int file must be in vicar pixels
+mf3 &xxa func="c5=c3$c3=c4$c4=c5"
+
+!   generate a master reference
+
+gtgen out=&xxxlab2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-112,36,0.0)", +
+   "ModelTiePointTag=(0,&pixdeg,0,-112,35,0.0)", +
+   "ModelTiePointTag=(&pixdeg,0,0,-111,36,0.0)", +
+   "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+   "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+   "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+!   copy and label the input, also transform the pixel coord in cols 1,2
+!   by the offset params, note that the mapping is approximate.
+!   11/01 may need to recheck sign +/-  alpha version corrupted - alz
+
+mf3 &xxa func="c1=c1-(&loff)$c2=c2-(&soff)$c5=@index"
+
+    !   here, the program is automatically finding three tiepoints that
+    !   are close to the quad desired.  Two cases for (L,S) or (Lon,Lat)
+
+if (quadunit=1)
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&quad1 yval=&quad2
+   restore-variable file=&xxxrestore variable=(ixclosest)
+   let ixc1 = ixclosest
+   let quadsum = $fix(quad1+quadsiz1+0.5)
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&quadsum yval=&quad2
+   restore-variable file=&xxxrestore variable=(ixclosest)
+   let ixc2 = ixclosest
+   let quadsum = $fix(quad2+quadsiz2+0.5)
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&quad1 yval=&quadsum
+   restore-variable file=&xxxrestore variable=(ixclosest)
+   let ixc3 = ixclosest
+else
+   let tnl = $fix(quad1)
+   let tns = $fix(quad2)
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&tnl yval=&tns +
+      xcol=4 ycol=3
+   write "xval,yval &tnl,&tns"
+   restore-variable file=&xxxrestore variable=(ixclosest)
+    write "index1 &ixclosest"
+   let ixc1 = ixclosest
+   ibis2tcl &xxa v1=t1l v2=t1s vartype=(-1,-1) ibisloc=(&ixc1,1,&ixc1,2)
+   let tnl = $fix(t1l)
+   let tns = $fix(t1s)
+   write "lon-lat corner is at pixel &tnl,&tns"
+   let quadsum = tnl+400
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&quadsum yval=&tns
+   restore-variable file=&xxxrestore variable=(ixclosest)
+   let ixc2 = ixclosest
+   let quadsum = tns+400
+   getpoint fname=&xxa seq=&seq resname=&xxxrestore xval=&tnl yval=&quadsum
+   restore-variable file=&xxxrestore variable=(ixclosest)
+   let ixc3 = ixclosest
+   write "indexes &ixc1, &ixc2, &ixc3"
+end-if
+
+ibis2tcl &xxa v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s v11=t3e v12=t3n +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(&ixc1,1,&ixc1,2,&ixc1,3,&ixc1,4, +
+             &ixc2,1,&ixc2,2,&ixc2,3,&ixc2,4, +
+             &ixc3,1,&ixc3,2,&ixc3,3,&ixc3,4)
+
+let t1l = t1l-1  ! these convert vicar to GeoTIFF point-type
+let t1s = t1s-1
+let t2l = t2l-1
+let t2s = t2s-1
+let t3l = t3l-1
+let t3s = t3s-1
+
+copy &xxximage &xxxtinp
+gtgen inp=&xxxtinp 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtlist &xxxtinp
+if (stopat=1) goto theend
+
+if (sensunit=1)
+   write "converting L,S &sensN,&sensE"
+   ibis-gen &xxc version=&version org=&org nc=4 nr=1 deffmt=DOUB +
+      data=(&sensN,&sensE) datacols=(1,2)
+   pixmap (&xxc,&xxxtinp) mapcol=(3,4) pixcol=(1,2) 'pixtomap
+   ibis2tcl &xxc v1=sensE v2=sensN +
+      vartype=(-1,-1) ibisloc=(1,3,1,4)
+   write "to lon-lat &sensE,&sensN"
+end-if
+
+if (quadunit=0)
+   let quad3=quad1-quadsiz1
+   let quad4=quad2+quadsiz2
+   write "converting lon-lat &quad2,&quad1,&quadsiz2,&quadsiz1"
+   ibis-gen &xxc version=&version org=&org nc=4 nr=2 deffmt=DOUB +
+      data=(&quad2,&quad1,&quad4,&quad3) datacols=(1,2)
+   pixmap (&xxc,&xxxtinp) mapcol=(1,2) pixcol=(3,4) 'maptopix
+   ibis-list &xxc
+   ibis2tcl &xxc v1=quad1 v2=quad2 v3=quad3 v4=quad4 vartype=(-1,-1,-1,-1) +
+      ibisloc=(1,3,1,4,2,3,2,4)
+   let quadsiz1=quad3-quad1+1
+   let quadsiz2=quad4-quad2+1
+end-if
+let sl=$fix(quad1+0.5)
+let ss=$fix(quad2+0.5)
+let nl=$fix(quadsiz1+0.5)
+let ns=$fix(quadsiz2+0.5)
+write "final (sl,ss,nl,ns) &sl,&ss,&nl,&ns"
+
+!   copy the subset of the input, move the corresponding (l,s) in ibis file
+
+gtcopy &xxxtinp &xxxinp size=(&sl,&ss,&nl,&ns)
+mf3 &xxa func="c1=c1-(&sl)+1$c2=c2-(&ss)+1"
+
+!   now the mapping sequence, gtproj code from aerowarp where lambert
+!   used, but both are PC here so use mf3 instead.  remember, all coords
+!   for gtwarpxd are in the reference image space (&xxxlab2)
+
+ibis-copy &xxa &xxb nc=19
+pixmap (&xxb,&xxxinp) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+!gtproj (&xxb,&xxxinp,&xxxlab2) incol=(5,6,9) outcol=(15,16,10) 'tec
+mf3 &xxb func="c15=c5$c16=c6"
+pixmap (&xxb,&xxxlab2) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+!gtproj (&xxb,&xxxinp,&xxxlab2) incol=(3,4,9) outcol=(7,8,10) 'tec
+mf3 &xxb func="c7=c3$c8=c4"
+pixmap (&xxb,&xxxlab2) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxb func="c13=c11-c9$c14=c12-c10"
+
+!   call gtwarpxd, the distortion is in cols 9-12, the initial call
+!   is used only to get range for dted correction, so only need 40 x 40
+!   grid here (11/01 chged to nah nav by alz)
+
+gtwarpxd &xxxinp &ufile ref=&xxxlab2 distort=(&xxb,,,,) 'coverinp +
+     dcols=(9,10,11,12) nah=&nah nav=&nav
+if (stopat=2) goto theend
+
+
+! new section for offset error
+
+
+imcorner (&ufile) line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=100
+gengrid2 out=&xxe ncol=11 nah=2 nav=2 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+write "grid: &l1,&s1 &l2,&s2"
+write "grid: &l3,&s3 &l4,&s4"
+
+!gengrid out=&xxe ncol=11 nah=2 nav=2 hbase=170.0 hsize = 40.0 +
+!    vbase=170.0 vsize = 40.0 old code
+
+piclsq &xxe &ufile goesmaster.img &xxf &xxxcorfail &seq +
+  search=128  fftsize=128 minsrch=128 fitmin=0.045 +
+  lsq1=12.0 lsq2=5.0 lsq3=3.0 lsqthresh=1
+ibis-copy &xxf &xxxcora2
+restore-variable file=&xxxcorfail variable=(corfail)
+write "Acorfail &corfail"
+if (corfail=0) goto cordone
+
+write "none of the correlations worked, clock step"
+ibis-l correlationfailure
+
+cordone>
+
+ibis-copy &xxf &xxg nc=19
+pixmap (&xxg,&ufile) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+!gtproj (&xxg,&xxxinp,&xxxlab2) incol=(5,6,9) outcol=(15,16,10) 'tec
+mf3 &xxg func="c15=c5$c16=c6"
+pixmap (&xxg,&xxxlab2) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+!gtproj (&xxg,&xxxinp,&xxxlab2) incol=(3,4,9) outcol=(7,8,10) 'tec
+mf3 &xxg func="c7=c3$c8=c4"
+NEEDS UPDATE HERE SEE ASWARP.PDF, ALSO KEYSTONE FIT, alz bug stop
+pixmap (&xxg,&xxxlab2) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg func="c13=c11-c9$c14=c12-c10"
+
+gtwarpxd &xxxinp &xxximageout ref=&xxxlab2 distort=(&xxb,&xxg,,,) +
+     dcols=(9,10,11,12,9,10,11,12) +
+     polyfit=("","linear","","","") 'coverinp nah=&nah nav=&nav
+if (stopat=3) goto theend
+
+
+theend>
+end-proc
+.TITLE
+meteowarp - correct meteosat imagery
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 23 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 13 Jan, 2002
+
+.LEVEL1
+.VARI INROOT
+root for the input files
+from goeslog program
+.VARI OUTROOT
+directory and root name for 
+output files
+.VARI DTED
+elevation file with GeoTIFF
+label covering area, in m.
+.VARI SENSE
+sensor east, start of track
+see help 2
+.VARI SENSN
+sensor north, start of track
+.VARI SENSELV
+sensor elev (m), start of track
+.VARI SENSUNIT
+0 - E,N in (lon,lat) degrees
+1 - E,N in (L,S) pixel of
+    raw file from METEOLOG
+.VARI SEQ
+temp file naming modifier
+.VARI PIXDEG
+desired pixels per degree
+in output data sets
+.VARI QUAD1
+first coord of desired quad,
+see help 2
+.VARI QUAD2
+second coord of desired quad
+.VARI QUADSIZ1
+extent of first coord of
+desired quad
+.VARI QUADSIZ2
+extent of second coord of
+desired quad
+.VARI QUADUNIT
+0 - E,N in (lon,lat) degrees
+1 - E,N in (L,S) pixel of
+    raw file from AVHRRSA
+.VARI LOFF
+logging correction, plus
+value moves frame to South,
+or data to North; in pixels
+.VARI SOFF
+logging correction, plus
+value moves frame to East,
+or data to West; in pixels
+.VARI LOFF2
+post-elev correction, plus
+value moves frame to South,
+or data to North; in pixels
+.VARI SOFF2
+post-elev correction, plus
+value moves frame to East,
+or data to West; in pixels
+.VARI STOPAT
+1 - stop after label of input
+2 - stop after log corr and
+    offset (loff,soff) corr
+3 - stop after dted corr
+4 - stop after all 5 bands
+.LEVEL2
+.var inroot
+The inputs are: <root>.image, <root>.int
+The output is: <root>_map.image
+.var outroot
+The inputs are: <root>.image, <root>.int
+The output is: <root>_map.image
+.var seq
+The temporary files will incorporate this string in the names to parallel
+runs can be made.  This is intended to be modified later to a session
+variable, or some such thing, depending on the computer system.
+.VARI SENSE1
+There are two cases, (L,S) and (Lon,Lat) as specified by the SENSUNIT parm
+
+For the (L,S) case, the user inputs VICAR pixel locations for the satellite.  During calculation for each
+
+For the (Lon,Lat) case, the satellite is not placed at the actual lon-lat
+but is placed at the (Lon,Lat) which is extrapolated from the affine,
+approximate mapping of the user-selected quad.  This could actually
+misplace the location of the satellite.  THIS METHOD IS
+NOT RECOMMENDED UNLESS ONLY THE LON-LAT OF THE SATELLITE IS KNOWN.
+
+Satellite location is used only for the correction of elevation offset
+of the image data.
+
+Elevation is in meters.
+.VARI QUAD1
+There are two cases, (L,S) and (Lon,Lat) as specified by the QUADUNIT parm
+
+For the (L,S) case, the four parameters are used as the corresponding
+VICAR parameters:
+     quad1     - sl
+     quad2     - ss
+     quadsize1 - nl
+     quadsize2 - ns
+note that the input image may have a funny rotation so that the vicar
+(sl,ss) may be at a corner other than the upper right corner.  To get
+a feel for which corner is the VICAR (sl,ss), run this proc with the
+STOPAT parameter set to 1.  Look at the rotation diagram near the end
+of the listing coming out of the GTLIST call.  The corner that has the 
+1 is the VICAR (sl,ss) corner.  Don't worry, the proc will always 
+produce a normal north-oriented VICAR image as output.  If you are not 
+sure about the nl,ns settings you can run a test case, or do a square
+image and cut it when done.  The (nl,ns) are always positive.
+
+For the (Lon,Lat) case, the rotation still has to be looked at and the
+(quad1,quad2) is set to the VICAR (sl,ss) corner.  The quadsize1/2 are
+set to the number of degrees of data desired.  The quadsize1/2 are always
+positive.  For the AVHRR rotation 3, quad1 is a latitude and quad2 is a
+longitude for the lower right corner of desired data.
+.END

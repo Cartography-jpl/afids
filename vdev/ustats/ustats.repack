@@ -1,0 +1,6 @@
+$ vpack ustats.com -mixed -
+	-s ustats.f -
+	-i ustats.imake -
+	-p ustats.pdf -
+	-t tstustats.pdf tstustats.log
+$ Exit

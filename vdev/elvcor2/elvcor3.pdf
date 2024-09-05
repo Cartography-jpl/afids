@@ -1,0 +1,109 @@
+procedure help=*
+parm gridfile type=string
+parm gridimage type=string
+parm dted type=string
+parm satazim type=real
+parm satelev type=real
+parm regelv type=real
+parm cols type=int count=4
+parm testparm type=int default=0
+
+local iloop int
+local degrad real
+local meterpix real
+body
+
+! calculate meters per pixel
+
+gt2tcl &gridimage val=meterpix keyword=MODELPIXELSCALETAG vtype=8 sequence=1
+let degrad = 3.1415926536/180.0
+
+mf3 &gridfile func="c10=(&regelv)$c11=(&satazim)*(&degrad)$c15=c1$c16=c2"
+mf3 &gridfile func="c14=@tan((90.0-(&satelev))*&degrad)"
+
+let iloop = 0
+loop
+let iloop = iloop+1
+if (iloop>3) goto endiloop
+
+pixmap (&gridfile,&gridimage) mapcol=(3,4) pixcol=(15,16) 'pixtomap
+gtproj (&gridfile,&gridimage,&dted) incol=(3,4) outcol=(5,6)
+pixmap (&gridfile,&dted) mapcols=(5,6) pixcols=(7,8) 'maptopix
+getzval (&dted,&gridfile) cols=(7,8,9) win=2 'dted
+
+! wasn't sure of +-sign in early cases, also order of sin/cos
+! pretty sure now that case=0 is the correct arithmetic
+if (testparm=0)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15-c13*@sin(c11)/(&meterpix)$c16=c16+c13*@cos(c11)/(&meterpix)")
+else-if (testparm=1)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15+c13*@sin(c11)/(&meterpix)$c16=c16+c13*@cos(c11)/(&meterpix)")
+else-if (testparm=2)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15+c13*@sin(c11)/(&meterpix)$c16=c16-c13*@cos(c11)/(&meterpix)")
+else-if (testparm=3)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15-c13*@sin(c11)/(&meterpix)$c16=c16-c13*@cos(c11)/(&meterpix)")
+else-if (testparm=4)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15-c13*@cos(c11)/(&meterpix)$c16=c16+c13*@sin(c11)/(&meterpix)")
+else-if (testparm=5)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15+c13*@cos(c11)/(&meterpix)$c16=c16+c13*@sin(c11)/(&meterpix)")
+else-if (testparm=6)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15+c13*@cos(c11)/(&meterpix)$c16=c16-c13*@sin(c11)/(&meterpix)")
+else-if (testparm=7)
+   mf3 &gridfile func=("c12=c9-c10$c10=c9$c13=c12*c14$", +
+     "c15=c15-c13*@cos(c11)/(&meterpix)$c16=c16-c13*@sin(c11)/(&meterpix)")
+end-if
+
+end-loop
+endiloop>
+
+end-proc
+.TITLE
+elvcor2 - correct for elevation offset, modis case
+.HELP
+PURPOSE
+     Calculate elevation offsets for a satellite image using a
+DTED elevation image and satellite az-elev
+	   
+CALL
+     
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+The dted must cover the area and have a GeoTIFF label.
+
+Original Programmer: A. L. Zobrist, 15 Sep, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+.LEVEL1
+.VARI GRIDFILE
+ibis file with (line,samp) in cols
+(1,2) referencing gridimage
+.VARI GRIDIMAGE
+A GeoTIFF labelled image used to
+map the (line,samp)
+.VARI DTED
+elevation file with GeoTIFF
+label covering area, in m.
+.VARI SATAZIM
+satellite azimuth, clockwise
+from North in degrees
+.VARI SATELEV
+satellite elevation, nadir is
+ninety degrees
+.REGELV
+registration elevation from proc
+.COLS
+Generated and corrected pixels
+in these columns (oldline,oldsamp,
+newline,newsamp)
+.END

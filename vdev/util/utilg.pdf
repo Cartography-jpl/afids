@@ -1,0 +1,79 @@
+procedure
+parm inp type=(string,99)
+parm dted type=(string,99)
+parm out type=(string,99)
+parm mpix real def=1.0
+parm maptype type=string valid=("pc","utm","ref") default="utm"
+parm usermapref type=(string,99) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+parm typref type=keyword count=(0:1) valid=(coverref,coverinp) +
+     default=coverinp
+parm xvd string valid=("n","y") default="n"
+parm nah int def=1000
+parm nav int def=1000
+
+local temp type=(string,99)
+local vicout type=(string,99)
+local wref type=(string,99)
+local rastypstr string
+local vicortif int
+local lon real
+local lat real
+
+body
+
+! utility to convert rpc image to geotiff map
+
+let temp = "scratch/" // "&inp" // ".temp"
+let vicout = "scratch/" // "&inp" // ".vicout"
+
+file2tcl &inp ftype=vicortif
+if (vicortif=2)
+   vtiff3-tovic &inp &temp
+else-if (vicortif=1)
+   let temp = "&inp"
+else
+   write "MSG: NITF format not implemented yet"
+   write "MSG: See VICAR Program file2tcl for ftype=&vicortif"
+   goto theend
+   !!!!let temproot = "scratch/&scr_key"  when expand to nitf
+   !!!!let fname3 = "&temproot" // "&inp" // ".temp"
+   !!!!vextract &inp &temproot
+end-if
+
+if (maptype<>"ref")
+   gt2tcl &temp val=lon keyword=NITF_CORNERLON1 vtype=8
+   gt2tcl &temp val=lat keyword=NITF_CORNERLAT1 vtype=8
+end-if
+
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+if (maptype="pc")
+   let wref = "scratch/" // "&inp" // ".wref"
+   genpc &wref lon=&lon lat=&lat mpix=&mpix rastypst="&rastypstr"
+else-if (maptype="utm")
+   let wref = "scratch/" // "&inp" // ".wref"
+   genutm2 &wref lon=&lon lat=&lat mpix=&mpix rastypst="&rastypstr"
+else
+   let wref = "&usermapref"
+end-if
+
+rpcwarp (&temp, +
+   &dted) +
+   &vicout +
+   ref="&wref" +
+   typref="&typref" nah=&nah nav=&nav interp=&interp
+
+vtiff3-fromvic &vicout &out
+
+write "MSG: PROCESSING COMPLETED"
+
+if (xvd="y") xvd &vicout
+
+theend>
+end-proc

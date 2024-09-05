@@ -1,0 +1,6 @@
+$ vpack polarect.com -mixed -
+	-s polarect.f -
+	-i polarect.imake -
+	-p polarect.pdf -
+	-t tstpolarect.pdf tstpolarect.log
+$ Exit

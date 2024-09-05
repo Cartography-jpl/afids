@@ -1,0 +1,6 @@
+$ vpack difnear.com -
+	-s difnear.c -
+	-i difnear.imake -
+	-p difnear.pdf -
+	-t tstdifnear.pdf
+$ Exit

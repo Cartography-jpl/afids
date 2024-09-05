@@ -1,0 +1,322 @@
+procedure
+parm key type=string
+parm band type=string
+
+local zfile type=string
+local cfile type=string
+local nfile type=string
+local xyfile type=string
+local xyfile1 type=string
+local xyfile2 type=string
+local xyfile3 type=string
+local xyfile4 type=string
+local xyfile5 type=string
+local xyfile6 type=string
+local xyfile7 type=string
+local c2file type=string
+local c3file type=string
+local c4file type=string
+local xfile type=string
+local joinfile type=string
+local parfile type=string
+local qfile type=string
+local topo string
+
+local iloop int
+local jloop int
+local dire int
+local dirn int
+local zclen int
+local cclen int
+local minnumzval int
+local qexist int
+local numimg int
+local numnbr int
+local cornbr int
+local cornbrcount int
+local corfile string
+local cornbrfile string
+local bobname string
+local moore1 string
+local moore2 string
+local pathxy string
+
+local deltaz real
+local deltaz3 real
+local deltaz6 real
+local deltaz9 real
+local deltaz12 real
+local deltazpar string
+local deltazlen int
+local corpt int
+local firsttime int
+
+local edgexythr real
+
+body
+
+!  get the filenames
+
+let zfile = "&key" // "_&band" // "_zfile"
+let cfile = "&key" // "_&band" // "_cfile"
+let nfile = "&key" // "_&band" // "_nfile"
+let xyfile = "&key" // "_&band" // "_xyfile"
+let c2file = "scratch/&key" // "_&band" // "_c2file"
+let c3file = "scratch/&key" // "_&band" // "_c3file"
+let c4file = "scratch/&key" // "_&band" // "_c4file"
+let xfile = "scratch/&key" // "_&band" // "_xfile"
+let xyfile1 = "scratch/&key" // "_&band" // "_xyfile1"
+let xyfile2 = "scratch/&key" // "_&band" // "_xyfile2"
+let xyfile3 = "scratch/&key" // "_&band" // "_xyfile3"
+let xyfile4 = "scratch/&key" // "_&band" // "_xyfile4"
+let xyfile5 = "scratch/&key" // "_&band" // "_xyfile5"
+let xyfile6 = "scratch/&key" // "_&band" // "_xyfile6"
+let xyfile7 = "scratch/&key" // "_&band" // "_xyfile7"
+let joinfile = "scratch/&key" // "_&band" // "_joinfile"
+let qfile = "&key" // "_&band" // "_qfile"
+let parfile = "&key" // "_params"
+file2tcl &c4file val=qexist
+if (qexist=1) ush /bin/rm &c4file
+
+ibis2tcl &zfile vclen=zclen vartype=1
+let deltazpar = "deltazthresh&band" // "="
+asc2tcl &parfile keyword="&deltazpar" val=deltaz vtype=8
+asc2tcl &parfile keyword="minnumzval=" val=minnumzval vtype=4
+asc2tcl &parfile keyword="topo=" val=topo vtype=0
+asc2tcl &parfile keyword="numimg=" val=numimg vtype=4
+asc2tcl &parfile keyword="pathxy=" val=pathxy vtype=0
+asc2tcl &parfile keyword="edgexythr=" val=edgexythr vtype=7
+write "edgexythr &edgexythr"
+let deltaz3 = 3.0*deltaz
+let deltaz6 = 6.0*deltaz
+let deltaz9 = 9.0*deltaz
+let deltaz12 = 12.0*deltaz
+mf3 &zfile f="c3=c5"
+
+!  copy and zip the neighbor, loop for the touching neighbors
+
+let firsttime = 0
+let iloop = 0
+loop
+   let iloop = iloop+1
+   if (iloop>numimg) goto loopdone
+   
+   rowop2 &zfile &c2file keycol=5 range=(&iloop,&iloop) prec=0.5 'select
+   ibis2tcl &c2file v1=corfile vartype=2 ibisloc=(1,2)
+   write "************************** &iloop zclen &zclen corfile &corfile"
+   
+   ibis-copy &zfile &xfile
+   ibis-gen &joinfile nc=6 nr=1 +
+      format=("FULL","FULL","FULL","FULL","REAL","REAL")
+   icat (&zfile,&joinfile) &c3file 'h
+   rowop2 &c3file &c2file keycol=5 range=(&iloop,&iloop) prec=0.5 'delete
+   
+   mf3 &c2file f="c14=(&iloop)$c16=c6$c17=c7"
+   sort &c2file sortcol=(14,16,17)
+   sort &xfile sortcol=(5,6,7)
+   zipcol2 inp=(&c2file,&xfile) incol=(14,16,17) outcol=(18,19) +
+          file=(5,6,7,12,13) null=(-999,-999) 
+   rowop2 &c2file &c3file keycol=(12,18) range=(-9999,-1,-9999,-1) 'delete
+   
+   ibis2tcl &c3file vclen=cclen vartype=1
+   if (cclen=0) goto continloop
+   ibis-gen &joinfile nc=6 nr=1 +
+      format=("REAL","REAL","REAL","REAL","REAL","REAL")
+   icat (&c3file,&joinfile) &c2file 'h
+   
+   write "water mask &topo"
+   ibis-l &c2file nr=1
+   pixmap (&c2file,&topo) mapcols=(8,9) pixcols=(23,24) 'maptopix
+   getzval (&topo,&c2file) cols=(23,24,25) win=2
+   rowop2 &c2file &c3file keycol=25 range=(1.0,30000.0) 'select
+   sort &c3file sortcol=5
+   ibis-l &c3file nr=1
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.0*c21/c22")
+   
+   write "deltaz12 &deltaz12 wdeltaz12"
+   
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz12,&deltaz12) 'select
+    
+   mf3 &c2file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.25*c21/c22")
+   rowop2 &c2file &c3file keycol=21 range=(-&deltaz9,&deltaz9) 'select
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.50*c21/c22")
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz6,&deltaz6) 'select
+    
+   mf3 &c2file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.75*c21/c22")
+   rowop2 &c2file &c3file keycol=21 range=(-&deltaz3,&deltaz3) 'select
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-c21/c22")
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz,&deltaz) 'select
+ 
+   mf3 &c2file f=("c22=1.0$@csum(c12,c5)$@csum(c18,c5)$", +
+          "@csum(c22,c5)$c12=c12/c22$c18=c18/c22")
+   rowop2 &c2file &c3file keycol=22 range=(&minnumzval,999999) 'select
+   
+   ibis2tcl &c3file vclen=deltazlen vartype=1
+   write "img &iloop band &band thresh &deltaz zcount &deltazlen"
+   
+   if (deltazlen=0) goto continloop
+   
+   !! correlation for (x,y) edge matching, need to loop over actual neighbors
+   
+   if ("&band"<>"2") goto skipxy
+   
+   ibis-copy &c3file &xyfile1
+   sort &xyfile1 sortcol=5
+   aggrg2 &xyfile1 &xyfile2 agcol=5
+   ibis2tcl &xyfile2 vclen=numnbr vartype=1
+   
+   ibis-l &xyfile1 nr=4
+   ibis-l &xyfile2 nr=4
+   write "numnbr &numnbr"
+   
+   let jloop = 0
+   loop
+      let jloop = jloop+1
+      if (jloop>numnbr) goto jloopdone
+      
+      ibis2tcl &xyfile2 v1=cornbr v2=cornbrfile vartype=(1,2) +
+         ibisloc=(&jloop,5,&jloop,2)
+      write "cornbr &cornbr cornbrfile &cornbrfile"
+      
+      rowop2 &xyfile1 &xyfile3 keycol=5 range=(&cornbr,&cornbr) prec=0.5 'select
+            
+      ibis2tcl &xyfile3 vclen=cornbrcount vartype=1
+      ibis-gen &joinfile nc=11 nr=&cornbrcount deffmt=REAL
+      icat (&joinfile,&xyfile3) &xyfile4 'h
+      mf3 &xyfile4 f="c3=c19$c4=c20"
+      pixmap (&xyfile4,&corfile) mapcol=(3,4) pixcol=(1,2) 'maptopix
+      mf3 &xyfile4 f="c1=c1-@mod(c1,1.0)$c2=c2-@mod(c2,1.0)"
+      
+      if (iloop<cornbr)
+        
+        ! getting rid of poorly situated edge matching points
+        plab2tcl inp=&corfile property="COREG_META_DATA" val=bobname +
+             keyword=bobdate vtype=0
+        let moore1 = "&pathxy" // "/&bobname" // "1M_map4.2.moore"
+        gtsize &corfile &xyfile5 pzoom=0.25
+        mooreins &xyfile5 +
+           &moore1
+        plab2tcl inp=&cornbrfile property="COREG_META_DATA" val=bobname +
+             keyword=bobdate vtype=0
+        let moore2 = "&pathxy" // "/&bobname" // "1M_map4.2.moore"
+        gtsize &cornbrfile &xyfile5 pzoom=0.25
+        mooreins &xyfile5 +
+           &moore2
+        pixmap (&xyfile4,&moore1) mapcol=(3,4) pixcol=(5,6) 'maptopix
+        getzval (&moore1,&xyfile4) cols=(5,6,7) win=2
+        pixmap (&xyfile4,&moore2) mapcol=(3,4) pixcol=(5,6) 'maptopix
+        getzval (&moore2,&xyfile4) cols=(5,6,8) win=2
+        mf3 &xyfile4 f="c9=(c7>100)+(c8>100)+(@abs(c7-c8)<400)"
+        rowop2 &xyfile4 &xyfile5 keycol=9 range=(2.9,3.1) 'select
+
+        ibis2tcl &xyfile5 vclen=corpt vartype=1
+        write "Acorpt &corpt &corfile,&cornbrfile"
+        if (corpt<4) goto jcontinue
+        mf3 &xyfile5 f="c9=(@rand)*&corpt"
+        rowop2 &xyfile5 &xyfile4 keycol=9 range=(0.0,250.0) 'select
+        
+        write "Apicmtch5 (&corfile,&cornbrfile,&xyfile4) SEARCH=512 fftsize=512 +"
+        write "minsrch=512 zrej=50 pred=quad autofit=15 redo=30 thr_res=120.0 +"
+        write "zerolim=0.1 ffthalf=1 magnify=(3.0,3.0) magshrk=y"
+
+        !!!!if ("&corfile"="z2" and "&cornbrfile"="z6") ibis-l bugg26
+
+        !has the ffthalf=0 error been fixed?
+        picmtch5 (&corfile,&cornbrfile,&xyfile4) SEARCH=512 fftsize=512 +
+           minsrch=512 zrej=50 pred=quad autofit=15 redo=30 thr_res=120.0 +
+           zerolim=0.1 ffthalf=1 magnify=(3.0,3.0) magshrk=y
+        
+        rowop2 &xyfile4 &xyfile5 keycol=9 range=(-99999,0.00001) 'delete
+        ibis2tcl &xyfile5 vclen=corpt vartype=1
+        if (corpt<2) goto jcontinue
+
+        ! doubling the points for two image geoms, averaging the match
+        
+        ibis-copy &xyfile5 &xyfile6
+        
+        pixmap (&xyfile6,&cornbrfile) mapcol=(33,34) pixcol=(6,7) 'pixtomap
+        pixmap (&xyfile6,&corfile) mapcol=(33,34) pixcol=(6,7) 'maptopix
+        mf3 &xyfile6 f=("c10=c6-c1$c11=c7-c2$c6=c6-0.5*c10$c7=c7-0.5*c11$", +
+               "c10=@sqrt(c10*c10+c11*c11)")
+        rowop2 &xyfile6 &xyfile4 keycol=10 range=(0.0,&edgexythr) 'select
+        
+        ibis2tcl &xyfile4 vclen=corpt vartype=1
+        if (corpt<4) write "CAUTION: throwout eliminated an edge-1"
+        if (corpt<4) goto jcontinue
+        
+        mf3 &xyfile5 f="c26=c25$c25=c16$c16=c26"
+        mf3 &xyfile5 f="c33=c1$c1=c6$c6=c33"
+        mf3 &xyfile5 f="c33=c2$c2=c7$c7=c33"
+        
+        pixmap (&xyfile5,&corfile) mapcol=(33,34) pixcol=(6,7) 'pixtomap
+        pixmap (&xyfile5,&cornbrfile) mapcol=(33,34) pixcol=(6,7) 'maptopix
+        mf3 &xyfile5 f=("c10=c6-c1$c11=c7-c2$c6=c6-0.5*c10$c7=c7-0.5*c11$", +
+               "c10=@sqrt(c10*c10+c11*c11)")
+        rowop2 &xyfile5 &xyfile7 keycol=10 range=(0.0,&edgexythr) 'select
+        
+        ibis2tcl &xyfile7 vclen=corpt vartype=1
+        if (corpt<4) write "CAUTION: throwout eliminated an edge-2"
+        if (corpt<4) goto jcontinue
+        
+        icat (&xyfile4,&xyfile7) &xyfile6 'v
+      
+        if (firsttime=0)
+           ibis-copy &xyfile6 &xyfile
+           let firsttime = 1
+        else
+           icat (&xyfile,&xyfile6) &joinfile
+           ibis-copy &joinfile &xyfile
+        end-if
+      end-if
+      
+   jcontinue>
+   end-loop
+   jloopdone>
+   ibis-l &xyfile nr=4
+   skipxy>
+   
+   !! end of correlation section
+   
+   aggrg2 &c3file &c2file agcol=5
+   ibis-l &c2file nr=4
+   
+   file2tcl &c4file val=qexist
+   if (qexist=0)
+      ibis-copy &c2file &c4file
+   else
+      icat (&c4file,&c2file) &joinfile
+      ibis-copy &joinfile &c4file
+   end-if
+
+continloop>
+end-loop
+loopdone>
+
+ibis2tcl &c4file vclen=cclen vartype=1
+ibis-gen &joinfile nc=4 nr=1 format=("REAL","REAL","REAL","REAL")
+icat (&c4file,&joinfile) &cfile 'h
+
+sort &cfile sortcol=5
+mf3 &cfile f="c20=c18-c12$c23=c12*c22$c24=c22"
+mf3 &cfile f="@csum(c23,c5)$@csum(c24,c5)$c23=c23/c24"
+
+ibis-copy &cfile xxxcfilebug
+zrelax2 &cfile cols=(5,12,14,18,20,23,24,25,26)
+
+ibis-copy &zfile &joinfile
+sort &joinfile sortcol=2
+aggrg2 &joinfile &nfile agcol=2
+sort &nfile sortcol=3
+
+file2tcl &qfile val=qexist
+if (qexist=1) ush /bin/rm &qfile
+
+end-proc

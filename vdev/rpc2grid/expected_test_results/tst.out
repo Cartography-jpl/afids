@@ -1,0 +1,274 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+rpc2grid in=(../test_data/xxchip2.img,  +
+   ../test_data/qb1_iraq_dem.hlf)  +
+   out=xxxgrid nah=2 nav=2
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl ../test_data/xxchip2.img val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxxgrid ncol=8 nah=2 nav=2    l1=4.+
+483132638619e+01 s1=3.587197754663e+01 l2=4+
+.484168053645e+01 s2=3.587175795984e+01    l3=4.483137093470e+01 s3=3.586520476886e+01 l4=4.484154456866e+01 s4=3.586499557958e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxxgrid version="ibis-2" org="column" nc=8   +
+    nr=9 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxgrid func="c3=@int((@index-1)/3)/2"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/3)/2
+9 records in
+mf3 xxxgrid func="c4=@mod(@index+2,3)/2"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+2,3)/2
+9 records in
+mf3 xxxgrid func="c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+0+
+1))+(4.484168053645e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+01))+(4.484168053645e+01)
+9 records in
+mf3 xxxgrid func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+9 records in
+mf3 xxxgrid func="c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+0+
+1))+(3.586520476886e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+01))+(3.586520476886e+01)
+9 records in
+mf3 xxxgrid func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+9 records in
+mf3 xxxgrid func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+9 records in
+end-proc
+pixmap (xxxgrid,../test_data/qb1_iraq_dem.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (../test_data/qb1_iraq_dem.hlf,xxxgrid) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxxgrid,../test_data/xxchip2.img)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+ibis-l xxxgrid cols=(1,2,3,4,5) csiz=(15,15,12,12,12)  +
+  cfor="%15.10f %15.10f %12.6f %12.6f %12.6f" 'format
+Beginning VICAR task ibis
+ 
+Number of Rows:9  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:9
++---------------+---------------+------------+------------+-----------
+             C:1             C:2          C:3          C:4         C:5
+            DOUB            DOUB         DOUB         DOUB        DOUB
++---------------+---------------+------------+------------+-----------
+  44.8313263862   35.8719775466   375.225010   -38.161647   -39.914083
+  44.8365034613   35.8718677532   423.860284   -40.702537   486.833197
+  44.8416805364   35.8717579598   435.216835   -40.912462  1041.915704
+  44.8313486604   35.8685911577   375.000000   502.684319   -39.469750
+  44.8364806065   35.8684839637   412.414722   500.424588   490.861750
+  44.8416125526   35.8683767697   421.156371   499.963142  1043.098436
+  44.8313709347   35.8652047689   376.689521  1043.371612   -40.419251
+  44.8364577517   35.8651001742   409.639373  1040.971366   488.463894
+  44.8415445687   35.8649955796   408.448472  1040.733579  1043.298542
+rpc2grid in=(../test_data/xxchip2.img,  +
+   ../test_data/qb1_iraq_dem.hlf)  +
+   out=xxxgrid nah=2 nav=2  +
+   lon1=44.82 lat1=35.87  +
+   lon2=44.84 lat2=35.87  +
+   lon3=44.84 lat3=35.85  +
+   lon4=44.82 lat4=35.85
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+   let clon1 = lon1
+   let clat1 = lat1
+   let clon2 = lon2
+   let clat2 = lat2
+   let clon3 = lon4
+   let clat3 = lat3
+   let clon4 = lon3
+   let clat4 = lat4
+else
+end-if
+gengrid2 out=xxxgrid ncol=8 nah=2 nav=2    l1=4.+
+482000000000e+01 s1=3.587000000000e+01 l2=4+
+.484000000000e+01 s2=3.587000000000e+01    l3=4.482000000000e+01 s3=3.585000000000e+01 l4=4.484000000000e+01 s4=3.585000000000e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxxgrid version="ibis-2" org="column" nc=8   +
+    nr=9 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxgrid func="c3=@int((@index-1)/3)/2"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/3)/2
+9 records in
+mf3 xxxgrid func="c4=@mod(@index+2,3)/2"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+2,3)/2
+9 records in
+mf3 xxxgrid func="c5=c3*(4.482000000000e+01-(4.482000000000e+01))+(4.482000000000e+01)$c6=c3*(4.484000000000e+01-(4.484000000000e+0+
+1))+(4.484000000000e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.482000000000e+01-(4.482000000000e+01))+(4.482000000000e+01)$c6=c3*(4.484000000000e+01-(4.484000000000e+01))+(4.484000000000e+01)
+9 records in
+mf3 xxxgrid func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+9 records in
+mf3 xxxgrid func="c7=c4*(3.587000000000e+01-(3.587000000000e+01))+(3.587000000000e+01)$c8=c4*(3.585000000000e+01-(3.585000000000e+0+
+1))+(3.585000000000e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587000000000e+01-(3.587000000000e+01))+(3.587000000000e+01)$c8=c4*(3.585000000000e+01-(3.585000000000e+01))+(3.585000000000e+01)
+9 records in
+mf3 xxxgrid func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+9 records in
+mf3 xxxgrid func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+9 records in
+end-proc
+pixmap (xxxgrid,../test_data/qb1_iraq_dem.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (../test_data/qb1_iraq_dem.hlf,xxxgrid) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxxgrid,../test_data/xxchip2.img)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+ibis-l xxxgrid
+Beginning VICAR task ibis
+ 
+Number of Rows:9  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:9
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+       44.82       35.87      410.00      312.77    -1297.22        0.00
+       44.83       35.87      373.00      282.22     -183.70        0.00
+       44.84       35.87      425.00      245.92      865.51        0.00
+       44.82       35.86      400.00     1911.40    -1296.83        0.00
+       44.83       35.86      376.00     1879.22     -192.27        0.00
+       44.84       35.86      379.00     1845.19      894.15        0.00
+       44.82       35.85      400.00     3509.02    -1304.13        0.00
+       44.83       35.85      378.00     3475.88     -200.31        0.00
+       44.84       35.85      380.00     3441.07      887.62        0.00
+ 
+Rows: 1:9
++-----------+-----------
+         C:7         C:8
++-----------+-----------
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+end-proc

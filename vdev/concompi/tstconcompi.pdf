@@ -1,0 +1,22 @@
+procedure
+refgbl $echo
+
+local lstcmp int
+
+body
+let $echo="yes"
+
+! TEST SCRIPT FOR concompi
+
+gen xxx1 nl=6 ns=6 'half
+f2 xxx1 out=xxx2 func="line*((samp<4)+(samp>4))"
+f2 xxx1 out=xxx2a +
+  func="(line==3)*(samp==5)"
+list xxx2
+list xxx2a 'zer
+
+concompi (xxx2,xxx2a) (xxx4,xxx3)
+list xxx4 ndig=2
+
+
+end-proc

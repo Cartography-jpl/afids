@@ -1,0 +1,187 @@
+procedure help=*
+parm inp type=string
+parm out type=string
+parm ref type=string
+parm ibistmp type=string
+parm magfiddl type=real default=1.0
+parm gorfiddl type=real default=1.0
+parm corthr real default=0.0
+parm subpix type=int default=0
+
+local magnif real
+local shiftl real
+local shifts real
+local ishiftl int
+local ishifts int
+local proj21 real
+local zlim real
+local badchk real
+local corchk real
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local img1 string
+local img2 string
+local img3 string
+local rtype int
+
+refgbl $echo
+body
+let $echo="yes"
+write "gtpswarp 1/24/2012"
+
+let img1 = "&ibistmp" // "xx3771"
+let img2 = "&ibistmp" // "xx3772"
+let img3 = "&ibistmp" // "xx3773"
+plab2tcl &inp val=rtype keyword=GTRASTERTYPEGEOKEY vtype=4
+if (rtype=2)
+   gtsize &inp &img1 pzoom=0.2
+else
+   gtsize &inp &img1 azoom=0.2
+end-if
+gtwarp &ref &img2 ref=&img1 'coverref
+f2 (&img1,&img2) out=&img3 fun="in1*in2"
+
+imcorner &img3 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=3 'corrfoot
+
+ibis-gen &ibistmp nc=42 nr=4 deffmt=DOUB +
+   datacol=(21,22,23,24,25,26,27,28) +
+   data=(&l1,&s1,&l2,&s2,&l3,&s3,&l4,&s4, +
+         &l1,&s1,&l2,&s2,&l3,&s3,&l4,&s4, +
+         &l1,&s1,&l2,&s2,&l3,&s3,&l4,&s4, +
+         &l1,&s1,&l2,&s2,&l3,&s3,&l4,&s4)
+pixmap (&ibistmp,&img3) pixcol=(21,22) mapcol=(3,4) 'pixtomap
+pixmap (&ibistmp,&inp) pixcol=(31,32) mapcol=(3,4) 'maptopix
+pixmap (&ibistmp,&img3) pixcol=(23,24) mapcol=(3,4) 'pixtomap
+pixmap (&ibistmp,&inp) pixcol=(33,34) mapcol=(3,4) 'maptopix
+pixmap (&ibistmp,&img3) pixcol=(25,26) mapcol=(3,4) 'pixtomap
+pixmap (&ibistmp,&inp) pixcol=(35,36) mapcol=(3,4) 'maptopix
+pixmap (&ibistmp,&img3) pixcol=(27,27) mapcol=(3,4) 'pixtomap
+pixmap (&ibistmp,&inp) pixcol=(37,38) mapcol=(3,4) 'maptopix
+
+mf3 &ibistmp f=("c1=(c31+c35)*0.5$c2=(c32+c34)*0.5$", +
+  "c39=c35-c31$c40=c39/1024")
+
+ibis2tcl &ibistmp v1=magnif vartype=-1 ibisloc=(1,40)
+let magnif = magnif*magfiddl*0.9
+let zlim = gorfiddl*40.0
+
+! offset the four correlations
+
+mf3 &ibistmp f="c41=@mod(@index,2)*2-1$c42=@int((@index+1.0)/2.0)*2-3"
+mf3 &ibistmp f="c1=c1+c41*&magnif*102.4"
+mf3 &ibistmp f="c2=c2+c42*&magnif*102.4"
+
+! big correlation
+
+picmtch5 (&inp,&ref,&ibistmp) search=1024 fftsize=1024 +
+       minsrch=1024 zrej=0 pred=linear autofit=0 redo=0 +
+       zerolim=&zlim zerolim2=&zlim ffthalf=0 thr_res=0 +
+       magnif=(&magnif,&magnif)
+
+sort &ibistmp sortcol=9 'descend
+
+pixmap (&ibistmp,&ref) pixcol=(6,7) mapcol=(3,4) 'pixtomap
+pixmap (&ibistmp,&inp) pixcol=(12,13) mapcol=(3,4) 'maptopix
+mf3 &ibistmp f="c14=c1-c12$c15=c2-c13"
+mf3 &ibistmp f="c16=c14+(c14>0)-0.5$c17=c15+(c15>0)-0.5"
+if (subpix=1)
+   ibis2tcl &ibistmp v1=badchk v2=corchk +
+      vartype=(-1,-1) ibisloc=(1,10,1,9)
+   if (badchk<-9998.0 or corchk<corthr)
+      mf3 &ibistmp f="c14=0.0$c15=0.0"
+   end-if
+   goto theend
+end-if
+
+ibis2tcl &ibistmp v1=shiftl v2=shifts v3=badchk v4=corchk +
+      vartype=(-1,-1,-1,-1) ibisloc=(1,16,1,17,1,10,1,9)
+if (badchk<-9998.0 or corchk<corthr)
+   if (fmode=0)
+      gtcopy &inp &out
+   else
+      ush rm -f &out
+   end-if
+   goto theend
+end-if
+let ishiftl = $fix(shiftl)
+let ishifts = $fix(shifts)
+ibis-list &ibistmp
+
+gtmove &inp &out shift=(&ishiftl,&ishifts)
+
+theend>
+end-proc
+.TITLE
+gtpswarp - move an image to match another, shift only case, subpixel info option
+.HELP
+PURPOSE
+    uses a single 1024 correlation to shift an image to match another.
+The label is changed, so whole pixel shift only.  The image pixels are
+not moved or changed at all (see procedure GTMOVE).
+
+Now programmed with imcorner calls to find extent of data in both images.  The
+corners of data in the second image are mapped back to the first image and
+overlaid with the extent of data in the first image.  The footprint of the 
+fft correlation is set to maximal size inside of data.  This can fail somewhat
+due to mapping discrepancy between the two images or curved edges of data.
+
+If subpix is set to 1, then the subpixel offset is placed into columns
+(14,15) of the ibis file named by parameter ibistmp.
+
+Program now modified to perform four correlations and takes the highest correlation
+value of the four.
+
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+The input and reference images must have VICAR GeoTIFF labels.
+They must have the same mapping projections (but not necessarily scale),
+or really close.
+------------
+
+
+Original Programmer: A. L. Zobrist, 25 Aug, 2010
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 15 Dec, 2011    "taking best of four correlations"
+
+.LEVEL1
+.VARI INP
+input file
+.VARI OUT
+output file, equals 
+shifted input
+.VARI REF
+reference image to be
+matched
+.VARI IBISTMP
+temp file to use for
+picmtch5, is small
+.VARI MAGFIDDL
+use to make correlation 
+footprint larger or smaller
+.VARI GORFIDDL
+use to allow more or less
+gore area (default 1.0 is
+40% gore)
+.VARI CORTHR
+minimum allowed for correlation
+value, abort on less
+.VARI SUBPIXEL
+leave subpixel offset in
+cols (14,15) of ibis file
+and don't create out image
+.END

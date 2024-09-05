@@ -1,0 +1,183 @@
+procedure help=*
+parm inp type=(string,99) count=3
+parm cols type=int count=5 default=(1,2,3,4,5)
+parm thresh type=real default=0.000001
+parm fixdted string valid=("n","y") default="n"
+
+local rfile type=(string,99)
+local rpcfile type=(string,99)
+local dted type=(string,99)
+local iloop int
+
+local col1 int
+local col2 int
+local col3 int
+local col4 int
+local col5 int
+
+local lon real
+local lat real
+local elv real
+local fixelv real
+local line real
+local samp real
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+local gridsiz real
+local lthresh real
+body
+
+!  RPCINV HANDYPROC
+
+let rfile = inp(1)
+let rpcfile = inp(2)
+let dted = inp(3)
+let col1 = cols(1)
+let col2 = cols(2)
+let col3 = cols(3)
+let col4 = cols(4)
+let col5 = cols(5)
+if (col2<2 or col3<3 or col4<4 or col5<5)
+   write "columns in bad order"
+   goto theend
+end-if
+
+ibis-copy &rfile xxxrfile0
+mf3 xxxrfile0 f="c4=(c&col4)$c5=(c&col5)$c3=(c&col3)"
+
+ibis-gen xxxrfile1 nc=5 nr=1 format=("DOUB","DOUB","DOUB","DOUB","DOUB")
+icat (xxxrfile0,xxxrfile1) xxxrfile2 'h
+pixmap (xxxrfile2,&rpcfile) mapcol=(1,2) pixcol=(4,5) 'pixtomap
+ibis2tcl xxxrfile2 v1=line v2=samp v3=fixelv vartype=(-1,-1,-1) +
+      ibisloc=(1,4,1,5,1,3)
+
+let iloop = 0
+let gridsiz = 0.7
+loop
+
+let iloop = iloop+1
+if (iloop>9) goto loopdone          ! max iters is 9
+let gridsiz = gridsiz*0.1
+if (iloop>2) let gridsiz = gridsiz*0.1
+if (gridsiz<thresh) goto loopdone
+
+ibis2tcl xxxrfile2 v1=lon v2=lat v3=elv vartype=(-1,-1,-1) +
+   ibisloc=(1,1,1,2,1,3)
+let l1 = lon-gridsiz
+let s1 = lat-gridsiz
+let l2 = lon-gridsiz
+let s2 = lat+gridsiz
+let l3 = lon+gridsiz
+let s3 = lat-gridsiz
+let l4 = lon+gridsiz
+let s4 = lat+gridsiz
+gengrid2 out=xxxrpcinvgrid ncol=8 nah=150 nav=150 +
+     l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+if (fixdted="n")
+   pixmap (xxxrpcinvgrid,&dted) mapcol=(1,2) pixcol=(6,7) 'maptopix
+   getzval (&dted,xxxrpcinvgrid) cols=(6,7,3) win=2
+else
+   mf3 xxxrpcinvgrid f="c3=&fixelv"
+end-if
+rpcfwd (xxxrpcinvgrid,&rpcfile) 'misselv
+tieconv xxxrpcinvgrid out=xxxrpcinvgrid2 cols=(4,5,1,2) 'abendg +
+  nah=1 nav=1 minl=&line mins=&samp maxl=&line maxs=&samp 'geomv gridtol=9.0
+
+ibis2tcl xxxrpcinvgrid2 v1=lon v2=lat vartype=(-1,-1) +
+   ibisloc=(1,3,1,4)
+mf3 xxxrfile2 f="c6=(&lon)$c7=(&lat)$c8=c6-c1$c9=c7-c2$c10=@sqrt(c8*c8+c9*c9)"
+write "iloop &iloop"
+ibis-l xxxrfile2 nr=1 cols=(1,2,6,7,10) csiz=(14,14,14,14,16) +
+        cfor="%14.10f %14.10f %14.10f %14.10f %16.13f"
+mf3 xxxrfile2 f="c1=c6$c2=c7"
+if (fixdted="n")
+   pixmap (xxxrfile2,&dted) mapcol=(1,2) pixcol=(6,7) 'maptopix
+   getzval (&dted,xxxrfile2) cols=(6,7,3) win=2
+else
+   mf3 xxxrfile2 f="c3=&fixelv"
+end-if
+
+ibis2tcl xxxrfile2 v1=lthresh v2=elv vartype=(-1,-1) ibisloc=(1,10,1,3)
+if (lthresh<thresh) goto loopdone
+
+end-loop
+loopdone>
+
+mf3 &rfile f="c&col1=(&lon)$c&col2=(&lat)$c&col3=(&elv)"
+
+theend>
+end-proc
+.TITLE
+RPCINV - Iterate to solve RPF in reverse with elevation lookup
+.HELP
+PURPOSE
+     This program should not be used anymore.  Use RPCINV2.
+
+     RPCINV reads the GeoTIFF label of an image with GeoTIFF label
+containing RPC's and uses the label information to reverse solve the
+RPF's (solve for lon,lat,elev for a particular line,samp).  The solving
+process has to iterate the elevation lookup since the lon,lat is used
+to look up the elevation.  The starting point is put in the ibis file
+record.  Only the first record is solved.  See column order in
+restrictions.
+	   
+CALL
+     rpcinv INPUT COLS THRESH
+  WHERE:
+     INPUT          is the ibis data set of (line,sample) points
+                    followed by the GeoTIFF data set followed by the dted
+     COLS           are the columns for (lon,lat,elev,line,sample)
+     THRESH         is a (lon,lat) threshold to stop iteration
+ 
+OPERATION
+
+     The (line,samp) are turned into a (lon,lat) guess using the GeoTIFF
+mapping in the label.  A grid is generated near the guess (lon,lat). 
+getzval is used to look up elevation of the grid. rpcfwd is used to calculate
+the (line,samp) of the grid.  Tieconv is used to invert the grid to find
+the (lon,lat) of the desired (line,samp).  Then the new elevation is looked
+up for the new (lon,lat).  Because the elevation is new, the grid process
+is iterated.  Shutoff occurs when the (lon,lat) difference is below the
+thresh parameter, or a max of 9 iterations.
+
+PERFORMANCE
+
+Expect about 10 seconds.
+
+.PAGE
+Restrictions
+------------
+
+The second input must have a GeoTIFF label. The dted file must be referenced
+by a geographic (lon,lat) GeoTIFF label.
+
+Only the first record of the IBIS file is treated.
+
+Column numbers should be in increasing sequence.  The column order is
+(lon,lat,elv,line,samp).
+
+.PAGE
+Original Programmer: A. L. Zobrist, 02 Mar, 2005
+Current Cognizant Programmer: A. L. Zobrist
+.LEVEL1
+.VARI INP
+IBIS file with 5+ columns
+Input file with GeoTIFF, RPC
+DTED file
+.VARI COLS
+column numbers for (lon,lat,
+elev,line,samp)
+.VARI THRESH
+RMS of (lon,lat) to stop itr
+.VARI FIXDTED
+if "y" uses constant elevation
+from column 3 of ibis file
+.END

@@ -1,0 +1,330 @@
+procedure
+parm dgrow type=int default=3
+
+parm path type=string
+parm rootpre type=string
+parm rootpost type=string
+parm outtabroot type=string
+parm subdir type=string
+
+local pre20sig real
+local post20sig real
+local pre30sig real
+local post30sig real
+
+local pre10sig real
+local post10sig real
+local pre40sig real
+local post40sig real
+
+local pre50sig real
+local post50sig real
+local pre60sig real
+local post60sig real
+
+local prebgsig real
+local postbgsig real
+local prendvisig real
+local postndvisig real
+local metafilepre string
+local cloudmaskpre string
+local metafilepost string
+local cloudmaskpost string
+local totalmask string
+
+local bigmaskpre string
+local bigmaskpost string
+
+local cloudmask string
+local lnstr string
+local qexist integer
+
+local outibis string
+local outimg string
+
+local nxpre1 string
+local nxpre2 string
+local nxpre3 string
+local nxpre4 string
+local nxpre5 string
+local nxpre6 string
+local nxpost1 string
+local nxpost2 string
+local nxpost3 string
+local nxpost4 string
+local nxpost5 string
+local nxpost6 string
+local nxbgpre string
+local nxndvipre string
+local nxbgpost string
+local nxndvipost string
+local nxbgprenorm string
+local nxndviprenorm string
+local nxbgpostnorm string
+local nxndvipostnorm string
+local nxdifbg string
+local nxdifndvi string
+local nxdif1 string
+local nxdif2 string
+local nxdif3 string
+local nxdif4 string
+local nxdif5 string
+local nxdif6 string
+
+local xxxicloud2 string
+local xxxicloud string
+local xxxcloud2 string
+local xxxcloud string
+local xxxim3a string
+local xxxim3b string
+local xxxim3n string
+local xxxim3 string
+local xxxim4 string
+local xxxim4a string
+local xxxim4g string
+local xxxim4b string
+local xxxim5 string
+local xxxim6 string
+
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="return"
+let $echo="yes"
+
+write "detre3 03/29/2010"
+let outibis = "&subdir" // "&outtabroot" // ".asc"
+let outimg = "&subdir" // "&outtabroot" // ".img"
+
+let metafilepre = "&path" // "&rootpre" // "MTL.txt"
+let cloudmaskpre = "&rootpre" // "cloud.img"
+let lnstr = "&path" // "&rootpre" // "1.img"
+ush ln -fs &lnstr pre10r
+ush ln -fs &lnstr pre20r
+let lnstr = "&path" // "&rootpre" // "2.img"
+ush ln -fs &lnstr pre30r
+let lnstr = "&path" // "&rootpre" // "3.img"
+ush ln -fs &lnstr pre40r
+let lnstr = "&path" // "&rootpre" // "4.img"
+ush ln -fs &lnstr pre50r
+
+let metafilepost = "&path" // "&rootpost" // "MTL.txt"
+let cloudmaskpost = "&rootpost" // "cloud.img"
+let cloudmask = "&rootpost" // "cmbcloud.img"
+let lnstr = "&path" // "&rootpost" // "1.img"
+ush ln -fs &lnstr post10r
+ush ln -fs &lnstr post20r
+let lnstr = "&path" // "&rootpost" // "2.img"
+ush ln -fs &lnstr post30r
+let lnstr = "&path" // "&rootpost" // "3.img"
+ush ln -fs &lnstr post40r
+let lnstr = "&path" // "&rootpost" // "4.img"
+ush ln -fs &lnstr post50r
+  
+let bigmaskpre = "&subdir" // "&rootpre" // "lsatpre.img"
+let bigmaskpost = "&subdir" // "&rootpost" // "lsatpost.img"
+let totalmask = "&subdir" // "&rootpost" // "totalmask.img"
+
+ush ln -fs pre10r pre10
+ush ln -fs pre20r pre20
+ush ln -fs pre30r pre30
+ush ln -fs pre40r pre40
+ush ln -fs pre50r pre50
+ush ln -fs post10r post10
+ush ln -fs post20r post20
+ush ln -fs post30r post30
+ush ln -fs post40r post40
+ush ln -fs post50r post50
+
+let nxpre1 = "&subdir" // "nxpre1"
+let nxpre2 = "&subdir" // "nxpre2"
+let nxpre3 = "&subdir" // "nxpre3"
+let nxpre4 = "&subdir" // "nxpre4"
+let nxpre5 = "&subdir" // "nxpre5"
+let nxpre6 = "&subdir" // "nxpre6"
+let nxpost1 = "&subdir" // "nxpost1"
+let nxpost2 = "&subdir" // "nxpost2"
+let nxpost3 = "&subdir" // "nxpost3"
+let nxpost4 = "&subdir" // "nxpost4"
+let nxpost5 = "&subdir" // "nxpost5"
+let nxpost6 = "&subdir" // "nxpost6"
+let nxbgpre = "&subdir" // "nxbgpre"
+let nxndvipre = "&subdir" // "nxndvipre"
+let nxbgpost = "&subdir" // "nxbgpost"
+let nxndvipost = "&subdir" // "nxndvipost"
+let nxbgprenorm = "&subdir" // "nxbgprenorm"
+let nxndviprenorm = "&subdir" // "nxndviprenorm"
+let nxbgpostnorm = "&subdir" // "nxbgpostnorm"
+let nxndvipostnorm = "&subdir" // "nxndvipostnorm"
+let nxdifbg = "&subdir" // "nxdifbg"
+let nxdifndvi = "&subdir" // "nxdifndvi"
+let nxdif1 = "&subdir" // "nxdif1"
+let nxdif2 = "&subdir" // "nxdif2"
+let nxdif3 = "&subdir" // "nxdif3"
+let nxdif4 = "&subdir" // "nxdif4"
+let nxdif5 = "&subdir" // "nxdif5"
+let nxdif6 = "&subdir" // "nxdif6"
+
+let xxxicloud2 = "&subdir" // "xxxicloud2"
+let xxxicloud = "&subdir" // "xxxicloud"
+let xxxcloud2 = "&subdir" // "xxxcloud2"
+let xxxcloud = "&subdir" // "xxxcloud"
+let xxxim3a = "&subdir" // "xxxim3a"
+let xxxim3b = "&subdir" // "xxxim3b"
+let xxxim3n = "&subdir" // "xxxim3n"
+let xxxim3 = "&subdir" // "xxxim3"
+let xxxim4 = "&subdir" // "xxxim4"
+let xxxim4a = "&subdir" // "xxxim4a"
+let xxxim4g = "&subdir" // "xxxim4g"
+let xxxim4b = "&subdir" // "xxxim4b"
+let xxxim5 = "&subdir" // "xxxim5"
+let xxxim6 = "&subdir" // "xxxim6"
+
+goto curr        !keep this switch for analysis
+
+! cloudmask then reflectance
+
+!acca (pre20r,pre30r,pre40r,pre50r,pre60) +
+!  meta=&metafilepre out=&cloudmaskpre
+!xvd &cloudmaskpre
+
+!acca (post20r,post30r,post40r,post50r,post60) +
+!  meta=&metafilepost out=&cloudmaskpost
+!xvd &cloudmaskpost
+
+!f2 inp=(&cloudmaskpre,&cloudmaskpost) out=&cloudmask +
+!   fun="max(in1,in2)"
+!xvd &cloudmask
+
+!multilsatref inp=(pre10r,pre20r,pre30r,pre40r,pre50r) +
+!   out=(pre10,pre20,pre30,pre40,pre50) +
+!   meta=&metafilepre
+
+!multilsatref inp=(post10r,post20r,post30r,post40r,post50r) +
+!   out=(post10,post20,post30,post40,post50) +
+!   meta=&metafilepost
+
+!hist pre20 'exclude sigma=pre20sig mode=nohist
+!hist post20 'exclude sigma=post20sig mode=nohist
+!hist pre30 'exclude sigma=pre30sig mode=nohist
+!hist post30 'exclude sigma=post30sig mode=nohist
+
+!hist pre10 'exclude sigma=pre10sig mode=nohist
+!hist post10 'exclude sigma=post10sig mode=nohist
+!hist pre40 'exclude sigma=pre40sig mode=nohist
+!hist post40 'exclude sigma=post40sig mode=nohist
+
+!hist pre50 'exclude sigma=pre50sig mode=nohist
+!hist post50 'exclude sigma=post50sig mode=nohist
+!hist pre60 'exclude sigma=pre60sig mode=nohist
+!hist post60 'exclude sigma=post60sig mode=nohist
+
+cvdnorm (pre10,pre20,pre30,pre40,pre50, +
+   post10,post20,post30,post40,post50) +
+   out=(&nxpre1,&nxpre2,&nxpre3,&nxpre4,&nxpre5, +
+   &nxpost1,&nxpost2,&nxpost3,&nxpost4,&nxpost5) +
+   sigma=(1.0,1.0,1.0,1.0,1.0, +
+   1.0,1.0,1.0,1.0,1.0) +
+   printls=(5863,4093) window=11 donut=5 
+
+!  sigma=(&pre10sig,&pre20sig,&pre30sig,&pre40sig,&pre50sig,&pre60sig, +
+!  &post10sig,&post20sig,&post30sig,&post40sig,&post50sig,&post60sig) +
+
+!  bg and nvdi
+
+f2 (&nxpre5,&nxpre3) out=&nxbgpre fun="((in1-in2)/(in1+in2))*200+128"
+f2 (&nxpost5,&nxpost3) out=&nxbgpost fun="((in1-in2)/(in1+in2))*200+128"
+f2 (&nxpre4,&nxpre3) out=&nxndvipre fun="((in1-in2)/(in1+in2))*200+128"
+f2 (&nxpost4,&nxpost3) out=&nxndvipost fun="((in1-in2)/(in1+in2))*200+128"
+
+!hist &nxbgpre 'exclude sigma=prebgsig mode=nohist
+!hist &nxbgpost 'exclude sigma=postbgsig mode=nohist
+!hist &nxndvipre 'exclude sigma=prendvisig mode=nohist
+!hist &nxndvipost 'exclude sigma=postndvisig mode=nohist
+
+cvdnorm (&nxbgpre,&nxndvipre,&nxbgpost,&nxndvipost) +
+   out=(&nxbgprenorm,&nxndviprenorm,&nxbgpostnorm,&nxndvipostnorm) +
+   sigma=(1.0,1.0,1.0,1.0) +
+   printls=(5863,4093) window=11 donut=5 'nopre
+
+!  sigma=(&prebgsig,&prendvisig,&postbgsig,&postndvisig) +
+
+f2 (&nxbgprenorm,&nxbgpostnorm) out=&nxdifbg fun="(in2-in1)*0.004+128" format=byte
+f2 (&nxndviprenorm,&nxndvipostnorm) out=&nxdifndvi fun="(in2-in1)*0.5+128" format=byte
+
+! brightness diff
+
+f2 (&nxpre1,&nxpost1) out=&nxdif1 fun="(in2-in1)*0.8+128" format=byte
+f2 (&nxpre2,&nxpost2) out=&nxdif2 fun="(in2-in1)*0.8+128" format=byte
+f2 (&nxpre3,&nxpost3) out=&nxdif3 fun="(in2-in1)*0.8+128" format=byte
+f2 (&nxpre4,&nxpost4) out=&nxdif4 fun="(in2-in1)*0.6+128" format=byte
+f2 (&nxpre5,&nxpost5) out=&nxdif5 fun="(in2-in1)*0.8+128" format=byte
+
+! compute totalmask
+
+f2 (pre10,pre20,pre30,pre40,pre50) out=&bigmaskpre format=byte +
+  fun="(in1.gt.0.5)*(in2.gt.0.5)*(in3.gt.0.5)*(in4.gt.0.5)*(in5.gt.0.5)"
+f2 (post10,post20,post30,post40,post50) out=&bigmaskpost format=byte +
+  fun="(in1.gt.0.5)*(in2.gt.0.5)*(in3.gt.0.5)*(in4.gt.0.5)*(in5.gt.0.5)"
+
+!f2 &cloudmask out=xxxicloud2 fun="1-in1" format=byte
+!moore xxxicloud2 xxxicloud dmax=5 'outone
+!f2 (&cloudmask,xxxicloud) out=xxxcloud2 fun="(in2.lt.0.5)*in1" format=byte
+!moore xxxcloud2 xxxcloud dmax=50 'outone
+f2 (&bigmaskpre,&bigmaskpost) out=&totalmask format=byte +
+     fun="(in1.gt.0.5)*(in2.gt.0.5)"
+
+! do target 1 in xxxim4a
+
+f2 (&nxdif1,&nxdif2,&nxdif3,&nxdif4) out=&xxxim3a format=byte +
+  fun="(in1+in2+in3+in4-512)*0.25+128"
+f2 &nxdifbg out=&xxxim3b fun="128-(in1-128)" format=byte
+f2 &nxdifndvi out=&xxxim3n fun="128+(in1-128)" format=byte
+
+!f2 (&xxxim3a,&xxxim3b,&xxxim3n,&totalmask) out=&xxxim4a +
+!   fun="(in1.gt.137)*(in2.gt.0)*(in3.gt.132)*(in4.gt.0.5)"
+
+curr>
+
+f2 (&nxdif2,&nxdif3,&nxdif4,&nxdif5,&xxxim3n,&totalmask) out=&xxxim4a +
+   fun="(in1.gt.130)*(in2.gt.128)*(in3.gt.130)*(in4.lt.127)*(in5.gt.132)*(in6.gt.0.5)"
+
+! do target 2 in &xxxim4b
+
+moore &xxxim4a &xxxim4g dmax=&dgrow
+
+f2 (&nxdif1,&nxdif2,&nxdif3,&nxdif4,&nxdif5) out=&xxxim3 format=byte +
+  fun="(in1.lt.128)*(in2.lt.128)*(in3.lt.128)*(in4.lt.128)*(in5.lt.128)* +
+  (in1+in2+in3+in4-512)*0.125+128"
+f2 (&xxxim3,&xxxim3b,&xxxim3n,&xxxim4g) out=&xxxim4b +
+   fun="(in1.lt.121)*(in2.lt.129)*(in3.lt.101)*(in4.gt.0.5)* +
+   (in3.lt.(in2-25))*2"
+
+f2 (&xxxim4a,&xxxim4b,&totalmask) &xxxim4 +
+     fun="(in1+in2*(in1.lt.0.5))*(in3.gt.0.5)"
+
+! connected component
+
+cform &xxxim4 &xxxim5 oform=full
+
+concomp &xxxim5 (&xxxim6, xxxim6work)
+
+!xvd xxxim6
+
+comptab inp=(&xxxim6, &xxxim5) out=xxxltab.ibis
+
+getzval (&xxxim4, xxxltab.ibis) cols=(3,4,11) 'NOIN
+
+rowop2 xxxltab.ibis outtab keycol=2 range=(0, 6) 'select
+
+compject (&xxxim6, outtab) out=&outimg cols=(1,11)
+
+pixmap (outtab, &outimg) mapcols=(9,10) pixcol=(3,4) 'pixtomap
+
+ibis-l outtab cols=(1,9,10,11) 'noheader 'nocol +
+   outfile=&outibis cfor="%7d %15.8f %14.8f %7.0f"
+
+theend>
+end-proc

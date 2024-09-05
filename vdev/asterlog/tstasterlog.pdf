@@ -1,0 +1,45 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR ASTERLOG
+
+! 1A
+! VNIR
+!asterlog inp=aster1A sensor=VNIR
+! VNIR looking backward
+!asterlog inp=aster1A sensor=VNIR lookback=1
+! SWIR
+!asterlog inp=aster1A sensor=SWIR
+! TIR
+!asterlog inp=aster1A sensor=TIR
+
+! 1B
+! VNIR
+!asterlog inp=aster1B sensor=VNIR
+! VNIR looking backward
+!asterlog inp=aster1B sensor=VNIR lookback=1
+! SWIR
+!asterlog inp=aster1B sensor=SWIR
+! TIR
+!asterlog inp=aster1B sensor=TIR
+
+
+! Surface Kinetic Temperature AST_08
+!asterlog inp=AST_08_003110320011855220010000.hdf
+
+! Surface Emissivity AST_05
+!asterlog inp=AST_05_003111020011901210000000.hdf
+
+! Surface Radiance-TIR AST_09T
+!asterlog inp=AST_09T_003111020011901210020000.hdf
+
+asterlog inp=../test_data/AST_L1B_00307072001171513_20080320032829_30979.hdf sensor=TIR
+
+end-proc

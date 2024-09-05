@@ -1,0 +1,6 @@
+$ vpack getdelta.com -mixed -
+	-s getdelta.c -
+	-i getdelta.imake -
+	-p getdelta.pdf -
+	-t tstgetdelta.pdf
+$ Exit

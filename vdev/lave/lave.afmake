@@ -1,0 +1,41 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = lave
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+#CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+FFLAGS += -Wunused-parameter -Wunused -Wuninitialized -Wsurprising -Wintrinsic-shadow -Wno-globals -fbounds-check
+#==============================================================
+
+lave:     ../sub/stacka_big.o
+#COMMENTS
+##############################################################
+#
+#  For gfortran:
+# -Wall includes:
+#       -Waliasing
+#       -Wampersand,
+#       -Wconversion, 
+#       -Wsurprising, 
+#       -Wc-binding-type, 
+#       -Wintrinsics-std, 
+#       -Wno-tabs, 
+#       -Wintrinsic-shadow, 
+#       -Wline-truncation, 
+#       -Wtarget-lifetime, 
+#       -Wreal-q-constant 
+#       -Wunused
+#
+# -Wextra includes:
+#       -Wcompare-reals 
+#       -Wunused-parameter
+#################################################
+

@@ -1,0 +1,47 @@
+process help=*
+ PARM INP     TYPE=STRING
+ PARM PREFIX  TYPE=STRING
+ END-PROC
+
+! HELP TEXT FOR GTDEL
+.TITLE
+GTDEL - Program for deleting key/values from a VICAR GeoTIFF label.
+.HELP
+PURPOSE
+     GTDEL is a VICAR applications program that deletes label items
+     with a specified prefix from a GeoTIFF label.
+     
+CALL
+     gtdel INP PREFIX
+  WHERE:
+     INP           is the input VICARGT image file to be updated.
+     PREFIX        is the label name prefix of the item(s) to be deleted.
+
+.PAGE
+RESTRICTIONS
+------------
+
+INP and PREFIX must be less than 100 characters long.
+
+REFERENCES
+
+     Ritter, N., Ruth, M. "GeoTIFF Format Specification, Revision 1.0",
+     JPL Cartographic Applications Group.
+     
+.PAGE
+WRITTEN BY:            W. L. Bunch
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+Mon Apr 11 2005 Initial version
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+
+.PAGE
+Original Programmer:  W. L. Bunch
+Cognizant Programmer: W. L. Bunch
+.LEVEL1
+.VAR INP
+Input file to be modified.
+.VAR PREFIX
+Label key prefix to be matched against GeoTIFF item keys in INP.
+.END

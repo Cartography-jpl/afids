@@ -1,0 +1,6 @@
+$ vpack polygeov.com -mixed -
+	-s polygeov.c -
+	-i polygeov.imake -
+	-p polygeov.pdf -
+	-t tstpolygeov.pdf
+$ Exit

@@ -1,0 +1,188 @@
+procedure help=*
+parm imout type=string
+parm dted type=string
+parm elvtab type=string
+
+parm sensE1 type=real
+parm sensN1 type=real
+parm senselv1 type=real
+parm sensE2 type=real
+parm sensN2 type=real
+parm senselv2 type=real
+
+parm nah type=int
+parm nav type=int
+
+parm regelv type=real
+
+parm ecor1 type=real default=0.11
+parm ecor2 type=real default=0.00
+
+local tnl type=int
+local tns type=int
+local nahp1 int
+local navp1 int
+local nahxnav int
+
+local iloop int
+local avlat real
+local avlat2 real
+local coslat real
+local strpixdeg string
+local pixdeg real
+local meterpix real
+
+body
+
+!   calculate meters per pixel, use power series for cosine
+
+gt2tcl &imout val=pixdeg keyword=MODELPIXELSCALETAG vtype=8 sequence=1
+write "pixdeg-1 &pixdeg"
+let pixdeg = 1.0/pixdeg 
+write "pixdeg &pixdeg"
+
+let avlat = (sensN1+sensN2)*0.5
+let avlat = avlat*3.141592/180.0
+let avlat2 = avlat*avlat
+let coslat = 1.0-avlat2/2.0+avlat2*avlat2/24.0
+let meterpix = 60.0*1852.0*coslat/pixdeg
+write "pixdeg &pixdeg avlat &avlat coslat &coslat meterpix &meterpix"
+
+!   generate the grid
+
+lab2tcl &imout v1=tnl v2=tns keyword=(nl,ns) 'system
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+
+ibis-gen &elvtab version="ibis-2" org="column"  nc=30 nr=&nahxnav deffmt=DOUB
+mf3 &elvtab func=("c1=(@int((@index-1)/&nahp1)/&nav)*&tnl+0.5$", +
+         "c2=(@mod(@index+&nah,&nahp1)/&nah)*&tns+0.5")
+pixmap (&elvtab,&imout) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+
+! dropping perpendicular from grid to track of satellite
+! approximation - perpendicular in pixel space not on sphere
+
+mf3 &elvtab func=("c3=(&sensE2)-(&sensE1)$c4=(&sensN2)-(&sensN1)$", +
+      "c7=c5-(&sensE1)$c8=c6-(&sensN1)$c9=(c3*c7+c4*c8)/(c3*c3+c4*c4)")
+mf3 &elvtab func="c11=c3*c9+(&sensE1)$c12=c4*c9+(&sensN1)$c10=@atan2(c12-c6,c11-c5)"
+mf3 &elvtab func=("c13=&senselv1+(&senselv2-(&senselv1))*", +
+      "((c12-(&sensN1))/(&sensN2-(&sensN1)))")
+mf3 &elvtab func="c15=c1$c16=c2$c18=&regelv"
+
+! looping until residual gone, seems like three loops really does it
+  
+let iloop = 1
+loop
+   pixmap (&elvtab,&imout) mapcol=(19,20) pixcol=(15,16) 'pixtomap
+   gtproj (&elvtab,&imout,&dted) incol=(19,20) outcol=(28,29)
+   pixmap (&elvtab,&dted) mapcol=(28,29) pixcol=(24,25) 'maptopix
+   getzval (&dted,&elvtab) cols=(24,25,30) win=2 'dted
+   mf3 &elvtab func="c17=c30-c18$@dist(c11,c12,c19,c20,c21)"
+   mf3 &elvtab func=("c26=c21/6371000$c27=@atan2(c21,c13)-c26$", +
+        "c22=c17*@tan(c27)$c23=@abs(c22)$@vmax(c23)")
+   
+   !ibis-list &elvtab nr=10 sr=50
+   !ibis-list &elvtab nr=10 sr=50 cols=(17,18,19,20,26,27) +
+   !csiz=(22,22,22,22,22,22) +
+   !cfor="%22.15f%22.15f%22.12f%22.12f%22.12f%22.12f"
+  
+   !reset the correction and the elevation for next iteration
+   !sin() has - because line direction opposite to latitude direction
+   mf3 &elvtab func=("c15=c15-c22*@sin(c10)/(&meterpix)$", +
+           "c16=c16+c22*@cos(c10)/(&meterpix)$c18=c18+c17")
+   let iloop = iloop+1
+if (iloop>4) goto loop1done
+end-loop
+loop1done>
+write "loop 1 done"
+
+! post iteration correction in column 14
+
+ibis-l &elvtab cols=(18,1,2,15,16) nr=30 +
+    cfor="%12.5f%12.5f%12.5f%12.5f%12.5f"
+mf3 &elvtab func="c14=(&ecor1)+(&ecor2)*(c18-&regelv)/&regelv"
+mf3 &elvtab func="c15=c15+c14*(c15-c1)$c16=c16+c14*(c16-c2)"
+ibis-l &elvtab cols=(14,1,2,15,16) nr=30 +
+    cfor="%12.5f%12.5f%12.5f%12.5f%12.5f"
+
+end-proc
+.TITLE
+elvcor - correct for elevation offset
+.HELP
+PURPOSE
+     Calculate elevation offsets for a satellite image using a
+DTED elevation image and a simple description of the satellite
+path relative to the image.
+	   
+CALL
+     The elevation correction is in an IBIS file (the name of the 
+file is the third parameter).  It is formatted for GTWARPXD,
+meaning that only the name of the file and the four columns
+that contain (newl,news,oldl,olds) need to be passed to GTWARPXD.
+The four columns are (1,2,15,16).
+
+See avwarp.pdf for a sample of use.  A copy has been saved in the
+elvcor.com file for this procedure.
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+The reference output image is presently required to be in
+geographic coordinates (Platte Carree).  The dted doesn't 
+have to be geographic.  The parameters sensE1, ... have to
+be in geographic coordinate (lon-lat)
+
+Original Programmer: A. L. Zobrist, 12 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 4 Dec, 2001
+Last change by: A. L. Zobrist, 16 Nov, 2002: finally got sign right for c22 calc 
+Last change by: A. L. Zobrist, 17 Feb, 2003: shift in rotated direction 
+
+.LEVEL1
+.VARI IMOUT
+image to be corrected, uses Geo-
+TIFF label information from it
+.VARI DTED
+elevation file with GeoTIFF
+label covering area, in m.
+.VARI ELVTAB
+IBIS table generated, correction
+in cols (1,2,15,16) for gtwarpxd
+.VARI SENSE1
+sensor lon, start of track
+see help 2
+.VARI SENSN1
+sensor lat, start of track
+.VARI SENSELV1
+sensor elev (m), start of track
+.VARI SENSE2
+sensor lon, end of track
+.VARI SENSN2
+sensor lat, end of track
+.VARI SENSELV2
+sensor elev (m), end of track
+.VARI NAH
+Number of Areas Horizontally for
+grid used in geom operatrions
+.VARI NAV
+Number of Areas Vertically for
+grid used in geom operatrions
+.LEVEL2
+.VARI SENSE1
+sensor east, start of track
+presently only longitudeallowed
+.VARI SENSN1
+sensor north, start of track
+presently only latitudeallowed
+.VARI SENSE2
+sensor east, end of track
+presently only longitudeallowed
+.VARI SENSN2
+sensor north, end of track
+presently only latitudeallowed
+.END

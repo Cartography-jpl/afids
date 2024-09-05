@@ -1,0 +1,794 @@
+tstinsert
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+write "afidsroot = /home/rjb/vicar_afids/install/afids"
+afidsroot = /home/rjb/vicar_afids/install/afids
+write "aftestdata = /media/sf_raid3/test_data"
+aftestdata = /media/sf_raid3/test_data
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+gen OUT=BYTE.DAT NL=10 NS=10
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list INP=BYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5       4   5   6   7   8   9  10  11  12  13
+      6       5   6   7   8   9  10  11  12  13  14
+      7       6   7   8   9  10  11  12  13  14  15
+      8       7   8   9  10  11  12  13  14  15  16
+      9       8   9  10  11  12  13  14  15  16  17
+     10       9  10  11  12  13  14  15  16  17  18
+label-list INP=BYTE.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File BYTE.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+insert INP=BYTE.DAT SIZE=(3,3,5,5) OUT=INSBYTE.DAT
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+list INP=INSBYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+     Samp     1       3       5
+   Line
+      1       4   5   6   7   8
+      2       5   6   7   8   9
+      3       6   7   8   9  10
+      4       7   8   9  10  11
+      5       8   9  10  11  12
+label-list INP=INSBYTE.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSBYTE.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                5 lines per band
+                5 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+ 
+************************************************************
+insert INP=BYTE.DAT OUT=INSBYTE.DAT LINE=5
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         11
+OUTPUT NS=         10
+LINE INSERTED          5
+list INP=INSBYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5       4   5   6   7   8   9  10  11  12  13
+      6       4   5   6   7   8   9  10  11  12  13
+      7       5   6   7   8   9  10  11  12  13  14
+      8       6   7   8   9  10  11  12  13  14  15
+      9       7   8   9  10  11  12  13  14  15  16
+     10       8   9  10  11  12  13  14  15  16  17
+     11       9  10  11  12  13  14  15  16  17  18
+insert INP=BYTE.DAT OUT=INSBYTE.DAT 'NOAVG LINE=5
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         11
+OUTPUT NS=         10
+LINE INSERTED          5
+list INP=INSBYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+
+      6       4   5   6   7   8   9  10  11  12  13
+      7       5   6   7   8   9  10  11  12  13  14
+      8       6   7   8   9  10  11  12  13  14  15
+      9       7   8   9  10  11  12  13  14  15  16
+     10       8   9  10  11  12  13  14  15  16  17
+     11       9  10  11  12  13  14  15  16  17  18
+label-list INP=INSBYTE.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSBYTE.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                11 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+ 
+************************************************************
+insert INP=BYTE.DAT OUT=INSBYTE.DAT DN=128 LINE=5 'TRUNC
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+LINE INSERTED          5
+list INP=INSBYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       3   4   5   6   7   8   9  10  11  12
+      5     128 128 128 128 128 128 128 128 128 128
+      6       4   5   6   7   8   9  10  11  12  13
+      7       5   6   7   8   9  10  11  12  13  14
+      8       6   7   8   9  10  11  12  13  14  15
+      9       7   8   9  10  11  12  13  14  15  16
+     10       8   9  10  11  12  13  14  15  16  17
+label-list INP=INSBYTE.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSBYTE.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in BYTE format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:44 2016 ----
+ 
+************************************************************
+insert INP=BYTE.DAT OUT=INSBYTE.DAT LINE=(13,3,8,4)
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         14
+OUTPUT NS=         10
+LINE INSERTED          3
+list INP=INSBYTE.DAT
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:44 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp     1       3       5       7       9
+   Line
+      1       0   1   2   3   4   5   6   7   8   9
+      2       1   2   3   4   5   6   7   8   9  10
+      3       2   3   4   5   6   7   8   9  10  11
+      4       2   3   4   5   6   7   8   9  10  11
+      5       3   4   5   6   7   8   9  10  11  12
+      6       4   5   6   7   8   9  10  11  12  13
+      7       5   6   7   8   9  10  11  12  13  14
+      8       6   7   8   9  10  11  12  13  14  15
+      9       7   8   9  10  11  12  13  14  15  16
+     10       8   9  10  11  12  13  14  15  16  17
+     11       9  10  11  12  13  14  15  16  17  18
+let $echo="no"
+ 
+-------- HALF DATA ------
+ 
+gen OUT=HALF.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=HALF
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list INP=HALF.DAT
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5       400   500   600   700   800   900  1000  1100  1200  1300
+      6       500   600   700   800   900  1000  1100  1200  1300  1400
+      7       600   700   800   900  1000  1100  1200  1300  1400  1500
+      8       700   800   900  1000  1100  1200  1300  1400  1500  1600
+      9       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+     10       900  1000  1100  1200  1300  1400  1500  1600  1700  1800
+label-list INP=HALF.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File HALF.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+insert INP=HALF.DAT SIZE=(3,3,5,6) OUT=INSHALF.DAT
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+list INP=INSHALF.DAT
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp       1     2     3     4     5     6
+   Line
+      1       400   500   600   700   800   900
+      2       500   600   700   800   900  1000
+      3       600   700   800   900  1000  1100
+      4       700   800   900  1000  1100  1200
+      5       800   900  1000  1100  1200  1300
+label-list INP=INSHALF.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSHALF.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                5 lines per band
+                6 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+ 
+************************************************************
+insert INP=HALF.DAT OUT=INSHALF.DAT LINE=5
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         11
+OUTPUT NS=         10
+LINE INSERTED          5
+list INP=INSHALF.DAT
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5       350   450   550   650   750   850   950  1050  1150  1250
+      6       400   500   600   700   800   900  1000  1100  1200  1300
+      7       500   600   700   800   900  1000  1100  1200  1300  1400
+      8       600   700   800   900  1000  1100  1200  1300  1400  1500
+      9       700   800   900  1000  1100  1200  1300  1400  1500  1600
+     10       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+     11       900  1000  1100  1200  1300  1400  1500  1600  1700  1800
+label-list INP=INSHALF.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSHALF.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                11 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+ 
+************************************************************
+insert INP=HALF.DAT OUT=INSHALF.DAT DN=1234 LINE=5 'TRUNC
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+LINE INSERTED          5
+list INP=INSHALF.DAT
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp       1     2     3     4     5     6     7     8     9    10
+   Line
+      1         0   100   200   300   400   500   600   700   800   900
+      2       100   200   300   400   500   600   700   800   900  1000
+      3       200   300   400   500   600   700   800   900  1000  1100
+      4       300   400   500   600   700   800   900  1000  1100  1200
+      5      1234  1234  1234  1234  1234  1234  1234  1234  1234  1234
+      6       400   500   600   700   800   900  1000  1100  1200  1300
+      7       500   600   700   800   900  1000  1100  1200  1300  1400
+      8       600   700   800   900  1000  1100  1200  1300  1400  1500
+      9       700   800   900  1000  1100  1200  1300  1400  1500  1600
+     10       800   900  1000  1100  1200  1300  1400  1500  1600  1700
+label-list INP=INSHALF.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSHALF.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+ 
+************************************************************
+let $echo="no"
+ 
+-------- FULL DATA ------
+ 
+gen OUT=FULL.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=FULL
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list INP=FULL.DAT
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0        100        200        300        400        500        600        700        800        900
+      2            100        200        300        400        500        600        700        800        900       1000
+      3            200        300        400        500        600        700        800        900       1000       1100
+      4            300        400        500        600        700        800        900       1000       1100       1200
+      5            400        500        600        700        800        900       1000       1100       1200       1300
+      6            500        600        700        800        900       1000       1100       1200       1300       1400
+      7            600        700        800        900       1000       1100       1200       1300       1400       1500
+      8            700        800        900       1000       1100       1200       1300       1400       1500       1600
+      9            800        900       1000       1100       1200       1300       1400       1500       1600       1700
+     10            900       1000       1100       1200       1300       1400       1500       1600       1700       1800
+label-list INP=FULL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File FULL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in FULL format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+insert INP=FULL.DAT SIZE=(3,3,5,6) OUT=INSFULL.DAT
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+list INP=INSFULL.DAT
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+     Samp            1          2          3          4          5          6
+   Line
+      1            400        500        600        700        800        900
+      2            500        600        700        800        900       1000
+      3            600        700        800        900       1000       1100
+      4            700        800        900       1000       1100       1200
+      5            800        900       1000       1100       1200       1300
+label-list INP=INSFULL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSFULL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in FULL format from a X86-LINUX host
+                1 bands
+                5 lines per band
+                6 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+ 
+************************************************************
+insert INP=FULL.DAT OUT=INSFULL.DAT LINE=5
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         11
+OUTPUT NS=         10
+LINE INSERTED          5
+list INP=INSFULL.DAT
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0        100        200        300        400        500        600        700        800        900
+      2            100        200        300        400        500        600        700        800        900       1000
+      3            200        300        400        500        600        700        800        900       1000       1100
+      4            300        400        500        600        700        800        900       1000       1100       1200
+      5            350        450        550        650        750        850        950       1050       1150       1250
+      6            400        500        600        700        800        900       1000       1100       1200       1300
+      7            500        600        700        800        900       1000       1100       1200       1300       1400
+      8            600        700        800        900       1000       1100       1200       1300       1400       1500
+      9            700        800        900       1000       1100       1200       1300       1400       1500       1600
+     10            800        900       1000       1100       1200       1300       1400       1500       1600       1700
+     11            900       1000       1100       1200       1300       1400       1500       1600       1700       1800
+label-list INP=INSFULL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSFULL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in FULL format from a X86-LINUX host
+                1 bands
+                11 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+ 
+************************************************************
+insert INP=FULL.DAT OUT=INSFULL.DAT DN=1234 LINE=5 'TRUNC
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+LINE INSERTED          5
+list INP=INSFULL.DAT
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:45 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+     Samp            1          2          3          4          5          6          7          8          9         10
+   Line
+      1              0        100        200        300        400        500        600        700        800        900
+      2            100        200        300        400        500        600        700        800        900       1000
+      3            200        300        400        500        600        700        800        900       1000       1100
+      4            300        400        500        600        700        800        900       1000       1100       1200
+      5           1234       1234       1234       1234       1234       1234       1234       1234       1234       1234
+      6            400        500        600        700        800        900       1000       1100       1200       1300
+      7            500        600        700        800        900       1000       1100       1200       1300       1400
+      8            600        700        800        900       1000       1100       1200       1300       1400       1500
+      9            700        800        900       1000       1100       1200       1300       1400       1500       1600
+     10            800        900       1000       1100       1200       1300       1400       1500       1600       1700
+label-list INP=INSFULL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSFULL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in FULL format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:45 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+ 
+************************************************************
+let $echo="no"
+ 
+-------- REAL DATA ------
+ 
+gen OUT=REAL.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=REAL
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+list INP=REAL.DAT
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+     Samp             1           2           3           4           5           6           7           8           9          10
+   Line
+      1       0.000E+00   1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02
+      2       1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03
+      3       2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03
+      4       3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03
+      5       4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03
+      6       5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03
+      7       6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03
+      8       7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03
+      9       8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03   1.700E+03
+     10       9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03   1.700E+03   1.800E+03
+label-list INP=REAL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File REAL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in REAL format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+ 
+************************************************************
+insert INP=REAL.DAT SIZE=(3,3,5,6) OUT=INSREAL.DAT
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+list INP=INSREAL.DAT
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+     Samp             1           2           3           4           5           6
+   Line
+      1       4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02
+      2       5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03
+      3       6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03
+      4       7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03
+      5       8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03
+label-list INP=INSREAL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSREAL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in REAL format from a X86-LINUX host
+                1 bands
+                5 lines per band
+                6 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+ 
+************************************************************
+insert INP=REAL.DAT OUT=INSREAL.DAT LINE=5
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=         11
+OUTPUT NS=         10
+LINE INSERTED          5
+list INP=INSREAL.DAT
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:47 2016
+     Samp             1           2           3           4           5           6           7           8           9          10
+   Line
+      1       0.000E+00   1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02
+      2       1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03
+      3       2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03
+      4       3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03
+      5       3.505E+02   4.505E+02   5.505E+02   6.505E+02   7.505E+02   8.505E+02   9.505E+02   1.050E+03   1.150E+03   1.250E+03
+      6       4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03
+      7       5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03
+      8       6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03
+      9       7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03
+     10       8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03   1.700E+03
+     11       9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03   1.700E+03   1.800E+03
+label-list INP=INSREAL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSREAL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in REAL format from a X86-LINUX host
+                1 bands
+                11 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:47 2016 ----
+ 
+************************************************************
+insert INP=REAL.DAT OUT=INSREAL.DAT DN=1234 LINE=5 'TRUNC
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+LINE INSERTED          5
+list INP=INSREAL.DAT
+Beginning VICAR task list
+
+   REAL     samples are interpreted as  REAL*4  data
+ Task:GEN       User:rjb       Date_Time:Wed Jul 27 00:19:46 2016
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:47 2016
+     Samp             1           2           3           4           5           6           7           8           9          10
+   Line
+      1       0.000E+00   1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02
+      2       1.000E+02   2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03
+      3       2.000E+02   3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03
+      4       3.000E+02   4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03
+      5       1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03   1.234E+03
+      6       4.000E+02   5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03
+      7       5.000E+02   6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03
+      8       6.000E+02   7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03
+      9       7.000E+02   8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03
+     10       8.000E+02   9.000E+02   1.000E+03   1.100E+03   1.200E+03   1.300E+03   1.400E+03   1.500E+03   1.600E+03   1.700E+03
+label-list INP=INSREAL.DAT
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File INSREAL.DAT ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in REAL format from a X86-LINUX host
+                1 bands
+                10 lines per band
+                10 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: rjb -- Wed Jul 27 00:19:46 2016 ----
+IVAL=0.0
+SINC=100.0
+LINC=100.0
+BINC=1.0
+MODULO=0.0
+---- Task: INSERT -- User: rjb -- Wed Jul 27 00:19:47 2016 ----
+ 
+************************************************************
+let $echo="no"
+ 
+ New test of image > 2 GB
+ 
+ test in insert of line 5005 in large image
+ 
+insert ct/pre_reg.hlf bigins.img DN=9234 LINE=5005
+Beginning VICAR task insert
+** INSERT - 12-Jul-2016 (64-bit) - rjb
+OUTPUT NL=      32886
+OUTPUT NS=      38550
+LINE INSERTED       5005
+list bigins.img  size=(5000,5000,10,10)
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:TASK      User:tllogan   Date_Time:Wed Sep 18 17:16:51 2013
+ Task:INSERT    User:rjb       Date_Time:Wed Jul 27 00:19:47 2016
+     Samp    5000  5001  5002  5003  5004  5005  5006  5007  5008  5009
+   Line
+   5000      3158  3158  3158  3162  3170  3183  3183  3179  3192  3179
+   5001      3141  3141  3145  3170  3183  3175  3170  3183  3196  3183
+   5002      3170  3158  3158  3166  3166  3175  3179  3170  3166  3187
+   5003      3145  3162  3153  3162  3170  3170  3170  3166  3162  3179
+   5004      3187  3170  3158  3162  3170  3175  3183  3179  3166  3175
+   5005      9234  9234  9234  9234  9234  9234  9234  9234  9234  9234
+   5006      3170  3162  3153  3158  3166  3170  3179  3179  3166  3175
+   5007      3179  3183  3170  3162  3162  3179  3183  3175  3166  3158
+   5008      3158  3158  3162  3162  3170  3192  3187  3196  3175  3166
+   5009      3162  3162  3162  3162  3166  3166  3175  3179  3179  3166
+let $echo="no"
+exit
+slogoff

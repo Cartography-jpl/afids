@@ -1,0 +1,22 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = stretch
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#CPPFLAGS += -I$(AFIDSTOP)/include -I.
+#FFLAGS += -Wunused -Wuninitialized -Wsurprising
+
+#==============================================================
+# Extra files stretch depends on.
+
+STRETCH_SOURCE = manual_stretch.F hist_params.F get_histogram.F
+STRETCH_SOURCE += exclude_histogram.F histogram_stretch.F
+STRETCH_SOURCE += bimodal.F hpeak.F astretch.F post_stretch.F
+STRETCH_SOURCE += print_histogram.F stati.F
+
+stretch: $(STRETCH_SOURCE:%.F=%._f.o)
+
+

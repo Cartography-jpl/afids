@@ -1,0 +1,70 @@
+PROCESS       HELP=*
+PARM INP      TYPE=(STRING,99)
+PARM DCOLS    TYPE=INTEGER COUNT=5 DEFAULT=(1,2,3,4,5)
+PARM SCOL     TYPE=INTEGER DEFAULT=6
+PARM RPCTYPE  TYPE=(STRING,2) valid=("A","B")
+END-PROC
+.TITLE
+VICAR Program rpcsccub - sets up scale and offset for a "cube"
+.HELP
+PURPOSE
+
+     rpcsccub reads an IBIS file of rpc data points (in the usual
+     five columns (lon,lat,elev,line,samp) and puts the scales
+     and offsets for each of the five variables into another
+     column of the file (15 records) in the usual IBIS format
+     for rpc scales.
+     
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     rpcsccub INP=A DCOLS=(3,4,5,6,7) SCOL=11 RPCTYPE="B"
+     
+     where
+
+     A           is an IBIS file with rpc data in cols 3,,7
+     DCOLS       are the columns of A containing (lon,lat,elev,
+                 line,samp)
+     SCOL        is the column to receive the scales and offsets
+                 in the usual IBIS format.
+     RPCTYPE     is "A" or "B" according to desired rpc format.
+.PAGE
+OPERATION
+   The extrema of each variable sets the scale and offset by
+   solving linearly in the fashion required by the rpc
+   standard.
+   
+.PAGE
+
+TIMING
+
+     less than a second.
+     
+RESTRICTIONS
+
+   The file should have at least 100 points and at least five
+   elevation values should be represented multiple times.
+
+
+.PAGE
+WRITTEN BY:            A. L. Zobrist, 06 December 2005
+
+COGNIZANT PROGRAMMER:  A. L. Zobrist
+
+REVISIONS: 
+  Fri Dec 28 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.LEVEL1
+.VAR INP
+IBIS file of (lon,lat,elv,
+line,samp) points with extra
+column for scale
+.VAR DCOLS
+columns for (lon,lat,elv,
+line,samp)
+.VAR SCOL
+output column for scale/offsets
+.VAR RPCTYPE
+A - for type A RPC format (nitf)
+B - for type B RPC format (QB)
+.END

@@ -1,0 +1,51 @@
+procedure
+
+local pre20sig real
+local post20sig real
+local pre30sig real
+local post30sig real
+
+local pre10sig real
+local post10sig real
+local pre40sig real
+local post40sig real
+
+local pre50sig real
+local post50sig real
+local pre60sig real
+local post60sig real
+
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="return"
+let $echo="yes"
+
+
+hist pre20 'exclude sigma=pre20sig mode=nohist
+hist post20 'exclude sigma=post20sig mode=nohist
+hist pre30 'exclude sigma=pre30sig mode=nohist
+hist post30 'exclude sigma=post30sig mode=nohist
+
+hist pre10 'exclude sigma=pre10sig mode=nohist
+hist post10 'exclude sigma=post10sig mode=nohist
+hist pre40 'exclude sigma=pre40sig mode=nohist
+hist post40 'exclude sigma=post40sig mode=nohist
+
+hist pre50 'exclude sigma=pre50sig mode=nohist
+hist post50 'exclude sigma=post50sig mode=nohist
+hist pre60 'exclude sigma=pre60sig mode=nohist
+hist post60 'exclude sigma=post60sig mode=nohist
+
+cvdnorm (pre10s,pre20s,pre30s,pre40s,pre50s,pre60s, +
+   post10s,post20s,post30s,post40s,post50s,post60s) +
+   out=(nxpre1,nxpre2,nxpre3,nxpre4,nxpre5,nxpre6, +
+   nxpost1,nxpost2,nxpost3,nxpost4,nxpost5,nxpost6) +
+   sigma=(&pre10sig,&pre20sig,&pre30sig,&pre40sig,&pre50sig,&pre60sig, +
+   &post10sig,&post20sig,&post30sig,&post40sig,&post50sig,&post60sig) +
+   printls=(1026,1064) window=11 donut=3
+
+theend>
+end-proc

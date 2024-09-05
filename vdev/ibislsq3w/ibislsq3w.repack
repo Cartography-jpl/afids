@@ -1,0 +1,7 @@
+$ vpack ibislsq3w.com -mixed -
+	-s ibislsq3w.c ibishelper.c ibishelper.h lsqequation.c lsqequation.h -
+	   lsqibis.c lsqibis.h -
+	-i ibislsq3w.imake -
+	-p ibislsq3w.pdf -
+	-t tstibislsq3w.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack mosmaster.com -mixed -
+	-p mosmaster.pdf ingest.pdf quadmos.pdf zprocess.pdf mosfth.pdf -
+	   zprcheck.pdf zprzip.pdf mosanal.pdf -
+	-t austst.pdf austst_params lsatlog2.pdf lsatlog10x.pdf bigbcall.pdf -
+	   mosnorm.pdf mosframe.pdf
+$ Exit

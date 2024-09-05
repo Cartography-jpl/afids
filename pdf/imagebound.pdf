@@ -1,0 +1,7 @@
+process help=*
+parm inp type=string
+parm min_lat type=name
+parm max_lat type=name
+parm min_lon type=name
+parm max_lon type=name
+end-proc

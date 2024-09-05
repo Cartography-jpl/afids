@@ -1,0 +1,153 @@
+!  Procedure to test the procedure IMGSTAT
+procedure
+refgbl $echo
+refgbl $autousage
+! Jun 22, 2012 - RJB
+! TEST SCRIPT FOR IMGSTAT
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list   
+! 
+! parameters:
+!   <none>
+!
+! Requires NO external test data: 
+
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="yes"
+!BYTE
+gen a 10 10 
+list a
+! Test 1
+imgstat a b 'mean window=3
+list b
+! Test 2
+imgstat a b 'min window=3
+list b
+! Test 3
+imgstat a b 'min window=5
+list b
+! Test 4
+imgstat a b 'max window=3
+list b
+! Test 5
+imgstat a b 'sd window=3
+list b
+! Test 6
+imgstat a b 'mssd window=3
+list b
+! Test 7
+imgstat a (b,c,d,e,f) 'mean 'min 'max 'sd 'mssd window=3
+list b
+list c
+list d
+list e
+list f
+! Test 8
+imgstat a (b,c)  'min 'max window=3
+list b
+list c
+!HALF
+gen h 10 10 ival=100 linc=10 sinc=10 format=HALF
+list h
+! Test 9
+imgstat h i 'mean window=3
+list i
+! Test 10
+imgstat h i 'min window=3
+list i
+! Test 11
+imgstat h i 'min window=5
+list i
+! Test 12
+imgstat h i 'max window=3
+list i
+! Test 13
+imgstat h i 'sd window=3
+list i
+! Test 14
+imgstat h i 'mssd window=3
+list i
+! Test 15
+imgstat h (i,j,k,l,m) 'mean 'min 'max 'sd 'mssd window=3
+list i
+list j
+list k
+list l
+list m
+! Test 16
+imgstat h (i,j)  'min 'max window=3
+list i
+list j
+
+!FULL
+gen f 10 10 ival=10000 linc=1000 sinc=1000 format=FULL
+list f
+! Test 17
+imgstat f g 'mean window=3
+list g
+! Test 18
+imgstat f g 'min window=3
+list g
+! Test 19
+imgstat f g 'min window=5
+list g
+! Test 20
+imgstat f g 'max window=3
+list g
+! Test 21
+imgstat f g 'sd window=3
+list g
+! Test 22
+imgstat f g 'mssd window=3
+list g
+! Test 23
+imgstat f (g,h,i,j,k) 'mean 'min 'max 'sd 'mssd window=3
+list g
+list h
+list i
+list j 
+list k
+! Test 24
+imgstat f (g,h)  'min 'max window=3
+list g
+list h
+
+!REAL
+gen r 10 10 ival=10000.0 linc=1000 sinc=1000 format=REAL
+list r
+! Test 25
+imgstat r s 'mean window=3
+list s
+! Test 26
+imgstat r s 'min window=3
+list s
+! Test 27
+imgstat r s 'min window=5
+list s
+! Test 28
+imgstat r s 'max window=3
+list s
+! Test 29
+imgstat r s 'sd window=3
+list s
+! Test 30
+imgstat r s 'mssd window=3
+list s
+! Test 31
+imgstat r (s,t,u,v,w) 'mean 'min 'max 'sd 'mssd window=3
+list s
+list t
+list u
+list v 
+list w
+! Test 32
+imgstat r (s,t)  'min 'max window=3
+list s
+list t
+
+let $echo="no"
+end-proc

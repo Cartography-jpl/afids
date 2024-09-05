@@ -1,0 +1,384 @@
+procedure	! mos_5m_elv
+
+! mos_5m_elv lat=32.8 long=64.5 lat2=33.0 long2=65.0 fname=afgh_5m_aoi7.hlf
+! mos_5m_elv fname=afgh_5m_aoi22.hlf refimg=region6.img (uses lat/long extents of region6.img)
+
+parm lat real def=-999
+parm long real def=-999
+parm lat2 real def=-999
+parm long2 real def=-999
+parm fname string
+parm expansion real def=0.0 valid=(0:1.0)	! fraction of a degree to expand the elevation file <=1.0
+parm refimg string def="none"
+parm disp string valid=("n","y") default="n"	! Default is to NOT display the final output image
+!								===
+
+!	Check for necessary files and set path to proper ELV directory
+
+local chunk real init=26	! # of files per fthmos procedure call
+local ELV_db string init = "afgh_5m_elv_db.int"
+local ELV_dir string
+local ELV_path string init = "./"
+local ELV_type integer init=5
+local midlat real
+local midlong real
+local all_ELVs string
+local valid integer
+local img string init=".img"
+local tiny string init="_tiny"
+local int string init=".int"
+local plus string init=" +"
+local avglat real
+local avglong real
+local minlat real
+local maxlat real
+local minlong real
+local maxlong real
+local inc integer
+local num integer
+local ELVs1 string init=""
+local ELVs2 string init=""
+local ELVs3 string init=""
+local ELVs4 string init=""
+local space string init=" "
+local uscore string init="_"
+local count integer init=0
+local final_ELV string
+local found integer
+local found2 integer
+local found3 integer
+local found4 integer
+local loop_count integer
+local nf string init="_nf"
+local failed string init="_failed"
+local temp_ELV_path string
+local elv_list string
+local v1 real
+local v2 real
+local v3 real
+local v4 real
+local sl integer
+local ss integer
+local el integer
+local es integer
+local nl integer
+local ns integer
+local ftype integer
+local fsubtype integer
+local total_files integer init=0
+local num_mos real
+local inum_mos integer
+local kinc integer
+local sinc integer
+local nrows integer
+local elv_count integer
+
+local afidsvdevdata string
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+
+write "mos_5m_elv version Sat May  7 2011"
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+
+let ELV_dir="&afidsvdevdata/cedar_beach"
+let ELV_db="&afidsvdevdata/cedar_beach/&ELV_db"
+
+!	Get the lat/long extents of the coverage and report
+ibis-copy &ELV_db aaaaa incol=(2,3,4,5) outcol=(1,2,3,4) nc=5
+
+!	Latitude
+mf3 aaaaa func="c5=c1$@vmin(c5)"
+ibis2tcl aaaaa minlat vartype=0 varcnt=1 ibisloc=(1,5)
+mf3 aaaaa func="c5=c3$@vmin(c5)"
+ibis2tcl aaaaa v1 vartype=0 varcnt=1 ibisloc=(1,5)
+if (v1<minlat) let minlat=v1
+mf3 aaaaa func="c5=c1$@vmax(c5)"
+ibis2tcl aaaaa maxlat vartype=0 varcnt=1 ibisloc=(1,5)
+mf3 aaaaa func="c5=c3$@vmax(c5)"
+ibis2tcl aaaaa v1 vartype=0 varcnt=1 ibisloc=(1,5)
+if (v1>maxlat) let maxlat=v1
+
+!	longitude
+mf3 aaaaa func="c5=c2$@vmin(c5)"
+ibis2tcl aaaaa minlong vartype=0 varcnt=1 ibisloc=(1,5)
+mf3 aaaaa func="c5=c4$@vmin(c5)"
+ibis2tcl aaaaa v1 vartype=0 varcnt=1 ibisloc=(1,5)
+if (v1<minlong) let minlong=v1
+mf3 aaaaa func="c5=c2$@vmax(c5)"
+ibis2tcl aaaaa maxlong vartype=0 varcnt=1 ibisloc=(1,5)
+mf3 aaaaa func="c5=c4$@vmax(c5)"
+ibis2tcl aaaaa v1 vartype=0 varcnt=1 ibisloc=(1,5)
+if (v1>maxlong) let maxlong=v1
+
+write " "
+write "Lat / Long extents of the elevation database:"
+write " "
+write "Min lat: &minlat / Min long: &minlong"
+write "Max lat: &maxlat / Max long: &maxlong"
+write " "
+write "======================================================================"
+write " "
+if ((lat=-999)and(long=-999))
+  if (refimg="none") goto theend  ! perhaps the lat/long extents come from a reference image
+  file2tcl &refimg val=found ftype=ftype fsubtype=fsubtype
+  if (found=0)
+    write "Reference image &refimg not found"
+    goto theend
+  end-if
+  if (ftype<>1)
+    write "The reference image is not a VICAR image."
+    goto theend
+  end-if
+  if (fsubtype<>4)
+    write "The reference image does not contain the required geoTIFF information."
+    goto theend
+  end-if
+!	Extract the lat/long values from the min/max of the reference image
+  lab2tcl &refimg v1=nl v2=ns keyword=(nl,ns) 'system
+  write " "
+  write "Reference image &refimg nl: &nl ns: &ns"
+  ibis-gen temp1 nr=2 nc=4 datacols=(1,2,3,4) data=(1,1,0,0,&nl,&ns,0,0)
+  pixmap (temp1,&refimg) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+  ibis2tcl temp1 lat long lat2 long2 vartype=(0,0,0,0) varcnt=4 +
+    ibisloc=(1,4,1,3,2,4,2,3)
+  write " "
+  write "lat: &lat long: &long"
+  write "lat2: &lat2 long2: &long2"
+end-if
+
+!	If 2 lat/long values are supplied then we 
+!	need to generate an AOI image
+if (lat2<>(-999))
+  if (fname="")
+    write "Missing output final filename ... aborting ..."
+    write " "
+    goto theend
+  end-if
+  file2tcl &fname val=found
+  if (found=1)
+    write " "
+    write "File &fname already created ... aborting ..."
+    write " "
+    goto theend
+  end-if
+end-if
+
+if (lat > lat2)
+  let maxlat = lat
+  let minlat = lat2
+else
+  let maxlat = lat2
+  let minlat = lat
+end-if
+if (long > long2)
+  let maxlong = long
+  let minlong = long2
+else
+  let maxlong = long2
+  let minlong = long
+end-if
+
+let minlat = minlat - &expansion
+let minlong = minlong - &expansion
+let maxlat = maxlat + &expansion
+let maxlong = maxlong + &expansion
+
+write " "
+write "Lat/Long extents in the proper order:"
+write " "
+write "&minlat &minlong"
+write "&maxlat &maxlong"
+write " "
+!goto theend
+
+	! AOI - possible multiple ELVs
+let valid=0
+let loop_count=1
+rowop2 &ELV_db aaaaa keyc=2 +
+  range=(&minlat,&maxlat) 'select
+rowop2 &ELV_db bbbbb keyc=4 +
+  range=(&minlat,&maxlat) 'select
+icat (aaaaa,bbbbb) ab 'v
+rowop2 ab ccccc keyc=3 +
+  range=(&minlong,&maxlong) 'select
+rowop2 ab ddddd keyc=5 +
+  range=(&minlong,&maxlong) 'select
+icat (ccccc,ddddd) bbbbb 'v
+ibis-copy bbbbb combo nc=11
+sort combo sortcol=1 index=11
+aggrg2 combo elv_files agcol=11
+ibis2tcl elv_files vclen=count
+
+if (count=0)
+!	Before we give up, take the average and see if the point fall inside one of the tiles
+  let avglat = (minlat+maxlat) / 2.0
+  let avglong = (minlong+maxlong) / 2.0
+  ibis-copy &ELV_db aaaaa nc=12
+  mf3 aaaaa func="c6=&avglat"
+  mf3 aaaaa func="c7=&avglong"
+  mf3 aaaaa func="c8=c6>c2$c9=c7>c3"
+  mf3 aaaaa func="c10=c6<c4$c11=c7<c5"
+  mf3 aaaaa func="c12=c8*c9*c10*c11"
+  rowop2 aaaaa bbbbb keyc=12 range=(1,1) 'select
+  ibis-copy bbbbb elv_files nc=11
+  ibis2tcl elv_files vclen=count
+  if (count=0)
+    write "No elevation files found within the requested lat/long AOI"
+    goto theend
+  end-if
+end-if
+
+write " "
+write "# of elevation files found with the AOI: &count"
+write " "
+mos_tiles>
+if (count>1)	! Data contained in more than one file
+  let inc = 1
+  loop		! generate plus signs in a string column
+    ibis-gen aaaaa nc=1 format=(A3) nr=1 strcol=1 nr=1 string=("&plus")
+    if (inc = 1)
+      ibis-copy aaaaa ccccc
+    else
+      icat (aaaaa,ccccc) bbbbb 'v
+      ibis-copy bbbbb ccccc
+    end-if
+    label-del ccccc
+    write "									&inc / &count"
+    let inc = inc + 1
+    if (inc > count) goto done2
+  end-loop
+  done2>
+  ibis-copy ccccc temp_ccccc
+  ibis-copy temp_ccccc ccccc
+  ibis-copy elv_files elv_temp sc=1 nc=1
+  icat (elv_temp,ccccc) elv_list 'h
+  ibis-gen aaaaa nc=1 format=(A50,A3) nr=1 strcol=(1,2) string=("procedure","   ")
+  ibis-gen bbbbb nc=1 format=(A50,A3) nr=1 strcol=(1,2) string=("body","   ")
+  ibis-gen ccccc nc=1 format=(A50,A3) nr=1 strcol=(1,2) string=("fthmos tst"," +  ")
+  ibis-gen eeeee nc=1 format=(A50,A3) nr=1 strcol=(1,2) string=("end-proc","   ")
+  icat (aaaaa,bbbbb) ab 'v
+  icat (ab,ccccc) abcx 'v
+
+!	Figure out how many min-mosaics of up to 26 files we will be needing
+  let num_mos = $float(&count) / &chunk
+  write "&num_mos"
+  let inum_mos = $fix(num_mos)
+  write "&inum_mos"
+  if (num_mos>inum_mos)
+    write "more than &inum_mos"
+    let inum_mos=inum_mos + 1
+  end-if
+  write "&inum_mos"
+  let total_files = inum_mos
+  write "# of mini-mosaics: &total_files"
+  file2tcl mos_elv1 val=found
+  if (found=1) ush rm mos_elv*
+
+  let kinc = 1
+  let sinc = 1
+  let nrows = $fix(&chunk)
+  loop
+    write "ibis-copy elv_list ab_list sr=&sinc nr=&nrows	&kinc/&inum_mos"
+    ibis-copy elv_list ab_list sr=&sinc nr=&nrows
+    icat (abcx,ab_list) ab 'v
+    ibis-gen ddddd nc=1 format=(A50,A3) nr=1 strcol=(1,2) string=("out=mos_elv&kinc tol=.25"," ")
+    icat (ab,ddddd) abc 'v
+    icat (abc,eeeee) ab_list 'v
+    file2tcl mosaic_elv.pdf val=found
+    if (found=1) ush rm mosaic_elv.pdf
+    ibis-l ab_list out=mosaic_elv.pdf cform="%46.45s%4.3s" head=nohead colhead=nocol
+
+    tcl2tcl script=("source $env(AFIDS_TCL)/cbSupport.tcl ; ", +
+	"fixCbMiniProc ", "&ELV_dir/" )
+
+    mosaic_elv	! Generate one of the mini mosaics
+    next_tile>
+    let kinc = kinc + 1
+    if (kinc > inum_mos) goto all_done
+    let sinc = sinc + $fix(&chunk)
+  end-loop
+end-if
+all_done>
+!	Mosaic all of the mos_elv files together
+if (count=1) goto crop_aoi
+
+let kinc=1
+file2tcl xmos_elv_files.txt val=found
+if (found=1) ush rm xmos_elv_files.txt
+ush ls mos_elv* > xmos_elv_files.txt
+ush more xmos_elv_files.txt
+vquic xmos_elv_files.txt xmos_elv_list format="(A16)"
+ibis2tcl xmos_elv_list vclen=elv_count
+
+ibis-gen aaaaa nc=1 format=(A16,A3) nr=1 strcol=(1,2) string=("procedure"," ")
+ibis-gen bbbbb nc=1 format=(A16,A3) nr=1 strcol=(1,2) string=("body"," ")
+ibis-gen ccccc nc=1 format=(A16,A3) nr=1 strcol=(1,2) string=("fthmos z"," + ")
+ibis-gen eeeee nc=1 format=(A16,A3) nr=1 strcol=(1,2) string=("end-proc"," ")
+icat (aaaaa,bbbbb) ab 'v
+icat (ab,ccccc) abcx 'v
+
+let inc =1
+loop		! generate plus signs in a string column
+  ibis-gen aaaaa nc=1 format=(A3) nr=1 strcol=1 nr=1 string=("&plus")
+  if (inc = 1)
+    ibis-copy aaaaa ccccc
+  else
+    icat (aaaaa,ccccc) bbbbb 'v
+    ibis-copy bbbbb ccccc
+  end-if
+  label-del ccccc
+    write "									&inc / &elv_count"
+  let inc = inc + 1
+  if (inc > elv_count) goto done3
+end-loop
+done3>
+
+icat (xmos_elv_list,ccccc) elv_list 'h
+icat (abcx,elv_list) ab 'v
+ibis-gen ddddd nc=1 format=(A16,A3) nr=1 strcol=(1,2) string=("out=temp"," ")
+icat (ab,ddddd) abc 'v
+icat (abc,eeeee) ab_list 'v
+file2tcl mosaic_elv.pdf val=found
+if (found=1) ush rm mosaic_elv.pdf
+ibis-l ab_list out=mosaic_elv.pdf cform="%15.14s%3.2s" head=nohead colhead=nocol
+final_mos>
+mosaic_elv	! Mosaic all of the mini mosaics together
+crop_aoi>
+ibis-gen cpts nc=4 datacol=(2,1) nr=2 data=(&maxlat,&minlong,&minlat,&maxlong)
+if (count > 1)
+  pixmap (cpts,temp) mapcols=(1,2) pixcols=(3,4) 'maptopix
+  ibis2tcl cpts v1 v2 v3 v4 varcnt=2 vartype=(0,0,0,0) ibisloc=(1,3,1,4,2,3,2,4)
+  let sl = $fix(&v1+.5)
+  let ss = $fix(&v2+.5)
+  let el = $fix(&v3+.5)
+  let es = $fix(&v4+.5)
+  let nl = el - sl + 1
+  let ns = es - ss + 1
+  gtcopy temp &fname size=(&sl,&ss,&nl,&ns)
+else	! Data contained within one file
+  ibis2tcl elv_files ELVs1 vartype=2 varcnt=1 ibisloc=(1,1)
+  pixmap (cpts,&ELVs1) mapcols=(1,2) pixcols=(3,4) 'maptopix
+  ibis2tcl cpts v1 v2 v3 v4 varcnt=2 vartype=(0,0,0,0) ibisloc=(1,3,1,4,2,3,2,4)
+  let sl = $fix(&v1+.5)
+  let ss = $fix(&v2+.5)
+  let el = $fix(&v3+.5)
+  let es = $fix(&v4+.5)
+  let nl = el - sl + 1
+  let ns = es - ss + 1
+  gtcopy &ELVs1 &fname size=(&sl,&ss,&nl,&ns)
+end-if
+
+if (disp="y") xvd &fname
+theend>
+let _onfail="continue"	! in case some of the following files do not exist
+
+!	Clean up temporary files ...
+if (count>1)
+  ush rm aaaaa bbbbb ccccc ddddd eeeee ab abc abcx cpts ab_list 
+  ush rm elv_list xmos_elv_list combo elv_files elv_temp
+end-if
+end-proc

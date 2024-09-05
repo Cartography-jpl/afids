@@ -1,0 +1,6 @@
+#! /bin/csh -f
+
+set scriptdir=`dirname $0`
+source $scriptdir/../etc/afids/setup_afids_env.csh
+$scriptdir/../afids/vdev/vextract $1 $2 $3 $4
+

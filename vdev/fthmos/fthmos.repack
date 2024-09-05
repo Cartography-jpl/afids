@@ -1,0 +1,4 @@
+$ vpack fthmos.com -mixed -
+	-p fthmos.pdf -
+	-t tstfthmos.pdf
+$ Exit

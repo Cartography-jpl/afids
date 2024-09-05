@@ -1,0 +1,46 @@
+procedure
+parm inp type=(string,99)
+
+local cep type=real
+local refimg type=(string,99)
+local vicortif int
+local temp type=(string,99)
+body
+
+! utility to info accuracy CEP 90% (pixels)
+
+file2tcl &inp ftype=vicortif
+if (vicortif=2)
+   let temp = "&inp" // "temp"
+   vtiff3-tovic &inp &temp
+else-if (vicortif=1)
+   let temp = "&inp"
+else
+   write "MSG: File Problem"
+   write "MSG: See VICAR Program file2tcl for ftype=&vicortif"
+end-if
+
+plab2tcl &temp property=COREG_META_DATA val=cep +
+   keyword=ACCURACY_CEP vtype=7
+if (cep<0.0)
+   plab2tcl &temp property=COREG_META_DATA val=cep +
+      keyword=ACCURACY vtype=7
+   let cep = cep*1.1774
+end-if
+plab2tcl &temp property=COREG_META_DATA val=refimg +
+   keyword=ACCREF vtype=0
+   
+if (cep<0.0)
+   write "MSG: no accuracy figure in label"
+else
+   write "MSG: ACCURACY CHECK (USING CORRELATION) IS &cep PIXELS CEP"
+   write "MSG: REFERENCE IMAGE WAS &refimg"
+   if (cep>3.0 and cep<=7.0)
+      write "MSG: RESULTS VERY POOR"
+   end-if
+   if (cep>7.0)
+      write "MSG: RESULTS EXTREMELY POOR"
+   end-if
+end-if
+
+end-proc

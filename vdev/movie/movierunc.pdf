@@ -1,0 +1,172 @@
+procedure
+parm caseix type=string default="moviebqx"
+parm prefix type=string default="PaxRiver_19Sept05_0"
+parm rawloc type=string default="/export/data4/amt"
+parm imcount type=int default=2002
+parm imstart type=int default=2500
+parm immstep type=int default=150
+parm padlen type=int default=4
+parm poly type=(string,7) default="quad" valid=("keystone","quad")
+parm rthresh type=real default=2.5
+
+local vicfile string
+local vicfilenext string
+local lvicfile string
+local lvicfilenext string
+local rvicfile string
+local rvicfilenext string
+local vicrawmap string
+local vicprev string
+local outprev string
+local vicout string
+local tifout string
+local tiforg string
+local tifhlf string
+local victemp string
+local mapfile string
+local nfilenum int
+local nfileprev int
+local nfilenext int
+local iloop int
+local filenum string
+local fileprev string
+local filenext string
+local rmean real
+local found int
+local resetmst int
+body
+
+let mapfile = "&caseix" // "/&prefix" // "master.img"
+let victemp = "&caseix" // "/&prefix" // "temp.img"
+
+let resetmst = immstep
+let iloop = 0
+loop
+let iloop = iloop+1
+if (iloop>&imcount) goto endiloop
+let resetmst = resetmst-1
+
+let nfilenum = imstart+iloop-1
+let nfileprev = imstart+iloop-2
+let nfilenext = imstart+iloop
+
+tclpad inval="&nfilenum" val=filenum len=&padlen
+tclpad inval="&nfileprev" val=fileprev len=&padlen
+tclpad inval="&nfilenext" val=filenext len=&padlen
+ 
+let rvicfile = "&rawloc" // "/&prefix" // "&filenum" // ".hlf.Z"
+let rvicfilenext = "&rawloc" // "/&prefix" // "&filenext" // ".hlf.Z"
+let lvicfile = "&caseix" // "/&prefix" // "&filenum" // ".hlf.Z"
+let lvicfilenext = "&caseix" // "/&prefix" // "&filenext" // ".hlf.Z"
+let vicfile = "&caseix" // "/&prefix" // "&filenum" // ".hlf"
+let vicfilenext = "&caseix" // "/&prefix" // "&filenext" // ".hlf"
+let vicrawmap = "&caseix" // "/&prefix" // "&filenum" // ".rmimg"
+let vicprev = "&caseix" // "/&prefix" // "&fileprev" // ".rmimg"
+let outprev = "&caseix" // "/&prefix" // "&fileprev" // ".img"
+let vicout = "&caseix" // "/&prefix" // "&filenum" // ".img"
+let tifout = "&caseix" // "/&prefix" // "&filenum" // ".tif"
+let tiforg = "&caseix" // "/&prefix" // "&filenum" // "_o.tif"
+let tifhlf = "&caseix" // "/&prefix" // "&filenum" // "_h.tif"
+
+file2tcl &vicfile val=found
+if (found=0)
+   ush cp "&rvicfile" "&lvicfile"
+   ush uncompress -v "&lvicfile"
+end-if
+file2tcl &vicfilenext val=found
+if (found=0)
+   ush cp "&rvicfilenext" "&lvicfilenext"
+   ush uncompress -v "&lvicfilenext"
+end-if
+   
+gtgen &vicfile xx0 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0.0,0.0,0,-112.0,35.0,0.0)", +
+  "ModelTiePointTag=(100000.0,0.0,0,-111.0,35.0,0.0)", +
+  "ModelTiePointTag=(0.0,100000.0,0,-112.0,34.0,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtgen &vicfilenext xx1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0.0,0.0,0,-112.0,35.0,0.0)", +
+  "ModelTiePointTag=(100000.0,0.0,0,-111.0,35.0,0.0)", +
+  "ModelTiePointTag=(0.0,100000.0,0,-112.0,34.0,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+! sawtooth correction, use even lines from next raw image
+
+imsplit xx0 +
+   (xx2,xx3)
+imsplit xx1 +
+   (xx4,xx5)
+
+immerge (xx2,xx5) xx0
+calibapp xx0 &vicrawmap
+
+! end of sawtooth correction
+
+! now the image; note difference in notation for xxxgridn
+! when dcols=0, the reference is to a set of grids (root name)
+! otherwise, the reference is to a specific grid file
+
+if (iloop=1)
+   gtpwarp &vicrawmap &vicout +
+      ref=&mapfile 'coverref nah=250 nav=120 accoff=y fftgrid=(12,8) +
+      fftsize=256 magnify=1 toler=&rthresh polyfit=&poly gridout=xxxgrida
+else-if (resetmst<1)
+   let mapfile = "&outprev"
+   gtpwarp &vicrawmap &vicout +
+      ref=&mapfile 'coverref nah=250 nav=120 accoff=y fftgrid=(12,8) +
+      fftsize=256 magnify=1 toler=&rthresh polyfit=&poly gridout=xxxgrida
+   let resetmst = immstep 
+else
+   write "&vicrawmap &vicprev"
+   gtpwarp &vicrawmap &victemp +
+      ref=&vicprev 'coverref nah=250 nav=120 accoff=y fftgrid=(12,8) +
+      fftsize=256 magnify=1 toler=&rthresh polyfit=&poly gridout=xxxgridb
+   gtwarpxd &vicrawmap &vicout +
+      ref=&mapfile +
+      distort=(xxxgridb,xxxgrida1,,,) +
+      dcols=(0,0,0,0,1,2,3,4) polyfit=("","&poly","","","") +
+      'coverref nah=250 nav=120 gridout=xxxgridc
+   gtpwarp &vicout &victemp +
+      ref=&mapfile 'coverref nah=250 nav=120 accoff=y fftgrid=(12,8) +
+      fftsize=256 magnify=1 toler=&rthresh polyfit=&poly gridout=xxxgridd
+   gtwarpxd &vicrawmap &vicout +
+      ref=&mapfile +
+      distort=(xxxgridc,xxxgridd1,,,) +
+      dcols=(0,0,0,0,1,2,3,4) polyfit=("","&poly","","","") +
+      'coverref nah=250 nav=120 gridout=xxxgrida
+end-if
+
+!  two products: half/tif and half/tif/raw
+
+vtiff3-fromvic &vicout &tifhlf
+vtiff3-fromvic &vicfile &tiforg
+
+end-loop
+endiloop>
+
+goto theend
+this code was to get archer to have a good stretch, esp on 2d case
+cform &vicout xx0 oform=byte irange=(400.0,2000.0) +
+    orange=(0.0,255.0)
+hist xx0 'exclude mean=rmean
+f2 inp=xx0 out=xx1 func="im1+(im1<0.5)*&rmean"
+vtiff3-fromvic xx1 &tifout
+
+cform &vicfile xx0 oform=byte irange=(400.0,2000.0) +
+    orange=(0.0,255.0)
+hist xx0 'exclude mean=rmean
+f2 inp=xx0 out=xx1 func="im1+(im1<0.5)*&rmean"
+vtiff3-fromvic xx1 &tiforg
+
+
+
+theend>
+end-proc

@@ -1,0 +1,17 @@
+lib_LTLIBRARIES += ossimTcl.la
+ossimTcl_la_DEPENDENCIES = libvif.la
+ossimTcl_la_LDFLAGS = -module -avoid-version
+ossimTcl_la_LIBADD = $(OSSIM_LIBS)
+ossimTcl_la_LIBADD+= $(CARTO_LIBS) $(VICAR_RTL_LIBS) libvif.la
+ossimTcl_la_LIBADD+= $(TCL_LIBS)
+# Don't think this is needed, comment out and see if anything breaks
+#ossimTcl_la_LIBADD+= -lssl -lcrypto
+EXTRA_ossimTcl_la_DEPENDENCIES = $(VICAR_RTL_BUILD_DEPEND)
+EXTRA_ossimTcl_la_DEPENDENCIES+= $(CARTO_BUILD_DEPEND)
+
+ossimTcl_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(vifinc) 
+ossimTcl_la_CPPFLAGS+= -DAFIDS_GEOTIFF $(VICAR_RTL_CFLAGS)
+ossimTcl_la_CPPFLAGS+= $(TCL_CFLAGS) $(OSSIM_CFLAGS) $(CARTO_CFLAGS)
+
+ossimTcl_la_SOURCES = @srcossimtcl@/ossimTcl.cpp
+

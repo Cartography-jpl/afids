@@ -1,0 +1,30 @@
+procedure
+refgbl $autousage
+refgbl $echo
+body
+let $autousage="none"
+let _onfail="continue"
+let $echo="yes"
+
+gen A nl=3 ns=3 format="byte" LINC=1 SINC=3
+list A
+qswp2005 A B OP=FORWARD
+list B
+qswp2005 B C OP=REVERSE
+list C
+
+gen A nl=4 ns=4 format="real" LINC=1 SINC=3
+list A
+qswp2005 A B OP=FORWARD
+list B
+qswp2005 B C OP=REVERSE
+list C
+
+gen A nl=5 ns=3 LINC=1 SINC=3 FORMAT="COMP"
+list A
+qswp2005 A B OP=FORWARD
+list B
+qswp2005 B C OP=REVERSE
+list C
+
+end-proc

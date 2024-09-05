@@ -1,0 +1,159 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="yes"
+!
+! Jun 29, 2016 - RJB
+! TEST SCRIPT FOR FLOT
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list 
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+
+! first the simple tests
+!      byte image - first test defaults.
+!
+gen FLOTA NL=10 NS=12
+flot INP=FLOTA OUT=FLOTAO 
+list FLOTAO 
+!
+!    try SL and SS not equal to 1 with 'HORIZ.
+!
+flot INP=FLOTA OUT=FLOTAO2 SIZE=(2,3,8,7) 'HORIZ
+list FLOTAO2
+!
+!    try other modes
+!
+flot FLOTA FLOTAO3 'COUNTER
+list FLOTAO3
+!
+flot FLOTA FLOTAO4 'VERT
+list FLOTAO4
+!
+flot FLOTA FLOTAO5 'ROT180
+list FLOTAO5
+!
+!      halfword image - first test defaults.
+!
+gen FLOTB NL=10 NS=12 'HALF
+flot INP=FLOTB OUT=FLOTBO 
+list FLOTBO 
+!
+!    try SL and SS not equal to 1 with 'VERT.
+!
+flot INP=FLOTB OUT=FLOTBO2 SIZE=(2,3,8,7) 'VERT
+list FLOTBO2
+!
+!    try other modes
+!
+flot FLOTB FLOTBO3 'CLOCK
+list FLOTBO3
+!
+flot FLOTB FLOTBO4 'TRANS
+list FLOTBO4
+!
+!      fullword image - first test defaults.
+!
+gen FLOTC NL=10 NS=12 'FULL
+flot INP=FLOTC OUT=FLOTCO 
+list FLOTCO 
+!
+!    try SL and SS not equal to 1 with 'CLOCK.
+!
+flot INP=FLOTC OUT=FLOTCO2 SIZE=(2,3,8,7) 'CLOCK
+list FLOTCO2
+!
+!    try other modes
+!
+flot FLOTC FLOTCO3 'COUNTER
+list FLOTCO3
+!
+flot FLOTC FLOTCO4 'VERT
+list FLOTCO4
+!
+!      REAL*4 image - first test defaults.
+!
+gen FLOTD NL=10 NS=12 'REAL4
+flot INP=FLOTD OUT=FLOTDO 
+list FLOTDO 
+!
+!    try SL and SS not equal to 1 with 'HORIZ.
+!
+flot INP=FLOTD OUT=FLOTDO2 SIZE=(2,3,8,7) 'HORIZ
+list FLOTDO2
+!
+!    try other modes
+!
+flot FLOTD FLOTDO3 'COUNTER
+list FLOTDO3
+!
+flot FLOTD FLOTDO4 'TRANS
+list FLOTDO4
+!
+!    large images
+!
+let $echo="no"
+write " "
+write " New test of image > 2 GB"
+write " "
+write " first test rotate clockwise  - tests one internal routine"
+write " "
+let $echo="yes"
+flot ct/pre_reg.hlf big.img 
+list big.img size=(1000,1000,10,10)
+let $echo="no"
+write " "
+write " next test transpose  - tests the other internal routine"
+write " "
+let $echo="yes"
+flot ct/pre_reg.hlf bigtrans.img 'trans
+list bigtrans.img size=(1000,1000,10,10)
+!
+! clean up
+!
+rm>
+let $echo="no"
+ush rm ct
+END-PROC

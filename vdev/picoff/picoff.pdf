@@ -1,0 +1,108 @@
+procedure help=*
+parm image1 type=string
+parm image2 type=string
+parm offout type=string
+parm usegeo string valid=("n","y") default="n"
+
+local magnif real
+local magnifl real
+local magnifs real
+local ratio real
+local iratio int
+local nl1 int
+local ns1 int
+local nl2 int
+local ns2 int
+
+local midl int
+local mids int
+local fftsiz int
+local fftdiv real
+
+local fnl1 real
+local fns1 real
+local fnl2 real
+local fns2 real
+
+body
+
+let fftsiz = 1024
+let fftdiv = $float(fftsiz)*1.5
+
+lab2tcl &image1 v1=nl1 v2=ns1 keyword=(nl,ns) 'system
+lab2tcl &image2 v1=nl2 v2=ns2 keyword=(nl,ns) 'system
+
+let fnl1 = $float(nl1)
+let fns1 = $float(ns1)
+let fnl2 = $float(nl2)
+let fns2 = $float(ns2)
+let ratio = fnl1/fnl2+0.5
+let iratio = $fix(ratio)
+write "nl1,ns1,nl2,ns2 &nl1,&ns1,&nl2,&ns2 &ratio &iratio"
+let magnifl = fnl1/fftdiv
+let magnifs = fns1/fftdiv
+if (magnifl<magnifs)
+   let magnif = magnifl
+else
+   let magnif = magnifs
+end-if
+let midl = nl1/2
+let mids = ns1/2
+
+ibis-gen &offout nc=11 nr=1 +
+   deffmt=DOUB datacol=(1,2) +
+   data=(&midl,&mids)
+
+if (usegeo="n")
+ picmtch5 (&image1, +
+   &image2, +
+   &offout) +
+   search=&fftsiz fftsize=&fftsiz redo=0 +
+   minsrch=&fftsiz magnif=(&magnif,&magnif) +
+   itie=(1.0,1.0,1.0,&fns1,&fnl1,1.0) +
+   otie=(1.0,1.0,1.0,&fns2,&fnl2,1.0)
+else
+ picmtch5 (&image1, +
+   &image2, +
+   &offout) +
+   search=&fftsiz fftsize=&fftsiz redo=0 +
+   minsrch=&fftsiz magnif=(&magnif,&magnif)
+end-if
+
+mf3 &offout f="c10=c1-c6*(&iratio)$c11=c2-c7*(&iratio)"
+ibis-l &offout
+
+end-proc
+.TITLE
+picoff - picmtch5 to get shift/offset of two images
+.HELP
+PURPOSE
+     
+	   
+CALL
+
+
+
+
+
+
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 17 Nov, 2004
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 17 Nov, 2004
+
+10-17-2019 - Ray Bambery
+    fixed testscript tstpicoff.pdf
+
+.LEVEL1
+
+.END

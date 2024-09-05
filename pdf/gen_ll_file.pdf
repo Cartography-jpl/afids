@@ -1,0 +1,55 @@
+procedure	! gen_ll_file
+
+parm f1 string	! L5155038_038
+parm f2 string	! 20090906
+parm f3 string	! _L71155038_038
+parm f4 string	! 20090914
+parm mode string def="skip" valid=("skip","replace")
+
+local source string init="/raid20/bare_ground/"
+local bgfile string init="_bg_ndvi_bgi_ob"
+local img string init=".img"
+local int string init=".int"
+local lltxt string init="_lonlat_final.txt"
+local fname string
+local found integer
+local num integer
+
+refgbl $echo
+body
+
+let $echo="no"
+let $switch=512
+
+let fname = "&f1&f2&f3&f4"
+
+write "fname = &fname"
+
+write "checking &fname&lltxt"
+
+file2tcl &fname&lltxt val=found
+if ((found=1)and(mode="skip")) goto theend
+
+write "firstconcomp outimg=temp_cc.img"
+
+firstconcomp &fname&bgfile&img +
+  out= &fname&bgfile&int outimg=temp_cc.img lowthres=136 highthre=141
+
+ibis-copy &fname&bgfile&int stats incol=(1,9,10,11) outcol=(1,2,3,4) nc=4
+ibis2tcl &fname&bgfile&int vclen=num
+
+ibis-gen old_new nc=2 nr=&num format=("A10","A10") fmtcols=(1,2) strcol=(1,2) +
+        'ibis-2 string=("&f2","&f4")
+mf3 old_new func="c1='&f2'"
+mf3 old_new func="c2='&f4'"
+
+icat (stats,old_new) temp_int 'h
+sort temp_int sortcol=4 'desc
+mf3 temp_int func="c1=@index"
+ibis-l temp_int +
+  out=&fname&lltxt +
+  cols=(1,2,3,4,5,6) cform="%5i%18.11f%18.11f%9.1f%15.13s%13.13s" colh=nocol 'nohead
+
+theend>
+end-proc
+

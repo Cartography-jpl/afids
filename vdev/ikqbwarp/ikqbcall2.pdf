@@ -1,0 +1,955 @@
+procedure
+refgbl $echo
+parm key string
+parm rawimg type=(string,128)
+parm rawimgntf2 type=(string,128) default=""
+parm rawmeta type=(string,128) default=""
+parm rawhdr type=(string,128) default=""
+parm rawband type=int def=0
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted type=(string,128) default=""
+parm base type=(string,128) default=""
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+parm linesamp type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm longlat type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm lsatls type=real count=6 +
+   default=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm maptype type=string valid=("pc","utm","ref") default="utm"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm fftinit int def=256
+parm mpix real def=1.0
+parm mpixf real def=2.0    ! now obsolete
+parm rawtype string valid=("nitf","tif","dimap") default="nitf"
+parm senstype string valid=("i","q","n","p","s","r","a") default="i"
+parm xvdonly string valid=("n","y") default="n"
+parm outimg type=(string,128)
+parm refimg type=(string,128) default=""
+parm hfit string default=""  !now obsolete
+parm runmode string default="legacy" valid=("legacy","hfit", +
+   "microfit","microfit_h","microfit_k","locfit","jcib")
+
+parm usermapref type=(string,128) default=""
+parm interp type=string valid=("bilin","noin") default="bilin"
+parm rastype type=string valid=("area","point") default="point"
+parm outrpc type=(string,128) default=""
+parm outrpctp type=string valid=("ntf","vic","tif") default="ntf"
+
+parm siteref type=(string,128) default=""
+parm siteout type=(string,128) default=""
+parm testparm int default=0
+parm debugparm int default=0
+
+parm belist type=(string,128) default=""
+parm beouttype type=(string,4) valid=("vic","tif") default="vic"
+parm beoutroot type=(string,128) default=""
+parm bepixsize type=real default=1.0
+parm bewinsize type=int valid=(2048:999999) default=4096
+parm berefrpc type=(string,128) default=""
+parm masterband type=int default=0  ! use for multispec master, not recommended
+
+parm magfac real def=1.0
+parm reuselog string default=""
+parm igeolocc string valid=("a","n","y") default="a"
+
+local inloc type=(string,128)
+local outloc type=(string,128)
+local fnamein type=(string,128)
+local logname type=(string,128)
+local fname3r type=(string,128)
+local fname3 type=(string,128)
+local fname4 type=(string,128)
+local fname5 type=(string,128)
+local maptmp1 type=(string,128)
+local maptmp2 type=(string,128)
+local temp1 type=(string,128)
+local temp2 type=(string,128)
+local temp3 type=(string,128)
+
+local inroot type=(string,128)
+local outroot type=(string,128)
+local dtedfile type=(string,99)
+local basefile type=(string,99)
+local outn type=(string,99)
+local outnsuffix type=(string,99)
+local mosstring type=(string,128)
+local mosstring2 type=(string,128)
+local scratchroot type=(string,128)
+local gridinfoloc type=(string,128)
+local gridfinalloc type=(string,128)
+
+local stopat int
+
+local pixsizx real
+local pixsizy real
+
+local uleast real
+local ulnorth real
+local iuleast int
+local iulnorth int
+local lleast real
+local llnorth real
+local ureast real
+local urnorth real
+local lreast real
+local lrnorth real
+
+local nl1 real
+local ns1 real
+local nl2 real
+local ns2 real
+local nl3 real
+local ns3 real
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+local lrlon real
+local lrlat real
+local utmstring string
+local cetag string
+local afidsroot type=(string,128)
+local elevroot type=(string,128)
+local cib1root type=(string,128)
+local cib5root type=(string,128)
+
+local satazim real
+local satelev real
+
+local alpha real
+local test2pt real
+
+local moslon int
+local moslat int
+local moslon2 int
+local moslat2 int
+local cmoslon real
+local cmoslat real
+local cmoslon2 real
+local cmoslat2 real
+local cllon real
+local cllat real
+local culon real
+local culat real
+
+local qexist int
+local inpnl int
+local inpns int
+local utmzone int
+local modeltype int
+local itemp int
+
+local nlraw int
+local nsraw int
+local ige1 real
+local ign1 real
+local ige2 real
+local ign2 real
+local ige3 real
+local ign3 real
+local ige4 real
+local ign4 real
+local igeolo string
+local igeoloci string
+
+local igec real
+local ignc real
+local nlc real
+local nsc real
+local badec real
+local badnc real
+local diffe real
+local diffn real
+local rawe real
+local rawn real
+local corre real
+local corrn real
+
+local foff real
+local ioff int
+
+body
+let $echo="yes"
+write "ikqbcall2 version Tue Feb 21 2011"
+write "rawtype &rawtype"
+write "mpix &mpix"
+
+! set igeoloci from igeolocc
+
+if (igeolocc="a")
+   if (senstype="i") let igeoloci = "n"
+   if (senstype="q") let igeoloci = "n"
+   if (senstype="n") let igeoloci = "y"
+   if (senstype="p") let igeoloci = "n"
+   if (senstype="s") let igeoloci = "n"
+   if (senstype="r") let igeoloci = "n"
+   if (senstype="a") let igeoloci = "n"
+else
+   let igeoloci = "&igeolocc"
+end-if
+
+! WGS84 verticaldatum now required for ikqb level of resolution
+
+if ("&dted"<>"")
+   plab2tcl &dted property=Geotiff val=qexist keyword=VERTICALCSTYPEGEOKEY vtype=4
+   if (qexist<>5030)
+      write "ERROR: VERTICAL DATUM MUST BE WGS84 AND REQUIRES LABEL VERTICALCSTYPEGEOKEY"
+      goto theend
+   end-if
+end-if
+
+let stopat=6
+
+write "&linesamp"
+
+! call walt's routine to generate fnamein
+
+idgen prefix=bob outvar=fnamein
+if (reuselog<>"") let fnamein = "&reuselog"
+
+let inloc = "raw&key/"
+let outloc = "final&key/"
+
+let fname3r = "&inloc" // "&fnamein"
+let fname3 = "&inloc" // "&fnamein" // ".img"
+let fname4 = "&inloc" // "&fnamein" // ".txt"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+let maptmp1 = "scratch/" // "&fnamein" // ".mp1"
+let maptmp2 = "scratch/" // "&fnamein" // ".mp2"
+let temp1 = "scratch/" // "&fnamein" // ".temp1"
+let temp2 = "scratch/" // "&fnamein" // ".temp2"
+let temp3 = "scratch/" // "&fnamein" // ".temp3"
+
+! logging here
+
+!----------------------------------------------------------------   
+! Handle files that support RPC. Currently this in NITF and 
+! SPOT DIMAP files
+!----------------------------------------------------------------   
+
+if (rawtype="nitf" or rawtype="dimap")
+
+   !----------------------------------------------------------------   
+   ! Skip logging files if we we are using the reuselog flag
+   !----------------------------------------------------------------   
+
+   if (reuselog<>"")
+      file2tcl &fname3 val=qexist
+   else
+      let qexist = 0
+   end-if
+   if (qexist=0)
+      longsize intvar=itemp
+
+      !----------------------------------------------------------------   
+      ! Log spot DIMAP files
+      !----------------------------------------------------------------   
+
+      if (rawtype="dimap")
+         spot2vicar &rawimg &fname3 &rawband
+         lab2asc &fname3 &fname4
+
+      !----------------------------------------------------------------
+      ! Or log type "n" data
+      !----------------------------------------------------------------   
+
+      else-if (senstype="n" or itemp=4)
+         vextract2 &rawimg &fname3
+         if ("&rawimgntf2"<>"")
+            vextract2 &rawimgntf2 &temp2
+            ush mv &fname3 &temp1
+            ibis-gen &temp3 nr=1 nc=5 deffmt=DOUB
+            !need option in rpcinv2 to use "" for 3d input peter will fix
+            rpcinv2 (&temp3,&temp2,&temp1) thresh=0.000001 +
+                cols=(1,2,3,4,5) fixdted=y
+            rpcfwd (&temp3,&temp1) cols=(1,2,3,4,5)
+            ibis-l &temp3 cols=(1,2,4,5) cfor="%16.12f %16.12f %16.12f %16.12f"
+            ibis2tcl &temp3 v1=foff vartype=-1 ibisloc=(1,4)
+            let ioff = $fix(foff+0.5)
+            vnitfmos (&temp1,&temp2) &fname3 ioff=&ioff
+         end-if
+         lab2asc &fname3 &fname4
+
+      !----------------------------------------------------------------
+      ! Or log NITF data.
+      !----------------------------------------------------------------
+
+      else
+         vextract2 &rawimg &fname3
+         if ("&rawimgntf2"<>"")
+            vextract2 &rawimgntf2 &temp2
+            ush mv &fname3 &temp1
+            ibis-gen &temp3 nr=1 nc=5 deffmt=DOUB
+            !need option in rpcinv2 to use "" for 3d input peter will fix
+            rpcinv2 (&temp3,&temp2,&temp1) thresh=0.000001 +
+                cols=(1,2,3,4,5) fixdted=y
+            rpcfwd (&temp3,&temp1) cols=(1,2,3,4,5)
+            ibis-l &temp3 cols=(1,2,4,5) cfor="%16.12f %16.12f %16.12f %16.12f"
+            ibis2tcl &temp3 v1=foff vartype=-1 ibisloc=(1,4)
+            let ioff = $fix(foff+0.5)
+            vnitfmos (&temp1,&temp2) &fname3 ioff=&ioff
+         end-if
+         lab2asc &fname3 &fname4
+      end-if
+   else
+      lab2asc &fname3 &fname4
+      goto reuse
+   end-if
+   lab2tcl &fname3 v1=nlraw v2=nsraw keyword=(nl,ns) 'system
+   
+   if (masterband>0)
+      copy &fname3 &temp1 bands=(&masterband,1)
+      copy &temp1 &fname3
+   end-if
+
+   label-add inp=&fname3 items="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+
+   reuse>
+   
+   !----------------------------------------------------------------
+   ! Make sure NITF_CETAG is present, adding it if it is missing.
+   !----------------------------------------------------------------
+
+   plab2tcl &fname3 property=Geotiff val=cetag keyword=NITF_CETAG vtype=0
+   if (cetag<>"RPC00A" and cetag<>"RPC00B")
+      label-add inp=&fname3 items="NITF_CETAG=RPC00B" +
+         property="GEOTIFF"
+   end-if
+   
+   ! here is where compression gets done
+   compresschk &fname3
+   
+   write "fnamein &fnamein"  
+   let logname = "&fnamein" // ".ntf"
+   if (xvdonly="y")
+      xvd &fname3
+      goto theend
+   end-if
+   
+   !----------------------------------------------------------------
+   ! now prepare the base and dted mosaics if needed
+   !----------------------------------------------------------------
+
+   if ("&dted"="" or "&base"="")
+      if (igeoloci="y")
+         plab2tcl &fname3 property=Geotiff val=igeolo keyword=NITF_IGEOLO +
+                  vtype=0
+         gtigeolo &igeolo e1=ullon n1=ullat e2=urlon n2=urlat +
+                          e3=lrlon n3=lrlat e4=lllon n4=lllat
+         ! beware, these might start at lower left, see code for culon...
+      else
+         asc2tcl &fname4 keyword="NITF_CORNERLON1=" val=ullon vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLAT1=" val=ullat vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLON2=" val=urlon vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLAT2=" val=urlat vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLON3=" val=lrlon vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLAT3=" val=lrlat vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLON4=" val=lllon vtype=8
+         asc2tcl &fname4 keyword="NITF_CORNERLAT4=" val=lllat vtype=8
+      end-if
+      let cllon = lllon
+      if (lrlon<cllon) let cllon = lrlon
+      if (ullon<cllon) let cllon = ullon
+      if (urlon<cllon) let cllon = urlon
+      let culon = lllon
+      if (lrlon>culon) let culon = lrlon
+      if (ullon>culon) let culon = ullon
+      if (urlon>culon) let culon = urlon
+      let cllat = lllat
+      if (lrlat<cllat) let cllat = lrlat
+      if (ullat<cllat) let cllat = ullat
+      if (urlat<cllat) let cllat = urlat
+      let culat = lllat
+      if (lrlat>culat) let culat = lrlat
+      if (ullat>culat) let culat = ullat
+      if (urlat>culat) let culat = urlat
+   end-if
+   
+   if ("&dted"="")
+      if (cllon>0.0)
+         let moslon = $fix(cllon-0.2)
+      else
+         let moslon = $fix(-cllon+1.2)*(-1)
+      end-if
+      if (cllat>0.0)
+         let moslat = $fix(cllat-0.2)
+      else
+         let moslat = $fix(-cllat+1.2)*(-1)
+      end-if
+      if (culon>0.0)
+         let moslon2 = $fix(culon+1.2)
+      else
+         let moslon2 = $fix(-culon+0.2)*(-1)
+      end-if
+      if (culat>0.0)
+         let moslat2 = $fix(culat+1.2)
+      else
+         let moslat2 = $fix(-culat+0.2)*(-1)
+      end-if
+
+   write "ullon &ullon ullat &ullat"
+   write "urlon &urlon urlat &urlat"
+   write "lllon &lllon lllat &lllat"
+   write "lrlon &lrlon lrlat &lrlat"
+   write "moslon &moslon moslat &moslat"
+   write "moslon2 &moslon2 moslat2 &moslat2"
+   end-if
+
+   if ("&dted"<>"")
+      let dtedfile = "&dted"
+   else
+      let dtedfile = "d&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2"
+      let outn = "dtedmos/&dtedfile"
+      let outnsuffix = "&outn" // "_dem.img"
+      file2tcl &outnsuffix val=qexist
+      write "qexist &qexist"
+      if (qexist=0)
+         translog AFIDS_ROOT afidsroot
+         let mosstring = afidsroot // "/data/srtmL2_filled"
+         mos_l2_dem slon=&moslon slat=&moslat elon=&moslon2 +
+            elat=&moslat2 DIRin="&mosstring" +
+            out="&outn" DIRout="./"
+         compresschk &outnsuffix
+      end-if
+      let dtedfile = "&outnsuffix"
+   end-if
+
+   if ("&base"="")
+      let cllon = cllon*100.0
+      let culon = culon*100.0
+      let cllat = cllat*100.0
+      let culat = culat*100.0
+
+      if (cllon>0.0)
+         let moslon = $fix(cllon-0.2)
+      else
+         let moslon = $fix(-cllon+1.2)*(-1)
+      end-if
+      if (cllat>0.0)
+         let moslat = $fix(cllat-0.2)
+      else
+         let moslat = $fix(-cllat+1.2)*(-1)
+      end-if
+      if (culon>0.0)
+         let moslon2 = $fix(culon+1.2)
+      else
+         let moslon2 = $fix(-culon+0.2)*(-1)
+      end-if
+      if (culat>0.0)
+         let moslat2 = $fix(culat+1.2)
+      else
+         let moslat2 = $fix(-culat+0.2)*(-1)
+      end-if
+
+   write "ullon &ullon ullat &ullat"
+   write "urlon &urlon urlat &urlat"
+   write "lllon &lllon lllat &lllat"
+   write "lrlon &lrlon lrlat &lrlat"
+   write "cllon &cllon cllat &cllat"
+   write "culon &culon culat &culat"
+   write "moslon &moslon moslat &moslat"
+   write "moslon2 &moslon2 moslat2 &moslat2"
+   let cmoslon = $float(moslon)*0.01
+   let cmoslat = $float(moslat)*0.01
+   let cmoslon2 = $float(moslon2)*0.01
+   let cmoslat2 = $float(moslat2)*0.01
+   write "cmoslon &cmoslon cmoslat &cmoslat"
+   write "cmoslon2 &cmoslon2 cmoslat2 &cmoslat2"
+   end-if
+
+   if ("&base"<>"")
+      let basefile = "&base"
+   else
+      let basefile = "b&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // ".qcib"
+      let outn = "basemos/&basefile"
+      file2tcl &outn val=qexist
+      if (qexist=0)
+         translog CIB1_ROOT cib1root
+         translog CIB5_ROOT cib5root
+         let mosstring = "&cib1root" // "/"
+         let mosstring2 = "&cib5root" // "/"
+         cibcut path="&mosstring" cibtab="cib01_db.int" +
+            pathalt="&mosstring2" cibtabalt="cib05_db.int" +
+            quad=(&cmoslon,&cmoslat2,&cmoslon2,&cmoslat) +
+            out=&outn +
+            pstring="xxxtst" xvd=n partial=10.0
+         !!!compresschk &basefile -  implement when cib compresses
+      end-if
+      let basefile = "&outn"
+   end-if
+
+   if (igeoloci="y")
+      plab2tcl &fname3 property=Geotiff val=igeolo keyword=NITF_IGEOLO vtype=0
+      gtigeolo &igeolo e1=ige1 n1=ign1 e2=ige2 n2=ign2 +
+                       e3=ige3 n3=ign3 e4=ige4 n4=ign4
+      write "igeolo &igeolo"
+      write "l/s &nlraw &nsraw"
+      let igec = (ige1+ige2+ige3+ige4)*0.25
+      let ignc = (ign1+ign2+ign3+ign4)*0.25
+      let nlc = $float(nlraw)*0.5
+      let nsc = $float(nsraw)*0.5
+      ibis-gen xxxaa1 nc=5 nr=1 format=("DOUB","DOUB","DOUB","DOUB","DOUB") +
+         datacol=(4,5) data=(&nlc,&nsc)
+      rpcinv2 (xxxaa1,&fname3,&dtedfile) cols=(1,2,3,4,5)
+      ibis-l xxxaa1 cfor="%12.5f%12.5f%12.1f%12.1f%12.1f" cols=(1,2,3,4,5)
+      ibis-gen xxxaa1 nc=5 nr=4 format=("DOUB","DOUB","DOUB","DOUB","DOUB") +
+         datacol=(4,5) +
+         data=(0.0,0.0,0.0,&nsraw,&nlraw,&nsraw,&nlraw,0.0)
+      rpcinv2 (xxxaa1,&fname3,&dtedfile) cols=(1,2,3,4,5)
+      mf3 xxxaa1 f="@average(c1)$@average(c2)"
+      ibis-l xxxaa1 cfor="%12.5f%12.5f%12.1f%12.1f%12.1f" cols=(1,2,3,4,5)
+      ibis2tcl xxxaa1 v1=badec v2=badnc vartype=(-1,-1) ibisloc=(1,1,1,2)
+      let diffe = igec-badec
+      let diffn = ignc-badnc
+
+      write "diffe,igec,badec &diffe,&igec,&badec"
+      write "diffn,ignc,badnc &diffn,&ignc,&badnc"
+
+      plab2tcl &fname3 property=Geotiff val=rawn keyword=RPC_FIELD6 vtype=7
+      plab2tcl &fname3 property=Geotiff val=rawe keyword=RPC_FIELD7 vtype=7
+
+      let corrn = rawn+diffn
+      let corre = rawe+diffe
+
+      write "corre,rawe,diffe &corre,&rawe,&diffe"
+      write "corrn,rawn,diffn &corrn,&rawn,&diffn"
+
+      label-replace inp=&fname3 property="GEOTIFF" +
+        items="RPC_FIELD6='&corrn',RPC_FIELD7='&corre'"
+      rpc2gtlb (&fname3,&dtedfile) rastype=point
+   end-if
+   
+   !----------------------------------------------------------------
+   ! Now call the new RPC warp routine
+   !----------------------------------------------------------------
+
+   let inroot = "&inloc" // "&fnamein"
+   let outroot = "&outloc" // "&fnamein"
+   let scratchroot = "scratch/" // "&fnamein"
+
+   let gridinfoloc = "&outloc" // "&fnamein"// "gridinfo"
+   let gridfinalloc = "&outloc" // "&fnamein"// "gridfinal"
+   ikqbrpcw inroot=&inroot outroot=&outroot +
+    scratchroot=&scratchroot +
+    dted="&dtedfile" base="&basefile" +
+    seq=nn fftinit=&fftinit maptype=&maptype magfac=&magfac +
+    master="&refimg" +
+    mpix=&mpix rastype=&rastype  +
+    rawtype=&rawtype runmode="&runmode" +
+    outrpc="&outrpc" outrpctp="&outrpctp"+
+    gridinfo=&gridinfoloc  +
+    gridfinal=&gridfinalloc +
+    nah=&nah nav=&nav rtype=&rtype senstype=&senstype +
+    line_upper=&line_upper line_lower=&line_lower interp=&interp +
+    samp_left=&samp_left samp_right=&samp_right outimg=&outimg +
+    usermapref="&usermapref" +
+    linesamp=&linesamp +
+    lsatls=&lsatls +
+    longlat=&longlat +
+    belist="&belist" +
+    beoutroot="&beoutroot" +
+    beouttype="&beouttype" bepixsize=&bepixsize bewinsize=&bewinsize +
+    berefrpc="&berefrpc"
+    
+   goto theend
+
+!----------------------------------------------------------------   
+! Branch for old non-RPC files
+!----------------------------------------------------------------   
+else
+   vtiff3-tovic &rawimg &fname3
+   write "fname3 &fname3 fnamein &fnamein ."
+   label-add inp=&fname3 items="bobdate=&fnamein" +
+         property="COREG_META_DATA"
+   write "finished label-add"
+   let logname = "&fnamein" // ".tif"
+   ! for compression testing
+   compresschk &fname3
+   if (xvdonly="y")
+      xvd &fname3
+      goto theend
+   end-if
+
+   if (senstype="i")
+      ikonoslog &logname &rawhdr &rawmeta &fname4
+   else-if (senstype="q")
+      quickbirdlog &rawmeta &fname4
+   end-if
+end-if
+
+! make a .nav file
+
+if (senstype="i")
+
+   asc2tcl &fname4 keyword="IKONOS_PIXEL_SIZE_X=" val=pixsizx vtype=8
+   asc2tcl &fname4 keyword="IKONOS_PIXEL_SIZE_Y=" val=pixsizy vtype=8
+
+   asc2tcl &fname4 keyword="IKONOS_NOMCOL_AZIMUTH=" +
+       val=satazim vtype=8
+   asc2tcl &fname4 keyword="IKONOS_NOMCOL_ELEVATION=" +
+       val=satelev vtype=8
+   write "pixsizx &pixsizx pixsizy &pixsizy"
+   write "satazim &satazim satelev &satelev"
+   asc2tcl &fname4 keyword="IKONOS_UTM_ZONE=" val=utmzone vtype=4
+
+   write "utmzone &utmzone"
+   if (utmzone=(-999))
+      asc2tcl &fname4 keyword="IKONOS_COORD1_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD1_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD2_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD2_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD3_LON=" val=lrlon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD3_LAT=" val=lrlat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD4_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD4_LAT=" val=lllat vtype=8
+   
+      asc2tcl &fname4 keyword="IKONOS_ROWS=" val=inpnl vtype=4
+      asc2tcl &fname4 keyword="IKONOS_COLUMNS=" val=inpns vtype=4
+   
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+      write "inpnl inpns = &inpnl &inpns"
+      if (utmzone<10)
+         let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      else
+         let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      end-if
+      gtgen out=&maptmp1 +
+         geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+         "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+      gtgen out=&maptmp2 +
+         geotiff=("ProjectedCSTypeGeoKey=&utmstring", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   
+      ibis-gen &fname5 nc=6 nr=4 deffmt=DOUB datacols=(1,2,5,6) +
+         data=(1.0,1.0,&ullon,&ullat,1.0,&inpns,&urlon,&urlat, +
+         &inpnl,1.0,&lllon,&lllat,&inpnl,&inpns,&lrlon,&lrlat)
+      gtproj2 (&fname5,&maptmp1,&maptmp2) incol=(5,6) outcol=(3,4)
+      ibis-l &fname5
+   else
+      asc2tcl &fname4 keyword="IKONOS_UL_EASTING=" val=uleast vtype=8
+      asc2tcl &fname4 keyword="IKONOS_UL_NORTHING=" val=ulnorth vtype=8
+
+      let ureast = uleast+1000.0*pixsizx
+      let urnorth = ulnorth
+      let lleast = uleast
+      let llnorth = ulnorth-1000.0*pixsizy
+      let lreast = uleast+1000.0*pixsizx
+      let lrnorth = ulnorth-1000.0*pixsizy
+
+      ibis-gen &fname5 nc=4 nr=4 deffmt=DOUB +
+         data=(0.0,0.0,&uleast,&ulnorth, +
+         0.0,1000.0,&ureast,&urnorth, +
+         1000.0,0.0,&lleast,&llnorth, +
+         1000.0,1000.0,&lreast,&lrnorth) +
+         datacols=(1,2,3,4)
+      ibis-l &fname5
+   end-if
+
+else-if (senstype="q")        !quickbird case X is east
+   asc2tcl &fname4 keyword="QUICKBIRD_MAP_ZONE=" val=utmzone vtype=4
+   write "utmzone &utmzone"
+   if (utmzone<1)
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LON=" val=lrlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LAT=" val=lrlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LAT=" val=lllat vtype=8
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_ROWS=" val=inpnl vtype=4
+      asc2tcl &fname4 keyword="QUICKBIRD_COLUMNS=" val=inpns vtype=4
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_AZIMUTH=" +
+          val=satazim vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_ELEVATION=" +
+          val=satelev vtype=8
+      
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+      write "inpnl inpns = &inpnl &inpns"
+      if (utmzone<10)
+         let utmstring = "3260" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      else
+         let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      end-if
+      gtgen out=&maptmp1 +
+         geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+         "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+      gtgen out=&maptmp2 +
+         geotiff=("ProjectedCSTypeGeoKey=&utmstring", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+      
+      let test2pt = linesamp(1)
+      if (test2pt<(-990.0))
+         ibis-gen &fname5 nc=6 nr=4 deffmt=DOUB datacols=(1,2,5,6) +
+            data=(1.0,1.0,&ullon,&ullat,1.0,&inpns,&urlon,&urlat, +
+            &inpnl,1.0,&lllon,&lllat,&inpnl,&inpns,&lrlon,&lrlat)
+      else
+         let ullon = longlat(1)
+         let ullat = longlat(2)
+         let lllon = longlat(3)
+         let lllat = longlat(4)
+         let urlon = longlat(5)
+         let urlat = longlat(6)
+
+         let test2pt = lsatls(1)
+         if (test2pt>(-990.0))
+            let nl1 = lsatls(1)
+            let ns1 = lsatls(2)
+            let nl2 = lsatls(3)
+            let ns2 = lsatls(4)
+            let nl3 = lsatls(5)
+            let ns3 = lsatls(6)
+            ibis-gen &fname5 nc=4 nr=3 deffmt=DOUB datacol=(1,2) +
+               data=(&nl1,&ns1,&nl2,&ns2,&nl3,&ns3)
+            pixmap (&fname5,&base) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+            ibis2tcl &fname5 v1=ullon v2=ullat v3=lllon v4=lllat +
+               v5=urlon v6=urlat vartype=(-1,-1,-1,-1,-1,-1) +
+               ibisloc=(1,3,1,4,2,3,2,4,3,3,3,4)
+         end-if
+
+         let nl1 = linesamp(1)
+         let ns1 = linesamp(2)
+         let nl2 = linesamp(3)
+         let ns2 = linesamp(4)
+         let nl3 = linesamp(5)
+         let ns3 = linesamp(6)
+
+         ibis-gen &temp1 nc=4 nr=3 deffmt=DOUB datacols=(1,2,3,4) +
+            data=(&nl1,&ns1,&ullon,&ullat,&nl3,&ns3,&urlon,&urlat, +
+            &nl2,&ns2,&lllon,&lllat)
+         tieconv INP=&temp1 COLS=(1,2,3,4)  OUT=&temp2 +
+            NAH=1,NAV=1,MINL=1,MINS=1,MAXL=&inpnl,MAXS=&inpns +
+           'GEOMV poly="LINEAR" 
+         ibis-gen &temp3 nr=1 nc=2 deffmt=DOUB
+         icat (&temp2,&temp3) &fname5 'h
+         mf3 &fname5 f="c5=c3$c6=c4"
+         ibis-l &fname5
+      end-if
+      gtproj2 (&fname5,&maptmp1,&maptmp2) incol=(5,6) outcol=(3,4)
+      ibis-l &fname5
+   else
+      asc2tcl &fname4 keyword="CALC_UTM_XRES=" val=pixsizx vtype=8
+      asc2tcl &fname4 keyword="CALC_UTM_YRES=" val=pixsizy vtype=8
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_AZIMUTH=" +
+          val=satazim vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_ELEVATION=" +
+          val=satelev vtype=8
+      let satazim = satazim+90.0    ! QB is path azimuth, ik is looking along row
+      write "pixsizx &pixsizx pixsizy &pixsizy"
+      write "satazim &satazim satelev &satelev"
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_ORIGIN_X=" val=uleast vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_ORIGIN_Y=" val=ulnorth vtype=8
+      let ureast = uleast+1000.0*pixsizx
+      let urnorth = ulnorth
+      let lleast = uleast
+      let llnorth = ulnorth-1000.0*pixsizy
+      let lreast = uleast+1000.0*pixsizx
+      let lrnorth = ulnorth-1000.0*pixsizy
+
+      ibis-gen &fname5 nc=4 nr=4 deffmt=DOUB +
+         data=(0.0,0.0,&uleast,&ulnorth, +
+         0.0,1000.0,&ureast,&urnorth, +
+         1000.0,0.0,&lleast,&llnorth, +
+         1000.0,1000.0,&lreast,&lrnorth) +
+         datacols=(1,2,3,4)
+      ibis-l &fname5
+   end-if
+end-if
+
+!  THIS IS A TEST ONLY OF SATELLITE ELEVATION VS GROUND ELEVATION
+!  BUT MAY NEED THIS CODE FOR QUICKBIRD CASE, ALSO GET CORRECT SAT ELV
+!  WOULD BE NICE TO PROGRAM THE EXACT SOLUTION
+
+!let alpha = (90.0-satelev)/(1.0+704000.0/6367443.0)
+!let alpha = 90.0-alpha
+
+!write "alpha &alpha satelev &satelev"
+!let satelev = alpha
+
+! now prepare the base and dted mosaics if needed
+! should make this a subroutine with the similar code above for rpc case
+
+   if ("&dted"="" or "&base"="")
+      if (senstype<>"q") write "ERROR: AUTO CREATION OF BASE/DTED NON-NITF IS QB ONLY"
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LON=" val=lrlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LAT=" val=lrlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LAT=" val=lllat vtype=8
+   end-if
+   
+   if ("&dted"="")
+      if (lllon>0.0)
+         let moslon = $fix(lllon-0.2)
+      else
+         let moslon = $fix(-lllon+1.2)*(-1)
+      end-if
+      if (lrlat>0.0)
+         let moslat = $fix(lrlat-0.2)
+      else
+         let moslat = $fix(-lrlat+1.2)*(-1)
+      end-if
+      if (urlon>0.0)
+         let moslon2 = $fix(urlon+1.2)
+      else
+         let moslon2 = $fix(-urlon+0.2)*(-1)
+      end-if
+      if (ullat>0.0)
+         let moslat2 = $fix(ullat+1.2)
+      else
+         let moslat2 = $fix(-ullat+0.2)*(-1)
+      end-if
+
+   write "ullon &ullon ullat &ullat"
+   write "urlon &urlon urlat &urlat"
+   write "lllon &lllon lllat &lllat"
+   write "lrlon &lrlon lrlat &lrlat"
+   write "moslon &moslon moslat &moslat"
+   write "moslon2 &moslon2 moslat2 &moslat2"
+   end-if
+
+   if ("&dted"<>"")
+      let dtedfile = "&dted"
+   else
+      let dtedfile = "d&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2"
+      let outn = "dtedmos/&dtedfile"
+      let outnsuffix = "&outn" // "_dem.img"
+      file2tcl &outnsuffix val=qexist
+      write "qexist &qexist"
+      if (qexist=0)
+         translog AFIDS_ROOT afidsroot
+         let mosstring = afidsroot // "/data/srtmL2_filled"
+         mos_l2_dem slon=&moslon slat=&moslat elon=&moslon2 +
+            elat=&moslat2 DIRin="&mosstring" +
+            out="&outn" DIRout="./"
+         compresschk &outnsuffix
+      end-if
+      let dtedfile = "&outnsuffix"
+   end-if
+
+   if ("&base"="")
+      let cllon = lllon
+      if (lrlon<cllon) let cllon = lrlon
+      if (ullon<cllon) let cllon = ullon
+      if (urlon<cllon) let cllon = urlon
+      let culon = lllon
+      if (lrlon>culon) let culon = lrlon
+      if (ullon>culon) let culon = ullon
+      if (urlon>culon) let culon = urlon
+      let cllat = lllat
+      if (lrlat<cllat) let cllat = lrlat
+      if (ullat<cllat) let cllat = ullat
+      if (urlat<cllat) let cllat = urlat
+      let culat = lllat
+      if (lrlat>culat) let culat = lrlat
+      if (ullat>culat) let culat = ullat
+      if (urlat>culat) let culat = urlat
+      let cllon = cllon*100.0
+      let culon = culon*100.0
+      let cllat = cllat*100.0
+      let culat = culat*100.0
+
+      if (cllon>0.0)
+         let moslon = $fix(cllon-0.2)
+      else
+         let moslon = $fix(-cllon+1.2)*(-1)
+      end-if
+      if (cllat>0.0)
+         let moslat = $fix(cllat-0.2)
+      else
+         let moslat = $fix(-cllat+1.2)*(-1)
+      end-if
+      if (culon>0.0)
+         let moslon2 = $fix(culon+1.2)
+      else
+         let moslon2 = $fix(-culon+0.2)*(-1)
+      end-if
+      if (culat>0.0)
+         let moslat2 = $fix(culat+1.2)
+      else
+         let moslat2 = $fix(-culat+0.2)*(-1)
+      end-if
+
+   write "ullon &ullon ullat &ullat"
+   write "urlon &urlon urlat &urlat"
+   write "lllon &lllon lllat &lllat"
+   write "lrlon &lrlon lrlat &lrlat"
+   write "cllon &cllon cllat &cllat"
+   write "culon &culon culat &culat"
+   write "moslon &moslon moslat &moslat"
+   write "moslon2 &moslon2 moslat2 &moslat2"
+   let cmoslon = $float(moslon)*0.01
+   let cmoslat = $float(moslat)*0.01
+   let cmoslon2 = $float(moslon2)*0.01
+   let cmoslat2 = $float(moslat2)*0.01
+   write "cmoslon &cmoslon cmoslat &cmoslat"
+   write "cmoslon2 &cmoslon2 cmoslat2 &cmoslat2"
+   end-if
+
+   if ("&base"<>"")
+      let basefile = "&base"
+   else
+      let basefile = "b&moslon" // "_&moslat" // "_&moslon2" // "_&moslat2" // ".qcib"
+      let outn = "basemos/&basefile"
+      file2tcl &outn val=qexist
+      if (qexist=0)
+         translog AFIDS_ROOT afidsroot
+         let mosstring = "&afidsroot" // "/data/cib1/"
+         let mosstring2 = "&afidsroot" // "/data/cib5/"
+         cibcut path="&mosstring" cibtab="cib01_db.int" +
+            pathalt="&mosstring2" cibtabalt="cib05_db.int" +
+            quad=(&cmoslon,&cmoslat2,&cmoslon2,&cmoslat) +
+            out=&outn +
+            pstring="xxxtst" xvd=n partial=10.0
+         !!!compresschk &basefile -  implement when cib compresses
+      end-if
+      let basefile = "&outn"
+   end-if
+!   now back to the main call
+
+let inroot = "&inloc" // "&fnamein"
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+
+let gridinfoloc = "&outloc" // "&fnamein"// "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein"// "gridfinal"
+
+ikqbwarp2 inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted="&dtedfile" base="&basefile" +
+   seq=nn fftinit=&fftinit maptype=&maptype +
+   master="&refimg" testparm=&testparm +
+   gridinfo=&gridinfoloc  +
+   gridfinal=&gridfinalloc +
+   loff=0 soff=0 loff2=0 soff2=0 mpix=&mpix rastype=&rastype  +
+   satazim=&satazim satelev=&satelev utmzone=&utmzone rawtype=&rawtype +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype senstype=&senstype +
+   line_upper=&line_upper line_lower=&line_lower interp=&interp +
+   samp_left=&samp_left samp_right=&samp_right outimg=&outimg +
+   usermapref="&usermapref" +
+   siteref="&siteref" +
+   siteout="&siteout"
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc

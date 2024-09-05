@@ -1,0 +1,6 @@
+$ vpack genealg2.com -mixed -
+	-s genealg2.c -
+	-i genealg2.imake -
+	-p genealg2.pdf -
+	-t tstgenealg2.pdf
+$ Exit

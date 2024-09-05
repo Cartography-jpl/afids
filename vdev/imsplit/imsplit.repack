@@ -1,0 +1,6 @@
+$ vpack imsplit.com -mixed -
+	-s imsplit.c -
+	-i imsplit.imake -
+	-p imsplit.pdf -
+	-t tstimsplit.pdf
+$ Exit

@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR rpc2ibis
+
+ibis-gen xxxa nr=80 nc=2 format=("DOUB","DOUB")
+
+label-list ../test_data/xxchip2.img
+rpc2ibis (../test_data/xxchip2.img,xxxa)
+ibis-l xxxa  csiz=(18,18) cfor="%16.14 f%16.9f"
+
+end-proc

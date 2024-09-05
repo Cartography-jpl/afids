@@ -1,0 +1,6 @@
+$ vpack mss.com -mixed -
+	-s mss.f -
+	-i mss.imake -
+	-p mss.pdf -
+	-t tstmss.pdf tstmss.log
+$ Exit

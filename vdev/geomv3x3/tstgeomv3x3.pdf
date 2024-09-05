@@ -1,0 +1,26 @@
+procedure
+refgbl $echo
+parm version string def="ibis-1"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+!   TEST SCRIPT FOR GEOMV3X3
+
+ 
+gen xxxim1 10 10 SINC=40 LINC=40
+
+! Perform 45 degree rotation clockwise with 1.4 times enlargement
+
+geomv3x3 xxxim1 xxxim2 sl=1 ss=1 nl=20 ns=20 +
+   TIEPOINT=(1.,1.,5.,-5.,1.,20.,-5.,5., +
+                20.,1.,15.,5.,20.,20.,5.,15.)
+
+geomv3x3 xxxim1 xxxim3 sl=1 ss=1 nl=20 ns=20 memsize=1 +
+   TIEPOINT=(1.,1.,5.,-5.,1.,20.,-5.,5.,+
+                20.,1.,15.,5.,20.,20.,5.,15.)
+
+difpic (xxxim2,xxxim3)
+
+end-proc

@@ -1,0 +1,6 @@
+$ vpack generefine.com -mixed -
+	-s generefine.c -
+	-i generefine.imake -
+	-p generefine.pdf -
+	-t tstgenerefine.pdf
+$ Exit

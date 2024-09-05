@@ -1,0 +1,6 @@
+$ vpack moore.com -mixed -
+	-s moore.c -
+	-i moore.imake -
+	-p moore.pdf -
+	-t tstmoore.pdf
+$ Exit

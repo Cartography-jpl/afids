@@ -1,0 +1,490 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+let testrpc = "../test_data/xxchip2.img"
+let dted = "../test_data/qb1_iraq_dem.hlf"
+label-list ../test_data/xxchip2.img
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File ../test_data/xxchip2.img ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a SUN-SOLR host
+                1 bands
+                1085 lines per band
+                1088 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+NITF_IMAGEDATIM='05072951ZMAY03'
+NITF_CETAG='RPC00B'
+NITF_ACQ_DATE='20030505072952'
+NITF_OBL_ANG='28.55'
+NITF_ANGLE_TO_NORTH='270'
+NITF_SUN_EL='+62.5'
+NITF_SUN_AZ='129.6'
+NITF_MEAN_GSD='029.8'
+NITF_DYNAMIC_RANGE='02047'
+NITF_ROLL_ANG='-28.03'
+RPC_FIELD1='1'
+RPC_FIELD2='0019.88'
+RPC_FIELD3='0000.15'
+RPC_FIELD4='1280'
+RPC_FIELD5='13062'
+RPC_FIELD6='+35.8606'
+RPC_FIELD7='+044.9534'
+RPC_FIELD8='+1017'
+RPC_FIELD9='002921'
+RPC_FIELD10='14238'
+RPC_FIELD11='+00.0209'
+RPC_FIELD12='+000.1239'
+RPC_FIELD13='+0634'
+RPC_FIELD141='+0.132748E-1'
+RPC_FIELD142='-0.147510E+0'
+RPC_FIELD143='-0.113465E+1'
+RPC_FIELD144='-0.138959E-1'
+RPC_FIELD145='+0.200180E-2'
+RPC_FIELD146='+0.635242E-4'
+RPC_FIELD147='+0.115861E-3'
+RPC_FIELD148='-0.286551E-2'
+RPC_FIELD149='-0.778726E-2'
+RPC_FIELD1410='+0.388308E-5'
+RPC_FIELD1411='-0.126487E-5'
+RPC_FIELD1412='+0.788107E-5'
+RPC_FIELD1413='+0.365929E-4'
+RPC_FIELD1414='+0.232154E-5'
+RPC_FIELD1415='-0.225421E-4'
+RPC_FIELD1416='-0.208933E-4'
+RPC_FIELD1417='+0.180910E-4'
+RPC_FIELD1418='+0.363930E-6'
+RPC_FIELD1419='-0.939815E-6'
+RPC_FIELD1420='-0.431269E-7'
+RPC_FIELD151='+0.100000E+1'
+RPC_FIELD152='+0.380256E-2'
+RPC_FIELD153='+0.643151E-2'
+RPC_FIELD154='+0.314790E-3'
+RPC_FIELD155='+0.184958E-4'
+RPC_FIELD156='-0.198243E-5'
+RPC_FIELD157='-0.116422E-5'
+RPC_FIELD158='-0.192637E-4'
+RPC_FIELD159='+0.722401E-4'
+RPC_FIELD1510='-0.161779E-4'
+RPC_FIELD1511='+0.495049E-5'
+RPC_FIELD1512='+0.126794E-5'
+RPC_FIELD1513='+0.190771E-3'
+RPC_FIELD1514='-0.157429E-6'
+RPC_FIELD1515='+0.246815E-4'
+RPC_FIELD1516='+0.491660E-3'
+RPC_FIELD1517='-0.541022E-6'
+RPC_FIELD1518='+0.320900E-6'
+RPC_FIELD1519='+0.181401E-4'
+RPC_FIELD1520='+0.143592E-6'
+RPC_FIELD161='-0.104025E-1'
+RPC_FIELD162='+0.968850E+0'
+RPC_FIELD163='-0.487887E-3'
+RPC_FIELD164='-0.325142E-1'
+RPC_FIELD165='-0.710444E-3'
+RPC_FIELD166='+0.217572E-3'
+RPC_FIELD167='-0.654969E-4'
+RPC_FIELD168='+0.107384E-1'
+RPC_FIELD169='-0.519453E-5'
+RPC_FIELD1610='-0.176761E-4'
+RPC_FIELD1611='-0.121058E-5'
+RPC_FIELD1612='+0.106017E-3'
+RPC_FIELD1613='+0.541226E-5'
+RPC_FIELD1614='-0.389680E-5'
+RPC_FIELD1615='+0.103307E-4'
+RPC_FIELD1616='+0.584016E-4'
+RPC_FIELD1617='+0.380777E-7'
+RPC_FIELD1618='+0.901765E-5'
+RPC_FIELD1619='+0.165988E-5'
+RPC_FIELD1620='-0.119374E-6'
+RPC_FIELD171='+0.100000E+1'
+RPC_FIELD172='-0.319831E-3'
+RPC_FIELD173='+0.681092E-3'
+RPC_FIELD174='-0.549762E-3'
+RPC_FIELD175='-0.267977E-5'
+RPC_FIELD176='-0.619388E-5'
+RPC_FIELD177='+0.267975E-7'
+RPC_FIELD178='+0.476371E-5'
+RPC_FIELD179='-0.147985E-4'
+RPC_FIELD1710='-0.423457E-5'
+RPC_FIELD1711='+0.144009E-7'
+RPC_FIELD1712='-0.107213E-5'
+RPC_FIELD1713='+0.110590E-6'
+RPC_FIELD1714='+0.410217E-7'
+RPC_FIELD1715='-0.169482E-6'
+RPC_FIELD1716='+0.108104E-5'
+RPC_FIELD1717='+0.000000E+0'
+RPC_FIELD1718='-0.233038E-6'
+RPC_FIELD1719='+0.186413E-7'
+RPC_FIELD1720='-0.135637E-7'
+CHIP_PARENT_OFFS_LINE=''
+CHIP_PARENT_OFFS_SAMP=''
+NITF_CORNERLON1='44.83170930595'
+NITF_CORNERLAT1='35.87172707408'
+NITF_CORNERELV1='3.766367775586E+02'
+NITF_CORNERLON2='44.8412822999'
+NITF_CORNERLAT2='35.87150787181'
+NITF_CORNERELV2='4.323969211227E+02'
+NITF_CORNERLON3='44.84115327505'
+NITF_CORNERLAT3='35.86525567113'
+NITF_CORNERELV3='4.088602900966E+02'
+NITF_CORNERLON4='44.83174717856'
+NITF_CORNERLAT4='35.86546526031'
+NITF_CORNERELV4='3.769057829475E+02'
+NITF_CENTERLON='4.483647301486E+01'
+NITF_CENTERLAT='3.586848896933E+01'
+NITF_CENTERELV='4.124234325431E+02'
+NITF_CENTER_GSD='8.816892077020E-01'
+NITF_CENTER_ELEV_LOOK_ANG='5.820481361276E+01'
+NITF_CENTER_AZIM='3.207458726385E-01'
+NITF_CENTER_UPISUP='9.004806560992E+01'
+MODELTRANSFORMATIONTAG=
+'(0.00000938738,-0.0000001377059,0,44.831894043966,-0.0000002082474,-0.0000062516683,0,35.871719164913,0,0,0,0,0,0,0,1)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GEOGANGULARUNITSGEOKEY='9102(Angular_Degree)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: VTIFF3 -- User: alz -- Tue Mar 15 18:57:34 2005 ----
+---- Task: GEOMV -- User: alz -- Fri Aug 18 15:05:29 2006 ----
+ 
+************************************************************
+rpc2gtlb (../test_data/xxchip2.img,../test_data/qb1_iraq_dem.hlf)
+write "rpc2gtlb version 29-may-06"
+rpc2gtlb version 29-may-06
+let out = inp(1)
+if (rastype="area")
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+rpc2grid inp=(../test_data/xxchip2.img,../test_data/qb1_iraq_dem.hlf) out=xxxrpc2grid1 nah=1 nav=1 ncol=8
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl ../test_data/xxchip2.img val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl ../test_data/xxchip2.img val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxxrpc2grid1 ncol=8 nah=1 nav=1    +
+l1=4.483132638619e+01 s1=3.587197754663e+01+
+ l2=4.484168053645e+01 s2=3.587175795984e+01    l3=4.483137093470e+01 s3=3.586520476886e+01 l4=4.484154456866e+01 s4=3.586499557958+
+e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxxrpc2grid1 version="ibis-2" org="column" nc+
+=8       nr=4 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxrpc2grid1 func="c3=@int((@index-1)/2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/2)/1
+4 records in
+mf3 xxxrpc2grid1 func="c4=@mod(@index+1,2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+1,2)/1
+4 records in
+mf3 xxxrpc2grid1 func="c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.4841680536+
+45e+01))+(4.484168053645e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.483137093470e+01-(4.483132638619e+01))+(4.483132638619e+01)$c6=c3*(4.484154456866e+01-(4.484168053645e+01))+(4.484168053645e+01)
+4 records in
+mf3 xxxrpc2grid1 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+4 records in
+mf3 xxxrpc2grid1 func="c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.5865204768+
+86e+01))+(3.586520476886e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587175795984e+01-(3.587197754663e+01))+(3.587197754663e+01)$c8=c4*(3.586499557958e+01-(3.586520476886e+01))+(3.586520476886e+01)
+4 records in
+mf3 xxxrpc2grid1 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+4 records in
+mf3 xxxrpc2grid1 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+4 records in
+end-proc
+pixmap (xxxrpc2grid1,../test_data/qb1_iraq_dem.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (../test_data/qb1_iraq_dem.hlf,xxxrpc2grid1) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxxrpc2grid1,../test_data/xxchip2.img)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+ibis-l xxxrpc2grid1
+Beginning VICAR task ibis
+ 
+Number of Rows:4  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+       44.83       35.87      375.23      -38.16      -39.91        0.00
+       44.84       35.87      435.22      -40.91     1041.92        0.00
+       44.83       35.87      376.69     1043.37      -40.42        0.00
+       44.84       35.86      408.45     1040.73     1043.30        0.00
+ 
+Rows: 1:4
++-----------+-----------
+         C:7         C:8
++-----------+-----------
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+grid3pt xxxrpc2grid1 cols=(4,5,1,2)  +
+  ix1=ixc1 ix2=ixc2 ix3=ixc3  +
+  v11=t1l v21=t1s v31=t1e v41=t1n  +
+  v12=t2l v22=t2s v32=t2e v42=t2n  +
+  v13=t3l v23=t3s v33=t3e v43=t3n
+Beginning VICAR task grid3pt
+grid3pt version Thu Mar 05 2008
+gtgen out=xxxrpc2grid1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(-4.041925135283e+01,1.04337161+
+1881e+03,0,4.483137093470e+01,3.586520476886e+01,0.+
+0)",    "ModelTiePointTag=(1.043298541857e+03,1.040+
+733578764e+03,0,4.484154456866e+01,3.5864995579+
+58e+01,0.0)",    "ModelTiePointTag=(1.041915704488+
+e+03,-4.091246156316e+01,0,4.484168053645e+0+
+1,3.587175795984e+01,0.0)",    "GTMo+
+delTypeGeoKey=2(ModelTypeGeographic)",    "GeogAngularUnitsGeoKey=9102(Angular_Degree)",    "GeographicTypeGeoKey=4326(GCS_WGS_84)"+
+,    "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",    "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtgenup (../test_data/xxchip2.img,xxxrpc2grid1)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+end-proc
+label-list ../test_data/xxchip2.img
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File ../test_data/xxchip2.img ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a SUN-SOLR host
+                1 bands
+                1085 lines per band
+                1088 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Property: GEOTIFF ----
+NITF_IMAGEDATIM='05072951ZMAY03'
+NITF_CETAG='RPC00B'
+NITF_ACQ_DATE='20030505072952'
+NITF_OBL_ANG='28.55'
+NITF_ANGLE_TO_NORTH='270'
+NITF_SUN_EL='+62.5'
+NITF_SUN_AZ='129.6'
+NITF_MEAN_GSD='029.8'
+NITF_DYNAMIC_RANGE='02047'
+NITF_ROLL_ANG='-28.03'
+RPC_FIELD1='1'
+RPC_FIELD2='0019.88'
+RPC_FIELD3='0000.15'
+RPC_FIELD4='1280'
+RPC_FIELD5='13062'
+RPC_FIELD6='+35.8606'
+RPC_FIELD7='+044.9534'
+RPC_FIELD8='+1017'
+RPC_FIELD9='002921'
+RPC_FIELD10='14238'
+RPC_FIELD11='+00.0209'
+RPC_FIELD12='+000.1239'
+RPC_FIELD13='+0634'
+RPC_FIELD141='+0.132748E-1'
+RPC_FIELD142='-0.147510E+0'
+RPC_FIELD143='-0.113465E+1'
+RPC_FIELD144='-0.138959E-1'
+RPC_FIELD145='+0.200180E-2'
+RPC_FIELD146='+0.635242E-4'
+RPC_FIELD147='+0.115861E-3'
+RPC_FIELD148='-0.286551E-2'
+RPC_FIELD149='-0.778726E-2'
+RPC_FIELD1410='+0.388308E-5'
+RPC_FIELD1411='-0.126487E-5'
+RPC_FIELD1412='+0.788107E-5'
+RPC_FIELD1413='+0.365929E-4'
+RPC_FIELD1414='+0.232154E-5'
+RPC_FIELD1415='-0.225421E-4'
+RPC_FIELD1416='-0.208933E-4'
+RPC_FIELD1417='+0.180910E-4'
+RPC_FIELD1418='+0.363930E-6'
+RPC_FIELD1419='-0.939815E-6'
+RPC_FIELD1420='-0.431269E-7'
+RPC_FIELD151='+0.100000E+1'
+RPC_FIELD152='+0.380256E-2'
+RPC_FIELD153='+0.643151E-2'
+RPC_FIELD154='+0.314790E-3'
+RPC_FIELD155='+0.184958E-4'
+RPC_FIELD156='-0.198243E-5'
+RPC_FIELD157='-0.116422E-5'
+RPC_FIELD158='-0.192637E-4'
+RPC_FIELD159='+0.722401E-4'
+RPC_FIELD1510='-0.161779E-4'
+RPC_FIELD1511='+0.495049E-5'
+RPC_FIELD1512='+0.126794E-5'
+RPC_FIELD1513='+0.190771E-3'
+RPC_FIELD1514='-0.157429E-6'
+RPC_FIELD1515='+0.246815E-4'
+RPC_FIELD1516='+0.491660E-3'
+RPC_FIELD1517='-0.541022E-6'
+RPC_FIELD1518='+0.320900E-6'
+RPC_FIELD1519='+0.181401E-4'
+RPC_FIELD1520='+0.143592E-6'
+RPC_FIELD161='-0.104025E-1'
+RPC_FIELD162='+0.968850E+0'
+RPC_FIELD163='-0.487887E-3'
+RPC_FIELD164='-0.325142E-1'
+RPC_FIELD165='-0.710444E-3'
+RPC_FIELD166='+0.217572E-3'
+RPC_FIELD167='-0.654969E-4'
+RPC_FIELD168='+0.107384E-1'
+RPC_FIELD169='-0.519453E-5'
+RPC_FIELD1610='-0.176761E-4'
+RPC_FIELD1611='-0.121058E-5'
+RPC_FIELD1612='+0.106017E-3'
+RPC_FIELD1613='+0.541226E-5'
+RPC_FIELD1614='-0.389680E-5'
+RPC_FIELD1615='+0.103307E-4'
+RPC_FIELD1616='+0.584016E-4'
+RPC_FIELD1617='+0.380777E-7'
+RPC_FIELD1618='+0.901765E-5'
+RPC_FIELD1619='+0.165988E-5'
+RPC_FIELD1620='-0.119374E-6'
+RPC_FIELD171='+0.100000E+1'
+RPC_FIELD172='-0.319831E-3'
+RPC_FIELD173='+0.681092E-3'
+RPC_FIELD174='-0.549762E-3'
+RPC_FIELD175='-0.267977E-5'
+RPC_FIELD176='-0.619388E-5'
+RPC_FIELD177='+0.267975E-7'
+RPC_FIELD178='+0.476371E-5'
+RPC_FIELD179='-0.147985E-4'
+RPC_FIELD1710='-0.423457E-5'
+RPC_FIELD1711='+0.144009E-7'
+RPC_FIELD1712='-0.107213E-5'
+RPC_FIELD1713='+0.110590E-6'
+RPC_FIELD1714='+0.410217E-7'
+RPC_FIELD1715='-0.169482E-6'
+RPC_FIELD1716='+0.108104E-5'
+RPC_FIELD1717='+0.000000E+0'
+RPC_FIELD1718='-0.233038E-6'
+RPC_FIELD1719='+0.186413E-7'
+RPC_FIELD1720='-0.135637E-7'
+CHIP_PARENT_OFFS_LINE=''
+CHIP_PARENT_OFFS_SAMP=''
+NITF_CORNERLON1='44.83170930595'
+NITF_CORNERLAT1='35.87172707408'
+NITF_CORNERELV1='3.766367775586E+02'
+NITF_CORNERLON2='44.8412822999'
+NITF_CORNERLAT2='35.87150787181'
+NITF_CORNERELV2='4.323969211227E+02'
+NITF_CORNERLON3='44.84115327505'
+NITF_CORNERLAT3='35.86525567113'
+NITF_CORNERELV3='4.088602900966E+02'
+NITF_CORNERLON4='44.83174717856'
+NITF_CORNERLAT4='35.86546526031'
+NITF_CORNERELV4='3.769057829475E+02'
+NITF_CENTERLON='4.483647301486E+01'
+NITF_CENTERLAT='3.586848896933E+01'
+NITF_CENTERELV='4.124234325431E+02'
+NITF_CENTER_GSD='8.816892077020E-01'
+NITF_CENTER_ELEV_LOOK_ANG='5.820481361276E+01'
+NITF_CENTER_AZIM='3.207458726385E-01'
+NITF_CENTER_UPISUP='9.004806560992E+01'
+MODELTRANSFORMATIONTAG=
+'(0.00000938738,-0.0000001377059,0,44.831894043966,-0.0000002082474,-0.0000062516683,0,35.871719164913,0,0,0,0,0,0,0,1)'
+GTMODELTYPEGEOKEY='2(ModelTypeGeographic)'
+GEOGANGULARUNITSGEOKEY='9102(Angular_Degree)'
+GEOGRAPHICTYPEGEOKEY='4326(GCS_WGS_84)'
+GTRASTERTYPEGEOKEY='2(RasterPixelIsPoint)'
+GEOGELLIPSOIDGEOKEY='7030(Ellipse_WGS84)'
+---- Task: VTIFF3 -- User: alz -- Tue Mar 15 18:57:34 2005 ----
+---- Task: GEOMV -- User: alz -- Fri Aug 18 15:05:29 2006 ----
+ 
+************************************************************
+end-proc

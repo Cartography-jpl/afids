@@ -1,0 +1,6 @@
+$ vpack geneprep.com -mixed -
+	-s geneprep.c -
+	-i geneprep.imake -
+	-p geneprep.pdf -
+	-t tstgeneprep.pdf
+$ Exit

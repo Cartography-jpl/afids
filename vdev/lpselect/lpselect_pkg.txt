@@ -1,0 +1,163 @@
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    1872 Aug  7  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    3715 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    3678 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	3715 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	3678 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	3715 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	3678 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	3715 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody     	3678 Jul  4  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	3109 Aug 28  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	3088 Aug 23  2007 lpselect.c~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody  	3109 Aug 28  2007 lpselect.c
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	1872 Aug  5  2007 lpselect.c
+raid27.dir:-rwxrwxrwx 1 rkf users   		3715 May 14  2007 lpselect.c*
+raid27.dir:-rwxrwxrwx 1 rkf users   		3673 May  4  2007 lpselect.c~*
+
+
+raid19_home.dir:-r--r--r-- 1 azobrist nobody    9338 Aug  5  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim     nobody   10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody  116933 Jul  2  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody   10805 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody   10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      116933 Jul  2  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10805 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      116933 Jul  2  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10805 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      116933 Jul  2  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10805 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       10768 Jul  4  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       13077 Aug 28  2007 lpselect.com
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        9338 Aug  5  2007 lpselect.com
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    734 Aug  7  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	356 Jul  4  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       2864 Aug 23  2007 lpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody        734 Aug  5  2007 lpselect.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users    		356 May  3  2007 lpselect.pdf*
+
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    393 Aug  7  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 azobrist nobody    404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody   	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody      	404 Jul  4  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       	764 Aug 24  2007 tstlpselect.pdf
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       	548 Aug 23  2007 tstlpselect.pdf~
+raid19_home.dir:-rw-r--r-- 1 pkim nobody       	393 Aug  5  2007 tstlpselect.pdf
+raid27.dir:-rwxrwxrwx 1 rkf users    		404 Jul  2  2007 tstlpselect.pdf*
+raid27.dir:-rwxrwxrwx 1 rkf users    		387 Jul  2  2007 tstlpselect.pdf~*
+
+
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	3715 Jul  4  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   	3715 Jul  4  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	3109 Aug 28  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	3088 Aug 23  2007 lpselect.c~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   	3109 Aug 28  2007 lpselect.c
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	1872 Aug  5  2007 lpselect.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	1872 Aug  7  2007 lpselect.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	3715 Jul  4  2007 lpselect.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff   	3715 Jul  4  2007 lpselect.c
+Data2_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	1872 Aug  7  2007 lpselect.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	3715 Jul  4  2007 lpselect.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff   	3715 Jul  4  2007 lpselect.c
+Data4_dir.txt:-rw-r--r--  1 rjb  staff      	3678 Jul  4  2007 lpselect.c
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    3715 May 14  2007 lpselect.c*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    3673 May  4  2007 lpselect.c~*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	10768 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff     	10805 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	10768 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff   	10768 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff  	10805 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	13077 Aug 28  2007 lpselect.com
+Data0_dir.txt:-rw-r--r--  1 rjb  staff      	 9338 Aug  5  2007 lpselect.com
+Data2_dir.txt:-r--r--r--  1 rjb  staff      	 9338 Aug  5  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	10768 Jul  4  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff     	10805 Jul  4  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff  	10805 Jul  4  2007 lpselect.com
+Data2_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+Data4_dir.txt:-r--r--r--  1 rjb  staff      	 9338 Aug  5  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	10768 Jul  4  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff     	10805 Jul  4  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff         116933 Jul  2  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff  	10805 Jul  4  2007 lpselect.com
+Data4_dir.txt:-rw-r--r--  1 rjb  staff     	10768 Jul  4  2007 lpselect.com
+
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	356 Jul  4  2007 lpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff         2864 Aug 23  2007 lpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	734 Aug  5  2007 lpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff        	734 Aug  7  2007 lpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	356 Jul  4  2007 lpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff        	734 Aug  7  2007 lpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	356 Jul  4  2007 lpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	356 Jul  4  2007 lpselect.pdf
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    356 May  3  2007 lpselect.pdf*
+
+
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff    	404 Jul  4  2007 tstlpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	764 Aug 24  2007 tstlpselect.pdf
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	548 Aug 23  2007 tstlpselect.pdf~
+Data0_dir.txt:-rw-r--r--  1 rjb  staff        	393 Aug  5  2007 tstlpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff        	393 Aug  7  2007 tstlpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff    	404 Jul  4  2007 tstlpselect.pdf
+Data2_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff        	393 Aug  7  2007 tstlpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff    	404 Jul  4  2007 tstlpselect.pdf
+Data4_dir.txt:-rw-r--r--  1 rjb  staff       	404 Jul  4  2007 tstlpselect.pdf
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    404 Jul  2  2007 tstlpselect.pdf*
+Data7_dir.txt:-rwxrwxrwx  1 rjb  _lpoperator    387 Jul  2  2007 tstlpselect.pdf~*
+ 
+
+
+

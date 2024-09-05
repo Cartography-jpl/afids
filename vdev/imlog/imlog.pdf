@@ -1,0 +1,71 @@
+process help=*
+PARM INP TYPE=STRING COUNT=1
+PARM OUT TYPE=STRING COUNT=1
+PARM LEAD_RM TYPE=INT COUNT=1
+PARM NL TYPE=INT COUNT=1
+PARM NS TYPE=INT COUNT=1
+PARM LINEHDR TYPE=INT COUNT=1 DEFAULT=0
+PARM LINETAIL TYPE=INT COUNT=1 DEFAULT=0
+PARM FORMAT KEYWORD VALID=(BYTE,HALF,FULL) DEFAULT=BYTE
+PARM SWAB KEYWORD VALID=(NOSWAB,SWAB) DEFAULT=NOSWAB
+
+END-PROC
+.TITLE
+imlog - converts a raw image file to VICAR
+.HELP
+PURPOSE:
+
+Strips a header from the file, then reads lines (stripping a line
+header and trailer from each), writing a VICAR file.
+
+The user has three choices to find the lengths of the image header
+and line headers/tails:
+
+1.  The documentation for the image
+2.  Use the unix utility od to list parts of the file
+3.  Guess at the values, run this program, then apply corrections
+    as determined by the VICAR program list
+
+EXECUTION:
+
+Example
+
+imlog INP=A OUT=B LEAD_RM=2437 NL=601 NS=601 FORMAT=half
+
+OPERATION:
+
+TIMING: 
+
+About 3 seconds on a SPARCstation.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          20 Oct 2005
+ COGNIZANT PROGRAMMER:   A. Zobrist          20 Oct 2005
+ 
+ REVISION HISTORY
+  05-10-20    AZ   Initial version
+Wed Jan  2 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+    
+.LEVEL1
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output image file
+.VARIABLE LEAD_RM
+INT - number of bytes of hdr
+    to remove
+.VARIABLE NL
+INT - number of lines output
+.VARIABLE NS
+INT - number of samples output
+.VARIABLE LINEHDR
+INT - number of bytes to remove
+    from the start of each line
+.VARIABLE LINETAIL
+INT - number of bytes to remove
+    from the end of each line
+.VARIABLE FORMAT
+KEYWORD - format of both input
+    and output
+.VARIABLE SWAB
+KEYWORD - reverse bytes to VICAR
+.END

@@ -1,0 +1,6 @@
+$ vpack astroref.com -mixed -
+	-s astroref.c -
+	-i astroref.imake -
+	-p astroref.pdf -
+	-t tstastroref.pdf devastroref.pdf
+$ Exit

@@ -1,0 +1,76 @@
+!get_elev_pixel.pdf
+!Given lat and lon location in the tdps Vector Editor, calculate
+!the line/sample and dem file containing the location and extract 
+!the elevation value.
+
+!Input Parameters:
+! lat - latitude of point in the Vector Editor (+/-)
+! lon - longitued of point in the Vector Editor (+/-)
+!adir - Directory where the DEMs are located
+
+!Outputs: 
+!Image file, tcl variable, interface file, write to output
+
+!Calling Example:
+! get_elev_pixel 33.5 45.5
+! get_elev_pixel -1.5 33.5
+
+procedure
+parm       lat     real      !Latitude of point
+parm       lon     real      !Longitude of point
+parm       adir    string    def="/data/tdps_srtm/" !DEM directory
+local      ilat    integer
+local      ilon    integer
+local      lns     string    init="n" !north or south in lowercase
+local      lew     string    init="e" !east or west in lowercase
+local      line    integer   
+local      samp    integer
+local      elev    integer
+local      tmp     real
+body
+
+!Set n/s/e/w codes
+if             (lat >= 0) let lns = "n"
+if             (lat <  0) let lns = "s"
+if             (lon >= 0) let lew = "e"
+if             (lon <  0) let lew = "w"
+
+!calculate the lower left corner (integer) of the 1 deg DEM cell
+!latitude
+if             (lat >= 0)
+   let          ilat = $fix(lat)
+else
+   let          tmp  = lat - 1
+   let          ilat = $fix(tmp) * (-1)
+end-if
+!longitude
+if             (lon >= 0)
+   let          ilon = $fix(lon)
+else
+   let          tmp  = lon - 1
+   let          ilon = $fix(lon) * (-1)
+end-if
+
+
+ibis-gen        xxa nr=1 nc=5 org=col datacols=(1,2) data=(&lon,&lat)
+
+!ibis-l          xxa 'format
+pixmap         (xxa,&"adir"/&"lns"&"ilat"&"lew"&"ilon"_L1.hlf) +
+                mapcols=(1,2) pixcols=(3,4) 'maptopix
+!Note: getzval occassionally fails along images edges (needs 2x2 window)
+!getzval        (&"adir"/&"lns"&"ilat"&"lew"&"ilon"_L1.hlf,xxa) +
+!                cols=(3,4,5) win=2 'noin
+!ibis-l          xxa 'noheader
+write          "Reading from file: &"lns"&"ilat"&"lew"&"ilon"_L1.hlf"
+
+ibis2tcl        xxa line samp ibisloc=(1,3,1,4) vartype=(3,3)
+!list            &"adir"/&"lns"&"ilat"&"lew"&"ilon"_L1.hlf +
+!                size=(&line,&samp,1,1)
+copy            &"adir"/&"lns"&"ilat"&"lew"&"ilon"_L1.hlf xxb +
+                size=(&line,&samp,1,1)
+mssibis         xxb xxc size=(1,1,1,1) band=1 cols=1 ncol=1
+!ibis-l          xxc
+ibis2tcl        xxc elev ibisloc=(1,1) vartype=3
+write          "****For Lat=&lat and Long=&lon"
+write          "********The Elevation is &elev meters"
+end-proc

@@ -1,0 +1,6 @@
+$ vpack tieconv.com -mixed -
+	-s tieconv.c -
+	-i tieconv.imake -
+	-p tieconv.pdf -
+	-t tsttieconv.pdf devtieconv.pdf
+$ Exit

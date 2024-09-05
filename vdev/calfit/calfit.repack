@@ -1,0 +1,6 @@
+$ vpack calfit.com -mixed -
+	-s calfit.c -
+	-i calfit.imake -
+	-p calfit.pdf -
+	-t tstcalfit.pdf
+$ Exit

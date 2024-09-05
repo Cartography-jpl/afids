@@ -1,0 +1,82 @@
+procedure
+
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Nov 04, 2017 - RJB
+! TEST SCRIPT FOR DESPIKE2
+!
+! Vicar Programs:
+!   translog f2
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+refgbl $echo
+body
+let $echo="no"
+let _onfail="goto rm"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto/despike ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data/carto/despike ct
+    else
+        ush ln -s $AFIDS_TESTDATA/carto/despike ct
+    end-if
+end-if
+let $echo="yes"
+
+!goto test2
+despike2 inp=ct/nhiuaxf2010000_031112541992.img out=despike.img scale=1.5
+
+!xvd ct/nhiuaxf2010000_031112541992.img
+!xvd despike.img
+
+f2 (ct/nhiuaxf2010000_031112541992.img, despike.img) diff.img func=("in1-in2")
+
+!xvd diff.img
+
+! REPEAT
+despike2 inp=despike.img out=despike2.img scale=1.5
+despike2 inp=despike2.img out=despike3.img scale=1.5
+despike2 inp=despike3.img out=despike4.img scale=1.5
+despike2 inp=despike4.img out=despike5.img scale=1.5
+despike2 inp=despike5.img out=despike6.img scale=1.5
+despike2 inp=despike6.img out=despike7.img scale=1.5
+
+test2>
+despike2 inp=ct/nhiuaxf2000000_006022055969.img out=despike10.img scale = 1
+
+f2 (ct/nhiuaxf2000000_006022055969.img, despike10.img) diff2.img func=("in1-in2")
+
+!xvd diff.img
+
+let $echo="no"
+rm>
+ush rm ct
+END-PROC

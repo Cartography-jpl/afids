@@ -1,0 +1,6 @@
+$ vpack gtrot.com -mixed -
+	-s gtrot.c -
+	-i gtrot.imake -
+	-p gtrot.pdf -
+	-t tstgtrot.pdf devgtrot.pdf
+$ Exit

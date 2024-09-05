@@ -1,0 +1,41 @@
+procedure
+local ftype int
+body
+
+goto curr
+
+utilf inp=../test_data/03MAY05072951-P1BS-000000050393_01_P005.NTF +
+   out= xxchip1.tif scr_key=xxqq xvd=n
+
+
+vtiff3-tovic xxchip1.tif xxchip1.img
+
+gtcopy xxchip1.img ../test_data/xxchip2.img size=(1,1,2000,2000)
+
+curr>
+
+gtcopy ../test_data/xxchip2.img xxchip3left.img size=(1,1,500,500)
+gtcopy ../test_data/xxchip2.img xxchip3right.img size=(501,501,500,500)
+label-list xxchip3.img
+
+rpccorn in=(/home/alz/ikapp/xxchip3left.img, +
+     /export/data4/tll/gui_test/dtedmos/qb1_iraq_dem.hlf)
+rpccorn in=(/home/alz/ikapp/xxchip3right.img, +
+     /export/data4/tll/gui_test/dtedmos/qb1_iraq_dem.hlf)
+
+label-list /home/alz/ikapp/xxchip3left.img
+label-list /home/alz/ikapp/xxchip3right.img
+
+goto theend
+from the label
+NITF_CORNERLAT1='35.881943'
+NITF_CORNERLON1='44.825279'
+NITF_CORNERLAT2='35.87611'
+NITF_CORNERLON2='45.080002'
+NITF_CORNERLAT3='35.84'
+NITF_CORNERLON3='45.075832'
+NITF_CORNERLAT4='35.845833'
+NITF_CORNERLON4='44.825832'
+
+theend>
+end-proc

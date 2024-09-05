@@ -1,0 +1,19 @@
+procedure
+local testrpc string
+local dted string
+refgbl $echo
+body
+let $echo="yes"
+
+
+!   TEST rpc2gtlb HANDYPROC
+
+let testrpc = "../test_data/xxchip2.img"
+let dted = "../test_data/qb1_iraq_dem.hlf"
+label-list &testrpc
+
+rpc2gtlb (&testrpc,&dted)
+
+label-list &testrpc
+
+end-proc

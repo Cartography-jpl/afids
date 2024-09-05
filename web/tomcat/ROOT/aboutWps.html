@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>About AFIDS WPS</title>
+</head>
+<body>
+
+<h2>About the AFIDS OGC WPS</h2>
+
+<p>
+The AFIDS WPS is a free Satellite Image Coregistration Service
+available to registered users via a username and password. Most users
+may wish to coregister Landsat imagery, but additional sensors are
+available or will be added in the future (e.g. Quickbird, Aster,
+Ikonos, ALI, Hyperion). For the Landsat processing paradigm, the AFIDS
+WPS registers your Landsat image (band3) to an orthorectified base
+image, and returns to you the registered image in GeoTIFF format (plus
+some accuracy and log files). The remaining bands can also be quickly
+registered using a correction grid (created with the band3
+registration) so everything matches exactly. After the first
+registration, a second date Landsat image can be sent to the AFIDS WPS
+for coregistration with your first image. These "first" and "second"
+Landsat images are referred to as "master" and "secondary." If
+desired, multiple "secondary" images can be registered to the "master"
+to develop a time-series of registered Landsat imagery. The
+registration process may differ slightly for other satellite image
+types.
+</p>
+
+<p>
+A goal of a Web Processing Service is to eventually perform all
+processing automatically using XML and other network tools to tie
+together all the components of image handling and
+manipulation. However, in the interim, it is necessary to have a
+minimum gui interface to the AFIDS WPS so human users can beta test
+the registration software and automated network interfaces.
+</p>
+
+<p>
+The AFIDS WPS conforms to the standards of the Open Geospatial
+Consortium (<a href="http://www.opengeospatial.org">OGC</a>) Web
+Processing Service (<a
+href="http://www.opengeospatial.org/standards/wps">WPS</a>). The OGC
+WPS specifies three required operations: Get Capabilities, Describe
+Process, and Execute. The output from each of these operations is an
+XML document. Embedded in the XML output are URLs to the actual output
+product(s).
+</p>
+
+<ol>
+<li>
+<a href="http://cart01:8080/cgi-bin/wps.py?service=Wps&version=0.4.0&request=getcapabilities">GetCapabilities</a> <br />
+This operation describes the processes offered by the server.
+</li>
+
+<li>
+DescribeProcess <br />
+This operation provides a detailed description of a particular process to the client:
+<ul>
+
+<li> Landsat
+<ul>
+<li>
+Describe <a href="http://cart01:8080/cgi-bin/wps.py?service=Wps&version=0.4.0&request=describeprocess&identifier=coregisterlandsatmaster">Master</a> coregistration
+</li>
+<li>
+Describe <a href="http://cart01:8080/cgi-bin/wps.py?service=Wps&version=0.4.0&request=describeprocess&identifier=coregisterlandsatsecondary">Secondary</a> coregistration
+</li>
+<li>
+Describe <a href="http://cart01:8080/cgi-bin/wps.py?service=Wps&version=0.4.0&request=describeprocess&identifier=coregisterlandsatadditional">Additional Band</a> coregistration
+</li>
+</ul>
+</li> <!-- end of Landsat -->
+
+</ul>
+</li>
+
+<li>
+Execute <br />
+This operation allows a client to run a specified process:
+<ul>
+
+<li> Landsat
+<ul>
+<li>
+Coregister a Master image
+</li>
+<li>
+Coregister a Secondary image
+</li>
+<li>
+Coregister an Additional Band image
+</li>
+</ul>
+</li> <!-- end of Landsat -->
+
+</ul>
+</li> <!-- end of Execute -->
+</ol>
+
+</form>
+
+</body>
+</html>

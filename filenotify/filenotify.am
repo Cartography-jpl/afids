@@ -1,0 +1,58 @@
+lib_LTLIBRARIES += libfilenotify.la libvif.la
+bin_PROGRAMS += Notify_App vif
+Notify_App_LDADD = libfilenotify.la
+libvif_la_LIBADD = libfilenotify.la
+libvif_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcfilenotify)/api/sample/inc
+libvif_la_CPPFLAGS+= -I$(srcdir)/$(srcfilenotify)/api/inc
+libvif_la_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+Notify_App_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcfilenotify)/api/sample/inc
+Notify_App_CPPFLAGS+= -I$(srcdir)/$(srcfilenotify)/api/inc
+Notify_App_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+vif_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcfilenotify)/api/sample/inc
+vif_CPPFLAGS+= -I$(srcdir)/$(srcfilenotify)/api/inc
+vif_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+vif_LDADD = libvif.la
+libfilenotify_la_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS) $(OPENSSL_CFLAGS)
+libfilenotify_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcfilenotify)/api/inc
+libfilenotify_la_LIBADD = $(OPENSSL_LIBS) $(PTHREAD_LIBS)
+
+lib_LTLIBRARIES += notifyTcl.la
+notifyTcl_la_DEPENDENCIES = libvif.la
+notifyTcl_la_LDFLAGS = -module -avoid-version
+notifyTcl_la_LIBADD = libvif.la
+notifyTcl_la_LIBADD+= $(TCL_LIBS)
+# Don't think this is needed, comment out and see if anything breaks
+#notifyTcl_la_LIBADD+= -lssl -lcrypto
+
+notifyTcl_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(vifinc) 
+notifyTcl_la_CPPFLAGS+= $(TCL_CFLAGS)
+
+notifyTcl_la_SOURCES = @srcfilenotify@/notifyTcl.cpp
+
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Defs.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Receiver.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Receiver_Handler.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Sender.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Sender_Handler.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/FN_Socket.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/Frame_Headers.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/Mutex_Guard.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/Open_SSL_Socket.h
+EXTRA_DIST+= @srcfilenotify@/api/inc/Standard_Socket.h
+
+libfilenotify_la_SOURCES = @srcfilenotify@/api/src/FN_Receiver.cpp
+libfilenotify_la_SOURCES+= @srcfilenotify@/api/src/FN_Sender.cpp
+libfilenotify_la_SOURCES+= @srcfilenotify@/api/src/Open_SSL_Socket.cpp
+libfilenotify_la_SOURCES+= @srcfilenotify@/api/src/Standard_Socket.cpp
+
+EXTRA_DIST+= @srcfilenotify@/api/sample/inc/FN_Util.h
+EXTRA_DIST+= @srcfilenotify@/api/sample/inc/Simple_Receiver_Handler.h
+EXTRA_DIST+= @srcfilenotify@/api/sample/inc/Simple_Sender_Handler.h
+Notify_App_SOURCES = @srcfilenotify@/api/sample/src/FN_Util.cpp 
+Notify_App_SOURCES+= @srcfilenotify@/api/sample/src/main.cpp 
+
+libvif_la_SOURCES = @srcfilenotify@/api/sample/src/FN_Util.cpp 
+libvif_la_SOURCES+= @srcfilenotify@/vif/vif.cpp
+EXTRA_DIST+= @srcfilenotify@/vif/vif.h
+
+vif_SOURCES = @srcfilenotify@/vif/vifMain.cpp

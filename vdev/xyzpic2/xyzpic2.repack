@@ -1,0 +1,6 @@
+$ vpack xyzpic2.com -mixed -
+	-s xyzpic2.c -
+	-i xyzpic2.imake -
+	-p xyzpic2.pdf -
+	-t tstxyzpic2.pdf
+$ Exit

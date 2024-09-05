@@ -1,0 +1,6 @@
+$ vpack ascnum.com -mixed -
+	-s ascnum.c -
+	-i ascnum.imake -
+	-p ascnum.pdf -
+	-t tstascnum.pdf ../test_data/ascnum.dat
+$ Exit

@@ -1,0 +1,52 @@
+procedure
+parm inp type=(string,99)
+parm out type=(string,99)
+parm aoi type=(string,12) count=4 default=("","","","")
+parm xvd string valid=("n","y") default="n"
+
+local s type=(string,12)
+local lnl type=int
+local lns type=int
+local sl type=int
+local ss type=int
+local nl type=int
+local ns type=int
+body
+
+! utility to cut VICAR sub-image (VICAR output)
+
+let s = aoi(1)
+if (s<>"")
+   str2tcl inval="&s" val=sl vtype=4
+else
+   let sl = 1
+end-if
+let s = aoi(2)
+if (s<>"")
+   str2tcl inval="&s" val=ss vtype=4
+else
+   let ss = 1
+end-if
+let s = aoi(3)
+if (s<>"")
+   str2tcl inval="&s" val=lnl vtype=4
+else
+   lab2tcl &inp v1=lnl keyword=nl 'system
+end-if
+let nl = lnl-sl+1
+let s = aoi(4)
+if (s<>"")
+   str2tcl inval="&s" val=lns vtype=4
+else
+   lab2tcl &inp v1=lns keyword=ns 'system
+end-if
+let ns = lns-ss+1
+
+write "size=(&sl,&ss,&nl,&ns)"
+gtcopy &inp &out size=(&sl,&ss,&nl,&ns)
+
+gtlist &out
+
+if (xvd="y") xvd &out
+
+end-proc

@@ -1,0 +1,41 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+goeslog inp=(/net/tazboy/export/raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.001,  +
+             /net/tazboy/export/raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.LON,  +
+             /net/tazboy/export/raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.LAT)  +
+        out=(band4.img,band4.int)  +
+        sl=1000 ss=1000 nl=500 ns=500 lines=2048 samples=2048
+Beginning VICAR task goeslog
+goeslog version Tue Feb 26 2008
+error opening /net/tazboy/export/raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.001 for input
+ ** ABEND called **
+continue
+goto done
+end-proc

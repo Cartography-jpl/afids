@@ -1,0 +1,5 @@
+#! /bin/csh -f
+
+set scriptdir=`dirname $0`
+source $scriptdir/../etc/afids/setup_afids_env.csh
+$scriptdir/ruby $scriptdir/../afids/vdev/argus/GroundProcessing/GroundProcessingGui.rb

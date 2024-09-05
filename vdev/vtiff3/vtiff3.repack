@@ -1,0 +1,6 @@
+$ vpack vtiff3.com -mixed -
+	-s vtiff3.c optimal_color2.c optimal_color2.h uFixedNums.c uFixedNums.h -
+	-p vtiff3.pdf -
+	-t tstvtiff3.pdf -
+	-i vtiff3.imake
+$ Exit

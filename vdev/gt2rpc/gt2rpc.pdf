@@ -1,0 +1,172 @@
+procedure help=*
+parm inp type=(string,99) count=1
+parm rpctype type=(string,2) count=1 valid=("A","B") default="A"
+
+local nl int
+local ns int
+local ns2 int
+local ns3 int
+local nl2 int
+local nl3 int
+local rpcval int
+local modeltype int
+
+local loff real
+local soff real
+local lonoff real
+local latoff real
+local lscl real
+local sscl real
+local lonscl real
+local latscl real
+local lx real
+local ly real
+local lc real
+local sx real
+local sy real
+local sc real
+local ref type=(string,99)
+local afidsvdevdata type=(string,99)
+body
+
+!  gt2rpc HANDYPROC
+
+plab2tcl &inp property=Geotiff val=modeltype +
+   keyword=gtmodeltypegeokey vtype=4
+lab2tcl &inp v1=nl v2=ns keyword=(nl,ns) 'system
+let nl2 = nl/3
+let nl3 = 2*nl2
+let ns2 = ns/3
+let ns3 = 2*ns2
+ibis-gen xxxgtrpc433 nc=35 nr=16 deffmt=DOUB datacols=(1,2) +
+   data=(1,1,1,&ns2,1,&ns3,1,&ns, +
+        &nl2,1,&nl2,&ns2,&nl2,&ns3,&nl2,&ns, +
+        &nl3,1,&nl3,&ns2,&nl3,&ns3,&nl3,&ns, +
+        &nl,1,&nl,&ns2,&nl,&ns3,&nl,&ns)
+pixmap (xxxgtrpc433,&inp) mapcols=(33,34) pixcols=(1,2) 'pixtomap
+translog AFIDS_VDEV_DATA afidsvdevdata
+let ref = "&afidsvdevdata/etop02nobath.hlf"
+gtproj (xxxgtrpc433,&inp,&afidsvdevdata/etop02nobath.hlf) incol=(33,34) outcol=(3,4) 'tec
+mf3 xxxgtrpc433 f="c1=c1-0.5$c2=c2-0.5"
+mf3 xxxgtrpc433 +
+   f="c5=c1$c6=c2$c7=c1$c8=c2$@vmin(c5)$@vmin(c6)$@vmax(c7)$@vmax(c8)"
+mf3 xxxgtrpc433 +
+   f="c9=(c7-c5)/2$c10=c5+c9$c11=(c8-c6)/2$c12=c6+c11"
+mf3 xxxgtrpc433 +
+   f="c9=@int(c9)$c10=@int(c10)$c11=@int(c11)$c12=@int(c12)"
+mf3 xxxgtrpc433 +
+   f="c13=(c1-c10)/c9$c14=(c2-c12)/c11"
+!ibis-l xxxgtrpc433 cols=(1,2,3,4) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(5,6,7,8) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(9,10,11,12) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(13,14,15,16) cfor="%14.7f %14.7f %14.7f %14.7f"
+
+mf3 xxxgtrpc433 +
+   f="c15=c3$c16=c4$c17=c3$c18=c4$@vmin(c15)$@vmin(c16)$@vmax(c17)$@vmax(c18)"
+mf3 xxxgtrpc433 +
+   f="c19=(c17-c15)/2$c20=c15+c19$c21=(c18-c16)/2$c22=c16+c21"
+mf3 xxxgtrpc433 +
+   f=("c19=(@int(c19*10000))/10000$c20=(@int(c20*10000))/10000$", +
+      "c21=(@int(c21*10000))/10000$c22=(@int(c22*10000))/10000")
+mf3 xxxgtrpc433 +
+   f="c23=(c3-c20)/c19$c24=(c4-c22)/c21"
+!ibis-l xxxgtrpc433 cols=(3,4,15,16) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(17,18,19,20) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(21,22,23,24) cfor="%14.7f %14.7f %14.7f %14.7f"
+
+mf3 xxxgtrpc433 f="c25=1"
+ibislsq2 xxxgtrpc433 indcol=(25,23,24) depcol=13 coeffcol=(26,27,28) rescol=32
+ibislsq2 xxxgtrpc433 indcol=(25,23,24) depcol=14 coeffcol=(29,30,31) rescol=33
+
+!ibis-l xxxgtrpc433 cols=(25,26,27,28) cfor="%14.7f %14.7f %14.7f %14.7f"
+!ibis-l xxxgtrpc433 cols=(29,30,31,32) cfor="%14.7f %14.7f %14.7f %14.7f"
+
+let rpcval = 0
+if (rpctype="B") let rpcval=1
+ibis2tcl xxxgtrpc433 v1=loff v2=soff v3=lonoff v4=latoff +
+   v5=lscl v6=sscl v7=lonscl v8=latscl +
+   vartype=(-1,-1,-1,-1,-1,-1,-1,-1) +
+   ibisloc=(1,10,1,12,1,20,1,22,1,9,1,11,1,19,1,21)
+ibis2tcl xxxgtrpc433 v1=lc v2=lx v3=ly v4=sc v5=sx v6=sy +
+   vartype=(-1,-1,-1,-1,-1,-1) +
+   ibisloc=(1,26,1,27,1,28,1,29,1,30,1,31)
+
+ibis-gen xxxgtrpc433b1 nc=1 nr=15 deffmt=DOUB
+mf3 xxxgtrpc433b1 +
+   f=("c1=(@index==1)*(&rpcval)+(@index==3)*1+(@index==6)*(&loff)+", +
+      "(@index==7)*(&soff)+(@index==8)*(&latoff)+(@index==9)*(&lonoff)+", +
+      "(@index==11)*(&lscl)+(@index==12)*(&sscl)+(@index==13)*(&latscl)+", +
+      "(@index==14)*(&lonscl)+(@index==15)*1")
+ibis-gen xxxgtrpc433b2 nc=5 nr=80 deffmt=DOUB datacols=1 +
+   data=(101,102,103,104,105)
+mf3 xxxgtrpc433b2 +
+   f=("c1=(@index==1)*(&lc)+(@index==2)*(&lx)+(@index==3)*(&ly)+", +
+      "(@index==41)*(&sc)+(@index==42)*(&sx)+(@index==43)*(&sy)+", +
+      "(@index==21)*1+(@index==61)*1")
+icat (xxxgtrpc433b1,xxxgtrpc433b2) xxxgtrpc433b 'h
+
+if (modeltype=1)
+   ! solve for N10, D10 here
+   ibislsqf (xxxgtrpc433,xxxgtrpc433b) func=RPCN10 +
+       datacol=(23,24,25) depcol=13 +
+       rescol=32 solcol=(2,3) rpctype=&rpctype rpcls=L
+   ibisnlsq (xxxgtrpc433,xxxgtrpc433b) func=RPCD9 +
+       datacol=(23,24,25) depcol=13 +
+       rescol=32 solcol=(3,4) rpctype=&rpctype rpcls=L
+   ibislsqf (xxxgtrpc433,xxxgtrpc433b) func=RPCN10 +
+       datacol=(23,24,25) depcol=14 +
+       rescol=32 solcol=(4,5) rpctype=&rpctype rpcls=S
+   ibisnlsq (xxxgtrpc433,xxxgtrpc433b) func=RPCD9 +
+       datacol=(23,24,25) depcol=14 +
+       rescol=32 solcol=(5,6) rpctype=&rpctype rpcls=S
+else
+   mf3 xxxgtrpc433b f="c6=c2"
+end-if
+
+ibis2rpc xxxgtrpc433b xxxgtrpc433c ccol=6 scol=1
+gtgenup (&inp,xxxgtrpc433c)
+
+theend>
+end-proc
+.TITLE
+gt2rpc - converts GeoTIFF mapping label to simplified rpc keeping both
+.HELP
+PURPOSE
+     A mapped image usually doesn't need an RPC, but a simplified RPC can
+represent the linear mapping.  No elevation is needed since a mapped image is
+always presumed ortho.
+
+DO NOT USE THIS ROUTINE FOR AN IMAGE WHICH IS NOT ORTHO AND MAY HAVE A GEOTIFF
+LABEL AS AN APPROXIMATE MAPPING.
+	   
+CALL
+     gt2rpc INPUT
+  WHERE:
+     INPUT          is an image file with a GeoTIFF mapping label.
+ 
+OPERATION
+
+    The mapping label is used to produce a grid and the grid is solved for
+an RPC.
+
+PERFORMANCE
+
+Expect about 1 seconds.
+
+.PAGE
+Restrictions
+------------
+
+The input must have a GeoTIFF label.
+
+DO NOT USE THIS ROUTINE FOR AN IMAGE WHICH IS NOT ORTHO AND MAY HAVE A GEOTIFF
+LABEL AS AN APPROXIMATE MAPPING.
+
+.PAGE
+Original Programmer: A. L. Zobrist, 11 Dec, 2008
+Current Cognizant Programmer: A. L. Zobrist
+.LEVEL1
+.VARI INP
+image file with a 
+GeoTIFF mapping label.
+.END

@@ -1,0 +1,70 @@
+procedure
+parm key string
+parm pixsiz real
+parm mlon real
+parm mlat real
+parm mcase type=int valid=(1,2) default=2
+
+local refmap type=(string,99)
+local mastername type=(string,30)
+local utmzone int
+local utmstring string
+local uln real
+local ule real
+local urn real
+local ure real
+local lln real
+local lle real
+
+local mstrlon real
+local mstrlat real
+local mstrlonp1 real
+local mstrlatm1 real
+local pixdeg real
+
+body
+
+let mastername = "&key" // "_params"
+asc2tcl &mastername keyword="refmap=" val=refmap vtype=0
+
+if (mcase=1)   ! generate the utm master image
+
+   let utmzone = $fix(mlon/6.0+31.0)
+   let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+   let ule = ($float(utmzone)-31.0)*6.0
+   let ule = mlon-ule-3.0
+   let ule = ule*80000.0+500000.0    ! need to calibrate, but approx OK
+   let uln = mlat*110000.0        ! need to calibrate, but approx OK
+   let ure = ule + pixsiz*100.0
+   let urn = uln
+   let lle = ule
+   let lln = uln - pixsiz*100.0
+
+   gtgen out=&refmap 'tiecnvrt 'rectfit +
+      geotiff=("ModelTiePointTag=(0,0,0,&ule,&uln,0.0)", +
+        "ModelTiePointTag=(100,0,0,&ure,&urn,0.0)", +
+        "ModelTiePointTag=(0,100,0,&lle,&lln,0.0)", +
+        "ProjectedCSTypeGeoKey=&utmstring", +
+        "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   gtlist &refmap
+
+else-if (mcase=2)   ! generate the platte caree master image
+
+   let mstrlon = mlon
+   let mstrlat = mlat
+   let mstrlonp1 = mstrlon+1.0
+   let mstrlatm1 = mstrlat-1.0
+   let pixdeg = 108000.0
+
+   gtgen out=&refmap 'tiecnvrt 'rectfit +
+      geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+        "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+        "ModelTiePointTag=(0,0,0,&mstrlon,&mstrlat,0.0)", +
+        "ModelTiePointTag=(0,&pixdeg,0,&mstrlon,&mstrlatm1,0.0)", +
+        "ModelTiePointTag=(&pixdeg,0,0,&mstrlonp1,&mstrlat,0.0)", +
+        "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   gtlist &refmap
+
+end-if
+
+end-proc

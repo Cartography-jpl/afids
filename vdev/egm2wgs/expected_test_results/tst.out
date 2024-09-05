@@ -1,0 +1,274 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xxxim1 nl=50 ns=50 ival=1000  'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,-112,39,0.0)",  +
+      "ModelTiePointTag=(50,0,0,-111,39,0.0)",  +
+      "ModelTiePointTag=(0,50,0,-112,38,0.0)",  +
+      "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+      "GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+      "GeogAngularUnitsGeoKey=9102(Angular_Degree)",  +
+      "GeographicTypeGeoKey=4326(GCS_WGS_84)",  +
+      "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtlist xxxim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,-112,39,0.0)
+MODELPIXELSCALETAG=(0.02,0.02,0.0)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5 -111.9900000000  38.99000000000
+       1.0     50.0         49.5      0.5 -111.0100000000  38.99000000000
+      50.0      1.0          0.5     49.5 -111.9900000000  38.01000000000
+      50.0     50.0         49.5     49.5 -111.0100000000  38.01000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0 -112.0000000000  39.00000000000
+       0.5     50.5         50.0      0.0 -111.0000000000  39.00000000000
+      50.5      0.5          0.0     50.0 -112.0000000000  38.00000000000
+      50.5     50.5         50.0     50.0 -111.0000000000  38.00000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units east
+1 line   = 0.0200000000000 map units north
+
+
+The scale fraction is 1 /      3.9
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+egm2wgs xxxim2 xxxim3
+translog AFIDS_ROOT afidsroot
+let egm96 = "/data/afids5/data/vdev/EGM96_20_x100.HLF"
+gtwarp /data/af+
+ids5/data/vdev/EGM96_20_x100.HLF   +
+  xxxfixdted1 ref=xxxim2 'coverref     nah=400 nav=400
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 10-oct-07"
+gtwarp version 10-oct-07
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl /data/afids5/data/vdev/EGM96_20_x100.HLF v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxim2 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,50,50)"
+geomv parameter (sl,ss,nl,ns) = (1,1,50,50)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=160801 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/401)/400)*50+(1-0.5)$",        +
+      "c2=(@mod(@index+400,401)/400)*50+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/401)/400)*50+(1-0.5)$c2=(@mod(@index+400,401)/400)*50+(1-0.5)
+160801 records in
+pixmap (xxqqgrid2qq,xxxim2) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqgrid2qq,xxxim2,/data/afids5/data/vdev/EGM96_20_x100.HLF) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,-112,39,0.0)
+MODELPIXELSCALETAG=(0.02,0.02,0.0)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,-180.0,90.0,0.0)
+MODELPIXELSCALETAG=(0.05,0.05,0.0)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse not applied
+
+forward not applied
+
+datum shift not applied
+pixmap (xxqqgrid2qq,/data/afids5/data/vdev/EGM96_20_x100.HLF) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+geomv INP=(/data/afids5/data/vdev/EGM96_20_x100.HLF,xxqqgrid2qq,xx+
+xim2) OUT=xxxfixdted1 size=(1,1,50,50)         cols=(1,2,7,8) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 400 nav = 400
+requested memory 1922
+end-proc
+f2 (xxxim2,xxxfixdted1)+
+     out=xxxi+
+m3     fun="in1-in2*0.01"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 using hash table lookup
+FUNCTION EVALUATED 2411 TIMES
+gtgenup xxxim3+
+    geotiff=("VerticalCSTypeGeoKey=5030(VertCS_WGS_84_ellipsoid)")
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+ush /bin/rm xxxfixdted1
+end-proc
+gtlist xxxim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,-112,39,0.0)
+MODELPIXELSCALETAG=(0.02,0.02,0.0)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+VERTICALCSTYPEGEOKEY=5030(VertCS_WGS_84_ellipsoid)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5 -111.9900000000  38.99000000000
+       1.0     50.0         49.5      0.5 -111.0100000000  38.99000000000
+      50.0      1.0          0.5     49.5 -111.9900000000  38.01000000000
+      50.0     50.0         49.5     49.5 -111.0100000000  38.01000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0 -112.0000000000  39.00000000000
+       0.5     50.5         50.0      0.0 -111.0000000000  39.00000000000
+      50.5      0.5          0.0     50.0 -112.0000000000  38.00000000000
+      50.5     50.5         50.0     50.0 -111.0000000000  38.00000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units east
+1 line   = 0.0200000000000 map units north
+
+
+The scale fraction is 1 /      3.9
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+f2 (xxxim2,xxxim3) out=xxxim1 fun="abs(in1-in2)"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 using hash table lookup
+FUNCTION EVALUATED 153 TIMES
+hist xxxim1
+Beginning VICAR task hist
+HIST version 15-NOV-05
+
+         17      36    ***
+         18    1790    **************************************************  1
+         19     579    **************************************************  2
+         20      95    ********
+
+AVERAGE GRAY LEVEL=18.29320
+STANDARD DEVIATION=0.558600
+NUMBER ELEMENTS=    2500
+MIN. DN=        17
+MAX. DN=        20
+
+end-proc

@@ -1,0 +1,80 @@
+process help=*
+parm inp type=(string,99) count=3
+parm out type=(string,99) count=3
+parm reverse type=int default=0
+parm noneg type=int default=1
+parm fileformat type=string valid=("geotiff","vicar") default="vicar"
+end-proc
+
+.title
+VICAR Program rgb2ish - converts between RGB and ISH
+.help
+PURPOSE
+
+     RGB2ISH converts between RGB and ISH.
+
+  1) Reads byte, half or full word VICAR image
+  2) Writes same, with RGB/ISH conversion
+  3) Conversion direction depends on "reverse" parm
+  4) Negative values can be set to zero
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     rgb2ish INP=(I1,I2,I3) OUT=(O1,O2,O3) PARMS
+     
+     where
+
+     I1,I2,I3   are VICAR input images
+     O1,O2,O3   are VICAR output images
+
+     PARMS	
+       reverse if 0 (default), converts rgb to ish else ish to rgb
+       noneg if non-zero (default), replaces negative values with zero
+       fileformat must be either vicar (default) or geotiff
+
+     Examples
+
+     rgb2ish INP=(r,g,b) OUT=(h,s,i)
+
+     rgb2ish INP=(h,s,i) OUT=(r,g,b) reverse=1
+
+.PAGE
+OPERATION
+
+     RGB2ISH converts between RGB and ISH, performing the conversion
+     in double values. Negative input values are not allowed.
+     Input images must be either all byte or all half word.
+   
+.PAGE
+
+RESTRICTIONS
+
+     None known.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, R. Nathan
+
+REVISIONS: 
+  Wed Nov  5 2008
+    Updated to ANSI-C
+  Mon Mar 25 2002
+    Initial version
+
+.level1
+.var inp
+VICAR input file
+.var out
+VICAR output file
+.var reverse
+If 0 (default), converts rgb to ish else ish to rgb.
+.var 
+noneg
+If non-zero (default), replaces negative values with zero
+.var
+fileformat
+Must be either vicar (default) or geotiff
+.level2
+.end

@@ -1,0 +1,165 @@
+procedure
+refgbl $echo
+parm key string
+parm fnamein string
+parm metin string
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm orthogr string valid=("yes","no") default="yes"
+parm dted string
+parm lsat string
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+
+parm maptype type=string valid=("pc","utm") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+
+local lmodfit string
+local rawfile
+local rawroot
+
+local ixclosest int
+local ixnext int
+
+local qlon real
+local qloninc real
+local qlat real
+local qlatinc real
+
+local fname4 string
+local fname5 string
+
+local inroot string
+local outroot string
+local scratchroot string
+
+local inloc string
+local outloc string
+local masterloc string
+local gridinfoloc string
+local gridfinalloc string
+
+local tlat1 real
+local tlon1 real
+local tlat2 real
+local tlon2 real
+local tlat3 real
+local tlon3 real
+local tlat4 real
+local tlon4 real
+local slat1 real
+local slon1 real
+local slat2 real
+local slon2 real
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+local satelv real
+
+local stopat int
+
+body
+let $echo="yes"
+
+let satelv = 704000.0
+
+! landsat 7 orthorectified only case for now
+
+if (orthogr="yes")
+   let lmodfit = "noelvcor"
+else
+   let lmodfit = "&modelfit"
+   
+   write "landsat 7 orthorectified only case for now"
+   goto theend
+   
+end-if
+
+let stopat=6    ! case 3 dropped because of utm proj
+
+let inloc = "raw" // "&key" // "/"
+let outloc = "final" // "&key" // "/"
+
+let rawfile = "&inloc" // "&fnamein" // "_nn30.tif"
+let rawroot = "&inloc" // "&fnamein" // ".band3"
+let fname4 = "&inloc" // "&metin" // ".met"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+
+!  vtiff (tif file assumed for the present)
+
+vtiff3-tovic inp=&rawfile out=&rawroot
+
+!   get coordinates from met file
+
+asc2tcl &fname4 keyword="SCENE_UL_CORNER_LON = " val=tlon1 vtype=8
+asc2tcl &fname4 keyword="SCENE_UL_CORNER_LAT = " val=tlat1 vtype=8
+asc2tcl &fname4 keyword="SCENE_UR_CORNER_LON = " val=tlon2 vtype=8
+asc2tcl &fname4 keyword="SCENE_UR_CORNER_LAT = " val=tlat2 vtype=8
+asc2tcl &fname4 keyword="SCENE_LL_CORNER_LON = " val=tlon3 vtype=8
+asc2tcl &fname4 keyword="SCENE_LL_CORNER_LAT = " val=tlat3 vtype=8
+asc2tcl &fname4 keyword="SCENE_LR_CORNER_LON = " val=tlon4 vtype=8
+asc2tcl &fname4 keyword="SCENE_LR_CORNER_LAT = " val=tlat4 vtype=8
+
+let slon1 = 0.5*(tlon1+tlon2)
+let slat1 = 0.5*(tlat1+tlat2)
+let slon2 = 0.5*(tlon3+tlon4)
+let slat2 = 0.5*(tlat3+tlat4)
+write "slon1,slat1,slon2,slat2 &slon1,&slat1,&slon2,&slat2"
+
+!   have to process the int file 
+
+imcorner &rawroot line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4
+ibis-gen &fname5 nr=3 nc=5 datacols=(1,2,3,4) +
+     format=("DOUB","DOUB","DOUB","DOUB","DOUB") +
+     data=(&l1,&s1,&tlat1,&tlon1, +
+     &l2,&s2,&tlat2,&tlon2, +
+     &l3,&s3,&tlat3,&tlon3) 
+ibis-l &fname5
+
+!   more directories + files
+
+let inroot = "&inloc" // "&fnamein" 
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+let masterloc = "&outloc" // "&key" // "master.img"
+let gridinfoloc = "&outloc" // "&fnamein" // "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein" // "gridfinal"
+
+! get the quad 
+
+let qlon = tlon3-0.05
+let qloninc = tlon2-tlon3+0.1
+let qlat = tlat1
+let qlatinc = tlat1-tlat4
+
+write "qlon,qlat &qlon,&qlat"
+write "qloninc,qlatinc &qloninc,&qlatinc"
+
+lswarp inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted="&dted"  lsat=&lsat +
+   seq=qq  pixdeg=1800.0 orthogr=&orthogr +
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc +
+   quadunit=0 master=&masterloc +
+   gridinfo=&gridinfoloc +
+   gridfinal=&gridfinalloc loff=0 soff=0 loff2=0 soff2=0 +
+   sensE1=&slon1 sensN1=&slat1 senselv1=&satelv +
+   sensE2=&slon2 sensN2=&slat2 senselv2=&satelv sensunit=0 +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype +
+   modelfit=&lmodfit maptype=&maptype +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right
+
+theend>
+end-proc

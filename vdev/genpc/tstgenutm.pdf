@@ -1,0 +1,12 @@
+procedure
+body
+
+genutm xxa east=420000 north=2970000 utmzone=34 mpix=1
+gtlist xxa
+
+genutm xxa east=420000 north=2970000 utmzone=34 +
+   mpix=30 rastypstr="2(RasterPixelIsPoint)"
+gtlist xxa
+
+end-proc
+

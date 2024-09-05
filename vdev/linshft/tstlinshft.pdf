@@ -1,0 +1,20 @@
+procedure
+refgbl $echo
+local shft real
+local xshft real
+local cval real
+body
+let $echo="yes"
+
+! TEST SCRIPT FOR linshft
+
+gen x1 nl=30 ns=5 ival=0 linc=100 sinc=100
+gen x2 nl=30 ns=5 ival=100 linc=100 sinc=100
+
+linshft inp=(x1,x2) itie=(3.0,3.0,27.0,3.0) otie=(3.0,3.0,27.0,3.0) +
+   shiftmax=2.0 shift=shft xshift=xshft corval=cval 'apodize
+
+write "shft &shft xshft &xshft cval &cval"
+
+theend>
+end-proc

@@ -1,0 +1,6 @@
+$ vpack nacma.com -mixed -
+	-s nacma.c NACMA_Utils.c NACMA_Utils.h ImageUtils.c ImageUtils.h AsterManager.c AsterManager.h cloud_masks.c cloud_masks.h -
+	-i nacma.imake -
+	-p nacma.pdf -
+	-t tstnacma.pdf
+$ Exit

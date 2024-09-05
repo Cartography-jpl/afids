@@ -1,0 +1,43 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR FFTMAG
+! tests BYTE images
+!
+! Vicar Programs:
+!       gen list fft22 label-list
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+
+refgbl $autousage
+refgbl $echo
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="yes"
+gen A 16 16
+list A SIZE=(1,1,10,10)
+fft22 A B
+fftmag B C BY=2
+label-list C
+fft22 C D 'INVERSE
+list D SIZE=(1,1,10,10)
+
+fftmag B C BYL=2
+label-list C
+fft22 C D 'INVERSE
+list D SIZE=(1,1,10,10)
+
+fftmag B C BYS=2
+label-list C
+fft22 C D 'INVERSE
+list D SIZE=(1,1,10,10)
+
+let $echo="no"
+end-proc

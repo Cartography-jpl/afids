@@ -1,0 +1,5 @@
+$ vpack ratio0.com -mixed -
+	-s ratio0.f -
+	-i ratio0.imake -
+	-p ratio0.pdf
+$ Exit

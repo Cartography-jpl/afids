@@ -1,0 +1,109 @@
+procedure
+parm inp     type=(string,99)
+parm out     type=(string,99)
+parm tiff    string valid=("f","s","b","n") default="b"
+parm xvd     string valid=("n","y") default="n"
+
+local temproot type=(string,99)
+local fname3 type=(string,99)
+local fname4 type=(string,99)
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+local lrlon real
+local lrlat real
+local inpnl int
+local inpns int
+local bytes int
+local nl    int
+local sl    int
+local size  int
+local inftype  int
+
+body
+
+let _onfail="continue"
+
+let temproot = "&out"
+let fname3 = "&temproot" // ".img"
+let fname4 = "&temproot" // ".txt"
+
+file2tcl &inp ftype=inftype
+if (inftype<>2)
+   vextract &inp &temproot
+else
+   vtiff3-tovic &inp &fname4
+end-if
+
+vextract &inp &temproot
+
+! get the mapping info
+
+asc2tcl &fname4 keyword="NITF_CornerLon1=" val=ullon vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLat1=" val=ullat vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLon2=" val=urlon vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLat2=" val=urlat vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLon3=" val=lrlon vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLat3=" val=lrlat vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLon4=" val=lllon vtype=8
+asc2tcl &fname4 keyword="NITF_CornerLat4=" val=lllat vtype=8
+asc2tcl &fname4 keyword="NITF_ROWS=" val=inpnl vtype=4
+asc2tcl &fname4 keyword="NITF_COLUMNS=" val=inpns vtype=4
+write "ullon= &ullon"
+write "ullat= &ullat"
+write "urlon= &urlon"
+write "urlat= &urlat"
+write "lrlon= &lrlon"
+write "lrlat= &lrlat"
+write "lllon= &lllon"
+write "lllat= &lllat"
+write "inpnl= &inpnl"
+write "inpns= &inpns"
+
+! gtgen the mapping in img file
+
+gtgen inp=&fname3 'tiecnvrt 'add +
+   geotiff=("ModelTiePointTag=(0,0,0,&ullon,&ullat,0.0)", +
+  "ModelTiePointTag=(0,&inpnl,0,&lllon,&lllat,0.0)", +
+  "ModelTiePointTag=(&inpns,0,0,&urlon,&urlat,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+! convert to external GeoTIFF
+! note, maximum output Geotiff file size is 2GBs
+! cut files > 2GBs in half
+
+if (tiff="n") goto next1
+if (tiff="s" or tiff="b") gtsize &fname3 xxxa  azoom=-16
+if (tiff="s" or tiff="b") vtiff3-fromvic xxxa &"out"_small.tif
+if (tiff="s") goto next1
+file2tcl xxxa fsize=size
+if (size >= 0)
+    vtiff3-fromvic &fname3 &"out".tif
+else
+write "Input file is > 2GBs. Divide into top and bot tiff files"
+let     nl = (inpnl / 2)
+gtcopy  &fname3 xxxa size=(1,1,&nl,&inpns)
+vtiff3-fromvic  xxxa &"out"_top.tif
+let     sl = (nl + 1)
+let     nl = (inpnl - sl) + 1
+gtcopy  &fname3 xxxa size=(&sl,1,&nl,&inpns)
+vtiff3-fromvic  xxxa &"out"_bot.tif
+end-if
+next1>
+
+ush rm -f xxxa
+
+!write "MSG: UTIL PROCESSING COMPLETE"
+
+if (xvd="y") xvd &fname3
+
+theend>
+end-proc

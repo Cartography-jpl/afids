@@ -1,0 +1,6 @@
+$ vpack power.com -mixed -
+	-s power.f -
+	-i power.imake -
+	-p power.pdf -
+	-t tstpower.pdf tstpower.log
+$ Exit

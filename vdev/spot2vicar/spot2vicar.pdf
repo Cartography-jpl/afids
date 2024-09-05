@@ -1,0 +1,64 @@
+process help=*
+parm inp     type=string count=1
+parm out     type=string count=1
+parm band    type=int default=0
+parm sl      type=int default=1
+parm ss      type=int default=1
+parm nl      type=int default=0
+parm ns      type=int default=0
+parm rpc     type=string valid=("n", "y") default="y"
+End-proc
+.title
+VICAR Program spot2vicar - logs SPOT image file to VICAR
+.help
+PURPOSE
+
+     SPOT2VICAR logs SPOT image and metadata. This includes
+     creating an RPC and storing in VICAR file.
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     spot2vicar inp outpre
+     
+     where
+
+     inp         is a SPOT DIMAP input image
+     band        is a zero-based band selecting a band from the particular image
+
+     options
+       band  selects one of several bands in a multispectral image; 
+             zero-based index
+       sl, ss, nl, ns specify a subarea to log
+       rpc   "y" to calculate and put rpc in VICAR output file
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            M. Smyth
+
+COGNIZANT PROGRAMMER:  M. Smyth
+
+REVISIONS: 
+  Mon April 26, 2010
+    Initial version
+
+.level1
+.var inp
+Input SPOT DIMAP image file
+.var band
+Used to select one of several bands. This is a zero-based index.
+.var sl
+Used to select a subarea to log.
+.var ss
+Used to select a subarea to log.
+.var nl
+Used to select a subarea to log.
+.var ns
+Used to select a subarea to log.
+.end

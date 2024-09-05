@@ -1,0 +1,626 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+local i integer
+local vals integer count=1:10
+local val integer
+local formats (string,20) count=1:10
+local format string
+local formats2 (string,20) count=1:10
+local format2 string
+local oformats (string,20) count=1:10
+local oformat string
+
+! Sep 24, 2013 - RJB
+! TEST SCRIPT FOR F2
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list difpic hist
+!
+! External Programs;
+!   <none>
+! 
+! parameters:
+!   <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+refgbl $echo
+refgbl $autousage
+
+body
+let $echo="no"
+
+let _onfail="stop"
+let $autousage="none"
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+
+
+let $echo="yes"
+
+! THIS IS A TEST SCRIPT FOR THE PROGRAM F2
+
+gen  F1 NL=5 NS=20 'FULL
+gen  F2 NL=5,NS=20 'FULL LINC=3 SINC=3
+list F1 'FULL
+list F2 'FULL
+!
+! Test 1 - INTEGER*4 TEST CASE
+!
+f2   INP=(F1,F2) OUT=X FUNCTION="IN1+SQRT(IN2)"
+list X
+gen  R NL=5 NS=20 'REAL4
+gen  S NL=5,NS=20 'REAL4 LINC=1.5 SINC=1.5
+list R
+list S
+!
+! Test 2 - REAL*4 TEST CASE
+!
+f2   INP=(R,S) OUT=X FUNCTION="IN1+SQRT(IN2)"
+list X
+gen  B NL=10 NS=10
+gen  G NL=10 NS=10 IVAL=125
+gen  H NL=10 NS=20 'HALF
+gen  L1 LINC=1. SINC=0. NL=10 NS=10
+gen  L2 LINC=0. SINC=1. NL=10 NS=10
+list B
+list H
+list L1
+list L2
+!
+! Test 3 - BASIC TEST CASES
+!
+f2   INP=B OUT=X FUNCTION="IN1+1"
+list X
+f2   INP=B OUT=X FUNCTION="INT(IN1/10)"
+list X 'ZERO
+f2   INP=B OUT=X2 FUNCTION="IN1/10" 'TRUNC
+difpic  (X,X2)
+! BASIC TEST CASE WITH BYTE VALUES > 127
+f2   INP=G OUT=X FUNCTION="IN1+1"
+list X
+! BASIC TEST CASE WITH WINDOW
+f2   INP=B OUT=X FUNCTION="IN1+1" SIZE=(2,3,6,4)
+list X
+! NEXT TWO EXECUTIONS TEST THE TRUNC KEYWORD.  SEE VALUE 5 IN LOWER RIGHT
+! CORNER CHANGE TO 6.
+f2   B X FUNC="SQRT(IN1**1.1234+7)"
+list X
+f2   B X FUNC="SQRT(IN1**1.1234+7)"   'TRUNC
+list X
+
+!  TEST 4  - HALFWORD CASE
+!
+f2   INP=H OUT=X  FUNCTION="IN1+1" 
+list X
+! HALFWORD CASE WITH WINDOW
+f2   INP=H OUT=X  FUNCTION="IN1+1"  SIZE=(2,5,6,8)
+list X
+!
+! Test 5 - LOGICAL CASES
+!
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1.AND.IN2"
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1.OR.IN2"
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1.XOR.IN2"
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1.LT.IN2"
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1.EQ.IN2"
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION=".NOT.(IN1.GE.IN2)"
+list X
+!
+! Test 6 - C-Language Constructs -- Also checks 'DUMP keyword
+!
+f2   INP=L1 OUT=X  FUNCTION="!IN1" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 && IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 &&&& IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 ^ IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 | IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1<<IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 <= IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 % IN2" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="IN1 > IN2" 'DUMP
+list X
+!
+! Test 7 - SPECIAL FUNCTIONS
+!
+copy L2 L3
+f2   INP=(L1,L2) OUT=X  FUNCTION="MOD(IN2,IN1)" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="MIN(IN1,IN2)" 'DUMP
+list X
+f2   INP=(L1,L2,L3) OUT=X  FUNCTION="MIN(IN1,IN2,IN3)" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  FUNCTION="MAX(IN1,IN2)" 'DUMP
+list X
+f2   INP=(L1,L2) OUT=X  +
+ FUNCTION="100.*SIN(IN1/10.)+100.*COS(IN2/10)" 'DUMP
+list X
+!
+! Test 8 - NO INPUT TEST CASE (IMAGE GENERATION)
+!
+f2   OUT=X  FUNCTION="LINE+SAMP"  SIZE=(1,1,10,10)
+list X
+!
+! Test 9 - THIS IS A MEDIUM  (90000 PIXEL) CASE WITH VARIOUS INPUTS.i
+!    THE TABLE LOOKUP METHOD IS USED.
+!    THE TERMINAL MESSAGES
+!       "FUNCTION EVALUATED 65536 TIMES"
+!       "FUNCTION EVALUATED N TIMES"  (255<N<65536)
+!       "FUNCTION EVALUATED 180000 TIMES"
+! SHOULD APPEAR.  IN1 WAS MADE DIFFERENT THAN IN2 TO CHECK FOR POSSIBLE
+! MIXUP OF INPUTS.
+let $echo="no"
+write "MEDIUM PIXEL (>90000) CASE"
+let i=1
+let formats=("BYTE","HALF","REAL4","END")
+loop
+    let format=formats(i)
+    if (format="END") break
+    let $echo="yes"
+
+    gen  A NL=300 NS=300 '&FORMAT
+    gen  B NL=300 NS=600 '&FORMAT
+    f2   INP=(A,B) OUT=X FUNCTION="IN1+SQRT(IN2)"
+    list X,NL=10,NS=10
+    let $echo="no"
+    let i=i+1
+end-loop
+!
+!  Test 10 - MIXED FORMATS FOR BOTH INPUT AND OUTPUT
+!
+let i=1
+let formats =("BYTE","HALF","BYTE","HALF", "FULL", "FULL","BYTE", "END")
+let formats2=("HALF","BYTE","HALF","BYTE", "REAL4","HALF","REAL4","END")
+let oformats=("BYTE","BYTE","FULL","REAL","BYTE", "BYTE","FULL", "END")
+loop
+    let format=formats(i)
+    if (format="END") break
+
+    let format2=formats2(i)
+    let oformat=oformats(I)
+    let $echo="yes"
+    gen  A NL=10 NS=10 '&FORMAT
+    gen  B NL=10 NS=10 '&FORMAT2
+    f2   INP=(A,B) OUT=X FUNCTION="IN1+IN2" '&OFORMAT
+    list X
+    let $echo="no"
+    let i=i+1
+end-loop
+
+let $echo="yes"
+gen   A 10 10 'BYTE
+gen   B 10 10 'HALF LINC=2 SINC=2
+gen   C 10 10 'FULL LINC=3 SINC=3
+gen   D 10 10 'REAL4 LINC=4 SINC=4
+let $echo="no"
+!
+! Test 11 - MULTIPLE INPUT CASES
+!
+! THE ONE'S PLACE WILL INCREMENT BY 1'S, THE 100'S PLACE BY 2'S
+! THE 10000'S PLACE BY 3'S, AND THE 1000000'S PLACE BY 4'S
+write "Multiple input case"
+let $echo="yes"
+f2   (A,B,C,D) X FUNC="IN1+100*IN2+10000*IN3+1000000*IN4" 'FULL
+list X
+! TEST OF FUNCTION STRING EXTENSION AND BAD FUNCTION STRINGS
+gen  F1 10 10 IVAL=0 SINC=0 LINC=0 
+gen  F2 10 10 IVAL=1 SINC=0 LINC=0 
+f2   INP=(F1,F2) OUT=X FUNCTION=+
+"(IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)++
+ (IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)+(IN1+IN2)"
+list X
+! -- These next two tests are omitted, because the new versions of
+!    knuth, xknuth can make sense of them (they DO make sense,after all).
+!write "The following execution of F2 should result in a BAD FUNCTION"
+!write "message and an F2 abend."
+!F2 INP=(F1,F2) OUT=X FUNCTION="IN1.EQ.-IN2"
+!F2 INP=(F1,F2) OUT=X FUNCTION="IN1.EQ.(-IN2)"
+!LIST X
+!
+
+!
+! Test 12 - THIS IS A TEST OF THE MAX NUMBER OF INPUTS
+!
+let $echo="no"
+write "Max number of inputs"
+let i=1
+let formats =("BYTE", "HALF", "FULL", "REAL", "END")
+loop
+    let format=formats(i)
+    if (format="END") break
+    let $echo="yes"
+    gen  B1 NL=10 NS=10 '&FORMAT
+    copy B1 B2
+    copy B1 B3
+    copy B1 B4
+    copy B1 B5
+    copy B1 B6
+    copy B1 B7
+    copy B1 B8
+    copy B1 B9
+    copy B1 B10
+    copy B1 B11
+    copy B1 B12
+    copy B1 B13
+    copy B1 B14
+    copy B1 B15
+    copy B1 B16
+    copy B1 B17
+    copy B1 B18
+    f2   (B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17,B18) B '&FORMAT +
+      FUNC="MIN(IN1,IN2,IN3,IN4,IN5,IN6,IN7,IN8,IN9,IN10,IN11,IN12,IN13,IN14,IN15,IN16,IN17,IN18)"
+    let $echo="no"
+    write "****************************"
+    WRITE "SHOULD GET 0 DIFFERENCES."
+    write "****************************"
+    let $echo="yes"
+    difpic (B,B1)
+    f2   (B1,B2,B3,B4,B5,B6,B7,B8,B9,B10,B11,B12,B13,B14,B15,B16,B17,B18) B '&FORMAT +
+      FUNC="MAX(IN1,IN2,IN3,IN4,IN5,IN6,IN7,IN8,IN9,IN10,IN11,IN12,IN13,IN14,IN15,IN16,IN17,IN18)"
+    let $echo="no"
+    write "****************************"
+    WRITE "SHOULD GET 0 DIFFERENCES."
+    write "****************************"
+    let $echo="yes"
+    difpic (B,B1)
+    let $echo="no"
+    LET i=i+1
+end-loop
+!
+! Test 13 - THIS IS A TEST OF THE MAX LINE SIZE FOR F2
+!
+write "Max line size for F2"
+let i=1
+let formats =( "BYTE", "HALF", "FULL", "REAL", "END")
+let formats2 =("BYTE", "HALF", "HALF", "HALF", "END")
+let vals=(      64000,  32000,  16000,  16000,  0)
+loop
+    let format=formats(i)
+    if (format="END") break
+
+    let format2=formats2(i)
+    let val=vals(i)
+    let $echo="yes"
+    gen   B0 NL=10 NS=&VAL '&FORMAT2
+    gen   B1 NL=10 NS=&VAL '&FORMAT
+    copy B1 B2
+    f2   (B1,B2) B '&FORMAT2  FUNC="MIN(IN1,IN2)"
+    let $echo="no"
+    write "****************************"
+    WRITE "SHOULD GET 0 DIFFERENCES."
+    write "****************************"
+    let $echo="yes"
+    difpic (B,B0)
+    f2   (B1,B2) B '&FORMAT2 FUNC="MAX(IN1,IN2)"
+    let $echo="no"
+    write "****************************"
+    WRITE "SHOULD GET 0 DIFFERENCES."
+    write "****************************"
+    let $echo="yes"
+    difpic (B,B0)
+    let $echo="no"
+    let i=i+1
+end-loop
+
+!
+! Test 14 - test various mathematical and trigonometric identities
+!
+write "Test various math and trig identities"
+let $echo="yes"
+gen a 10 10 'real4 ival=-9.0
+list a
+!
+f2 a b func="sqrt(in1)"
+list b
+f2 b c func="in1*in1"
+let $echo="no"
+write "Should get c = abs(a)."
+let $echo="yes"
+list c
+!
+f2 a b func="sin(in1)*sin(in1) + cos(in1)*cos(in1)"
+let $echo="no"
+write "Should get b = 1.0."
+let $echo="yes"
+list b
+!
+f2 a b func="10**(in1)"
+list b
+f2 b c func="log10(in1)"
+let $echo="no"
+write "Should get c = max( -6, a)."
+let $echo="yes"
+list c
+!
+f2 a b func="atan2(in1,1.0)"
+let $echo="no"
+write "Should get 0.0 and pi/4 = .78..."
+let $echo="yes"
+list b (2,9,1,2)
+f2 b c func="tan(in1)"
+let $echo="no"
+write "Should get c = a."
+let $echo="yes"
+list c
+!
+f2 a b func="atan(in1)"
+let $echo="no"
+write "Should get 0.0 and pi/4 = .78..."
+let $echo="yes"
+list b (2,9,1,2)
+f2 b c func="tan(in1)"
+let $echo="no"
+write "Should get c = a."
+let $echo="yes"
+list c
+!
+f2 a b func="tan(atan2(in1,in1))"
+let $echo="no"
+write "Should get b = 0 on diagonal from (10,1) to (1,10) and b=1 elsewhere."
+let $echo="yes"
+list b
+
+!!!!!!!!!!!
+! Test 15 - TEST OF EXCLUDE, LIMITS AND REPLACE PARAMETERS
+!
+let $echo="no"
+write "Test of exclude, limits and replace parameters"
+let $echo="yes"
+gen   A 10 10 IVAL=10 SINC=0 LINC=1
+gen   B 10 10 'HALF IVAL=-32768 SINC=0 LINC=5000
+gen   C 10 10 'FULL IVAL=432768 SINC=0 LINC=1
+gen   D 10 10 'REAL IVAL=5432768 SINC=0 LINC=1
+f2   INP=A OUT=X EXCLUDE=(13,14,18) FUNCTION="IN1+100"
+list X
+f2   INP=A OUT=X EXCLUDE=(13,14,18) FUNCTION="IN1+100" REPLACE=99
+list X
+f2   INP=A OUT=X EXCLUDE=(13,14,18) FUNCTION="IN1+100" REPLACE=280
+list X
+f2   INP=A OUT=X EXCLUDE=(13,14,18) FUNCTION="IN1+100" REPLACE=-280
+list X
+f2   INP=A OUT=X LIMITS=(5,18) FUNCTION="IN1+100" 
+list X
+f2   INP=A OUT=X LIMITS=(5,18) FUNCTION="IN1+100" REPLACE=99
+list X
+f2   INP=A OUT=X LIMITS=(5,18) FUNCTION="IN1+100" REPLACE=280
+list X
+f2   INP=A OUT=X LIMITS=(5,18) FUNCTION="IN1+100" REPLACE=-280
+list X
+f2   INP=B OUT=X EXCLUDE=-22768 FUNCTION="IN1+1000"
+list X
+f2   INP=B OUT=X EXCLUDE=-22768 REPLACE=99
+list X
+f2   INP=B OUT=X EXCLUDE=-27768 REPLACE=40000
+list X
+f2   INP=B OUT=X EXCLUDE=-27768 REPLACE=-40000
+list X
+f2   INP=B OUT=X LIMITS=(-50000, 0) 
+list X
+f2   INP=B OUT=X LIMITS=(-50000, 0) REPLACE=99
+list X
+f2   INP=B OUT=X LIMITS=(-30000, 0) REPLACE=40000
+list X
+f2   INP=B OUT=X LIMITS=(-30000, 0) REPLACE=-40000
+list X
+f2   INP=C OUT=X FUNCTION="IN1+1000" EXCLUDE=(432768,432775) 
+list X
+f2   INP=C OUT=X EXCLUDE=(432768,432775) REPLACE=99
+list X
+f2   INP=C OUT=X LIMITS=(432770,432775) 
+list X
+f2   INP=C OUT=X LIMITS=(432770,432775) REPLACE=99
+list X
+f2   INP=D OUT=X EXCLUDE=(5432770,5432775) FUNCTION="IN1+100000"
+list X
+f2   INP=D OUT=X EXCLUDE=(5432770,5432775) REPLACE=99
+list X
+f2   INP=D OUT=X LIMITS=(5432770,5432775) 
+list X
+f2   INP=D OUT=X LIMITS=(5432770,5432775) REPLACE=99
+list X
+f2   INP=(C,D) OUT=X EXCLUDE=(5432768,432768,432769) FUNCTION="IN1+IN2" +
+ REPLACE=4040
+list X
+gen  A 10 10 IVAL=0 SINC=0 LINC=1
+gen  B 10 10 IVAL=0 SINC=1 LINC=0
+gen  C 10 10 IVAL=10 SINC=0 LINC=0
+list A
+list B
+list C
+f2   INP=(A,B,C) OUT=X EXCLUDE=(3,4,8) FUNCTION="IN1+IN2+IN3"
+list X
+f2   INP=(A,B,C) OUT=X EXCLUDE=(3,4,8) FUNCTION="IN1+IN2+IN3" REPLACE=99
+list X
+f2   INP=(A,B,C) OUT=X EXCLUDE=(3,4,8) FUNCTION="IN1+IN2+IN3" REPLACE=280
+list X
+f2   INP=(A,B,C) OUT=X EXCLUDE=(3,4,8) FUNCTION="IN1+IN2+IN3" REPLACE=-280
+list X
+f2   INP=(A,B,C) OUT=X LIMITS=(3,10) FUNCTION="IN1+IN2+IN3"
+list X
+f2   INP=(A,B,C) OUT=X LIMITS=(3,10) FUNCTION="IN1+IN2+IN3" REPLACE=99
+list X
+f2   INP=(A,B,C) OUT=X LIMITS=(3,10) FUNCTION="IN1+IN2+IN3" REPLACE=280
+list X
+f2   INP=(A,B,C) OUT=X LIMITS=(3,10) FUNCTION="IN1+IN2+IN3" REPLACE=-280
+list X
+!
+! Test 16 - Test floating point error (FR#75716)
+!
+f2 out=a nl=5 ns=5 fun="-1.7e38*(line<3)+2" 'real
+f2 out=b nl=5 ns=5 fun="-1.7e38*(line<3)+1" 'real
+list a
+list b
+f2 (a,b) c fun="in1-in2" exclude=-1.7e38 replace=-1.7e38
+list c
+!
+! Test 17 - Tests on multiband images
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+let $echo="no"
+write "Test F2 on multiband images"
+let $echo="yes"
+gen a 5 10 12 ORG="BSQ" 'BYTE   LINC=2 SINC=3 BINC=4 IVAL=5
+f2 OUT=b nl=5 ns=10 nb=12 ORG="BSQ" 'BYTE   +
+   FUNC="2*(LINE-1) + 3*(SAMP-1) + 4*(BINC-1) + 5"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (a b)
+!
+gen a 5 10 12 ORG="BIL" 'HALF   LINC=2 SINC=3 BINC=4 IVAL=5
+f2 OUT=b nl=5 ns=10 nb=12 ORG="BIL" 'HALF   +
+   FUNC="2*(LINE-1) + 3*(SAMP-1) + 4*(BINC-1) + 5"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (a b) 
+!
+gen a 5 10 12 ORG="BIP" 'REAL   LINC=2 SINC=3 BINC=4 IVAL=5
+f2 OUT=b nl=5 ns=10 nb=12 ORG="BIP" 'REAL   +
+   FUNC="2*(LINE-1) + 3*(SAMP-1) + 4*(BINC-1) + 5"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (a b) 
+!
+gen a 5 10 12 ORG="BSQ" 'BYTE   
+copy a b size=(2 3 4 5) bands=(5 4)
+f2   a c size=(2 3 4 5) bands=(5 4) func="IN1"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (b c)
+!
+gen a 5 10 12 ORG="BIL" 'half
+copy a b size=(2 3 4 5) bands=(5 4)
+f2   a c size=(2 3 4 5) bands=(5 4) func="IN1"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (b c)
+!
+! save a for next test, below
+copy a a1
+!
+gen a 5 10 12 ORG="BIP" 'REAL4   
+copy a b size=(2 3 4 5) bands=(5 4)
+f2   a c size=(2 3 4 5) bands=(5 4) func="IN1"
+let $echo="no"
+write "Should get 0 differences."
+let $echo="yes"
+difpic (b c)
+!
+! Test 18 - test check on ORG:
+!
+let _onfail="continue"
+f2 (a a1) b func="in1+in2"
+let $echo="no"
+write "should get ABEND"
+!
+let _onfail="goto rm"
+let $echo="yes"
+gen   A 10 10 2 'BYTE BINC=0
+gen   B 10 10 2 'HALF LINC=2 SINC=2 BINC=0
+gen   C 10 10 2 'FULL LINC=3 SINC=3 BINC=0
+gen   D 10 10 2 'REAL4 LINC=4 SINC=4 BINC=0
+list A
+list B
+list C
+list D
+f2   (A,B,C,D) X FUNC="IN1+100*IN2+10000*IN3+1000000*IN4" 'FULL SB=1 NB=1
+list X
+f2   (A,B,C,D) X FUNC="IN1+100*IN2+10000*IN3+1000000*IN4" 'FULL +
+	SIZE=(5,5,5,5) SB=1 NB=1
+list X
+gen   JFM 10 10 10 IVAL=0 SINC=0 LINC=0
+gen   JSM 10 10 10 IVAL=10 SINC=0 LINC=0
+f2   INP=(JSM,JFM) OUT=X FUNCTION="IN1+IN2"
+list X
+f2   INP=(JSM,JFM) OUT=X FUNCTION="IN1+IN2" SIZE=(5,5,5,5)
+list X
+f2   INP=(JSM,JFM) OUT=X FUNCTION="IN1+IN2" SB=1 NB=3
+list X
+f2   INP=(JSM,JFM) OUT=X FUNCTION="IN1+IN2" SB=1 NB=3 SIZE=(5,5,5,5)
+list X
+f2   OUT=X FUNCTION="LINE+SAMP+BAND" SIZE=(1,1,10,10) NB=10
+list X
+f2   OUT=X  FUNCTION="MOD(SAMP,LINE)"   'HALF  SIZE=(1,1,10,20)
+list X
+!
+! Test 19 - Test Correct SL, SS handling FR#81717
+! This should start out with first value 33, not 11.
+!
+gen   X nl=10 ns=10
+f2   X Y (3,3,5,5) FUN="LINE*10+SAMP"
+list Y
+
+! Test 20 - tests for AR-112949:
+
+! test for case with EXCLUDE and float output type:
+gen a 100 100 sinc=2
+f2 a a1 'real func="0.9*in1"
+f2 a a2 'real func="0.9*in1" excl=0.0
+f2 (a1 a2) d fun="in1-in2"
+hist d 'nohis
+
+! test for problem with numbers < 1.0e-6 (actually in KNUTH):
+gen tiny.img 6 6 'real ival=1.0e-8 sinc=1.0e-9 linc=1.0e-9
+list tiny.img
+f2 tiny.img logtiny.img func="alog10(in1)"
+list logtiny.img
+
+let $echo="no"
+write "*******************************************"
+write "Test on 3 Massive images (Mali) - 32885 lines x 28550 samples"
+write "*******************************************"
+let $echo="yes"
+f2     (ct/post_reg.hlf,ct/pre_norm.hlf,ct/pre_reg.hlf) +
+        out=diff_norm.hlf +
+        func="(in1-in2)*(in1>0)*(in3>0)" 
+
+
+rm>
+let $echo="no"
+ush rm ct
+
+end-proc

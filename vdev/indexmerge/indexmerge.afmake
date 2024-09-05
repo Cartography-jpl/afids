@@ -1,0 +1,18 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = indexmerge
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+CFLAGS += -Wmissing-prototypes -Wstrict-prototypes 
+CFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wsign-compare
+#CFLAGS += -Wunreachable-code - bogus warnings with -O2
+

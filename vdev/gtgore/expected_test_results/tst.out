@@ -1,0 +1,177 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+tstgtwarpxd
+let $echo="yes"
+gen xxim1 nl=10 ns=10
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxim1 out=xxperth 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,.3,.3,0.0)",  +
+          "ModelTiePointTag=(10,0,0,.5,.3,0.0)",  +
+          "ModelTiePointTag=(0,10,0,.3,.5,0.0)",  +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)",  +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gen xxim1 nl=20 ns=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxim1 out=xxaustralia 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,.2,.7,0.0)",  +
+          "ModelTiePointTag=(20,0,0,.7,.7,0.0)",  +
+          "ModelTiePointTag=(0,20,0,.2,.2,0.0)",  +
+          "ProjectionGeoKey=1(CT_TransverseMercator)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtlist xxperth
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is a 'point' or 'post' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.0      0.0  0.300000000000  0.300000000000
+       1.0     10.0          9.0      0.0  0.480000000000  0.300000000000
+      10.0      1.0          0.0      9.0  0.300000000000  0.480000000000
+      10.0     10.0          9.0      9.0  0.480000000000  0.480000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5         -0.5     -0.5  0.290000000000  0.290000000000
+       0.5     10.5          9.5     -0.5  0.490000000000  0.290000000000
+      10.5      0.5         -0.5      9.5  0.290000000000  0.490000000000
+      10.5     10.5          9.5      9.5  0.490000000000  0.490000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 5
+789
+456
+123
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units east
+1 line   = 0.0200000000000 map units north
+
+
+The scale fraction is 1 /      0.8
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xxaustralia
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.212500000000  0.687500000000
+       1.0     20.0         19.5      0.5  0.687500000000  0.687500000000
+      20.0      1.0          0.5     19.5  0.212500000000  0.212500000000
+      20.0     20.0         19.5     19.5  0.687500000000  0.212500000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.200000000000  0.700000000000
+       0.5     20.5         20.0      0.0  0.700000000000  0.700000000000
+      20.5      0.5          0.0     20.0  0.200000000000  0.200000000000
+      20.5     20.5         20.0     20.0  0.700000000000  0.200000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0250000000000 map units east
+1 line   = 0.0250000000000 map units north
+
+
+The scale fraction is 1 /      2.0
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+ibis-gen xxdist version=ibis-2 org=column nc=4 nr=3 deffmt=DOUB
+Beginning VICAR task ibis
+acopin (gtwarpxd.dat,xxdist) cols=(1,2,3,4) lead_rm=1
+Beginning VICAR task acopin
+acopin version Thu Jan  3 2008
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstgtwarpxd', line 39
+RETURN
+continue
+end-proc

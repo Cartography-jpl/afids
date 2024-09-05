@@ -1,0 +1,70 @@
+tstmem
+gen out=x.img nl=64 ns=64 linc=0 sinc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+qsar inp=x.img out=y.img area=(2,2,1,7,50,2,8,3,1,50)
+Beginning VICAR task qsar
+QSAR version 14 Feb 2010 (64-bit) - RJB
+fft22 y.img ffty.img
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+FORWARD TRANSFORM
+TRANSFORM COMPLETED
+qsar inp=x.img out=z.img area=(32,32,5,5,200)
+Beginning VICAR task qsar
+QSAR version 14 Feb 2010 (64-bit) - RJB
+fft22 z.img fftz.img
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+FORWARD TRANSFORM
+TRANSFORM COMPLETED
+wiener inp=(fftz.img,ffty.img) out=ffts.img 'direct
+Beginning VICAR task wiener
+WIENER version Nov 1996
+fft22 inp=ffts.img out=blur.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+gausnois out=nois.img nl=64 ns=64 mean=0 sigma=20 format=half
+Beginning VICAR task gausnois
+Gausnois - 11-Aug-2013 - rjb (64bit)
+f2 inp=(blur.img,nois.img) out=bn.img function="in1+in2"
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 2113 TIMES
+fft22 bn.img fftbn.img
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+FORWARD TRANSFORM
+TRANSFORM COMPLETED
+wiener inp=(fftbn.img,ffty.img) out=fftss.img 'wiener sn=6
+Beginning VICAR task wiener
+WIENER version Nov 1996
+fft22 inp=fftss.img out=restored.img 'inverse format=half
+Beginning VICAR task fft22
+** FFT22 version 25-JUL-2016 - (64bit) - RJB
+INVERSE TRANSFORM
+TRANSFORM COMPLETED
+copy y.img psf.img nl=11 ns=11
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+mem inp=(bn.img,psf.img) out=rest.img rmserror=20 maxcrit=.1
+Beginning VICAR task mem
+** MEM - 9-23-2019 - RJB (64-bit)
+
+Starting RMS Error :      22.3467
+
+ Iteration   1 of  20
+     RMS Error          :      21.7632
+     Solution Criterion :   0.2879
+ Iteration   2 of  20
+     RMS Error          :      20.4689
+     Solution Criterion :   0.0247
+
+      * * *  CONVERGENCE ACHIEVED  * * *
+let $echo="no"
+exit
+slogoff

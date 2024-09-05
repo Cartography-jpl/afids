@@ -1,0 +1,101 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+
+let $echo="yes"
+let $autousage="none"
+
+write "each of the difpic calls should yield zero differences"
+
+gen r 50 50
+vtiff3 r r.tif
+vtiff3-tovic r.tif r1
+difpic (r,r1)
+
+vtiff3 r r.tif 'packbits
+vtiff3-tovic r.tif r1
+difpic (r,r1)
+
+vtiff3 r r.tif 'lzw
+vtiff3-tovic r.tif r1
+difpic (r,r1)
+
+vtiff3 r r.tif 'tiled
+vtiff3-tovic r.tif r1
+difpic (r,r1)
+
+vtiff3 r r.tif 'tiled 'lzw
+vtiff3-tovic r.tif r1
+difpic (r,r1)
+
+f2 out=lut fun="(samp %256)*(samp%4)" nl=1 ns=1024
+vtiff3 (r,lut) lut.tif
+vtiff3-tovic lut.tif (r1,lut1)
+difpic (r,r1)
+difpic (lut,lut1)
+
+gen g 50 50 linc=0
+gen b 50 50 sinc=0
+
+vtiff3 (r,g,b) color.tif
+vtiff3-tovic  color.tif (r1,g1,b1)
+difpic (r,r1)
+difpic (g,g1)
+difpic (b,b1)
+
+vtiff3 (r,g,b) color.tif 'planar
+vtiff3-tovic  color.tif (r1,g1,b1)
+difpic (r,r1)
+difpic (g,g1)
+difpic (b,b1)
+
+vtiff3 (r,g,b) color.tif 'tiled
+vtiff3-tovic  color.tif (r1,g1,b1)
+difpic (r,r1)
+difpic (g,g1)
+difpic (b,b1)
+
+vtiff3 (r,g,b) color.tif 'planar 'tiled
+vtiff3-tovic  color.tif (r1,g1,b1)
+difpic (r,r1)
+difpic (g,g1)
+difpic (b,b1)
+
+vtiff3 (r,g,b) color.tif 'planar 'tiled 'lzw
+vtiff3-tovic  color.tif (r1,g1,b1)
+difpic (r,r1)
+difpic (g,g1)
+difpic (b,b1)
+
+gen a nl=500 ns=500
+vtiff3 a a.tif 'tile tline=128 tsamp=128 'packbits
+vtiff3-tovic a.tif a1
+difpic (a,a1)
+
+!test dump facility:
+vtiff3-tovic a.tif a1 'dump
+
+
+!  new case for reading the VICAR GeoTIFF label, not parameters
+
+gen xxxim1 nl=10 ns=10
+gtgen in=xxxim1 'tiecnvrt +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "GeogPrimeMeridianGeoKey=40.0", +
+          "ModelTiePointTag=(2,3,0,-110,39,0.0)", +
+          "ModelTiePointTag=(2,10,0,-110,35,0.0)", +
+          "ModelTiePointTag=(10,3,0,-108,39,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+gtlist xxxim1
+
+vtiff3 xxxim1 xxxim1.tif
+
+ush strings xxxim1.tif
+vtiff3-tovic xxxim1.tif xxim2 'dump
+
+theend>
+
+end-proc

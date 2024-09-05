@@ -1,0 +1,118 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR ZFILL
+! tests BYTE and HALF images
+!
+! Vicar Programs:
+!       genthis list
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+! the last tetst sequence fails with
+!  adespike under Centos 7.2 and
+!  has been commented out
+! ZFILL TEST SCRIPT
+!
+refgbl $autousage
+refgbl $syschar
+refgbl $echo
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="yes"
+
+local PATH TYPE=STRING 
+
+!cellgen OUT=C1515 NL=15 NS=15 CSIZE=5
+genthis OUT=C1515 NL=15 NS=15 DN=(1,1,1,1,1,2,2,2,2,2,3,3,3,3,3, +
+                                  1,1,1,1,1,2,2,2,2,2,3,3,3,3,3, +
+                                  1,1,1,1,1,2,2,2,2,2,3,3,3,3,3, +
+                                  1,1,1,1,1,2,2,2,2,2,3,3,3,3,3, +
+                                  1,1,1,1,1,2,2,2,2,2,3,3,3,3,3, +
+                                  4,4,4,4,4,5,5,5,5,5,6,6,6,6,6, +
+                                  4,4,4,4,4,5,5,5,5,5,6,6,6,6,6, +
+                                  4,4,4,4,4,5,5,5,5,5,6,6,6,6,6, +
+                                  4,4,4,4,4,5,5,5,5,5,6,6,6,6,6, +
+                                  4,4,4,4,4,5,5,5,5,5,6,6,6,6,6, +
+                                  7,7,7,7,7,8,8,8,8,8,9,9,9,9,9, +
+                                  7,7,7,7,7,8,8,8,8,8,9,9,9,9,9, +
+                                  7,7,7,7,7,8,8,8,8,8,9,9,9,9,9, +
+                                  7,7,7,7,7,8,8,8,8,8,9,9,9,9,9, +
+                                  7,7,7,7,7,8,8,8,8,8,9,9,9,9,9)
+!
+zfill C1515 OUT 
+list OUT
+zfill C1515 OUT REPL=5 
+list OUT
+zfill C1515 OUT REPL=1 
+list OUT
+zfill C1515 OUT REPL=6 
+list OUT
+zfill C1515 OUT REPL=5 'DENSE
+list OUT
+zfill C1515 OUT NSW=3 NLW=3 REPL=5
+list OUT
+zfill C1515 OUT NSW=5 NLW=5 REPL=5
+list OUT
+zfill C1515 OUT NSW=5 NLW=5 REPL=5 EXCL=2
+list OUT
+zfill C1515 OUT NSW=7 NLW=6 REPL=5
+list OUT
+zfill C1515 OUT NSW=7 NLW=6 REPL=5 EXCL=2
+list OUT
+zfill C1515 OUT NSW=1 NLW=5 REPL=5
+list OUT
+zfill C1515 OUT NSW=5 NLW=1 REPL=5
+list OUT
+zfill C1515 OUT REPL=257 'DENSE
+list OUT
+zfill C1515 (OUT,MSK) REPL=6
+list OUT
+list MSK
+zfill C1515 (OUT,MSK) REPL=6 NSW=5 NLW=5
+list OUT
+list MSK
+zfill C1515 OUT REPL=5 SIZE=(5,5,4,4)
+list OUT
+zfill C1515 OUT REPL=5 SIZE=(4,4,7,7)
+list OUT
+!
+let $echo="no"
+
+end-proc
+write ""
+write ""
+write "***********************************************"
+write "*      TEST CASE COMPARING BINARY LABELS      *"
+write "*                                             *"
+write "*      There shouldn't be any difference      *"
+write "*    between input and output binary lables.  *"
+write "*                                             *"
+write "***********************************************"
+
+let $echo="yes"
+ adespike inp=&"PATH"s0539939965.r out=test1.img
+ zfill inp=test1.img out=test2.img 'bin
+ gedrlist|stdout=in.out| test1.img nlh=800
+ gedrlist|stdout=out.out| test2.img nlh=800
+ if ($SYSCHAR(1)="VAX_VMS")
+     dcl diff/out=diff.out in.out out.out
+ else
+     ush diff in.out out.out >diff.out
+ end-if
+
+let $echo="no"
+write ""
+write "***********************************************"
+write "*    File diff.out should contain no entry.   *"
+write "***********************************************"
+let $echo="yes"
+ typetext diff.out
+let $echo="no"
+end-proc

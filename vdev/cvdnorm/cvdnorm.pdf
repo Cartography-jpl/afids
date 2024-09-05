@@ -1,0 +1,105 @@
+process help=*
+PARM INP TYPE=STRING COUNT=(2:20)
+PARM OUT TYPE=STRING COUNT=(2:20)
+PARM SIZE TYPE=INTEGER COUNT=4 DEFAULT=(1,1,0,0)
+PARM SL TYPE=INTEGER DEFAULT=1
+PARM SS TYPE=INTEGER DEFAULT=1
+PARM NL TYPE=INTEGER DEFAULT=0
+PARM NS TYPE=INTEGER DEFAULT=0
+PARM WINDOW TYPE=INTEGER DEFAULT=11
+PARM DONUT TYPE=INTEGER DEFAULT=3
+PARM SIGMA TYPE=REAL COUNT=(2:20)
+PARM MASTERBAND TYPE=INT COUNT=(0:1) DEFAULT=2
+PARM PRINTLS TYPE=INT COUNT=2 DEFAULT=(-1,-1)
+PARM NOPRE KEYWORD COUNT=0:1 VALID=NOPRE DEFAULT=--
+
+END-PROC
+.TITLE
+cvdnorm - double normalization of multi-band registered satellite images
+.HELP
+PURPOSE:
+The input is a pair of multi-band registered images referred to as the "pre"
+and "post" images.  For each pixel of the registered images, the following
+two normalization steps are performed.
+
+1.  the bands of the pre image are normalized to a user-selected master band
+using a mean adjustment according to the surrounding window also ignoring a
+donut hole in the middle of the window.  The pixel is also sigma adjusted
+according to the image sigmas input as a parameter.  This is done
+independently for each spectral band.
+
+2.  the bands of the post image are normalized to the corresponding pre band
+using a mean adjustment according to the surrounding window also ignoring a
+donut hole in the middle of the window.  The pixel is also sigma adjusted
+according to the image sigmas input as a parameter.  This is done
+independently for each spectral band.
+
+
+The normalizations are useful for bringing out the spectral characteristics
+of targets smaller than the "donut" parameter.  The cross band normalization
+is useful for centering the band ratios near zero.
+EXECUTION:
+
+Example
+
+cvdnorm (A1,A2,A3,A4,A5,B1,B2,B3,B4,B5) out=(M1,M2,M3,M4,M5,N1,N2,N3,N4,N5) +
+     SIGMA=(23.2,26.6,18.4,21.6,33.9,24.7,26.1,18.1,21.9,32.9)
+            
+                               
+OPERATION:
+Because of the window, the program uses a "rolling barrel" of input
+lines to avoid rereading a line more than once in the second input.
+
+
+TIMING: 
+
+About the same speed as convolution filter.  
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          27 Jan 2010
+ COGNIZANT PROGRAMMER:   A. Zobrist          27 Jan 2010
+ 
+ REVISION HISTORY
+  10-01-27    AZ   Initial version
+
+  
+.LEVEL1
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output normalized images
+.VARIABLE SIZE
+INTEGER - Region of input files
+to be normalized
+.VARIABLE SL
+INTEGER - Starting line
+.VARIABLE SS
+INTEGER - Starting sample
+.VARIABLE NL
+INTEGER - Number of lines
+.VARIABLE NS
+INTEGER - Number of samples
+.VARIABLE WINDOW
+Size of the averaging window,
+must be odd
+.VARIABLE MASTERBAND
+normalize all pre bands to this pre
+band, then normalize post bands to pre
+.VARIABLE SIGMA
+REAL - sigmas per band
+.VARIABLE PRINTLS
+INT - (line,samp) to print (debug)
+.VARIABLE NOPRE
+use to shut off across band
+normalization
+.LEVEL2
+.VARIABLE SIZE
+The default (1,1,0,0) means use the whole image.
+.VARIABLE SL
+INTEGER - Starting line (see SIZE)
+.VARIABLE SS
+INTEGER - Starting sample (see SIZE)
+.VARIABLE NL
+INTEGER - Number of lines (see SIZE)
+.VARIABLE NS
+INTEGER - Number of samples (see SIZE)
+.END

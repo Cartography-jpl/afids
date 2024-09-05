@@ -1,0 +1,17 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR ASTERLOG
+
+asterlog inp=raw.hdf out=outraw sensor=TIR
+asterlog inp=raw05.hdf out=out05 sensor=TIR 'pseudo
+asterlog inp=raw08.hdf out=out08 sensor=TIR 'pseudo
+
+end-proc

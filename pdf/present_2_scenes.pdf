@@ -1,0 +1,143 @@
+procedure	! present_2_scenes
+
+		! file images_not_found created if one 
+		! of the 12 images is not found
+
+parm old string def="L71155038_03820090525"
+parm new string def="L5155038_03820090602"
+parm scalar integer def=-30
+
+local b1 string init="_B10.img"
+local b2 string init="_B20.img"
+local b3 string init="_B30.img"
+local b4 string init="_B40.img"
+local b5 string init="_B50.img"
+local b6 string init="_B60.img"
+local found integer
+local found2 integer
+local image_switch integer init=1
+local b6old integer init=0
+local b6new integer init=0
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+
+file2tcl images_not_found val=found
+if (found=1) ush rm images_not_found
+
+!	Make sure all of the images are present
+
+!	Check old first ...
+
+file2tcl &old&b1 val=found
+if (found=0) let image_switch=0
+
+file2tcl &old&b2 val=found
+if (found=0) let image_switch=0
+
+file2tcl &old&b3 val=found
+if (found=0) let image_switch=0
+
+file2tcl &old&b4 val=found
+if (found=0) let image_switch=0
+
+file2tcl &old&b5 val=found
+if (found=0) let image_switch=0
+
+file2tcl &old&b6 val=found	! B60
+if (found=0) 
+  let b6 = "_B61.img"		! check alternate band 6 filename
+  file2tcl &old&b6 val=found2
+  if (found2=0)
+    let image_switch=0
+  else
+    let b6old = 1		! B61
+  end-if
+end-if
+
+!	All old images found ... proceed
+
+gtsize &old&b1 oldb1 azoom=&scalar ! 'noin
+gtsize &old&b2 oldb2 azoom=&scalar ! 'noin
+gtsize &old&b3 oldb3 azoom=&scalar ! 'noin
+gtsize &old&b4 oldb4 azoom=&scalar ! 'noin
+gtsize &old&b5 oldb5 azoom=&scalar ! 'noin
+gtsize &old&b6 oldb6 azoom=&scalar ! 'noin
+
+!	Now check the newer image
+let b6="_B60.img"
+
+file2tcl &new&b1 val=found
+if (found=0) let image_switch=0
+
+file2tcl &new&b2 val=found
+if (found=0) let image_switch=0
+
+file2tcl &new&b3 val=found
+if (found=0) let image_switch=0
+
+file2tcl &new&b4 val=found
+if (found=0) let image_switch=0
+
+file2tcl &new&b5 val=found
+if (found=0) let image_switch=0
+
+file2tcl &new&b6 val=found	! B60
+if (found=0) 
+  let b6 = "_B61.img"		! check alternate band 6 filename
+  file2tcl &new&b6 val=found2
+  if (found2=0)
+    let image_switch=0
+  else
+    let b6new = 1		! B61
+  end-if
+end-if
+
+if (image_switch=0)
+  ush date > images_not_found
+  goto theend
+end-if
+
+!	All new images found ... proceed
+
+gtsize &new&b1 newb1 azoom=&scalar ! 'noin
+gtsize &new&b2 newb2 azoom=&scalar ! 'noin
+gtsize &new&b3 newb3 azoom=&scalar ! 'noin
+gtsize &new&b4 newb4 azoom=&scalar ! 'noin
+gtsize &new&b5 newb5 azoom=&scalar ! 'noin
+gtsize &new&b6 newb6 azoom=&scalar ! 'noin
+
+stretch oldb1 oldb1str 'gauss gsigma=2.5 iexclude=0
+stretch oldb2 oldb2str 'gauss gsigma=2.5 iexclude=0
+stretch oldb3 oldb3str 'gauss gsigma=2.5 iexclude=0
+stretch oldb4 oldb4str 'gauss gsigma=2.5 iexclude=0
+stretch oldb5 oldb5str 'gauss gsigma=2.5 iexclude=0
+stretch oldb6 oldb6str 'gauss gsigma=2.5 iexclude=0
+
+stretch newb1 newb1str 'gauss gsigma=2.5 iexclude=0
+stretch newb2 newb2str 'gauss gsigma=2.5 iexclude=0
+stretch newb3 newb3str 'gauss gsigma=2.5 iexclude=0
+stretch newb4 newb4str 'gauss gsigma=2.5 iexclude=0
+stretch newb5 newb5str 'gauss gsigma=2.5 iexclude=0
+stretch newb6 newb6str 'gauss gsigma=2.5 iexclude=0
+
+mss (oldb3str,oldb4str,oldb5str,oldb6str) topr
+mss (oldb2str,oldb4str,oldb5str,oldb6str) topg
+mss (oldb1str,oldb4str,oldb5str,oldb6str) topb
+
+mss (newb3str,newb4str,newb5str,newb6str) btmr
+mss (newb2str,newb4str,newb5str,newb6str) btmg
+mss (newb1str,newb4str,newb5str,newb6str) btmb
+
+append (topr,btmr) red
+append (topg,btmg) grn
+append (topb,btmb) blu
+
+!xvd (red,grn,blu)
+
+
+
+theend>
+end-proc

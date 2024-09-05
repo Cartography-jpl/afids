@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! DEVELOPMENT SCRIPT FOR RGB2ISH
+
+rgb2ish inp=\(walt_red.tif,walt_grn.tif,walt_blu.tif) out=(walt_h.tif,walt_s.tif,walt_i.tif\) fileformat=geotiff
+rgb2ish inp=\(walt_h.tif,walt_s.tif,walt_pan.tif\) out=\(walt_red_out.tif,walt_grn_out.tif,walt_blu_out.tif\) reverse=1 fileformat=geotiff
+
+end-proc

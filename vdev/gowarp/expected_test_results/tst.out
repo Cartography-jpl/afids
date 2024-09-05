@@ -1,0 +1,57 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+let xxa = "xxa" // "qq"
+let xxb = "xxb" // "qq"
+let xxc = "xxc" // "qq"
+let xxe = "xxe" // "qq"
+let xxf = "xxf" // "qq"
+let xxg = "xxg" // "qq"
+let xxxcorfail = "xxxcorfail" // "qq"
+let xxxcora2 = "xxxcora2" // "qq"
+let xxxlab2 = "xxxlab2" // "qq"
+let xxxinp = "xxxtemp" // "qq"
+let xxxtinp = "xxxttemp" // "qq"
+let xxxrestore = "xxxrestore" // "qq"
+let xxximageRAW = "/export/data1/goes-7/1992/92_180_1831" // ".img"
+let xxximage = "/home/alz/hector/testlanders/92_180_1831" // "_byte.image"
+let xxximageout = "/home/alz/hector/testlanders/92_180_1831" // "_map.image"
+let ufile = "/home/alz/hector/testlanders/92_180_1831" // "u_map.image"
+let xxxnav = "/export/data1/goes-7/1992/92_180_1831" // ".int"
+f2 inp=/export/data1/goes-7/1992/92_180_1831.img out=/home/alz/hector/testlanders/92_180_1831_byte.image func="IN1*0.25" format="HA+
+LF"
+Beginning VICAR task f2
+F2 version 2-04-94
+[VIC2-GENERR] Exception in XVOPEN, processing file: /export/data1/goes-7/1992/92_180_1831.img
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+RETURN
+RETURN
+continue
+end-proc

@@ -1,0 +1,46 @@
+process help=*
+parm pipename    type=(string,99)
+local dumstring string
+parm strvar  type=name default="dumstring"
+end-proc
+.title
+VICAR Program fifor - reads value from named pipe
+.help
+PURPOSE
+
+     FIFOR reads the value parameter from the named pipe
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     local somestrvar string
+     fifor pipename=thePipeName strvar=somestrvar
+
+.PAGE
+OPERATION
+
+     FIFOR reads the value parameter from the named pipe and copies it
+     to strvar.
+
+.PAGE
+     
+RESTRICTIONS
+
+     The named pipe must exist and be readable. This program will block
+     until there is a value to read.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch, Wed Feb 21 2007
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Wed Feb 21 2007    Initial version
+  Sat Dec 29 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.level1
+.var pipename
+The pipe name (created with system command "mkfifo").
+.var strvar
+TAE string variable to read into.
+.end

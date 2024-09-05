@@ -1,0 +1,6 @@
+$ vpack asterlog.com -mixed -
+	-s asterlog.c -
+	-i asterlog.imake -
+	-p asterlog.pdf -
+	-t tstasterlog.pdf devasterlog.pdf
+$ Exit

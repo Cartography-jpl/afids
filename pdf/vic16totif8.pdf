@@ -1,0 +1,12 @@
+procedure
+parm inp type=(string,99)
+parm out type=(string,99)
+local min type=real
+local max type=real
+body
+
+maxmin &inp minival=min maxival=max
+cform &inp temp.byt irange=(&min,&max) orange=(0,255) 'byte
+vtiff3-from temp.byt &out
+
+end-proc

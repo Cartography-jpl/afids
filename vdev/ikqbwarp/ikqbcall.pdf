@@ -1,0 +1,291 @@
+procedure
+refgbl $echo
+parm key string
+parm fnamein string
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted string
+parm base string
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+!!!parm maptype type=string valid=("pc","utm") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm fftinit int def=256
+parm mpix real def=1.0
+parm mpixf real def=2.0    !not in document but parameter retained for special cases
+parm rawtype string valid=("nitf","tif") default="nitf"
+parm senstype string valid=("i","q") default="i"
+parm xvdonly string valid=("n","y") default="n"
+
+local inloc string
+local outloc string
+local rawname string
+local metname string
+local hdrname string
+local logname string
+local fname3r string
+local fname3 string
+local fname4 string
+local fname5 string
+local maptmp1 string
+local maptmp2 string
+
+local inroot string
+local outroot string
+local scratchroot string
+local masterloc string
+local gridinfoloc string
+local gridfinalloc string
+
+local stopat int
+
+local pixsizx real
+local pixsizy real
+
+local uleast real
+local ulnorth real
+local iuleast int
+local iulnorth int
+local lleast real
+local llnorth real
+local ureast real
+local urnorth real
+local lreast real
+local lrnorth real
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+local lrlon real
+local lrlat real
+local utmstring string
+
+local satazim real
+local satelev real
+local alpha real
+
+local inpnl int
+local inpns int
+local utmzone int
+
+local lnstring string
+
+body
+let $echo="yes"
+
+let stopat=6
+
+let inloc = "raw&key/"
+let outloc = "final&key/"
+
+let fname3r = "&inloc" // "&fnamein"
+let fname3 = "&inloc" // "&fnamein" // ".img"
+let fname4 = "&inloc" // "&fnamein" // ".txt"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+let maptmp1 = "scratch/" // "&fnamein" // ".mp1"
+let maptmp2 = "scratch/" // "&fnamein" // ".mp2"
+let hdrname = "&inloc" // "&fnamein" // ".hdr"
+let metname = "&inloc" // "&fnamein" // ".met"
+
+! logging here
+
+if (rawtype="nitf")
+   let rawname = "&inloc" // "&fnamein" // ".ntf"
+   nitflog &rawname &fname3r 'echometa
+   let logname = "&fnamein" // ".ntf"
+   if (xvdonly="y")
+      xvd &fname3r
+      goto theend
+   end-if
+else
+   let rawname = "&inloc" // "&fnamein" // ".tif"
+   vtiff3-tovic &rawname &fname3
+   let logname = "&fnamein" // ".tif"
+   if (xvdonly="y")
+      xvd &fname3
+      goto theend
+   end-if
+end-if
+
+if (senstype="i")
+   ikonoslog &logname &hdrname &metname &fname4
+else
+   quickbirdlog &metname &fname4
+end-if
+
+! make a .nav file
+
+if (senstype="i")
+   asc2tcl &fname4 keyword="IKONOS_PIXEL_SIZE_X=" val=pixsizx vtype=8
+   asc2tcl &fname4 keyword="IKONOS_PIXEL_SIZE_Y=" val=pixsizy vtype=8
+
+   asc2tcl &fname4 keyword="IKONOS_NOMCOL_AZIMUTH=" +
+       val=satazim vtype=8
+   asc2tcl &fname4 keyword="IKONOS_NOMCOL_ELEVATION=" +
+       val=satelev vtype=8
+   write "pixsizx &pixsizx pixsizy &pixsizy"
+   !!if (rawtype="nitf") let satazim = satazim+90.0 await walt fix for SD
+   write "satazim &satazim satelev &satelev"
+
+   asc2tcl &fname4 keyword="IKONOS_UTM_ZONE=" val=utmzone vtype=4
+
+   write "utmzone &utmzone"
+   if (utmzone=(-999))
+      asc2tcl &fname4 keyword="IKONOS_COORD1_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD1_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD2_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD2_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD3_LON=" val=lrlon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD3_LAT=" val=lrlat vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD4_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="IKONOS_COORD4_LAT=" val=lllat vtype=8
+   
+      asc2tcl &fname4 keyword="IKONOS_ROWS=" val=inpnl vtype=4
+      asc2tcl &fname4 keyword="IKONOS_COLUMNS=" val=inpns vtype=4
+   
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+      write "inpnl inpns = &inpnl &inpns"
+      let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      gtgen out=&maptmp1 +
+         geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+         "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+      gtgen out=&maptmp2 +
+         geotiff=("ProjectedCSTypeGeoKey=&utmstring", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   
+      ibis-gen &fname5 nc=6 nr=4 deffmt=DOUB datacols=(1,2,5,6) +
+         data=(1.0,1.0,&ullon,&ullat,1.0,&inpns,&urlon,&urlat, +
+         &inpnl,1.0,&lllon,&lllat,&inpnl,&inpns,&lrlon,&lrlat)
+      gtproj2 (&fname5,&maptmp1,&maptmp2) incol=(5,6) outcol=(3,4)
+      ibis-l &fname5
+   else
+      asc2tcl &fname4 keyword="IKONOS_UL_EASTING=" val=uleast vtype=8
+      asc2tcl &fname4 keyword="IKONOS_UL_NORTHING=" val=ulnorth vtype=8
+
+      let ureast = uleast+1000.0*pixsizx
+      let urnorth = ulnorth
+      let lleast = uleast
+      let llnorth = ulnorth-1000.0*pixsizy
+      let lreast = uleast+1000.0*pixsizx
+      let lrnorth = ulnorth-1000.0*pixsizy
+
+      ibis-gen &fname5 nc=4 nr=4 deffmt=DOUB +
+         data=(0.0,0.0,&uleast,&ulnorth, +
+         0.0,1000.0,&ureast,&urnorth, +
+         1000.0,0.0,&lleast,&llnorth, +
+         1000.0,1000.0,&lreast,&lrnorth) +
+         datacols=(1,2,3,4)
+      ibis-l &fname5
+   end-if
+else                 !quickbird case X is east
+   asc2tcl &fname4 keyword="QUICKBIRD_MAP_ZONE=" val=utmzone vtype=4
+   write "utmzone &utmzone"
+   if (utmzone=(-999) or utmzone=0)
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UL_LAT=" val=ullat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LON=" val=urlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_UR_LAT=" val=urlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LON=" val=lrlon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LR_LAT=" val=lrlat vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LON=" val=lllon vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_LL_LAT=" val=lllat vtype=8
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_ROWS=" val=inpnl vtype=4
+      asc2tcl &fname4 keyword="QUICKBIRD_COLUMNS=" val=inpns vtype=4
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_AZIMUTH=" +
+          val=satazim vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_ELEVATION=" +
+          val=satelev vtype=8
+      
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+      write "inpnl inpns = &inpnl &inpns"
+      let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+      gtgen out=&maptmp1 +
+         geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+         "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+      gtgen out=&maptmp2 +
+         geotiff=("ProjectedCSTypeGeoKey=&utmstring", +
+         "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+   
+      ibis-gen &fname5 nc=6 nr=4 deffmt=DOUB datacols=(1,2,5,6) +
+         data=(1.0,1.0,&ullon,&ullat,1.0,&inpns,&urlon,&urlat, +
+         &inpnl,1.0,&lllon,&lllat,&inpnl,&inpns,&lrlon,&lrlat)
+      gtproj2 (&fname5,&maptmp1,&maptmp2) incol=(5,6) outcol=(3,4)
+      ibis-l &fname5
+   else
+      asc2tcl &fname4 keyword="CALC_UTM_XRES=" val=pixsizx vtype=8
+      asc2tcl &fname4 keyword="CALC_UTM_YRES=" val=pixsizy vtype=8
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_AZIMUTH=" +
+          val=satazim vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_SAT_ELEVATION=" +
+          val=satelev vtype=8
+      let satazim = satazim+90.0    ! QB is path azimuth, ik is looking along row
+      write "pixsizx &pixsizx pixsizy &pixsizy"
+      write "satazim &satazim satelev &satelev"
+   
+      asc2tcl &fname4 keyword="QUICKBIRD_ORIGIN_X=" val=uleast vtype=8
+      asc2tcl &fname4 keyword="QUICKBIRD_ORIGIN_Y=" val=ulnorth vtype=8
+      let ureast = uleast+1000.0*pixsizx
+      let urnorth = ulnorth
+      let lleast = uleast
+      let llnorth = ulnorth-1000.0*pixsizy
+      let lreast = uleast+1000.0*pixsizx
+      let lrnorth = ulnorth-1000.0*pixsizy
+
+      ibis-gen &fname5 nc=4 nr=4 deffmt=DOUB +
+         data=(0.0,0.0,&uleast,&ulnorth, +
+         0.0,1000.0,&ureast,&urnorth, +
+         1000.0,0.0,&lleast,&llnorth, +
+         1000.0,1000.0,&lreast,&lrnorth) +
+         datacols=(1,2,3,4)
+      ibis-l &fname5
+   end-if
+end-if
+
+!  THIS IS A TEST ONLY OF SATELLITE ELEVATION VS GROUND ELEVATION
+!  BUT MAY NEED THIS CODE FOR QUICKBIRD CASE, ALSO GET CORRECT SAT ELV
+!  WOULD BE NICE TO PROGRAM THE EXACT SOLUTION
+
+!let alpha = (90.0-satelev)/(1.0+704000.0/6367443.0)
+!let alpha = 90.0-alpha
+
+!write "alpha &alpha satelev &satelev"
+!let satelev = alpha
+
+
+!   now back to the main call
+
+let inroot = "&inloc" // "&fnamein"
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+let masterloc = "&outloc" // "&key" // "master.img"
+let gridinfoloc = "&outloc" // "&fnamein"// "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein"// "gridfinal"
+
+ikqbwarp inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted=&dted base=&base +
+   seq=nn fftinit=&fftinit+
+   master=&masterloc +
+   gridinfo=&gridinfoloc  +
+   gridfinal=&gridfinalloc +
+   loff=0 soff=0 loff2=0 soff2=0 mpix=&mpix mpixf=&mpixf +
+   satazim=&satazim satelev=&satelev utmzone=&utmzone rawtype=&rawtype +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype modelfit=&modelfit +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc

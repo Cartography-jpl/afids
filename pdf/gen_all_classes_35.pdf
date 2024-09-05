@@ -1,0 +1,97 @@
+procedure    ! gen_all_classes_35
+ 
+!  path 155 / row 38
+ 
+local A string init="L71155038_03820090407"
+local B string init="L71155038_03820090423"
+local C string init="L71155038_03820090509"	! failed - clouds
+local D string init="L71155038_03820090525"
+local E string init="L5155038_03820090602"
+local F string init="L71155038_03820090610"
+local G string init="L5155038_03820090618"
+local H string init="L71155038_03820090626"
+local I string init="L5155038_03820090704"
+local J string init="L71155038_03820090712"
+local K string init="L71155038_03820090728"
+local L string init="L71155038_03820090813"
+local M string init="L71155038_03820090829"
+local N string init="L5155038_03820090906"
+local O string init="L71155038_03820090914"
+local P string init="L5155038_03820090922"
+local Q string init="L71155038_03820090930"
+local R string init="L5155038_03820091008"
+local S string init="L71155038_03820091016"
+local T string init="L71155038_03820091117"
+ 
+local found integer
+ 
+!  usage: gen_classes_35 secondary master
+!
+ 
+refgbl $echo
+body
+let _onfail = "continue"	! If one of the cases crashes ...
+				! don't stop ... go to the next case.
+let $echo="no"
+let $switch=512
+file2tcl tifdir val=found
+if (found=0) ush mkdir tifdir
+ 
+gen_classes_35 &A &B !mode=skipgrid
+gen_ll_file L71155038_038 20090407 _L71155038_038 20090423
+ 
+! gen_classes_35 &B &C	! C failed AFIDS - clouds
+! gen_classes_35 &C &D	! C failed AFIDS - clouds
+ 
+gen_classes_35 &B &D !mode=skipgrid
+gen_ll_file L71155038_038 20090423 _L71155038_038 20090525
+gen_classes_35 &D &E !mode=skipgrid
+gen_ll_file L71155038_038 20090525 _L5155038_038 20090602
+
+gen_classes_35 &E &F !mode=skipgrid
+gen_ll_file L5155038_038 20090602 _L71155038_038 20090610
+ 
+gen_classes_35 &F &G !mode=skipgrid
+gen_ll_file L71155038_038 20090610 _L5155038_038 20090618
+gen_classes_35 &G &H !mode=skipgrid
+gen_ll_file L5155038_038 20090618 _L71155038_038 20090626
+gen_classes_35 &H &I !mode=skipgrid
+gen_ll_file L71155038_038 20090626 _L5155038_038 20090704
+gen_classes_35 &I &J !mode=skipgrid
+gen_ll_file L5155038_038 20090704 _L71155038_038 20090712
+gen_classes_35 &J &K !mode=skipgrid
+gen_ll_file L71155038_038 20090712 _L71155038_038 20090728
+gen_classes_35 &K &L !mode=skipgrid
+gen_ll_file L71155038_038 20090728 _L71155038_038 20090813
+gen_classes_35 &L &M !mode=skipgrid
+gen_ll_file L71155038_038 20090813 _L71155038_038 20090829
+gen_classes_35 &M &N !mode=skipgrid
+gen_ll_file L71155038_038 20090829 _L5155038_038 20090906
+
+gen_classes_35 &N &O !mode=skipgrid
+gen_ll_file L5155038_038 20090906 _L71155038_038 20090914
+
+gen_classes_35 &O &P !mode=skipgrid
+gen_ll_file L71155038_038 20090914 _L5155038_038 20090922
+gen_classes_35 &P &Q !mode=skipgrid
+gen_ll_file L5155038_038 20090922 _L71155038_038 20090930
+gen_classes_35 &Q &R !mode=skipgrid
+gen_ll_file L71155038_038 20090930 _L5155038_038 20091008
+gen_classes_35 &R &S !mode=skipgrid
+gen_ll_file L5155038_038 20091008 _L71155038_038 20091016
+gen_classes_35 &S &T !mode=skipgrid
+gen_ll_file L71155038_038 20091016 _L71155038_038 20091117
+ 
+!four_cases>
+gen_classes_35 &E &G !mode=skipgrid
+gen_ll_file L5155038_038 20090602 _L5155038_038 20090618
+gen_classes_35 &G &I !mode=skipgrid
+gen_ll_file L5155038_038 20090618 _L5155038_038 20090704
+gen_classes_35 &N &P !mode=skipgrid
+gen_ll_file L5155038_038 20090906 _L5155038_038 20090922
+gen_classes_35 &P &R !mode=skipgrid
+gen_ll_file L5155038_038 20090922 _L5155038_038 20091008
+ 
+!theend>
+ush date
+end-proc

@@ -1,0 +1,6 @@
+$ vpack ibis2asc.com -mixed -
+	-s ibis2asc.c -
+	-i ibis2asc.imake -
+	-p ibis2asc.pdf -
+	-t tstibis2asc.pdf
+$ Exit

@@ -1,0 +1,290 @@
+procedure ! intersect desired quad
+parm path type=string count=1
+parm cibtab type=string count=1
+parm pathalt type=string count=0:1 default=""
+parm cibtabalt type=string count=0:1 default=""
+parm out type=string
+parm quad type=real count=4
+parm pstring type=string default="xxxtst"
+parm xvd string valid=("n","y") default="n"
+parm partial type=real valid=(0.0:100.0) default=100.0
+parm suffix1 type=string default=".img"
+parm suffix2 type=string default=".img"
+
+local ule type=real
+local uln type=real
+local lre type=real
+local lrn type=real
+local clen type=int
+local lcibtab type=string
+local cibfile type=string
+local pcibfile type=string
+local pathuse type=string
+local sl type=int
+local ss type=int
+local nl type=int
+local ns type=int
+local tsl type=int
+local tss type=int
+local tnl type=int
+local tns type=int
+local pnl type=int
+local pns type=int
+local ps type=string
+local iloop type=int
+local jloop type=int
+local tname type=string
+local alt type=int
+local pcov type=real
+local pblack type=real
+local suffix type=string
+body
+
+write "cibcut jan/04/2009"
+
+let ule = quad(1)
+let uln = quad(2)
+let lre = quad(3)
+let lrn = quad(4)
+
+let alt = 0
+let suffix = "&suffix1"
+let pathuse = "&path"
+let lcibtab = "&pathuse" // "&cibtab"
+ibis-gen xxx1&pstring nc=6 nr=1 deffmt=DOUB
+icat (&lcibtab,xxx1&pstring) xxx2&pstring 'h
+mf3 xxx2&pstring f=("c6=(&ule>c3)*(&ule<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&ule>c3)*(&ule<c5)*(&lrn>c2)*(&lrn<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&lrn>c2)*(&lrn<c4)")
+rowop2 xxx2&pstring xxx3&pstring keycol=6 range=(0.9,4.1) 'select
+ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+
+ibis2tcl xxx3&pstring vclen=clen vartype=1
+if (clen=0)
+   let pathuse = "&pathalt"
+   let suffix = "&suffix2"
+   let lcibtab = "&pathuse" // "&cibtabalt"
+   if (lcibtab="") write "primary cib has no intersection, no alternate provided"
+   if (lcibtab="") goto theend
+   if (lcibtab<>"") write "using alternate &lcibtab"
+   icat (&lcibtab,xxx1&pstring) xxx2&pstring 'h
+   let alt = 1
+end-if
+
+mf3 xxx2&pstring f=("c6=(&ule>c3)*(&ule<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&lrn>c2)*(&lrn<c4)")
+rowop2 xxx2&pstring xxx3&pstring keycol=6 range=(1.9,2.1) 'select
+ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+
+ibis2tcl xxx3&pstring vclen=clen vartype=1
+if (clen=0) goto frac
+if (clen=1) goto single
+ibis-copy xxx3&pstring xxx2&pstring
+mf3 xxx2&pstring f="c7=@index"
+rowop2 xxx2&pstring xxx3&pstring keycol=7 range=(0.9,1.1) 'select
+single>
+!ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+ibis2tcl xxx3&pstring v1=cibfile vartype=2 ibisloc=(1,1)
+write ". &cibfile ."
+let pcibfile = "&pathuse" // "&cibfile" // "&suffix"
+write ". &pcibfile ."
+
+mf3 xxx3&pstring f="c6=(&ule)$c7=(&uln)"
+pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(8,9) 'maptopix
+mf3 xxx3&pstring f="c6=(&lre)$c7=(&lrn)"
+pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(10,11) 'maptopix
+!ibis-l xxx3&pstring
+
+mf3 xxx3&pstring f="c10=c10-c8$c11=c11-c9"
+ibis-gen xxx2&pstring nc=4 nr=1 deffmt=FULL
+icat (xxx3&pstring,xxx2&pstring) xxx4&pstring 'h
+mf3 xxx4&pstring f="c12=c8$c13=c9$c14=c10$c15=c11"
+ibis2tcl xxx4&pstring v1=sl v2=ss v3=nl v4=ns vartype=(1,1,1,1) +
+   ibisloc=(1,12,1,13,1,14,1,15)
+gtcopy &pcibfile &out size=(&sl,&ss,&nl,&ns)
+if (xvd="y") xvd &out
+goto testgore
+
+frac>
+mf3 xxx2&pstring f=("c6=(&ule>c3)*(&ule<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&ule>c3)*(&ule<c5)*(&lrn>c2)*(&lrn<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&lrn>c2)*(&lrn<c4)")
+rowop2 xxx2&pstring xxx3&pstring keycol=6 range=(0.9,4.1) 'select
+!ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+
+ibis2tcl xxx3&pstring vclen=clen vartype=1
+if (clen=0)
+   gen &out nl=1 ns=1 ival=99
+   goto theend
+end-if
+
+let iloop = 0
+let ps = ""
+loop
+   let iloop = iloop+1
+   if (iloop>clen) goto iloopdone
+   ibis2tcl xxx3&pstring v1=cibfile vartype=2 ibisloc=(&iloop,1)
+   let pcibfile = "&pathuse" // "&cibfile" // "&suffix"
+   mf3 xxx3&pstring f="c6=(&ule)$c7=(&uln)"
+   pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(8,9) 'maptopix
+   mf3 xxx3&pstring f="c6=(&lre)$c7=(&lrn)"
+   pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(10,11) 'maptopix
+   
+   mf3 xxx3&pstring f="c10=c10-c8$c11=c11-c9"
+   ibis-gen xxx2&pstring nc=4 nr=1 deffmt=FULL
+   icat (xxx3&pstring,xxx2&pstring) xxx4&pstring 'h
+   mf3 xxx4&pstring f="c12=c8$c13=c9$c14=c10$c15=c11"
+   ibis2tcl xxx4&pstring v1=sl v2=ss v3=nl v4=ns vartype=(1,1,1,1) +
+      ibisloc=(1,12,1,13,1,14,1,15)
+   let tname = "&pstring" // "&iloop"
+   
+   if (iloop>1)
+      if (sl<1)
+         let tsl = 1
+         let tnl = nl+sl-1
+      else
+         let tsl = sl
+         let tnl = nl
+      end-if
+      if (ss<1)
+         let tss = 1
+         let tns = ns+ss-1
+      else
+         let tss = ss
+         let tns = ns
+      end-if
+      lab2tcl &pcibfile v1=pnl v2=pns keyword=(nl,ns) 'system
+      if (tsl+tnl-1>pnl) let tnl = pnl-tsl+1
+      if (tss+tns-1>pns) let tns = pns-tss+1
+   else
+      let tsl = sl
+      let tnl = nl
+      let tss = ss
+      let tns = ns
+   end-if
+
+   gtcopy &pcibfile &tname size=(&tsl,&tss,&tnl,&tns)
+   let ps = "&ps" // " &tname"
+end-loop
+iloopdone>
+
+if (clen=1)
+   gtcopy &ps &out
+else
+  fthmos &pstring +
+   &ps +
+   out=&out
+end-if
+
+let tname = "&pstring" // "?"
+ush /bin/rm &tname
+
+if (xvd="y") xvd &out
+
+testgore>
+if (alt=0 and cibtabalt<>"" and partial<99.9)
+
+   size &out xxx8&pstring zoom=0.05
+   stretch xxx8&pstring xxx9&pstring table=(0,0,1,1,255,1)
+   hist xxx9&pstring mean=pcov mode=nohist
+   let pblack = 99.9-(pcov*100.0)
+   write "pcov &pcov pblack &pblack partial &partial"
+   if (pblack<partial) goto theend
+
+   write "adding alternate cib"
+   let pathuse = "&pathalt"
+   let suffix = "&suffix2"
+   let lcibtab = "&pathuse" // "&cibtabalt"
+   icat (&lcibtab,xxx1&pstring) xxx2&pstring 'h
+   let alt = 1
+   mf3 xxx2&pstring f=("c6=(&ule>c3)*(&ule<c5)*(&uln>c2)*(&uln<c4)+", +
+                  "(&lre>c3)*(&lre<c5)*(&lrn>c2)*(&lrn<c4)")
+   rowop2 xxx2&pstring xxx3&pstring keycol=6 range=(1.9,2.1) 'select
+   ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+
+   ibis2tcl xxx3&pstring vclen=clen vartype=1
+   if (clen=0) goto jfrac
+   if (clen=1) goto jsingle
+   ibis-copy xxx3&pstring xxx2&pstring
+   mf3 xxx2&pstring f="c7=@index"
+   rowop2 xxx2&pstring xxx3&pstring keycol=7 range=(0.9,1.1) 'select
+   jsingle>
+   !ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+   ibis2tcl xxx3&pstring v1=cibfile vartype=2 ibisloc=(1,1)
+   write ". &cibfile ."
+   let pcibfile = "&pathuse" // "&cibfile" // "&suffix"
+   write ". &pcibfile ."
+
+   mf3 xxx3&pstring f="c6=(&ule)$c7=(&uln)"
+   pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(8,9) 'maptopix
+   mf3 xxx3&pstring f="c6=(&lre)$c7=(&lrn)"
+   pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(10,11) 'maptopix
+   !ibis-l xxx3&pstring
+
+   mf3 xxx3&pstring f="c10=c10-c8$c11=c11-c9"
+   ibis-gen xxx2&pstring nc=4 nr=1 deffmt=FULL
+   icat (xxx3&pstring,xxx2&pstring) xxx4&pstring 'h
+   mf3 xxx4&pstring f="c12=c8$c13=c9$c14=c10$c15=c11"
+   ibis2tcl xxx4&pstring v1=sl v2=ss v3=nl v4=ns vartype=(1,1,1,1) +
+      ibisloc=(1,12,1,13,1,14,1,15)
+   gtcopy &pcibfile xxx5&pstring size=(&sl,&ss,&nl,&ns)
+   goto stitch
+
+   jfrac>
+   mf3 xxx2&pstring f=("c6=(&ule>c3)*(&ule<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&ule>c3)*(&ule<c5)*(&lrn>c2)*(&lrn<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&uln>c2)*(&uln<c4)+", +
+               "(&lre>c3)*(&lre<c5)*(&lrn>c2)*(&lrn<c4)")
+   rowop2 xxx2&pstring xxx3&pstring keycol=6 range=(0.9,4.1) 'select
+   !ibis-l xxx3&pstring cols=(1,2,3,4,5,6)
+
+   ibis2tcl xxx3&pstring vclen=clen vartype=1
+   if (clen=0)
+      gen &out nl=1 ns=1 ival=99
+      goto stitch
+   end-if
+
+   let jloop = 0
+   let ps = ""
+   loop
+      let jloop = jloop+1
+      if (jloop>clen) goto jloopdone
+      ibis2tcl xxx3&pstring v1=cibfile vartype=2 ibisloc=(&jloop,1)
+      let pcibfile = "&pathuse" // "&cibfile" // "&suffix"
+      mf3 xxx3&pstring f="c6=(&ule)$c7=(&uln)"
+      pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(8,9) 'maptopix
+      mf3 xxx3&pstring f="c6=(&lre)$c7=(&lrn)"
+      pixmap (xxx3&pstring,&pcibfile) mapcols=(6,7) pixcols=(10,11) 'maptopix
+   
+      mf3 xxx3&pstring f="c10=c10-c8$c11=c11-c9"
+      ibis-gen xxx2&pstring nc=4 nr=1 deffmt=FULL
+      icat (xxx3&pstring,xxx2&pstring) xxx4&pstring 'h
+      mf3 xxx4&pstring f="c12=c8$c13=c9$c14=c10$c15=c11"
+      ibis2tcl xxx4&pstring v1=sl v2=ss v3=nl v4=ns vartype=(1,1,1,1) +
+         ibisloc=(1,12,1,13,1,14,1,15)
+      let tname = "&pstring" // "&jloop"
+      gtcopy &pcibfile &tname size=(&sl,&ss,&nl,&ns)
+      let ps = "&ps" // " &tname"
+   end-loop
+   jloopdone>
+
+   fthmos &pstring +
+    &ps +
+    out=xxx5&pstring
+
+   let tname = "&pstring" // "?"
+   ush /bin/rm &tname
+
+   stitch>
+   gtcopy &out xxx6&pstring
+   gtwarp xxx5&pstring xxx7&pstring ref=xxx6&pstring 'coverref
+   f2 (xxx6&pstring,xxx7&pstring) &out fun="in1+(in1<0.5)*in2"
+
+   if (xvd="y") xvd &out
+
+end-if
+
+theend>
+end-proc

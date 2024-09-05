@@ -1,0 +1,18 @@
+# Install setup file in etc/afids. This seems to be the standard place this sort
+# of stuff is installed in a linux system.
+
+etcafids_DATA = @srcscript@/setup_afids_env.csh @srcscript@/setup_afids_env.sh
+installafids_DATA = @srcscript@/setup_afids_env.csh @srcscript@/setup_afids_env.sh
+bin_SCRIPTS+= @srcscript@/vicar @srcscript@/vicarb @srcscript@/taetm
+bin_SCRIPTS+= @srcscript@/afids 
+bin_SCRIPTS+= @srcscript@/ctv2 @srcscript@/vifclient @srcscript@/vextract
+bin_SCRIPTS+= ./libtool
+installafids_SCRIPTS = @srcscript@/run_me_if_moved.sh
+EXTRA_DIST+= @srcscript@/tst_compare.sh
+EXTRA_DIST+= @srcscript@/tst_compare_diff_command.sh
+
+
+
+
+
+

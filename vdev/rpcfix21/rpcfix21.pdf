@@ -1,0 +1,55 @@
+procedure help=*
+parm inp type=(string,99)
+parm col type=int
+local coeff21 real
+local coeff61 real
+body
+
+ibis2tcl &inp v1=coeff21 v2=coeff61 vartype=(-1,-1) +
+   ibisloc=(21,&col,61,&col)
+mf3 &inp +
+   f="c&col=(@index<40.5)*(c&col)/(&coeff21)+(@index>40.5)*(c&col)/(&coeff61)"
+
+end-proc
+.TITLE
+RPCFIX21 - Adjust an rpc ibis file so 21st coefficient is 1.00000000
+.HELP
+PURPOSE
+     The RPC coefficients are arranged into a numerator and a denominator
+so they can all be divided by coefficient 21 so that coefficient 21 is fixed
+at 1.0000000000.  Coefficient 21 is the constant in the denominator.
+
+Coefficient 61 is also normalized for coefficients 41 through 80 (the RPC's
+for the sample direction.
+
+CALL
+     rpcfix21 INP COL=C1
+  WHERE:
+     INP            is the input data set (IBIS formatted RPC's).
+     COL            is the column containing the RPC's.
+
+OPERATION
+
+   The value in row 21 is retrieved and the RPC's 1-40 are divided
+by that value.  Similarly the value in row 61 is applied to RPC's 41-80.
+
+PERFORMANCE
+
+Less than a second.
+
+.PAGE
+Restrictions
+------------
+
+None.
+
+.PAGE
+Original Programmer: A. L. Zobrist, 12 Apr, 2005
+Current Cognizant Programmer: A. L. Zobrist 
+.LEVEL1
+.VARI INP
+Input file name with RPC's
+.VARI COL
+The IBIS column containing RPC's
+.END
+

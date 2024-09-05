@@ -1,0 +1,32 @@
+procedure help=*
+parm file1 type=(string,99)
+parm file2 type=(string,99) count=0:1 default=""
+parm file3 type=(string,99) count=0:1 default=""
+parm file4 type=(string,99) count=0:1 default=""
+parm met1 type=(string,99) count=0:1 default=""
+parm met2 type=(string,99) count=0:1 default=""
+parm met3 type=(string,99) count=0:1 default=""
+parm met4 type=(string,99) count=0:1 default=""
+parm outimg type=(string,99) count=1
+parm numfile int
+
+refgbl $echo
+body
+let $echo="yes"
+
+lsatgxmos +
+  inp=("&file1",+
+  "&file2",+
+  "&file3"+
+  ,"&file4"+
+  ,"","","","","","") +
+  inp2=("&met1",+
+  "&met2",+
+  "&met3"+
+  ,"&met4"+
+  ,"","","","","","") +
+  out=&outimg
+
+write "MSG: PROCESSING COMPLETED"
+end-proc
+

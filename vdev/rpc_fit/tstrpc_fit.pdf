@@ -1,0 +1,44 @@
+procedure
+refgbl $echo
+refgbl $autousage
+local watermask type=(string,99)
+local afidsvdevdata type=(string,99)
+body
+!let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+let watermask = "&afidsvdevdata/world_30as_lwm.img"
+
+goto curr
+
+! TEST SCRIPT FOR RPC_FIT
+
+vextract ../test_data/03MAY05072951-P1BS-000000050393_01_P005.NTF +
+    xxyz
+
+gtsize ../test_data/qb1_cib.img xxyz.ref azoom=8.0
+
+goto theend
+curr>
+
+! Do this each time, because we overwrite RPC in rpc_fit
+vextract /home/alz/ikappt/copyfiles/03MAY05072951-P1BS-000000050393_01_P005.NTF +
+    xxyz
+
+rpc_fit inp=(xxyz.img /home/alz/ikappt/copyfiles/qb1_cib.img +
+   /home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf &watermask) +
+   maxdiff=1000.0 +
+   rpc_lnum=(0,1,2,3,4) +
+   rpc_snum=(0,1,2,3,4)
+
+rpcwarp (xxyz.img,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf) +
+   test_out ref=xxyz.ref +
+   'coverinp nah=800 nav=800
+
+util6 test_out /home/alz/ikappt/copyfiles/qb1_cib.img
+
+theend>
+
+end-proc

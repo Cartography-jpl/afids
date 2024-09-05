@@ -1,0 +1,6 @@
+$ vpack rpdeyestrtch.com -mixed -
+	-s rpdeyestrtch.c -
+	-i rpdeyestrtch.imake -
+	-p rpdeyestrtch.pdf -
+	-t tstrpdeyestrtch.pdf
+$ Exit

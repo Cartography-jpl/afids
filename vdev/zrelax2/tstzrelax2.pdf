@@ -1,0 +1,32 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm mean real def=0.0
+parm sdev real def=1.0
+parm seed real def=9.0
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="yes"
+
+mosmaster aus 0.05 20 120.0 -20.0
+
+genfake1 "p021r33fakedata_nn3.img" 160.8 -20.9     60
+genfake1 "p020r33fakedata_nn3.img" 161.0 -20.9     70
+
+genfake1 "p021r34fakedata_nn3.img" 160.8 -21.1     65
+genfake1 "p020r34fakedata_nn3.img" 161.0 -21.1     80
+
+ingest aus p021r33fakedata nn3 a
+ingest aus p020r33fakedata nn3 b
+ingest aus p021r34fakedata nn3 c
+ingest aus p020r34fakedata nn3 d
+
+zprocess aus nn3
+
+ibis-l aus_nn3_cfile cols=(2,5,12,18,20,21,23,24,25,26)
+
+quadmos  aus nn3 quad=(160.8,-20.9,161.8,-21.9) out=fakequad
+gtlist fakequad 'zero
+
+END-PROC

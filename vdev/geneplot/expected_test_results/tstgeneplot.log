@@ -1,0 +1,60 @@
+tstgeneplot
+<<<<<<< HEAD
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /media/sf_raid3/test_data/plotbkrd pl
+    end-if
+end-if
+geneplot inp=(bkrdplot_1_4_16295.ibis, bkrdplot_2_17_14255.ibis, bkrdplot_3_20_6832.ibis, bkrdplot_4_2_2161.ibis, bkrdplot_5_6_432.+
+ibis) out=x.gif
+Beginning VICAR task geneplot
+[IBIS-VICMSG] Exception in IBISFileUnit Reported by VICAR
+[VIC2-GENERR] Exception in XVOPEN, processing file: bkrdplot_1_4_16295.ibis
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+goto rm
+let $echo="no"
+tstgeneplot
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /media/sf_raid3/test_data/plotbkrd pl
+    end-if
+end-if
+geneplot inp=(pl/bkrdplot_1_4_16295.ibis, pl/bkrdplot_2_17_14255.ibis, pl/bkrdplot_3_20_6832.ibis, pl/bkrdplot_4_2_2161.ibis, pl/bk+
+rdplot_5_6_432.ibis) out=x.gif
+Beginning VICAR task geneplot
+[IBIS-VICMSG] Exception in IBISFileUnit Reported by VICAR
+[VIC2-GENERR] Exception in XVOPEN, processing file: pl/bkrdplot_1_4_16295.ibis
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+goto rm
+let $echo="no"
+tstgeneplot
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /media/sf_raid3/test_data/plotbkrd pl
+    end-if
+end-if
+geneplot inp=(pl/bkrdplot_1_4_16295.ibis, pl/bkrdplot_2_17_14255.ibis, pl/bkrdplot_3_20_6832.ibis, pl/bkrdplot_4_2_2161.ibis, pl/bk+
+rdplot_5_6_432.ibis) out=x.gif
+Beginning VICAR task geneplot
+[IBIS-VICMSG] Exception in IBISFileUnit Reported by VICAR
+[VIC2-GENERR] Exception in XVOPEN, processing file: pl/bkrdplot_1_4_16295.ibis
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+goto rm
+let $echo="no"
+exit
+slogoff

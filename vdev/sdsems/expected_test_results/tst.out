@@ -1,0 +1,35 @@
+enable-log
+ush ln -s ../test_data/dem.hlf test_compress.hlf
+comprs test_compress.hlf test.hlf
+Beginning VICAR task comprs
+sdsems test.hlf out.hlf debline=50 debsamp=150
+Beginning VICAR task sdsems
+SDSEMS version 2018-06-15
+using WX 1000.000000, WY 1000.000000, DEBLINE 50, DEBSAMP 150
+
+              SAMP    149 SAMP    150 SAMP    151
+LINE     49:   400.000000  400.000000  399.000000
+LINE     50:   400.000000  400.000000  399.000000
+LINE     51:   400.000000  399.000000  398.000000
+
+deltaX 0.000625
+deltaY 0.000375
+a_rad 2.111216 (120.963757 in degrees)
+tanS 0.000729 (s in degrees 0.041761)
+cosArad -0.514496
+sinArad 0.857493
+h0 400.000000
+
+LINE 49 SAMP 149 hi 400.000000 hm 400.000000 dif 0.000000 dif^2 0.000000 (wX * winX * cosArad + wY * winY * sinArad) 0.000000
+LINE 49 SAMP 150 hi 399.375000 hm 400.000000 dif 0.625000 dif^2 0.390625 (wX * winX * cosArad + wY * winY * sinArad) 857.492924
+LINE 49 SAMP 151 hi 398.750000 hm 399.000000 dif 0.250000 dif^2 0.062500 (wX * winX * cosArad + wY * winY * sinArad) 1714.985847
+LINE 50 SAMP 149 hi 400.375000 hm 400.000000 dif -0.375000 dif^2 0.140625 (wX * winX * cosArad + wY * winY * sinArad) -514.495730
+LINE 50 SAMP 150 hi 399.750000 hm 400.000000 dif 0.250000 dif^2 0.062500 (wX * winX * cosArad + wY * winY * sinArad) 342.997193
+LINE 50 SAMP 151 hi 399.125000 hm 399.000000 dif -0.125000 dif^2 0.015625 (wX * winX * cosArad + wY * winY * sinArad) 1200.490117
+LINE 51 SAMP 149 hi 400.750000 hm 400.000000 dif -0.750000 dif^2 0.562500 (wX * winX * cosArad + wY * winY * sinArad) -1028.991461
+LINE 51 SAMP 150 hi 400.125000 hm 399.000000 dif -1.125000 dif^2 1.265625 (wX * winX * cosArad + wY * winY * sinArad) -171.498537
+LINE 51 SAMP 151 hi 399.500000 hm 398.000000 dif -1.500000 dif^2 2.250000 (wX * winX * cosArad + wY * winY * sinArad) 685.994387
+
+sum 4.750000
+sqrt(sum/8.0) 0.770552
+disable-log

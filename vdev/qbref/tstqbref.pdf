@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+!qbref inp=(../../../data/orig_qb/Frenchman_Flat_07JUN08184839-P1BS-005616921010_01_P001_pan.img) panmeta=../../../data/orig_qb/07JUN08184839-P1BS-005616921010_01_P001.IMD out=qb_pan_005616921010.img band=5
+
+!qbref inp=(../../../data/orig_qb/Frenchman_Flat_07JUN08184839-P1BS-005616921011_01_P001_pan.img) panmeta=../../../data/orig_qb/07JUN08184839-P1BS-005616921011_01_P001.IMD out=qb_pan_005616921011.img band=5
+
+../realfunc/realfunc (qb_pan_005616921010.img, qb_pan_005616921011.img) qb_pan_diff_005616921010_005616921011.img
+
+END-PROC

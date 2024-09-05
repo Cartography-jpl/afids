@@ -1,0 +1,538 @@
+pdc DLG   500001   {Upper origin of stream}             DRAINAGE       1
+pdc DLG   500002   {Upper origin of stream at body}     DRAINAGE       2
+pdc DLG   500004   {Stream entering water body}         DRAINAGE       3
+pdc DLG   500005   {Stream exiting water body}          DRAINAGE       4
+pdc DLG   500101   Reservoir                            WATER          5
+pdc DLG   500102   {Covered reservoir}                  WATER          6
+pdc DLG   500106   {Fish hatchery or farm}              URBAN          7
+pdc DLG   500109   {Sewage disposal pond}               WATER          8
+pdc DLG   500111   {Marsh, wetland, swamp, or bog}      WETLANDS       9
+pdc DLG   500112   {Mangrove area}                      WETLANDS      10
+pdc DLG   500115   {Flats (tidal, mud, sand, gravel)}   BARREN        11
+pdc DLG   500116   {Bays, estuaries, gulfs, oceans}     WATER         12
+pdc DLG   500117   Shoal                                BARREN        13
+pdc DLG   500121   {Obstruction in water area}          WATER         14
+pdc DLG   500200   Shoreline                            WATER         15
+pdc DLG   500201   {Manmade Shorline}                   WATER         16
+pdc DLG   500203   {Indefinite shoreline}               WATER         17
+pdc DLG   500301   {Non-flowing well}                   DRAINAGE      18
+pdc DLG   500404   {Pumping station}                    URBAN         19
+pdc DLG   500406   {Dam or weir}                        URBAN         20
+pdc DLG   500410   Rock                                 BARREN        21
+pdc DLG   500412   Stream                               DRAINAGE      22
+pdc DLG   500414   {Ditch or Canal}                     DRAINAGE      23
+pdc DLG   500415   Aqueduct                             DRAINAGE      24
+pdc DLG   500416   Flume                                DRAINAGE      25
+pdc DLG   500417   Penstock                             URBAN         26
+pdc DLG   500418   Siphon                               URBAN         27
+pdc DLG   500419   {Channel in water area}              WATER         28
+pdc DLG   500421   {Lake or pond}                       WATER         29
+pdc DLG   500422   {Coral Reef}                         BARREN        30
+pdc DLG   700101   {Woods or brushwood}                 FOREST        31
+pdc DLG   700102   Scrub                                SHRUB         32
+pdc DLG   700103   {Orchard or plantation}              FOREST        33
+pdc DLG   700105   {Scattered trees}                    FOREST        34
+pdc DLG   800102   {Sand area or beach}                 BARREN        35
+pdc DLG   800104   Lava                                 BARREN        36
+pdc DLG  1700001   {Bridge Abutment}			ROADS         37
+pdc DLG  1700002   {Tunnel Portal}			ROADS	      38
+pdc DLG  1700005   Cul-de-sac				ROADS	      39
+pdc DLG  1700006   {Dead end}				URBAN	      40
+pdc DLG  1700007   Drawbridge				ROADS	      41
+pdc DLG  1700201   {Class 1, undivided}			ROADS	      42
+pdc DLG  1700202   {Class 1, divided by centerline}	ROADS	      43
+pdc DLG  1700203   {Class 1, divided, separated}	ROADS	      44
+pdc DLG  1700205   {Class 2, undivided}			ROADS  	      45
+pdc DLG  1700206   {Class 2, divided by centerline}	ROADS  	      46
+pdc DLG  1700207   {Class 2, divided, separated}	ROADS  	      47
+pdc DLG  1700209   {Class 3}				OTHER_ROADS   48
+pdc DLG  1700210   {Class 4}				OTHER_ROADS   49
+pdc DLG  1700211   {Trail, other than 4WD}		TRAILS	      40
+pdc DLG  1700212   {Trail, 4WD}				TRAILS	      51
+pdc DLG  1700213   Footbridge  	       	       	       	TRAILS	      52
+pdc DLG  1700214   {Road ferry crossing}       	       	WATER	      53
+pdc DLG  1700215   {Perimeter of parking area}	       	URBAN	      54
+pdc DLG  1700217   {Class 3, divided by centerline}	OTHER_ROADS   55
+pdc DLG  1700218   {Class 3, divided, lanes separated}	OTHER_ROADS   56
+pdc DLG  1700222   {Road in transition}			OTHER_ROADS   57
+pdc DLG  1700401   {Traffic circle}              	ROADS	      58
+pdc DLG  1700402   {Cloverleaf or interchange} 	       	ROADS	      59
+pdc DLG  1700405   {Nonstandard section or road}       	OTHER_ROADS   60
+pdc DLG  2000101   {School campus}			URBAN	      61
+pdc DLG  2000102   {Hospital complex}			URBAN	      62
+pdc DLG  2000104   {Prison compund}			URBAN	      63
+pdc DLG  2000122   {Athletic field}			GRASSLAND     64
+pdc DLG  2000123   {Golf course}		       	GRASSLAND     65
+pdc DLG  2000124   {Shopping center}			URBAN	      66
+pdc DLG  2000125   Zoo					URBAN	      67
+pdc DLG  2000126   {Drive-in theater}			URBAN	      68
+pdc DLG  2000127   {Racetrack or raceway}		URBAN	      69
+pdc DLG  2000140   Marina				URBAN	      70
+pdc DLG  2000150   {Built-up area}			URBAN 	      71
+pdc DLG  2000184   {Firing range}			URBAN	      72
+pdc DLG  2000202   Wall					URBAN	      73
+pdc DLG  2000206   {Fence line}				URBAN	      74
+pdc DLG  2000400   Building              		URBAN         75
+pdc DLG  2000402   Church                		URBAN         76
+pdc DLG  2000403   School                		URBAN         77
+pdc DLG  2000406   {Post office}         		URBAN         78
+pdc DLG  2000407   {City or town hall}   		URBAN         79
+pdc DLG  2000408   Hospital              		URBAN         80
+pdc DLG  2000409   Prison                		URBAN         81
+pdc DLG  2000411   Amphitheater          		URBAN         82
+pdc DLG  2000420   Cemetary              		URBAN         83
+pdc DLG  2000421   {Sewage disposal plant}		URBAN         84
+pdc DLG  2000425   Tank                   		URBAN         85
+pdc DLG  2000429   Quarry                		BARREN        86
+pdc DLG  2000432   {Pit, unconsolidated material}	BARREN        87
+pdc DLG  2000438   {Reclaimed area}      	 	BARREN        88
+pdc DLG  2000447   Corral                		URBAN         89
+pdc DLG  2000451   {Swimming pool}       		URBAN         90
+pdc DLG  2000452   {Archeological site, ruin}		BARREN        91
+pdc DLG  2000456   Stadium               		URBAN         92
+pdc DLG  2000466   {Breakwater, jetty, pier, dock}	URBAN         93
+pdc PDC_SHAPE 11   Residential                          URBAN         11
+pdc PDC_SHAPE 12   {Commercial & Services}              URBAN         12
+pdc PDC_SHAPE 13   Industrial                           URBAN         13
+pdc PDC_SHAPE 14   {Trans., Comm., & Utilities}         URBAN         14
+pdc PDC_SHAPE 15   {Industrial & Commercial Complex}    URBAN         15
+pdc PDC_SHAPE 16   {Mixed Urban}                        URBAN         16
+pdc PDC_SHAPE 17   {Other Urban}                        URBAN         17
+pdc PDC_SHAPE 21   {Cropland & Pasture}                 AGRICULTURE   21
+pdc PDC_SHAPE 22   Orchards                             FOREST        22
+pdc PDC_SHAPE 23   {Confined Feeding Operations}        URBAN         23
+pdc PDC_SHAPE 24   {Other Agricultural Land}            AGRICULTURE   24
+pdc PDC_SHAPE 31   {Herbaceous Rangeland}               GRASSLAND     31
+pdc PDC_SHAPE 32   {Shrub & Brush Rangeland}            SHRUB         32
+pdc PDC_SHAPE 33   {Mixed Rangelands}                   SHRUB         33
+pdc PDC_SHAPE 42   {Coniferous Forest Land}             FOREST        42
+pdc PDC_SHAPE 51   {Streams and Canals}                 WATER         51
+pdc PDC_SHAPE 52   Lakes                                WATER         52
+pdc PDC_SHAPE 53   Reservoirs                           WATER         53
+pdc PDC_SHAPE 54   {Bays & Estuaries}                   WATER         54
+pdc PDC_SHAPE 61   {Forested Wetland}                   WETLANDS      61
+pdc PDC_SHAPE 62   {Non-Forested Wetland}               WETLANDS      62
+pdc PDC_SHAPE 72   Beaches                              BARREN        72
+pdc PDC_SHAPE 73   {Sandy Areas other than Beaches}     BARREN        73
+pdc PDC_SHAPE 74   {Bare Exposed Rock}                  BARREN        74
+pdc PDC_SHAPE 75   {Strip Mines, Quarries, Gravel Pits} BARREN        75
+pdc PDC_SHAPE 76   {Transitional Areas}                 BARREN        76
+pdc PDC_SHAPE 77   {Mixed Barren Land}                  BARREN        77
+pdc PDC_SHAPE 301   {Left Bank (of stream/river)}       DRAINAGE      -2
+pdc PDC_SHAPE 302   Manmade                             DRAINAGE      -2
+pdc PDC_SHAPE 305   Stream                              DRAINAGE      -2
+pdc PDC_SHAPE 307   Aqueduct                            DRAINAGE      -2
+pdc PDC_SHAPE 309   Ditch                               DRAINAGE      -2
+pdc PDC_SHAPE 481  {Major Roads}                        ROADS         -1
+pdc PDC_SHAPE 482  {Other Roads}                        OTHER_ROADS   -1
+pdc PDC_SHAPE 480  {4WD Roads}                          TRAILS        -1
+mil VMAP_0  7      {Political Boundary}                 BARREN         7
+mil VMAP_0 22      {Aqueduct, Canal, Water Course}      DRAINAGE      -2
+mil VMAP_0 20      {Inland Water Area}                  WATER         20
+mil VMAP_0 23      {Trail EXS=2}                        TRAILS        -1
+mil VMAP_0 24      {Trail EXS=5}                        TRAILS        -1
+mil VMAP_0 25      {Trail EXS=28}                       TRAILS        -1
+mil VMAP_0 26      {Road MED=0}                         OTHER_ROADS   -1
+mil VMAP_0 27      {Road MED=2}                         OTHER_ROADS   -1
+mil VMAP_0 28      {Road MED=1}                         ROADS         -1
+mil VMAP_0 21      Swamp                                WETLANDS      21
+mil VMAP_0  1      Grass                                SHRUB          1
+mil VMAP_0  2      Scrub                                SHRUB          2
+mil VMAP_0  3      Crop                                 AGRICULTURE    3
+mil VMAP_0  4      Orchard                              FOREST         4
+mil VMAP_0  5      Trees                                FOREST         5
+mil VMAP_1  7      {Political Boundary}                 BARREN         7
+mil VMAP_1 22      {Aqueduct, Canal, Water Course}      DRAINAGE      -2
+mil VMAP_1 20      {Lake, Reservoir, Water Course Area} WATER         20
+mil VMAP_1 23      Trail                                TRAILS        -1
+mil VMAP_1 24      {Road RST=3}                         TRAILS        -1
+mil VMAP_1 25      {Road RST=2}                         TRAILS        -1
+mil VMAP_1 26      {Road MED=0}                         OTHER_ROADS   -1
+mil VMAP_1 27      {Road MED=2}                         OTHER_ROADS   -1
+mil VMAP_1 28      {Road MED=1}                         ROADS         -1
+mil VMAP_1 21      Swamp                                WETLANDS      21
+mil VMAP_1  1      Grass                                SHRUB          1
+mil VMAP_1  3      Crop                                 AGRICULTURE    3
+mil VMAP_1  4      Orchard                              FOREST         4
+mil VMAP_1  5      Trees                                FOREST         5
+pdc mauiShape  0   Ocean                                WATER          0
+pdc mauiShape  1   {Shrub & Brush Rangeland}            SHRUB          1
+pdc mauiShape  2   Lakes                                WATER          2
+pdc mauiShape  3   {Forested Wetland}                   WETLANDS       3
+pdc mauiShape  4   {Herbaceous Rangeland}               GRASSLAND      4
+pdc mauiShape  5   {Mixed Rangelands}                   SHRUB          5
+pdc mauiShape  6   {Transitional Areas}                 BARREN         6
+pdc mauiShape  7   {Sandy Areas other than Beaches}     BARREN         7
+pdc mauiShape  8   {Bare Exposed Rock}                  BARREN         8
+pdc mauiShape 9    {Trans., Comm., & Utilities}         URBAN          9
+pdc mauiShape 10   {Coniferous Forest Land}             FOREST        10
+pdc mauiShape 11   {Industrial & Commercial Complex}    URBAN         11
+pdc mauiShape 12   {Other Urban}                        URBAN         12
+pdc mauiShape 13   {Bays & Estuaries}                   WATER         13
+pdc mauiShape 14   {Strip Mines, Quarries, Gravel Pits} BARREN        14
+pdc mauiShape 15   Residential                          URBAN         15
+pdc mauiShape 16   {Commercial & Services}              URBAN         16
+pdc mauiShape 17   Industrial                           URBAN         17
+pdc mauiShape 18   {Mixed Urban}                        URBAN         18
+pdc mauiShape 19   {Cropland & Pasture}                 AGRICULTURE   19
+pdc mauiShape 20   {Non-Forested Wetland}               WETLANDS      20
+pdc mauiShape 21   Orchards                             FOREST        21
+pdc mauiShape 22   {Other Agricultural Land}            AGRICULTURE   22
+pdc mauiShape 23   Reservoirs                           WATER         23
+pdc mauiShape 24   Orchards                             FOREST        24
+pdc mauiShape 301   {Left Bank (of stream/river)}       DRAINAGE      -2
+pdc mauiShape 302   Manmade                             DRAINAGE      -2
+pdc mauiShape 305   Stream                              DRAINAGE      -2
+pdc mauiShape 307   Aqueduct                            DRAINAGE      -2
+pdc mauiShape 309   Ditch                               DRAINAGE      -2
+pdc mauiShape 481  {Major Roads}                        ROADS         -1
+pdc mauiShape 482  {Other Roads}                        OTHER_ROADS   -1
+pdc mauiShape 480  {4WD Roads}                          TRAILS        -1
+pdc mauiShape   500001   {Upper origin of stream}             DRAINAGE     101
+pdc mauiShape   500002   {Upper origin of stream at body}     DRAINAGE     102
+pdc mauiShape   500004   {Stream entering water body}         DRAINAGE     103
+pdc mauiShape   500005   {Stream exiting water body}          DRAINAGE     104
+pdc mauiShape   500101   Reservoir                            WATER        105
+pdc mauiShape   500102   {Covered reservoir}                  WATER        106
+pdc mauiShape   500106   {Fish hatchery or farm}              URBAN        107
+pdc mauiShape   500109   {Sewage disposal pond}               WATER        108
+pdc mauiShape   500111   {Marsh, wetland, swamp, or bog}      WETLANDS     109
+pdc mauiShape   500112   {Mangrove area}                      WETLANDS     110
+pdc mauiShape   500115   {Flats (tidal, mud, sand, gravel)}   BARREN       111
+pdc mauiShape   500116   {Bays, estuaries, gulfs, oceans}     WATER        112
+pdc mauiShape   500117   Shoal                                BARREN       113
+pdc mauiShape   500121   {Obstruction in water area}          WATER        114
+pdc mauiShape   500200   Shoreline                            WATER        115
+pdc mauiShape   500201   {Manmade Shorline}                   WATER        116
+pdc mauiShape   500203   {Indefinite shoreline}               WATER        117
+pdc mauiShape   500301   {Non-flowing well}                   DRAINAGE     118
+pdc mauiShape   500404   {Pumping station}                    URBAN        119
+pdc mauiShape   500406   {Dam or weir}                        URBAN        120
+pdc mauiShape   500410   Rock                                 BARREN       121
+pdc mauiShape   500412   Stream                               DRAINAGE     122
+pdc mauiShape   500414   {Ditch or Canal}                     DRAINAGE     123
+pdc mauiShape   500415   Aqueduct                             DRAINAGE     124
+pdc mauiShape   500416   Flume                                DRAINAGE     125
+pdc mauiShape   500417   Penstock                             URBAN        126
+pdc mauiShape   500418   Siphon                               URBAN        127
+pdc mauiShape   500419   {Channel in water area}              WATER        128
+pdc mauiShape   500421   {Lake or pond}                       WATER        129
+pdc mauiShape  1700001   {Bridge Abutment}			ROADS         37
+pdc mauiShape  1700002   {Tunnel Portal}			ROADS	      38
+pdc mauiShape  1700005   Cul-de-sac				ROADS	      39
+pdc mauiShape  1700006   {Dead end}				URBAN	      40
+pdc mauiShape  1700007   Drawbridge				ROADS	      41
+pdc mauiShape  1700201   {Class 1, undivided}			ROADS	      42
+pdc mauiShape  1700202   {Class 1, divided by centerline}	ROADS	      43
+pdc mauiShape  1700203   {Class 1, divided, separated}	        ROADS	      44
+pdc mauiShape  1700205   {Class 2, undivided}			ROADS  	      45
+pdc mauiShape  1700206   {Class 2, divided by centerline}	ROADS  	      46
+pdc mauiShape  1700207   {Class 2, divided, separated}	        ROADS  	      47
+pdc mauiShape  1700209   {Class 3}				OTHER_ROADS   48
+pdc mauiShape  1700210   {Class 4}				OTHER_ROADS   49
+pdc mauiShape  1700211   {Trail, other than 4WD}		TRAILS	      40
+pdc mauiShape  1700212   {Trail, 4WD}				TRAILS	      51
+pdc mauiShape  1700213   Footbridge  	       	       	       	TRAILS	      52
+pdc mauiShape  1700214   {Road ferry crossing}       	       	WATER	      53
+pdc mauiShape  1700215   {Perimeter of parking area}	       	URBAN	      54
+pdc mauiShape  1700217   {Class 3, divided by centerline}	OTHER_ROADS   55
+pdc mauiShape  1700218   {Class 3, divided, lanes separated}	OTHER_ROADS   56
+pdc mauiShape  1700222   {Road in transition}			OTHER_ROADS   57
+pdc mauiShape  1700401   {Traffic circle}              	        ROADS	      58
+pdc mauiShape  1700402   {Cloverleaf or interchange} 	       	ROADS	      59
+pdc mauiShape  1700405   {Nonstandard section or road}       	OTHER_ROADS   60
+pdc oahuShape  0   Ocean                                WATER          0
+pdc oahuShape  1   {Shrub & Brush Rangeland}            SHRUB          1
+pdc oahuShape  2   {Forested Wetland}                   WETLANDS       2
+pdc oahuShape  3   {Herbaceous Rangeland}               GRASSLAND      3
+pdc oahuShape  4   {Mixed Rangelands}                   SHRUB          4
+pdc oahuShape  5   {Transitional Areas}                 BARREN         5
+pdc oahuShape  6   {Trans., Comm., & Utilities}         URBAN          6
+pdc oahuShape  7   {Coniferous Forest Land}             FOREST         7
+pdc oahuShape  8   {Other Urban}                        URBAN          8
+pdc oahuShape  9   {Bays & Estuaries}                   WATER          9
+pdc oahuShape 10   {Strip Mines, Quarries, Gravel Pits} BARREN        10
+pdc oahuShape 11   Residential                          URBAN         11
+pdc oahuShape 12   {Commercial & Services}              URBAN         12
+pdc oahuShape 13   Industrial                           URBAN         13
+pdc oahuShape 14   {Mixed Urban}                        URBAN         14
+pdc oahuShape 15   {Cropland & Pasture}                 AGRICULTURE   15
+pdc oahuShape 16   {Non-Forested Wetland}               WETLANDS      16
+pdc oahuShape 17   Commercial                           URBAN         17
+pdc oahuShape 18   {Other Agricultural Land}            AGRICULTURE   18
+pdc oahuShape 19   Residential                          URBAN         19
+pdc oahuShape 20   Reservoirs                           WATER         20
+pdc oahuShape 21   Orchards                             FOREST        21
+pdc oahuShape 301   {Left Bank (of stream/river)}       DRAINAGE      -2
+pdc oahuShape 302   Manmade                             DRAINAGE      -2
+pdc oahuShape 305   Stream                              DRAINAGE      -2
+pdc oahuShape 307   Aqueduct                            DRAINAGE      -2
+pdc oahuShape 309   Ditch                               DRAINAGE      -2
+pdc oahuShape 481  {Major Roads}                        ROADS         -1
+pdc oahuShape 482  {Other Roads}                        OTHER_ROADS   -1
+pdc oahuShape 480  {4WD Roads}                          TRAILS        -1
+pdc oahuShape   500001   {Upper origin of stream}             DRAINAGE     101
+pdc oahuShape   500002   {Upper origin of stream at body}     DRAINAGE     102
+pdc oahuShape   500004   {Stream entering water body}         DRAINAGE     103
+pdc oahuShape   500005   {Stream exiting water body}          DRAINAGE     104
+pdc oahuShape   500101   Reservoir                            WATER        105
+pdc oahuShape   500102   {Covered reservoir}                  WATER        106
+pdc oahuShape   500106   {Fish hatchery or farm}              URBAN        107
+pdc oahuShape   500109   {Sewage disposal pond}               WATER        108
+pdc oahuShape   500111   {Marsh, wetland, swamp, or bog}      WETLANDS     109
+pdc oahuShape   500112   {Mangrove area}                      WETLANDS     110
+pdc oahuShape   500115   {Flats (tidal, mud, sand, gravel)}   BARREN       111
+pdc oahuShape   500116   {Bays, estuaries, gulfs, oceans}     WATER        112
+pdc oahuShape   500117   Shoal                                BARREN       113
+pdc oahuShape   500121   {Obstruction in water area}          WATER        114
+pdc oahuShape   500200   Shoreline                            WATER        115
+pdc oahuShape   500201   {Manmade Shorline}                   WATER        116
+pdc oahuShape   500203   {Indefinite shoreline}               WATER        117
+pdc oahuShape   500301   {Non-flowing well}                   DRAINAGE     118
+pdc oahuShape   500404   {Pumping station}                    URBAN        119
+pdc oahuShape   500406   {Dam or weir}                        URBAN        120
+pdc oahuShape   500410   Rock                                 BARREN       121
+pdc oahuShape   500412   Stream                               DRAINAGE     122
+pdc oahuShape   500414   {Ditch or Canal}                     DRAINAGE     123
+pdc oahuShape   500415   Aqueduct                             DRAINAGE     124
+pdc oahuShape   500416   Flume                                DRAINAGE     125
+pdc oahuShape   500417   Penstock                             URBAN        126
+pdc oahuShape   500418   Siphon                               URBAN        127
+pdc oahuShape   500419   {Channel in water area}              WATER        128
+pdc oahuShape   500421   {Lake or pond}                       WATER        129
+pdc oahuShape  1700001   {Bridge Abutment}			ROADS         37
+pdc oahuShape  1700002   {Tunnel Portal}			ROADS	      38
+pdc oahuShape  1700005   Cul-de-sac				ROADS	      39
+pdc oahuShape  1700006   {Dead end}				URBAN	      40
+pdc oahuShape  1700007   Drawbridge				ROADS	      41
+pdc oahuShape  1700201   {Class 1, undivided}			ROADS	      42
+pdc oahuShape  1700202   {Class 1, divided by centerline}	ROADS	      43
+pdc oahuShape  1700203   {Class 1, divided, separated}	        ROADS	      44
+pdc oahuShape  1700205   {Class 2, undivided}			ROADS  	      45
+pdc oahuShape  1700206   {Class 2, divided by centerline}	ROADS  	      46
+pdc oahuShape  1700207   {Class 2, divided, separated}	        ROADS  	      47
+pdc oahuShape  1700209   {Class 3}				OTHER_ROADS   48
+pdc oahuShape  1700210   {Class 4}				OTHER_ROADS   49
+pdc oahuShape  1700211   {Trail, other than 4WD}		TRAILS	      40
+pdc oahuShape  1700212   {Trail, 4WD}				TRAILS	      51
+pdc oahuShape  1700213   Footbridge  	       	       	       	TRAILS	      52
+pdc oahuShape  1700214   {Road ferry crossing}       	       	WATER	      53
+pdc oahuShape  1700215   {Perimeter of parking area}	       	URBAN	      54
+pdc oahuShape  1700217   {Class 3, divided by centerline}	OTHER_ROADS   55
+pdc oahuShape  1700218   {Class 3, divided, lanes separated}	OTHER_ROADS   56
+pdc oahuShape  1700222   {Road in transition}			OTHER_ROADS   57
+pdc oahuShape  1700401   {Traffic circle}              	        ROADS	      58
+pdc oahuShape  1700402   {Cloverleaf or interchange} 	       	ROADS	      59
+pdc oahuShape  1700405   {Nonstandard section or road}       	OTHER_ROADS   60
+pdc kauaiShape  0   Ocean                                WATER          0
+pdc kauaiShape  1   {Shrub & Brush Rangeland}            SHRUB          1
+pdc kauaiShape  2   Lakes                                WATER          2
+pdc kauaiShape  3   {Forested Wetland}                   WETLANDS       3
+pdc kauaiShape  4   {Herbaceous Rangeland}               GRASSLAND      4
+pdc kauaiShape  5   {Mixed Rangelands}                   SHRUB          5
+pdc kauaiShape  6   {Sandy Areas other than Beaches}     BARREN         6
+pdc kauaiShape  7   {Bare Exposed Rock}                  BARREN         7
+pdc kauaiShape  8   {Trans., Comm., & Utilities}         URBAN          8
+pdc kauaiShape  9   {Beaches}                            WATER          9
+pdc kauaiShape 10   {Coniferous Forest Land}             FOREST        10
+pdc kauaiShape 11   {Other Urban}                        URBAN         11
+pdc kauaiShape 12   {Bays & Estuaries}                   WATER         12
+pdc kauaiShape 13   {Strip Mines, Quarries, Gravel Pits} BARREN        13
+pdc kauaiShape 14   Residential                          URBAN         14
+pdc kauaiShape 15   {Commercial & Services}              URBAN         15
+pdc kauaiShape 16   Industrial                           URBAN         16
+pdc kauaiShape 17   {Cropland & Pasture}                 AGRICULTURE   17
+pdc kauaiShape 18   {Non-Forested Wetland}               WETLANDS      18
+pdc kauaiShape 19   {Other Agricultural Land}            AGRICULTURE   19
+pdc kauaiShape 20   Reservoirs                           WATER         20
+pdc kauaiShape 21   Orchards                             FOREST        21
+pdc kauaiShape 301   {Left Bank (of stream/river)}       DRAINAGE      -2
+pdc kauaiShape 302   Manmade                             DRAINAGE      -2
+pdc kauaiShape 305   Stream                              DRAINAGE      -2
+pdc kauaiShape 307   Aqueduct                            DRAINAGE      -2
+pdc kauaiShape 309   Ditch                               DRAINAGE      -2
+pdc kauaiShape 481  {Major Roads}                        ROADS         -1
+pdc kauaiShape 482  {Other Roads}                        OTHER_ROADS   -1
+pdc kauaiShape 480  {4WD Roads}                          TRAILS        -1
+pdc kauaiShape   500001   {Upper origin of stream}             DRAINAGE     101
+pdc kauaiShape   500002   {Upper origin of stream at body}     DRAINAGE     102
+pdc kauaiShape   500004   {Stream entering water body}         DRAINAGE     103
+pdc kauaiShape   500005   {Stream exiting water body}          DRAINAGE     104
+pdc kauaiShape   500101   Reservoir                            WATER        105
+pdc kauaiShape   500102   {Covered reservoir}                  WATER        106
+pdc kauaiShape   500106   {Fish hatchery or farm}              URBAN        107
+pdc kauaiShape   500109   {Sewage disposal pond}               WATER        108
+pdc kauaiShape   500111   {Marsh, wetland, swamp, or bog}      WETLANDS     109
+pdc kauaiShape   500112   {Mangrove area}                      WETLANDS     110
+pdc kauaiShape   500115   {Flats (tidal, mud, sand, gravel)}   BARREN       111
+pdc kauaiShape   500116   {Bays, estuaries, gulfs, oceans}     WATER        112
+pdc kauaiShape   500117   Shoal                                BARREN       113
+pdc kauaiShape   500121   {Obstruction in water area}          WATER        114
+pdc kauaiShape   500200   Shoreline                            WATER        115
+pdc kauaiShape   500201   {Manmade Shorline}                   WATER        116
+pdc kauaiShape   500203   {Indefinite shoreline}               WATER        117
+pdc kauaiShape   500301   {Non-flowing well}                   DRAINAGE     118
+pdc kauaiShape   500404   {Pumping station}                    URBAN        119
+pdc kauaiShape   500406   {Dam or weir}                        URBAN        120
+pdc kauaiShape   500410   Rock                                 BARREN       121
+pdc kauaiShape   500412   Stream                               DRAINAGE     122
+pdc kauaiShape   500414   {Ditch or Canal}                     DRAINAGE     123
+pdc kauaiShape   500415   Aqueduct                             DRAINAGE     124
+pdc kauaiShape   500416   Flume                                DRAINAGE     125
+pdc kauaiShape   500417   Penstock                             URBAN        126
+pdc kauaiShape   500418   Siphon                               URBAN        127
+pdc kauaiShape   500419   {Channel in water area}              WATER        128
+pdc kauaiShape   500421   {Lake or pond}                       WATER        129
+pdc kauaiShape  1700001   {Bridge Abutment}			ROADS         37
+pdc kauaiShape  1700002   {Tunnel Portal}			ROADS	      38
+pdc kauaiShape  1700005   Cul-de-sac				ROADS	      39
+pdc kauaiShape  1700006   {Dead end}				URBAN	      40
+pdc kauaiShape  1700007   Drawbridge				ROADS	      41
+pdc kauaiShape  1700201   {Class 1, undivided}			ROADS	      42
+pdc kauaiShape  1700202   {Class 1, divided by centerline}	ROADS	      43
+pdc kauaiShape  1700203   {Class 1, divided, separated}	        ROADS	      44
+pdc kauaiShape  1700205   {Class 2, undivided}			ROADS  	      45
+pdc kauaiShape  1700206   {Class 2, divided by centerline}	ROADS  	      46
+pdc kauaiShape  1700207   {Class 2, divided, separated}	        ROADS  	      47
+pdc kauaiShape  1700209   {Class 3}				OTHER_ROADS   48
+pdc kauaiShape  1700210   {Class 4}				OTHER_ROADS   49
+pdc kauaiShape  1700211   {Trail, other than 4WD}		TRAILS	      40
+pdc kauaiShape  1700212   {Trail, 4WD}				TRAILS	      51
+pdc kauaiShape  1700213   Footbridge  	       	       	       	TRAILS	      52
+pdc kauaiShape  1700214   {Road ferry crossing}       	       	WATER	      53
+pdc kauaiShape  1700215   {Perimeter of parking area}	       	URBAN	      54
+pdc kauaiShape  1700217   {Class 3, divided by centerline}	OTHER_ROADS   55
+pdc kauaiShape  1700218   {Class 3, divided, lanes separated}	OTHER_ROADS   56
+pdc kauaiShape  1700222   {Road in transition}			OTHER_ROADS   57
+pdc kauaiShape  1700401   {Traffic circle}              	        ROADS	      58
+pdc kauaiShape  1700402   {Cloverleaf or interchange} 	       	ROADS	      59
+pdc kauaiShape  1700405   {Nonstandard section or road}       	OTHER_ROADS   60
+pdc hawaiiShape  0   Ocean                                WATER          0
+pdc hawaiiShape  1   {Shrub & Brush Rangeland}            SHRUB          1
+pdc hawaiiShape  2   Lakes                                WATER          2
+pdc hawaiiShape  3   {Forested Wetland}                   WETLANDS       3
+pdc hawaiiShape  4   {Herbaceous Rangeland}               GRASSLAND      4
+pdc hawaiiShape  5   {Mixed Rangelands}                   SHRUB          5
+pdc hawaiiShape  6   {Transitional Areas}                 BARREN         6
+pdc hawaiiShape  7   {Bare Exposed Rock}                  BARREN         7
+pdc hawaiiShape  8   {Trans., Comm., & Utilities}         URBAN          8
+pdc hawaiiShape  9   {Coniferous Forest Land}             FOREST         9
+pdc hawaiiShape 10   {Industrial & Commercial Complex}    URBAN         10
+pdc hawaiiShape 11   {Other Urban}                        URBAN         11
+pdc hawaiiShape 12   {Other Urban}                        URBAN         12
+pdc hawaiiShape 13   {Bays & Estuaries}                   WATER         13
+pdc hawaiiShape 14   {Strip Mines, Quarries, Gravel Pits} BARREN        14
+pdc hawaiiShape 15   Residential                          URBAN         15
+pdc hawaiiShape 16   {Commercial & Services}              URBAN         16
+pdc hawaiiShape 17   Industrial                           URBAN         17
+pdc hawaiiShape 18   {Mixed Urban}                        URBAN         18
+pdc hawaiiShape 19   {Cropland & Pasture}                 AGRICULTURE   19
+pdc hawaiiShape 20   {Non-Forested Wetland}               WETLANDS      20
+pdc hawaiiShape 21   Orchards                             FOREST        21
+pdc hawaiiShape 22   {Other Agricultural Land}            AGRICULTURE   22
+pdc hawaiiShape 23   Orchards                             FOREST        23
+pdc hawaiiShape 301   {Left Bank (of stream/river)}       DRAINAGE      -2
+pdc hawaiiShape 302   Manmade                             DRAINAGE      -2
+pdc hawaiiShape 305   Stream                              DRAINAGE      -2
+pdc hawaiiShape 307   Aqueduct                            DRAINAGE      -2
+pdc hawaiiShape 309   Ditch                               DRAINAGE      -2
+pdc hawaiiShape 481  {Major Roads}                        ROADS         -1
+pdc hawaiiShape 482  {Other Roads}                        OTHER_ROADS   -1
+pdc hawaiiShape 480  {4WD Roads}                          TRAILS        -1
+pdc hawaiiShape   500001   {Upper origin of stream}             DRAINAGE     101
+pdc hawaiiShape   500002   {Upper origin of stream at body}     DRAINAGE     102
+pdc hawaiiShape   500004   {Stream entering water body}         DRAINAGE     103
+pdc hawaiiShape   500005   {Stream exiting water body}          DRAINAGE     104
+pdc hawaiiShape   500101   Reservoir                            WATER        105
+pdc hawaiiShape   500102   {Covered reservoir}                  WATER        106
+pdc hawaiiShape   500106   {Fish hatchery or farm}              URBAN        107
+pdc hawaiiShape   500109   {Sewage disposal pond}               WATER        108
+pdc hawaiiShape   500111   {Marsh, wetland, swamp, or bog}      WETLANDS     109
+pdc hawaiiShape   500112   {Mangrove area}                      WETLANDS     110
+pdc hawaiiShape   500115   {Flats (tidal, mud, sand, gravel)}   BARREN       111
+pdc hawaiiShape   500116   {Bays, estuaries, gulfs, oceans}     WATER        112
+pdc hawaiiShape   500117   Shoal                                BARREN       113
+pdc hawaiiShape   500121   {Obstruction in water area}          WATER        114
+pdc hawaiiShape   500200   Shoreline                            WATER        115
+pdc hawaiiShape   500201   {Manmade Shorline}                   WATER        116
+pdc hawaiiShape   500203   {Indefinite shoreline}               WATER        117
+pdc hawaiiShape   500301   {Non-flowing well}                   DRAINAGE     118
+pdc hawaiiShape   500404   {Pumping station}                    URBAN        119
+pdc hawaiiShape   500406   {Dam or weir}                        URBAN        120
+pdc hawaiiShape   500410   Rock                                 BARREN       121
+pdc hawaiiShape   500412   Stream                               DRAINAGE     122
+pdc hawaiiShape   500414   {Ditch or Canal}                     DRAINAGE     123
+pdc hawaiiShape   500415   Aqueduct                             DRAINAGE     124
+pdc hawaiiShape   500416   Flume                                DRAINAGE     125
+pdc hawaiiShape   500417   Penstock                             URBAN        126
+pdc hawaiiShape   500418   Siphon                               URBAN        127
+pdc hawaiiShape   500419   {Channel in water area}              WATER        128
+pdc hawaiiShape   500421   {Lake or pond}                       WATER        129
+pdc hawaiiShape  1700001   {Bridge Abutment}			ROADS         37
+pdc hawaiiShape  1700002   {Tunnel Portal}			ROADS	      38
+pdc hawaiiShape  1700005   Cul-de-sac				ROADS	      39
+pdc hawaiiShape  1700006   {Dead end}				URBAN	      40
+pdc hawaiiShape  1700007   Drawbridge				ROADS	      41
+pdc hawaiiShape  1700201   {Class 1, undivided}			ROADS	      42
+pdc hawaiiShape  1700202   {Class 1, divided by centerline}	ROADS	      43
+pdc hawaiiShape  1700203   {Class 1, divided, separated}	ROADS	      44
+pdc hawaiiShape  1700205   {Class 2, undivided}			ROADS  	      45
+pdc hawaiiShape  1700206   {Class 2, divided by centerline}	ROADS  	      46
+pdc hawaiiShape  1700207   {Class 2, divided, separated}	ROADS  	      47
+pdc hawaiiShape  1700209   {Class 3}				OTHER_ROADS   48
+pdc hawaiiShape  1700210   {Class 4}				OTHER_ROADS   49
+pdc hawaiiShape  1700211   {Trail, other than 4WD}		TRAILS	      40
+pdc hawaiiShape  1700212   {Trail, 4WD}				TRAILS	      51
+pdc hawaiiShape  1700213   Footbridge  	       	       	       	TRAILS	      52
+pdc hawaiiShape  1700214   {Road ferry crossing}       	       	WATER	      53
+pdc hawaiiShape  1700215   {Perimeter of parking area}	       	URBAN	      54
+pdc hawaiiShape  1700217   {Class 3, divided by centerline}	OTHER_ROADS   55
+pdc hawaiiShape  1700218   {Class 3, divided, lanes separated}	OTHER_ROADS   56
+pdc hawaiiShape  1700222   {Road in transition}			OTHER_ROADS   57
+pdc hawaiiShape  1700401   {Traffic circle}                     ROADS	      58
+pdc hawaiiShape  1700402   {Cloverleaf or interchange} 	       	ROADS	      59
+pdc hawaiiShape  1700405   {Nonstandard section or road}       	OTHER_ROADS   60
+mil VITD               1   {Built Up}                           URBAN          1
+mil VITD               2   Agriculture                          AGRICULTURE    2
+mil VITD               3   Barren                               BARREN         3
+mil VITD               4   Crop                                 AGRICULTURE    4
+mil VITD               5   Trees                                FOREST         5
+mil VITD               6   Agriculture                          AGRICULTURE    6
+mil VITD               7   Grass                                GRASSLAND      7
+mil VITD               8   Scrub                                SHRUB          8
+mil VITD               9   Cane                                 FOREST         9
+mil VITD              10   Trees                                FOREST        10
+mil VITD              20   Roads                                ROADS         20
+mil VITD              24   Roads                                ROADS         -1
+mil VITD              25   Roads                                ROADS         -1
+mil VITD              26   Roads                                ROADS         -1
+mil VITD              27   Roads                                ROADS         -1
+mil VITD              28   Roads                                ROADS         -1
+mil VITD_C               1   {Dense Forest}                     FOREST          1
+mil VITD_C               2   {Medium Forest}                    FOREST          2
+mil VITD_C               3   {Light Forest}                     SHRUB           3
+mil VITD_C               4   {Scattered Trees}                  SHRUB           4
+mil VITD_C               5   {Rice Field}                       AGRICULTURE     5
+mil VITD_C               6   {Open Field}                       BARREN          6
+mil VITD_C               7   Obstacles                          WATER          16
+mil VITD_C               8   Water                              WATER          18
+mil VITD_C               9   Water                              WATER          21
+mil VITD_C              10   Water                              WATER          22
+mil VITD_C              11   Urban                              URBAN          23
+mil VITD_C              12   Bridge                             URBAN          25
+mil VITD_C              13   Roads                              URBAN          26
+mil VITD_C              14   Roads                              URBAN          27
+mil VITD_C              15   Roads                              DRAINAGE        -2
+mil VITD_C              24   Roads                                ROADS         -1
+mil VITD_C              25   Roads                                ROADS         -1
+mil VITD_C              26   Roads                                ROADS         -1
+mil VITD_C              27   Roads                                ROADS         -1
+mil VITD_C              28   Roads                                ROADS         -1
+mil tdpsShape 501 TDPS_TRAFF_WATER             WATER  51
+mil tdpsShape 502 TDPS_TRAFF_IMPASSABLE        WATER  52
+mil tdpsShape 503 TDPS_TRAFF_SMOOTH            BARREN 53
+mil tdpsShape 504 TDPS_TRAFF_GENTLY_ROLLING    BARREN 54
+mil tdpsShape 505 TDPS_TRAFF_WATER_MOUNTAINOUS FOREST 55
+mil tdpsShape 506 TDPS_TRAFF_WATER_MARSH       WATER  56
+mil tdpsShape 101 {Loose Surface}                        LOOSE_ROADS         -1
+mil tdpsShape 102 {Hard Surface}                         HARD_ROADS   -1

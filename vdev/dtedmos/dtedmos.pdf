@@ -1,0 +1,196 @@
+procedure help=*
+parm hemi1 type=(string,2) count=1 valid=("w","e")
+parm hemi2 type=(string,2) count=1 valid=("n","s")
+parm lons type=(string,99) count=(10:10) +
+      default=("","","","","","","","","","")
+parm lats type=(string,99) count=(10:10) +
+      default=("","","","","","","","","","")
+parm altdted type=string default="nofileprovided"
+parm out type=(string,99) count=1
+parm diskimg type=string default="dtedraw"
+parm level type=int default=1 valid=(1:2)
+
+local lon string
+local lat string
+local flon string
+local flat string
+local latnext string
+local lonnext string
+local iloop int
+local iloop1 int
+local jloop int
+local jloop1 int
+local inexist int
+local parmstr string
+local parmmss string
+local inlog string
+local outlog string
+
+refgbl $echo
+body
+!let $echo="yes"
+
+
+
+
+DON'T USE THIS PROC ANYMORE ... USE DTEDMOS2
+
+
+
+
+
+!  DTEDMOS HANDYPROC
+
+let parmmss = "("
+let iloop = 0
+loop
+   let iloop = iloop+1
+   if (iloop>10) goto iloopdone
+   let lon = lons(iloop)
+   let flon = hemi1 // lon
+   let iloop1 = iloop+1
+   if (iloop1=11)
+      let lonnext = ""
+   else
+      let lonnext = lons(iloop1)
+   end-if
+   if (lon="") goto iloopdone
+   
+   
+   let jloop = 0
+   let parmstr = "("
+   loop
+      let jloop = jloop+1
+      if (jloop>10) goto jloopdone
+      let lat = lats(jloop)
+      let flat = hemi2 // lat
+      let jloop1 = jloop+1
+      if (jloop1=11)
+         let latnext = ""
+      else
+         let latnext = lats(jloop1)
+      end-if
+      if (lat="") goto jloopdone
+      let inlog = "&diskimg" // "/dted/&flon" // "/&flat" // ".dt&level"
+      !file2tcl &inlog val=inexist
+      !if (inexist=0)
+      !   write "ERROR: DTED FILE &inlog NOT FOUND"
+      !   goto theend
+      !end-if
+      let outlog = "dtedraw/" // "&flon" // "&flat" // ".log"
+      dtedlog &inlog &altdted &outlog &lon &lat &hemi1 &hemi2
+      let parmstr = parmstr // "&outlog" 
+      if (latnext<>"") let parmstr = parmstr // ","
+      if (latnext="") let parmstr = parmstr // ")"
+   end-loop
+   jloopdone>
+   
+   if (jloop<3)
+      gtcopy inp=&parmstr out=dtedraw/temp&lon
+   else
+      gtappend inp=&parmstr out=dtedraw/temp&lon 'overlap1
+   end-if
+   let parmmss = parmmss // "dtedraw/temp&lon"
+   if (lonnext<>"") let parmmss = parmmss // ","
+   if (lonnext="") let parmmss = parmmss // ")"
+   
+end-loop
+
+iloopdone>
+
+if (iloop<3)
+   gtcopy inp=&parmmss out=&out
+else
+   gtmss inp=&parmmss out=&out 'overlap1
+end-if
+
+theend>
+end-proc
+.TITLE
+DTEDMOS - Mosaic a checkerboard of DTED quads, and add a GeoTIFF label
+.HELP
+PURPOSE
+     After copying a set of DTED images forming a checkerboard pattern onto
+     disk, this routine logs them with VICAR labels, adds GeoTIFF labels, and
+     then mosaics them into a large checkerboard image.  If the files are less
+     than 1201 x 1201 (e.g. north of 50) then they are converted
+     to 1201 x 1201.
+     
+     The routine depends on a particular file structure.  Call this routine
+     from any user directory (which we will call "root").  There must be 
+     subdirectories named dtedraw and dtedmos.  The user must prepare for the
+     call by copying the DTED CDROM below dtedraw.  The directories immediately
+     below dtedraw will have names from the CDROM such as "w111", "w110",
+     representing longitude degrees.  In each of those directories will be 
+     files such as "n32.dt1", "n33.dt2".  The output mosaic will be in
+     the directory named dtedmos. 
+     
+     When copying DTED from CDROM, it is recommended that the directories be
+     created with the unix mkdir command and that the individual one degree
+     quads be copied into the directories.
+     
+CALL
+     DTEDMOS HEMI1="w" LONS=("111","110","109") +
+             HEMI2="n" LATS=("33","32") OUT=bigmos LEVEL=2
+ 
+  
+OPERATION
+
+The DMA files are logged to VICAR with routine DTEDVLOG.  This is called from
+procedure DTEDLOG which then adds a GeoTIFF label.  Finally, the routines 
+GTMSS and GTAPPEND are used to make the checkerboard mosaic.
+
+There are two special cases for missing DTED files:
+1.  If there is no DTED file, a quadrangle of all 0's is created.
+2.  If no DTED and an alternate DTED source is provided, then that
+file is transformed into a substitute file by bilinear interp-
+olation.  The alternate file has to be named using the parameter
+ALTINP and has to have a geotiff label.
+
+PERFORMANCE
+
+about ten seconds per degree quad on a SUN SPARCstation 20.
+
+.PAGE
+
+Restrictions
+------------
+
+Presently can't cross equator or int'l date line
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 27 Sep, 2002
+Current Cognizant Programmer: A. L. Zobrist
+
+  02-12-17    AZ   fixes for hemisph
+  03-01-08    AZ   zero fill if dted not there, use of alt dted
+
+.LEVEL1
+.VARI HEMI1
+"e" or "w" lower case
+.VARI HEMI2
+"n" or "s" lower case
+.VARI LONS
+List of lons in west to
+east order ("109",...), per
+DMA file naming
+.VARI LATS
+List of lats in north to
+south order ("33",...), per
+DMA file naming
+.VARI ALTDTED
+alternate dted to use if
+there are missing DTEDs
+(optional)
+.VARI OUT
+output file name
+LEVEL2
+.VARI ALTDTED
+If there are no missing DTEDs then this file does nothing and
+does not have to be given.  If there are missing DTEDs then
+this file is still optional... the routine will zero fill any
+area where there is missing DTEDs.  The third case is where 
+DTEDs are missing and there is an alternate source of DTED,
+then the alternate will be remapped to cover the missing DTEDs.
+.END

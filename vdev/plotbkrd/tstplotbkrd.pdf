@@ -1,0 +1,104 @@
+procedure
+
+
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+refgbl $echo
+refgbl $autousage
+
+! Oct 01, 2019 - RJB
+! TEST SCRIPT FOR PLOTBKRD
+!
+! Vicar Programs:
+!       translog ibis-list geneplot
+! 
+! External Programs"
+!   gnuplot 5.0 or greater
+!   ImageMagick 
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="no"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/plitbkrd pb
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid3/test_data/plotbkrd pb
+    else
+        ush ln -s $AFIDS_TESTDATA/plotbkrd pb
+    end-if
+end-if
+let _onfail="goto rm"
+
+let $echo="yes"
+
+! take combined subclusters created from clusterer
+ibis-li pb/EMsubclusters.ibis
+plotbkrd pb/EMsubclusters.ibis
+
+! isolate 12 output subclass ibis files
+
+ibis-li bkrdplot_1_20_38172.ibis
+ibis-li bkrdplot_2_12_1136.ibis
+
+geneplot inp=(bkrdplot_10_16_2.ibis, bkrdplot_12_3_2.ibis, +
+bkrdplot_2_12_1136.ibis, bkrdplot_4_4_286.ibis, bkrdplot_6_6_5.ibis, +
+bkrdplot_8_18_2.ibis, +
+bkrdplot_11_15_2.ibis, bkrdplot_1_20_38172.ibis, bkrdplot_3_10_374.ibis, +
+ bkrdplot_5_1_6.ibis, bkrdplot_7_13_3.ibis, bkrdplot_9_17_2.ibis) +
+         out=x1.gif
+
+! create the output plot in png format
+ush gnuplot tmp_geneplot.pg
+ush display x1.gif
+
+plotbkrd pb/KMsubclusters.ibis
+
+geneplot inp=(bkrdplot_10_14_1499.ibis, bkrdplot_11_18_1416.ibis, +
+bkrdplot_12_2_1406.ibis, bkrdplot_13_8_1343.ibis, bkrdplot_14_11_1339.ibis, +
+bkrdplot_15_3_1239.ibis) +
+         out=x2.gif
+! create the output plot in png format
+ush gnuplot tmp_geneplot.pg
+ush display x2.gif
+
+
+let $echo="no"
+rm> 
+ush rm -f pb
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

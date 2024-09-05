@@ -1,0 +1,297 @@
+!cutil1_log.pdf version 2.1
+!L1 AMT Image Processing Subsystem, Build 4.8
+!Latest Change Date: 06MAR2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 1 - Log and Rename Source Data
+
+!This VICAR procedure reads L1N AMT Dark Current and Flat Field 
+!imagery, tests the quality of the data, and converts them to VICAR
+!format with a computer and human friendly filename. An output file
+!is created that summarizes the "ImageQuality".
+
+!This code should be executed from the "run1_cutil.pdf" program.
+   
+!**********************************************************************
+!Notes on this VICAR procedure:
+
+!1) Three DIFFERENT directory locations are required:
+!---The input (inp) directory is where the L1N NITF files are located.          
+!---The link (lnk) directory is where links to the input directory's L1N NITF
+!files are created and put. These links are deleted as each input file is
+!processed. If the directory is not created by the user, it is created as per
+!the user-provided name. There should also be a "AL1N_ZZZ_LASTFILE.img" file,
+!but if not found, one is created. (The LASTFILE is a dummy file; it contains
+!nothing; it's the filename that is important.)       
+!---The output (out) directory is where the L1N file is placed after conversion 
+!to VICAR format and renamed. If not created by the user, it is created as per
+!the user-provided name.
+!2) A typical set of input L1N NITF images looks like:
+!Example input filename: AL1N_PRC_Comseqid_YYYYMMDDHHmmSSfff_F0001_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400000_F00001_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400100_F00002_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400200_F00003_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400300_F00004_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400400_F00005_versionn.ntf
+! AL1N_PRC_C00000001_20070201103400500_F00006_versionn.ntf
+!3) After logging and renaming, an output L1N VICAR file looks like:
+!Example output filename: AL1N_subtype_clockrate_gain_filter_inttime_Comseqid_index.hlf
+! AL1N_PRC_c8_g1_f007_int00800.000_C00000001_1.hlf
+!4) This program tests Image Quality and outputs a table and a
+!warning if an unusual number of certain pixels are found:
+!Problem pixels include:      
+! -Any Negative Numbers (Bit/Byte Errors)
+! -More than 100 Zeroes (Dropped Frames)
+! -More than 100 2730 values (Missing Data) 
+! -More than 100 4095 values (Saturation)
+! -Any values greater than 4095 (Bit/Byte Errors)
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name     Format   Description
+parm  inpdir   string   def="/raid14/linux/cutil/out/"
+parm  lnkdir   string   def="/raid14/linux/cutil/link/"
+parm  outdir   string   def="/raid14/linux/cutil/vic/"
+!Parameters used within this program
+local search   string   init="AL1N"
+local strname  string   !path/filename of input AL1N image.
+local strnam2  string   !filename of input AL1N image (path removed).
+local numf     integer  !LASTFILE found (1) or not found (0)
+local I        integer  !Index Counter
+local J        integer  !Index Counter
+local clk      string   !Clock rate specified 08.250
+local clock    string   !Clock rate specified 8 (for output filename)
+local gain     string   !gain value (1,4,6)
+local subt     string   !Product Subtype (PRC or SHC)
+local filt     string   !filter number (001=Open; 007=Closed)
+local int      string   !integration time in ms
+local coll     string   !Collection ID
+local found    integer  !File found (1) or not found (1)
+local v1       integer  !Number of Suspected Bad pixels
+local clen     integer  !Column Length
+local sec      integer  !Clock Seconds for temporary variable names
+local fid      integer  !Frame number from file
+local filti    integer  !Filter number in integer format
+local intr     real     !Integration time (ms) in real format
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=sec
+write         "***Initial Time = &sec Seconds"
+
+!Validate and/or Make Directories
+file2tcl      &inpdir val=found
+if            (found=0) goto error1
+file2tcl      &lnkdir val=found    
+if            (found=0) ush mkdir -m 777 &lnkdir
+if            (found=0) write "***&lnkdir NOT FOUND, WAS CREATED***"
+file2tcl      &outdir val=found   
+if            (found=0) ush mkdir -m 777 &outdir
+if            (found=0) write "***&outdir NOT FOUND, WAS CREATED***"
+if            ("&inpdir" = "&lnkdir") goto error1
+if            ("&inpdir" = "&outdir") goto error1
+if            ("&outdir" = "&lnkdir") goto error1
+
+!Create links to the input data
+ush ln -s -f  &"inpdir"/AL1N* &lnkdir
+file2tcl      &"lnkdir"/AL1N_ZZZ_LASTFILE.img val=found
+if            (found=0) gen out=&"lnkdir"/AL1N_ZZZ_LASTFILE.img 
+
+!Create ibisfile for storing Image Quality
+ibis-gen      &"outdir"xx5tmp&sec nr=1 nc=6 datacols=(1,2,3,4,5,6) +
+              data=(0,0,0,0,0,0)
+!**********************************************************************
+
+!Begin Loop
+
+let            I = 0            !Loop Counter
+loop
+let            I = I + 1
+write         "I = &I"
+!Fail-safe Stop Loop
+if            (I = 901) break
+
+!Get the first/top filename in a directory containing the provided
+!'search' string, and return the complete path and filename
+!as the string variable 'strname'. Also remove the name's suffix.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "getFMFRS &"lnkdir"&"search"*") strvar=strname
+
+!Check if this filename is 'LASTFILE'. If it is, stop and break.
+!"numf" is actually the number of files found; Should be 0 or 1.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind LASTFILE &strname") intvar=numf
+!write         "numf = &numf"
+!If numf is 1, then IT IS the LASTFILE. Stop looping and exit.
+if            (numf = 1) break
+
+!Remove directory/path from name
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "removePath &strname") strvar=strnam2
+
+!Convert NITF formatted files to Vicar format and extract metadata.
+write         "Input = &strnam2"
+vextract2      &"lnkdir"&"strnam2".ntf out=&"outdir"xx1tmp&sec
+!gtcopy         &"lnkdir"&"strnam2".hlf out=&"outdir"xx1tmp&sec
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=clk +
+               property="GEOTIFF" keyword=AMT_FPA_CLOCK_RATE
+write         "clock rate = &clk"
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=gain +
+               property="GEOTIFF" keyword=AMT_FPA_GAIN_REGISTER
+write         "gain register = &gain"
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=filt +
+               property="GEOTIFF" keyword=AMT_FILTER_WHEEL_INDEX
+write         "filter Number = &filt"
+plab2tcl       &"outdir"xx1tmp&sec vtype=2 val=filti +
+               property="GEOTIFF" keyword=AMT_FILTER_WHEEL_INDEX
+write         "filter Number = &filti"
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=int +
+               property="GEOTIFF" keyword=AMT_INTEGRATION_TIME
+write         "integration time = &int"
+plab2tcl       &"outdir"xx1tmp&sec vtype=7 val=intr +
+               property="GEOTIFF" keyword=AMT_INTEGRATION_TIME
+write         "integration time = &intr"
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=coll +
+               property="GEOTIFF" keyword=AMT_COLLECTION_ID
+write         "collection id = &coll"
+plab2tcl       &"outdir"xx1tmp&sec vtype=0 val=subt +
+               property="GEOTIFF" keyword=AMT_PRODUCT_SUBTYPE
+write         "product subtype = &subt"
+plab2tcl       &"outdir"xx1tmp&sec vtype=2 val=fid +
+               property="GEOTIFF" keyword=AMT_FRAME_NUMBER
+write         "frame number = &fid"
+
+!Simplify the clock rate name.
+if            ("&clk" = "00.516") let clock = "05"
+if            ("&clk" = "01.031") let clock = "1"
+if            ("&clk" = "02.063") let clock = "2"
+if            ("&clk" = "04.125") let clock = "4"
+if            ("&clk" = "08.250") let clock = "8"
+if            ("&clk" = "16.500") let clock = "16"
+!**********************************************************************
+
+!Each Dark Current and Flat Field is imaged 3 to 5 times. Loop to
+!determine the index number of this particular image.
+
+let            J = 0              !Loop Counter
+  loop
+  let          J = J + 1
+  if          (J = 11) break 
+  file2tcl    &"outdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf +
+               val=found
+  if          (found = 0) goto next1
+  end-loop
+
+!Write out the AL1N VICAR image with a new descriptive filename.
+next1>
+!gtcopy         inp=&"outdir"xx1tmp&sec +
+copy           inp=&"outdir"xx1tmp&sec +
+               out=&"outdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf
+write          "Output = AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf "
+!**********************************************************************
+
+!Test Image Quality
+!Good Quality means: No negative numbers; Few Zeros; Few 2730 values; Few 4095 values;
+!and no values above 4095.
+!If present, Stretch all negative numbers to -32767, leave 0, 2730, and 4095 as they are,
+!stretch inbetween values to 1000, and stretch anything over 4095 to 32767 for flagging.
+stretch       &"outdir"AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf +
+              &"outdir"xx1tmp&sec +
+               table=(-32768,-32768.,-1,-32768.,0,0.,1,1000.,2729,1000.,+
+               2730,2730.,2731,1000.,4094,1000.,4095,4095.,4096,32767.,+
+               32767,32767.)
+!hist         &"outdir"xx1tmp&sec
+!Create 0/1 Mask (1=Bad Pixels)
+stretch       &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec +
+               table=(-32768,1.,0,1.,1000,0.,2730,1.,4095,1.,32767,1.)
+!Create Interface file
+mssibis       (&"outdir"xx1tmp&sec,&"outdir"xx2tmp&sec) &"outdir"xx3tmp&sec +
+               mss=1 band=1 ncol=6 cols=2 'toibis
+sort           &"outdir"xx3tmp&sec sortcol=2
+mf3            &"outdir"xx3tmp&sec func="c1=&"fid"$c3=1$c4=&"filti"$c5=&"intr"$c6=&"J" "
+aggrg2         &"outdir"xx3tmp&sec &"outdir"xx4tmp&sec agcol=2 sumcol=3
+!ibis-l         &"outdir"xx4tmp&sec
+ibis2tcl       &"outdir"xx4tmp&sec vclen=clen
+write         "***The column length = &clen "
+!If ibis file is empty, no problems were found. Skip messages.
+!If ibis file has contents, sort by largest number of pixels (c2).
+!If the largest number of suspect pixels has more than 100 cases,
+!print a warning message.
+if            (&clen = 0) goto next2
+ibis-l         &"outdir"xx4tmp&sec
+sort           &"outdir"xx4tmp&sec sortcol=3 'descend
+ibis2tcl       &"outdir"xx4tmp&sec v1 ibisloc=(1,3) +
+               vartype=(3)
+write         "Number of Column 2 pixels = &v1"
+write         "  "
+if            (&v1 > 100) 
+ write "*** POSSIBLE HISTOGRAM PROBLEM WITH: AL1N_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int"_C&"coll"_&"J".hlf "
+else
+end-if
+write         "  "
+goto          next3
+next2>
+ibis-gen      &"outdir"xx4tmp&sec nr=1 nc=6 datacols=(1,2,3,4,5,6) +
+              data=(&"fid",0,0,&"filti",&"intr",&"J")
+next3>
+icat          (&"outdir"xx5tmp&sec &"outdir"xx4tmp&sec) &"outdir"xx3tmp&sec mode="V"
+ibis-copy      &"outdir"xx3tmp&sec &"outdir"xx5tmp&sec
+!ibis-l        &"outdir"xx5tmp&sec
+!**********************************************************************
+
+!Remove the AL1N NITF image from the lnk directory (so the next file
+!can be processed).
+ush            rm -f &"lnkdir"&"strnam2".ntf
+end-loop
+!**********************************************************************
+
+!List File Summary of Image Quality Measures
+rowop2        &"outdir"xx5tmp&sec  &"outdir"xx4tmp&sec keycol=1 range=(0,0)
+ibis-l        &"outdir"xx4tmp&sec  'nohead 'nocol +
+              cform="%7.0f %7.0f %9.0f %8.0f %12.5f %6.0f" +
+              pream=("                IMAGE QUALITY SUMMARY",+
+              "           Verify any case >100 pixels of", +
+              "          0, 2730, 4095, 4096, or neg numbs", +
+              "========================================================",+
+              "IMAGE ID   DNCODE   QUANTITY   FILTER  INT Time    INDEX")
+ibis-l        &"outdir"xx4tmp&sec  out=ImageQuality_&"sec".txt  'nohead 'nocol +
+              cform="%7.0f %7.0f %9.0f %8.0f %12.5f %6.0f" +
+              pream=("                IMAGE QUALITY SUMMARY",+
+              "           Verify any case >100 pixels of", +
+              "          0, 2730, 4095, 4096, or neg numbs", +
+              "========================================================",+
+              "IMAGE ID   DNCODE   QUANTITY   FILTER  INT Time    INDEX")
+!**********************************************************************
+
+!Delete Temporary Files and Closing Messages
+file2tcl      &"outdir"xx1tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx1tmp&sec
+file2tcl      &"outdir"xx2tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx2tmp&sec
+file2tcl      &"outdir"xx3tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx3tmp&sec
+file2tcl      &"outdir"xx4tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx4tmp&sec
+file2tcl      &"outdir"xx5tmp&sec val=found
+if           (found = 1) ush rm -f &"outdir"xx5tmp&sec
+goto          theend1
+
+error1>
+!Missing or Duplicate Directory Specification
+write        " "
+write        "*** ERROR: Missing or Duplicate Directory Specification ***"
+write        "*** Calibration Utility-1 Log Stopped Due to Errors ***"
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-1 Log Processing Successfully Completed ***"
+write        " "
+theend2>
+end-proc

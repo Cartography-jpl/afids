@@ -1,0 +1,187 @@
+!cutil7_mask.pdf version 2.2
+!L1 AMT Image Processing Subsystem, Build 4.13
+!Latest Change Date: 05SEP2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 7 - Create the Bad Pixel Mask
+
+!This VICAR procedure creates a Bad Pixel Mask for the SN103 and SN106
+!FPAs. The masks identify the location of dead, blemished, bloomed, or
+!saturated pixels, allowing for their optional removal through
+!interpolation via the L1 software. The bad pixel lists come from
+!spreadsheets associated with the "AMT_DFM_TC_0322_Level1_Waiver.doc"
+!prepared by Tom Cunningham and dated June 14, 2006. The specific files
+!are: Pixel_to_Pixel_SN106_v2.xls and Pixel_to_Pixel_SN103_v2.xls.
+!The xls files have been converted to text files (e.g., bad_pixels_sn106.txt),
+!and hardwired into this program. The Bad Pixel Masks should not have to 
+!be changed very often, but overtime, the FPA receptors will degrade. This
+!program allows for an optional 3375x3648 image of "new" bad pixels to
+!be added as required. Bad Pixels in the optional image should all be
+!ones (1) versus a zero (0) background (1=bad pixels). Defining and
+!creating the optional bad pixel input image is the responsibility
+!of the user. Note that the final bad calibration file has the DNs
+!reversed from the optional input. The output masks are written in vicar
+!and fits format. The vicar sn106 mask is for direct use by the L1 software.
+!Bad Pixel correction is NOT applied to sn103/SHC imagery, and so making
+!an SN103 is optional. The fits-format files are for potential use by the WFSC Team.
+!Update: The xls bad pixel list use a 0,0 origin. The text files have
+!been updated to a 1,1 origin and renamed: bad_pixels_sn106_11.txt
+
+!This code should be executed from the "run7_mask.pdf" program.
+!**********************************************************************
+
+!VICAR Parameter Defintions
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  inpdir string   def="/raid12/amt/sw/"      !Input Data Directory
+parm  outdir string   def="/raid12/amt/sw/vic/"  !Output Directory
+parm  inp106 string   def="tem1" !Optional filename of the "new" bad pixel image for SN106 Mask 
+parm  inp103 string   def="tem2" !Optional filename of the "new" bad pixel image for SN103 Mask
+parm  mask   string   def="sn106"  !Choices: sn103, sn106, both
+parm  vers   string   def="00000" !Version Number (1 + the last version; e.g, 00003)
+!Parameters used within this program
+local found  integer  !File found (1) or not found (1)
+local sec    integer  !Clock Seconds for temporary variable names
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl     &outdir val=found
+if          (found=0) goto error1
+file2tcl     &outdir val=found   
+if          (found=0) goto error1
+!**********************************************************************
+
+if          (mask = "sn103") goto jump1
+
+!SN106 Read bad_pixel text file: Line, Sample (Cols 1,2)
+!A third column is needed to assign a pixel DN by xyzpic
+!Temporarily, 0=good, 1=bad
+vquic        &"inpdir"bad_pixels_sn106_11.txt &"outdir"xx1tmp&sec ncol=3 cols=(1,2)
+mf3          &"outdir"xx1tmp&sec func="c3=1" 
+ibis-l       &"outdir"xx1tmp&sec nr=20
+ibis-co      &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec sr=1 sc=1 nc=3 'row
+!ibis-co      &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec sr=1 sc=1 nc=3 'row 'ibis-1
+!xyzpic       &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec  nl=3375 ns=3648
+!xyzpic produces a bad label; replace it
+!label-rem    &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec
+!label-cre    &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec nl=3375 ns=3648 +
+!             format=byte
+!New xyzpic2 replaces the old xyzpic
+xyzpic2      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec  nl=3375 ns=3648
+hist         &"outdir"xx1tmp&sec
+
+!Add Optional SN106 "NEW" image of bad pixels
+!Incoming file must be 3375x3648 and ONLY have DN 1=bad pixels; 0=good pixels
+file2tcl     &"inpdir"&inp106 val=found
+if          (found=0) write " "
+if          (found=0) write "NO Optional SN106 Bad Pixel Data Provided or Found"
+if          (found=0) write " "
+if          (found=0) goto next1
+
+write       " "
+write       "Optional SN106 File Found: &inp106 "
+write       " "
+hist         &"inpdir"&inp106
+f2          (&"outdir"xx1tmp&sec,&"inpdir"&inp106) &"outdir"xx2tmp&sec +
+             func="in1+in2"
+stretch      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec table=(0,0.,1,1.,2,1.)
+hist         &"outdir"xx1tmp&sec
+
+next1>
+!Writeout Completed SN106 Mask
+!Invert pixel values so 0=bad and 1=good/background
+stretch     &"outdir"xx1tmp&sec &"outdir"ACAL_PRC_FPA-MASK_V&"vers".img +
+             table=(0,1.,1,0.)
+fitsout     &"outdir"ACAL_PRC_FPA-MASK_V&"vers".img +
+            &"outdir"ACAL_PRC_FPA-MASK_V&"vers".fits
+hist        &"outdir"ACAL_PRC_FPA-MASK_V&"vers".img
+!**********************************************************************
+
+if          (mask = "sn106") goto jump2
+jump1>
+
+!SN103 Read bad_pixel text file: Line, Sample (Cols 1,2)
+!A third column is needed to assign a pixel DN by xyzpic
+!Temporarily, 0=good, 1=bad
+vquic        &"inpdir"bad_pixels_sn103_11.txt &"outdir"xx1tmp&sec ncol=3 cols=(1,2)
+mf3          &"outdir"xx1tmp&sec func="c3=1" 
+ibis-l       &"outdir"xx1tmp&sec nr=20
+ibis-co      &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec sr=1 sc=1 nc=3 'row
+!ibis-co      &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec sr=1 sc=1 nc=3 'row 'ibis-1
+!xyzpic       &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec  nl=3375 ns=3648
+!xyzpic produces a bad label; replace it
+!label-rem    &"outdir"xx1tmp&sec &"outdir"xx2tmp&sec
+!label-cre    &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec nl=3375 ns=3648 +
+!             format=byte
+!New xyzpic2 replaces the old xyzpic
+xyzpic2      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec  nl=3375 ns=3648
+hist         &"outdir"xx1tmp&sec
+
+!Add Optional SN103 "NEW" image of bad pixels
+!Incoming file must be 3375x3648 and ONLY have DN 1=bad pixels; 0=good pixels
+file2tcl     &"inpdir"&inp103 val=found
+if          (found=0) write " "
+if          (found=0) write "NO Optional SN103 Bad Pixel Data Provided or Found"
+if          (found=0) write " "
+if          (found=0) goto next2
+
+write       " "
+write       "Optional SN103 File Found: &inp103 "
+write       " "
+hist         &"inpdir"&inp103   
+f2          (&"outdir"xx1tmp&sec,&"inpdir"&inp103) &"outdir"xx2tmp&sec +
+             func="in1+in2"
+stretch      &"outdir"xx2tmp&sec &"outdir"xx1tmp&sec table=(0,0.,1,1.,2,1.)
+hist         &"outdir"xx1tmp&sec
+
+next2>
+!Writeout Completed SN103 Mask
+!Invert pixel values so 0=bad and 1=good/background
+stretch     &"outdir"xx1tmp&sec &"outdir"ACAL_SHC_FPA-MASK_V&"vers".img +
+             table=(0,1.,1,0.)
+fitsout     &"outdir"ACAL_SHC_FPA-MASK_V&"vers".img +
+            &"outdir"ACAL_SHC_FPA-MASK_V&"vers".fits
+hist        &"outdir"ACAL_SHC_FPA-MASK_V&"vers".img
+!**********************************************************************
+
+jump2>
+!Delete Temporary Files, Handle Errors, and Print Closing Message
+file2tcl     &"outdir"xx1tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+file2tcl     &"outdir"xx2tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx2tmp&sec
+file2tcl     &"outdir"xx3tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx3tmp&sec
+goto         theend1
+!**********************************************************************
+
+error1>
+!Error Messages
+write       " "
+write       "*** ERROR: Specified Directory Not Found ***"
+write       "*** Calibration Utility-7 Bad Pixel Mask Program: Stopped Due to Errors ***"
+write       " "
+file2tcl     &"outdir"xx1tmp&sec val=found 
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+file2tcl     &"outdir"xx2tmp&sec val=found 
+if          (found = 1) ush rm &"outdir"xx2tmp&sec
+file2tcl     &"outdir"xx3tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx3tmp&sec
+goto          theend2
+
+theend1>
+write       " "
+write       "*** Calibration Utility-7 Create Bad Pixel Mask Program: Successfully Completed ***"
+write       " "
+theend2>
+!**********************************************************************
+end-proc

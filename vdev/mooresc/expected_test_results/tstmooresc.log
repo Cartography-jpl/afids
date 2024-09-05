@@ -1,0 +1,96 @@
+tstmooresc
+gen xxxim1 nl=10 ns=10 sinc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen xxxim2 nl=10 ns=10 linc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=(xxxim1,xxxim2) out=xxxim3  +
+ func="2*((abs(in1-5)+abs(in2-5))<2)+3*((abs(in1-3)+abs(in2-6))<2)"
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 100 TIMES
+list xxxim3 'zer
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+ Task:F2        User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+     Samp     1       3       5       7       9
+   Line
+      1       0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   0   0   0   0
+      3       0   0   0   0   0   0   3   0   0   0
+      4       0   0   0   0   0   3   3   3   0   0
+      5       0   0   0   0   0   2   3   0   0   0
+      6       0   0   0   0   2   2   2   0   0   0
+      7       0   0   0   0   0   2   0   0   0   0
+      8       0   0   0   0   0   0   0   0   0   0
+      9       0   0   0   0   0   0   0   0   0   0
+     10       0   0   0   0   0   0   0   0   0   0
+mooresc xxxim3 xxxim4 dmax=2 pixval=(2,3) numpix=2
+Beginning VICAR task mooresc
+mooresc 10-06-2019 - rjb - 64-bit
+list xxxim4 'zer
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+ Task:MOORESC   User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+     Samp     1       3       5       7       9
+   Line
+      1       0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   1   0   0   0
+      3       0   0   0   0   0   1   1   1   0   0
+      4       0   0   0   0   1   2   1   1   1   0
+      5       0   0   0   0   1   2   2   1   0   0
+      6       0   0   0   1   1   1   2   1   0   0
+      7       0   0   0   0   1   1   1   0   0   0
+      8       0   0   0   0   0   1   0   0   0   0
+      9       0   0   0   0   0   0   0   0   0   0
+     10       0   0   0   0   0   0   0   0   0   0
+mooresc xxxim3 (xxxim4,xxxim5) dmax=2 pixval=(2,3) numpix=2
+Beginning VICAR task mooresc
+mooresc 10-06-2019 - rjb - 64-bit
+list xxxim4 'zer
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+ Task:MOORESC   User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+     Samp     1       3       5       7       9
+   Line
+      1       0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   1   0   0   0
+      3       0   0   0   0   0   1   1   1   0   0
+      4       0   0   0   0   1   2   1   1   1   0
+      5       0   0   0   0   1   2   2   1   0   0
+      6       0   0   0   1   1   1   2   1   0   0
+      7       0   0   0   0   1   1   1   0   0   0
+      8       0   0   0   0   0   1   0   0   0   0
+      9       0   0   0   0   0   0   0   0   0   0
+     10       0   0   0   0   0   0   0   0   0   0
+list xxxim5 'zer
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+ Task:MOORESC   User:afids     Date_Time:Mon Oct  7 15:44:25 2019
+     Samp     1       3       5       7       9
+   Line
+      1       0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   2   0   0   0
+      3       0   0   0   0   0   2   2   2   0   0
+      4       0   0   0   0   2   3   2   2   2   0
+      5       0   0   0   0   1   3   3   2   0   0
+      6       0   0   0   1   1   1   3   1   0   0
+      7       0   0   0   0   1   1   1   0   0   0
+      8       0   0   0   0   0   1   0   0   0   0
+      9       0   0   0   0   0   0   0   0   0   0
+     10       0   0   0   0   0   0   0   0   0   0
+let $echo="no"
+exit
+slogoff

@@ -1,0 +1,66 @@
+procedure
+! example input ibis file 20070420vs20070428.int
+! produces:
+! 20070420vs20070428_1.jpg class 1
+! 20070420vs20070428_2.jpg class 2
+! 20070420vs20070428.txt   table
+
+parm olddate type=string default="20070420"
+parm newdate type=string default="20070428"
+parm image type=string default="L5169037_03720070428_B30.img"
+
+local fname string
+local pre1 string
+local pre2 string
+local newf1 string
+local newf2 string
+local tif1 string
+local tif2 string
+local jpg1 string
+local jpg2 string
+local outtxt string
+local oldvnew string
+local rowcnt int
+body
+
+let oldvnew = "&olddate" // "vs" // "&newdate"
+let fname   = "&"oldvnew".int"
+let outtxt  = "&"oldvnew".txt"
+let pre1    = "&"oldvnew"_1"
+let pre2    = "&"oldvnew"_2"
+let newf1   = "&"pre1".int"
+let newf2   = "&"pre2".int"
+let tif1    = "&"pre1".tif"
+let tif2    = "&"pre2".tif"
+let jpg1    = "&"pre1".jpg"
+let jpg2    = "&"pre2".jpg"
+
+! split input into two files based on column 11 number
+rowop2 &fname &newf1 keycol=11 range=(1.0,1.0) 'select
+rowop2 &fname &newf2 keycol=11 range=(2.0,2.0) 'select
+
+! overlay Xs
+adrg_pts &newf1 &image &pre1
+adrg_pts &newf2 &image &pre2
+
+! convert to JPG
+ush convert &tif1 &jpg1
+ush convert &tif2 &jpg2
+
+! get row count
+ibis2tcl &fname vclen=rowcnt
+
+! create date column file
+ibis-gen old_new nc=2 nr=&rowcnt format=("A10","A10") fmtcols=(1,2) strcol=(1,2) +
+        'ibis-2 string=("&olddate","&newdate")
+mf3 old_new func="c1='&olddate'"
+mf3 old_new func="c2='&newdate'"
+
+! append date column file
+icat (&fname,old_new) temp_int 'h
+
+! produce table text
+ibis-l temp_int cols=(1,9,10,18,19,11) 'noheader 'nocol +
+   outfile=&outtxt cfor="%7d %15.8f %14.8f %8.8s %8.8s %7.0f"
+
+end-proc

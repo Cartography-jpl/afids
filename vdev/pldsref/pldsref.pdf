@@ -1,0 +1,65 @@
+PROCESS      HELP=*
+
+PARM INP       TYPE=STRING COUNT=0:5
+PARM MULTIMETA TYPE=STRING COUNT=0:1 DEFAULT=""
+PARM PANMETA   TYPE=STRING COUNT=0:1 DEFAULT=""
+PARM BAND      TYPE=INTEGER COUNT=0:1 DEFAULT=0 VALID=(0:5)
+PARM OUT       TYPE=STRING COUNT=0:5
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "pldsref"
+.HELP
+PURPOSE
+ This program converts raw dn images
+ into top of atmosphere reflectance 
+ images where the values range from 
+ 0 to 1.  The output image(s) is in 
+ "REAL" format. 
+
+.LEVEL1
+.VARIABLE INP
+ Input raw dn pleiades image(s).
+ The number of inputs must
+ be either 1 or all 5 bands.
+ !!! PAN BAND IS 5 !!!
+
+.VARIABLE OUT
+ Output reflectance image(s).
+ Either 1 or all 5 bands depending
+ on the input
+ !!! PAN BAND IS 5 !!!
+
+.VARIABLE MULTIMETA
+ .IMD file containing metadata
+ regarding the multispectral
+ input images.
+
+.VARIABLE PANMETA
+ .IMD file containing metadata
+ regarding the pan input image
+
+.VARIABLE BAND
+ Specifies which band the input
+ image is.  Ignored if all 5
+ bands are input.
+ !!! PAN BAND IS 5 !!!
+ Blue=1
+ Green=2
+ Red=3
+ NIR=4
+ Pan=5
+
+.END
+
+
+
+
+
+
+
+
+
+
+

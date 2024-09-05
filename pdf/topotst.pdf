@@ -1,0 +1,28 @@
+procedure
+local wgs84elv type=(string,99)
+local wmask type=(string,99)
+local egm96 type=(string,99)
+local afidsvdevdata type=(string,99)
+body
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+
+
+let wgs84elv = "&afidsvdevdata/etop02nobath.hlf"
+write "wgs84elv &wgs84elv"
+list &wgs84elv linc=1200 sinc=1200 'zero
+
+
+let wmask = "&afidsvdevdata/world_30as_lwm.img"
+write "wmask &wmask"
+list &wmask linc=3600 sinc=3600 'zero
+
+
+let egm96 = "&afidsvdevdata/EGM96_20_x100.HLF"
+write "egm96 &egm96"
+ush ls &egm96
+list &egm96 linc=1200 sinc=1200 'zero
+
+
+theend>
+end-proc

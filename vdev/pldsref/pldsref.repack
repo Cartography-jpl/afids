@@ -1,0 +1,6 @@
+$ vpack pldsref.com -mixed -
+	-s pldsref.c -
+	-i pldsref.imake -
+	-p pldsref.pdf -
+	-t tstpldsref.pdf
+$ Exit

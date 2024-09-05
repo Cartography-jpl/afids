@@ -1,0 +1,4 @@
+$ vpack geomv3x3.com -mixed -
+	-p geomv3x3.pdf -
+	-t tstgeomv3x3.pdf
+$ Exit

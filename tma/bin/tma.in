@@ -1,0 +1,7 @@
+#! /usr/bin/env wish@tcl_version@
+# -*-Tcl-*-
+
+lappend auto_path $env(AFIDS_ROOT)/tma_tcl
+package require TMASRV
+
+TMASRV_Init

@@ -1,0 +1,6 @@
+$ vpack pixmap.com -mixed -
+	-s pixmap.c -
+	-i pixmap.imake -
+	-p pixmap.pdf -
+	-t tstpixmap.pdf
+$ Exit

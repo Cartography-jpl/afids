@@ -1,0 +1,87 @@
+procedure
+parm out type=(string,99)
+parm mpix type=real default=1.0
+parm lon type=real
+parm lat type=real
+parm round type=real default=100000.0
+parm utmzoneoverride type=int default=-999
+parm rastypstr type=string default="1(RasterPixelIsArea)" +
+   valid=("1(RasterPixelIsArea)","2(RasterPixelIsPoint)")
+parm hemi_ns type=(string,2) valid=("N","S") default="N"
+
+local east real
+local north real
+
+local utmstring string
+local uln real
+local ule real
+local intuln int
+local intule int
+local urn real
+local ure real
+local lln real
+local lle real
+
+local utmzone int
+local loclon real
+local ebase string
+
+body
+
+if (lon<0.0)
+   let loclon = lon+180.0
+else
+   let loclon = lon
+end-if
+
+if (hemi_ns="N")
+   let ebase = "360"
+else
+   let ebase = "370"
+end-if
+
+! calculate zone, east, north from lon,lat
+
+let utmzone = $fix(loclon/6.0+31.0)
+if (utmzoneoverride>-900) let utmzone = utmzoneoverride
+
+let east = ($float(utmzone)-31.0)*6.0
+let east = loclon-east-3.0
+let east = east*80000.0+500000.0    ! need to calibrate, but approx OK
+let north = lat*110000.0         ! need to calibrate, but approx OK
+
+! main proc
+
+let east = east+10000000.0+round/2.0
+let north = north+10000000.0+round/2.0
+let intule = $fix(east/round)
+let intuln = $fix(north/round)
+let ule = $float(intule)
+let uln = $float(intuln)
+let ule = ule*round-10000000.0
+let uln = uln*round-10000000.0
+
+if (utmzone<10)
+   let utmstring = +
+   "&ebase" // "0&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "&hemi_ns)"
+else
+   let utmstring = +
+   "&ebase" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "&hemi_ns)"
+end-if
+
+let ure = ule + 100.0*&mpix
+let urn = uln
+let lle = ule
+let lln = uln - 100.0*&mpix
+
+gtgen out=&out 'tiecnvrt 'rectfit +
+   geotiff=("ModelTiePointTag=(0,0,0,&ule,&uln,0.0)", +
+     "ModelTiePointTag=(100,0,0,&ure,&urn,0.0)", +
+     "ModelTiePointTag=(0,100,0,&lle,&lln,0.0)", +
+     "ProjectedCSTypeGeoKey=&utmstring", +
+     "GTModelTypeGeoKey=1(ModelTypeProjected)", +
+     "ProjLinearUnitsGeoKey=9001(Linear_Meter)", +
+     "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+     "GTRasterTypeGeoKey=&rastypstr")
+
+end-proc

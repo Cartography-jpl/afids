@@ -1,0 +1,32 @@
+procedure
+parm file1 type=(string,99)
+parm file2 type=(string,99)
+
+local temp1 type=(string,99)
+local temp2 type=(string,99)
+local fmt1 string
+local fmt2 string
+body
+
+let temp1 = "&file1" // ".rev1"
+let temp2 = "&file1" // ".rev2"
+lab2tcl &file1 v1=fmt1 keyword=format 'system
+lab2tcl &file2 v1=fmt2 keyword=format 'system
+
+if (fmt1=fmt2)
+   xvd (&file2,&file1,&file1)
+else-if (fmt1="HALF")
+   f2 &file1 +
+     &temp1 +
+     fun="in1*0.022" format=byte
+   stretch &temp1 &temp2 'gauss gsigma=2.5 
+   xvd (&file2,&temp2,&temp2)
+else-if (fmt2="HALF")
+   f2 &file2 +
+     &temp1 +
+     fun="in1*0.022" format=byte
+   stretch &temp1 &temp2 'gauss gsigma=2.5 
+   xvd (&temp2,&file1,&file1)
+end-if
+
+end-proc

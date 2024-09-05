@@ -1,0 +1,35 @@
+procedure
+parm diskimg type=string default="/cdrom/cdrom0"
+parm localdir type=(string,99) ! no longer used
+parm lon type=real
+parm lat type=real
+parm out type=(string,99)
+
+local llon real
+local llat real
+local rlon real
+local ulat real
+local ldir type=(string,99)
+body
+
+ldir2tcl strvar=ldir
+
+let llon = lon
+let rlon = llon+0.5
+let llat = lat
+let ulat = lat+1.0
+cibmos qlon=(&llon,&rlon) qlat=(&llat,&ulat) +
+    localdir=&ldir +
+    vdevdir="/home/alz/vdev" out=xxxleft +
+    diskimg=&diskimg
+    
+let llon = rlon
+let rlon = llon+0.5
+cibmos qlon=(&llon,&rlon) qlat=(&llat,&ulat) +
+    localdir=&localdir +
+    vdevdir="/home/alz/vdev" out=xxxright +
+    diskimg=&diskimg
+
+fthmos inp1=basemos/xxxleft inp2=basemos/xxxright out=&out
+
+end-proc

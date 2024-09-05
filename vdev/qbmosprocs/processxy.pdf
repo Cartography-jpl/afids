@@ -1,0 +1,263 @@
+procedure help=*
+parm key type=string
+parm band type=string
+
+local xyfile type=(string,99)
+local nfile type=(string,99)
+local t1file type=(string,99)
+local t2file type=(string,99)
+local t3file type=(string,99)
+local parfile type=(string,99)
+local pathxy type=(string,99)
+local finaldir type=(string,99)
+local inlname type=(string,99)
+local bobname type=(string,99)
+local edname type=(string,99)
+local rawfile type=(string,99)
+local infile type=(string,99)
+local outfile type=(string,99)
+local reffile type=(string,99)
+local refmap type=(string,99)
+local gridfinal type=(string,99)
+local Bgrid type=(string,99)
+local xxxfinalref type=(string,99)
+local xxxtinp type=(string,99)
+local xxe type=(string,99)
+local primaryfile type=(string,99)
+local primarygrid type=(string,99)
+local pgrid1 type=(string,99)
+local pgrid2 type=(string,99)
+local pgrid3 type=(string,99)
+
+local numimg int
+local sl int
+local ss int
+local nl int
+local ns int
+local nl2 int
+local ns2 int
+local iloop int
+local numpoints int
+local nah int
+local nav int
+local nahp1 int
+local navp1 int
+local nahxnav int
+local gclen int
+local qexist int
+local noovlap int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+local btype string
+
+local nfile2 type=(string,99)
+local inlname2 type=(string,99)
+local infile2 type=(string,99)
+local lnstring string
+
+refgbl $echo
+body
+let $echo="yes"
+
+if ("&band"="1" or "&band"="2" or "&band"="3N")
+   let btype = "1M"
+else-if ("&band"="11" or "&band"="12" or "&band"="13" or "&band"="14")
+   let btype = "1M"                !really should be 4M but too late to change now
+else
+   goto theend
+end-if
+
+!  XY CORRECTION FOR QUICKBIRD
+
+let xyfile = "&key" // "_&band" // "_xyfile"
+let nfile = "&key" // "_&band" // "_nfile"
+let nfile2 = "&key" // "_2" // "_nfile"
+
+let t1file = "scratch/&key" // "&band" // "t1file"
+let t2file = "scratch/&key" // "&band" // "t2file"
+let t3file = "scratch/&key" // "&band" // "t3file"
+let xxxtinp = "scratch/&key" // "&band" // "xxxtinp"
+let xxe = "scratch/&key" // "&band" // "xxe"
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="pathxy=" val=pathxy vtype=0
+asc2tcl &parfile keyword="refmap=" val=refmap vtype=0
+asc2tcl &parfile keyword="numimg=" val=numimg vtype=4
+asc2tcl &parfile keyword="nah=" val=nah vtype=4
+asc2tcl &parfile keyword="nav=" val=nav vtype=4
+
+! loop over images
+
+let iloop = 0
+loop
+   let iloop = iloop+1
+   if (iloop>numimg) goto iloopdone
+   let finaldir = "&pathxy" // "/"
+   ibis2tcl &nfile v1=inlname vartype=2 ibisloc=(&iloop,1)
+   let infile = "&finaldir" // "&inlname" // "1M_map4.2"
+   let outfile = "&finaldir" // "&inlname" // "&btype" // "_map5.&band"
+   let primarygrid = "&finaldir" // +
+        "&inlname" // "&btype" // "_map4.&band" // ".grid"
+   let pgrid1 = "&primarygrid" // "1"
+   let pgrid2 = "&primarygrid" // "2"
+   let pgrid3 = "&primarygrid" // "3"
+   let gridfinal = "&finaldir" // "&inlname" // "Bgridfinal"
+   let reffile = "&finaldir" // +
+        "&inlname" // "&btype" // "_map4.&band" // ".grid3"
+   write "iloop &iloop inlname &inlname x"
+   write "primarygrid &primarygrid gridfinal &gridfinal"
+   write "should do fit and throwout here"
+  
+   let rawfile = "&finaldir" // "&inlname" // "&btype" // "_map0.&band"
+   write "rawfile &rawfile"
+   write "inlnamefile &inlname"
+   write "outfile &outfile"
+   write "reffile &reffile"
+   
+   if ("&band"<>"2")
+      ibis2tcl &nfile2 v1=inlname2 vartype=2 ibisloc=(&iloop,1)
+      write "inlname2 &inlname2"
+      
+      let Bgrid = "&finaldir" // "&inlname2" // "Bgridfinal"
+      let pgrid1 = "&Bgrid" // "1"
+      let pgrid2 = "&Bgrid" // "2"
+      let pgrid3 = "&Bgrid" // "3"
+      ibis2tcl &pgrid2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+         vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+      let slv = $fix(rslv)
+      let ssv = $fix(rssv)
+      let nlv = $fix(rnlv)
+      let nsv = $fix(rnsv)
+      write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+  
+      geomv (&rawfile, +
+         &pgrid1, +
+         &pgrid3) +
+         out=&outfile +
+         size=(&slv,&ssv,&nlv,&nsv)
+      
+      goto continueloop
+   end-if
+   
+   ibis-l &xyfile nr=2
+   rowop2 &xyfile &t1file key=25 range=(&iloop,&iloop) prec=0.5 'select
+   
+   !case of no overlap with any neighbor, generate identity map
+   ibis2tcl &t1file vclen=noovlap vartype=1
+   if (noovlap=0)
+      ibis-copy &xyfile &t3file nr=3
+      mf3 &t3file f="c25=&iloop"
+   else
+      ibis-copy &t1file &t3file nr=3
+   end-if
+   
+   lab2tcl &infile v1=nl v2=ns keyword=(nl,ns) 'system
+   let nl2 = nl/2
+   let ns2 = ns/2
+   mf3 &t3file +
+     f="c6=(&nl2)+100*@int((@index-1)/2)$c7=(&ns2)+100*@mod(@index+1,2)$c1=c6$c2=c7"
+   icat (&t3file,&t1file) &t2file 'v
+   
+   write "&nl &ns &nl2 &ns2"
+   ibis2tcl &t2file vclen=numpoints vartype=1
+   write "numpoints &numpoints"
+   if (numpoints>1490)
+      mf3 &t2file f="c33=@rand*(&numpoints)/1490"
+      rowop2 &t2file &t1file key=33 range=(0.0,0.9) 'select
+      write "points reduced for pwl fit"
+      ! should increase tieconv gridcheck to 3000, but keep this for huge overlap
+   else
+      ibis-copy &t2file &t1file
+   end-if
+   
+   !  the distortion files are remapped if non-pc mapping output
+
+   file2tcl &refmap val=qexist
+   if (qexist=0)
+      let xxxfinalref = "&reffile"
+   else
+      let xxxfinalref = "&refmap"
+   
+      ibis-gen &xxxtinp nc=4 nr=1 format=(DOUB,DOUB,DOUB,DOUB)
+      icat (&pgrid1,&xxxtinp) &xxe 'h
+      
+      pixmap (&xxe,&pgrid3) mapcol=(5,6) pixcol=(1,2) 'pixtomap
+      gtproj2 (&xxe,&pgrid3,&xxxfinalref) incol=(5,6) outcol=(7,8) 'tec
+      pixmap (&xxe,&xxxfinalref) mapcol=(7,8) pixcol=(1,2) 'maptopix
+      
+      pixmap (&xxe,&rawfile) mapcol=(5,6) pixcol=(3,4) 'pixtomap
+      gtproj2 (&xxe,&rawfile,&xxxfinalref) incol=(5,6) outcol=(7,8) 'tec
+      pixmap (&xxe,&xxxfinalref) mapcol=(7,8) pixcol=(3,4) 'maptopix
+   end-if
+   
+   ! both columns have been mapped to the infile (see zprocess)
+
+   pixmap (&t1file,&infile) mapcol=(33,34) pixcol=(1,2) 'pixtomap
+   gtproj2 (&t1file,&infile,&xxxfinalref) incol=(33,34) outcol=(35,36) 'tec
+   ibis-l &t1file nr=4 'format
+   pixmap (&t1file,&xxxfinalref) mapcol=(35,36) pixcol=(3,4) 'maptopix
+
+   pixmap (&t1file,&infile) mapcol=(33,34) pixcol=(6,7) 'pixtomap
+   gtproj2 (&t1file,&infile,&xxxfinalref) incol=(33,34) outcol=(35,36) 'tec
+   pixmap (&t1file,&xxxfinalref) mapcol=(35,36) pixcol=(1,2) 'maptopix
+   
+   if (qexist=0)
+      gtwarpxd &rawfile +
+        &outfile +
+        ref=&xxxfinalref +
+        distort=(&primarygrid,&t1file,,,) +
+        dcols=(0,0,0,0,1,2,3,4) gridout=&gridfinal znoin=znoin +
+        polyfit=("","","","","") 'coverinp nah=&nah nav=&nav
+   else
+      gtwarpxd &rawfile +
+        &outfile +
+        ref=&xxxfinalref +
+        distort=(&xxe,&t1file,,,) +
+        dcols=(1,2,3,4,1,2,3,4) gridout=&gridfinal znoin=znoin +
+        polyfit=("","","","","") 'coverinp nah=&nah nav=&nav
+   end-if
+continueloop>
+end-loop
+iloopdone>
+  
+theend>
+end-proc
+.TITLE
+XYCORR_A - correct (x,y) for aster mosaicking
+.HELP
+PURPOSE
+     
+     
+CALL
+
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+
+.PAGE
+
+Restrictions
+------------
+
+You must use the IBIS file prepared by zprocess.pdf
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 21 Jan, 2004
+Current Cognizant Programmer: A. L. Zobrist
+
+ 
+.level1
+
+.END

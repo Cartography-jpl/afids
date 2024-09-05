@@ -1,0 +1,174 @@
+PROCESS      HELP=*
+PARM INP           TYPE=STRING  COUNT=2
+PARM OUT           TYPE=STRING  COUNT=1
+PARM MUTATION      TYPE=REAL    COUNT=1 DEF=0.08
+PARM CROSSOVER     TYPE=REAL    COUNT=1 DEF=0.7
+PARM EVOLUTIONS    TYPE=INTEGER COUNT=1 DEF=1000
+PARM POPULATION    TYPE=INTEGER COUNT=1 DEF=500
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "genealg"
+.HELP
+PURPOSE
+ This program was developed specifically for
+ the SHIVA project.  It uses genetic algorithm
+ to find the optimum combination of band
+ ratios in classifying different materials.
+ This program is not a generalized genetic
+ algorithm program.
+
+.PAGE
+ The first input is a category IBIS file that
+ contains data in the following manner:
+
+ col      data
+ ===      ====
+  1       classification id
+  2       band ratio mean for 1, 2
+  3       band ratio sigma for 1, 2
+  4       band ratio mean for 1, 3
+  5       band ratio sigma for 1, 3
+  .       .
+  .       .
+  .       .
+  14      band ratio mean for 1, 8
+  15      band ratio sigma for 1, 8
+  16      band ratio mean for 2, 3
+  18      band ratio sigma for 2, 3
+  .       .
+  .       .
+  .       .
+  26      band ratio mean for 2, 8
+  27      band ratio sigma for 2, 8
+  28      band ratio mean for 3, 4
+  29      band ratio sigma for 3, 4
+  .       .
+  .       .
+  .       .
+  36      band ratio mean for 3, 8
+  37      band ratio sigma for 3, 8
+  38      band ratio mean for 4, 5
+  39      band ratio sigma for 4, 5
+  .       .
+  .       .
+  .       .
+  56      band ratio mean for 7, 8
+  57      band ratio sigma for 7, 8
+
+ The second input is an IBIS file that
+ contains data in the following manner:
+
+ col      data
+ ===      ====
+  1       classification id
+  2       band ratio 1, 2
+  3       band ratio 1, 3
+  .       .
+  .       .
+  .       .
+  8       band ratio 1, 8
+  9       band ratio 2, 3
+  .       .
+  .       .
+  .       .
+  14      band ratio 2, 8
+  15      band ratio 3, 4
+  .       .
+  .       .
+  .       .
+  28      band ratio 6, 8
+  29      band ratio 7, 8
+
+ The output is an IBIS file that contains
+ the optimum band ratios to use in
+ categorization and mean, sigma of each
+ differenent input classes.  The number
+ of rows determined by the number of
+ band ratios.  The number of columns
+ is determined as
+
+ 2 + 3*(# of distinct class. id in input)
+
+ col      data
+ ===      ====
+  1       first half of band ratio
+  2       second half of band ratio
+  3       id1
+  4       id1 mean
+  5       id1 sigma
+  6       id2
+  7       id2 mean
+  8       id2 sigma
+  .
+  .
+  .
+
+ i.e.  If the optimum combinations are:
+ {{1, 2}, {6, 8}}, and input classes were
+ 1, 2.  Let's assume that the mean and
+ sigma for class 1 for band ratio
+ 1,2 is 0.3, 0.5 and band ratio 6,8 
+ is 0.7, 0.2.  Also, assume that class
+ 2 has 0.2, 0.6 for band ratio 1,2 and
+ 0.1, 0.9 for band ratio 6,8.  Then the
+ output ibis file will look like:
+
+ 1  2  1.  0.3  0.5  2.  0.2  0.6
+ 6  8  1.  0.7  0.2  2.  0.1  0.9
+
+.PAGE
+WRITTEN BY:      P. KIM
+
+REVISIONS:
+  14 Oct 2019 Ray Bambery - fixed prototype in ibishelper.h
+                other prototypes, casting, printf to zvmessage
+   9 Oct 2019 rjb - removed all maesages from code by casting
+                    and fixing cartoLinkedList.h
+   2 Oct 2019 rjb - changed printfs to zvmessage to get output
+                into session.log
+  24 May 2011 (added mean sigma for output )
+   5 May 2011 (Initial)
+
+.LEVEL1
+.VARIABLE INP
+ 2 IBIS files
+ - category data
+ - ratio data
+ ** read PURPOSE
+ section
+
+.VARIABLE OUT
+ Output IBIS file
+ contains optimum
+ band ratio combos.
+ ** read PURPOSE
+ section
+
+.VARIABLE MUTATION
+ Mutation rate in
+ the GA
+ 
+.VARIABLE CROSSOVER
+ Crossover rate in
+ the GA
+
+.VARIABLE EVOLUTIONS
+ Number of iterations
+
+.VARIABLE POPULATION
+ Number of candidates
+ in each iteration
+
+.END
+
+
+
+
+
+
+
+
+
+
+

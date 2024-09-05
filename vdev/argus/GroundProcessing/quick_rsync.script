@@ -1,0 +1,4 @@
+#! /bin/sh -f
+
+rsync -v --files-from="$1" "$2/" "$3/"
+read -s -p "---- Done. Press <Return> to continue --"

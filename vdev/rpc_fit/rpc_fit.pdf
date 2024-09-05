@@ -1,0 +1,157 @@
+process help=*
+PARM INP TYPE=STRING COUNT=4
+PARM MAXDIFF TYPE=real default=1000.0
+PARM RPC_LNUM_FIT TYPE=INT COUNT=1:20 DEFAULT=(0,3)
+PARM RPC_SNUM_FIT TYPE=INT COUNT=1:20 DEFAULT=(0,3)
+End-proc
+.title
+RPC fitting.
+.help
+PURPOSE
+   This takes an image and RPC coefficients that map project that image.
+   The data is then matched against a reference image, and the results of
+   that match are used to improve the RPC coefficients.
+
+   The changed RPC coefficients are updated into the input file.
+
+CALL
+    rpc_fit INP REF_IMAGE DEM DATUM (MAXDIFF) (RPC_LNUM_FIT) +
+        (RPC_SNUM_FIT)
+  WHERE:
+     INP             1) is the input data set (must have RPC metadata)
+                     2) is the ground truth image (must have map projection 
+                     metadata)  
+                     3) is the DEM (must have map projection metadata)
+                     4) is the land/water mask.
+     MAXDIFF         optional maximum difference between initial warped 
+                     INP and REF_IMAGE, in meters (default 1000 m)
+     RPC_LNUM_FIT    optional line numerator RPC parameters to fit in range
+                     0 to 19 (i.e., zero based) (default constant term (0) and
+                     height term 3)
+     RPC_SNUM_FIT    optional sample numerator RPC parameters to fit in range
+                     0 to 19 (i.e., zero based) (default constant term (0) and
+                     height term 3)
+
+OPERATION
+
+This does image matching between a INP and a REF_IMAGE, 
+and adjusts the initial RPC coefficients read from the INP
+to give a better match between this map projected imagery and the REF_IMAGE.
+
+This is done in two steps. First we do a coarse fit to get the
+map projected roughly right, and then we do a finer adjustment to
+give a better fit.
+
+The first step is the coarse fit. Since an RPC is usually based on
+navigation data only, without and ground control points, it can
+give relatively large errors. We do a coarse shift to the RPC to
+reduce the errors enough that we can do a finer fit. 
+
+We first average the image and the Ref_img. We average so that we
+are coarse enough that the given image matching search window size
+will contain errors up to MAXDIFF meters.
+For example, with a 1000 m Max_diff, a search window of
+15, and 5 m Ref_img, we would average by a factor of 14
+(5 m x 14 factor x 15 search window = 1050 m error, allowing us to
+find 1000 m differences).
+
+We use a Forstner feature detector to determine where to match, starting
+with a regular grid of points and then shifting to interest points. 
+We then match at these features between the reference and map projected 
+images using a cross correlation matcher.
+
+We update the LINE_OFFSET and SAMPLE_OFFSET of the RPC only in the
+first phase, reducing the difference between the map projected image
+and the REF_IMAGE.
+
+We repeat the coarse fit until the remaining differences between
+the map projected data and the REF_IMAGE fall within matching search
+window at full resolution.
+
+We follow this with a fine fit. We again use the Forstner feature
+detector to determine where to match. We then match at these features
+between the reference and map projected images, but this time using a
+combination of a cross correlation matcher followed by a least squares
+matcher to get subpixel accuracy.
+
+We fit for the RPC parameters given by the user.
+
+This fine matching step is repeated until the change in average
+difference from one step to the next is less than a tolerance (5%
+change).
+
+.PAGE
+Restrictions
+------------
+
+The INP must have an RPC label (in the GeoTIFF property label for 
+VICAR, at present NITF must be logged with VEXTRACT).
+
+The REF_IMAGE, DEM and LANDWATER mask need to have map projection metadata
+(i.e. the GeoTIFF labels for VICAR format).
+
+The vertical datum for the RPC and the DEM MUST MATCH.  In all forseeable
+cases these data will be WGS84 (a spheroid).
+
+
+.PAGE
+Original Programmer: Mike Smyth, 4 Mar, 2008
+Current Cognizant Programmer: Mike Smyth
+.LEVEL1
+.VARIABLE INP
+The image to be map projected
+(updated)
+.VARIABLE REF_IMAGE
+The reference image that supplies
+ground truth.
+.VARIABLE DEM
+The Digital Elevation Model (DEM)
+to be used the the RPC.
+.VARIABLE LANDWATER
+The land/water mask to use.
+.VARIABLE MAXDIFF
+Maximum difference between initial warp of INP and REF_IMAGE, in meters.
+.VARIABLE RPC_LNUM_FIT
+RPC Line Numerator parameters to fit for.
+.VARIABLE RPC_SNUM_FIT
+RPC Sample Numerator parameters to fit for.
+.LEVEL2
+.VARIABLE INP
+This is the image to be map projected. It is in the raw instrument space.
+For example, this might be a Quickbird image. This should be in VICAR
+format.
+
+This image should contain metadata describing the initial RPC. For VICAR,
+this is a GeoTIFF label with RPC.
+.VARIABLE REF_IMAGE
+This is the reference image. This should be a map projected image, and 
+contain metadata describing the map projection. For example, this might be
+a CIB image. This provides ground truth.
+
+This should be in VICAR format.
+.VARIABLE DEM
+This is the Digital Elevation Model (DEM). This should be map projected
+and contain metadata describing the map projection. 
+
+This gives the height of the surface in meters relative to a reference
+surface (usually Mean Sea Level WGS84).
+
+This should be in VICAR format.
+.VARIABLE LANDWATER
+This is the land/water mask. This should be map projected and contain
+metadata describing the map projection.
+
+This should be in VICAR format.
+.VARIABLE MAXDIFF
+Maximum difference between initial warp of INP and REF_IMAGE, in meters.
+This is used for determining the window size used in the initial iteration 
+of the matching, so this should be an overestimate of the differences.
+.VARIABLE RPC_LNUM_FIT
+This gives the parameters of the line numerator term of the RPC that we
+will fit for. These should be numbers from 0 to 19. The default is to fit
+for the constant term (term 0) and the height term (term 3).
+.VARIABLE RPC_SNUM_FIT
+This gives the parameters of the sample numerator term of the RPC that we
+will fit for. These should be numbers from 0 to 19. The default is to fit
+for the constant term (term 0) and the height term (term 3).
+.end

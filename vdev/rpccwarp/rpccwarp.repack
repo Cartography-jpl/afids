@@ -1,0 +1,4 @@
+$ vpack rpccwarp.com -mixed -
+	-p rpccwarp.pdf -
+	-t tstrpccwarp.pdf
+$ Exit

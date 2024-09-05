@@ -1,0 +1,326 @@
+procedure
+parm key string
+parm band string
+parm loopstart int default=0
+
+local parfile string
+local rawfileix string
+local rawfile string
+local outfile string
+local map0file string
+local loginfile string
+local loginmeta string
+local checkfile string
+local existfile string
+local pathraw string
+local pathmsp string
+local pathxy string
+local shortname string
+local dted string
+local lsat string
+local bobgrid string
+local map0save string
+local t_onfail string
+
+local rawmain string
+local rawmainix string
+local rawmainfile string
+
+local gd string init="grid* "		! rkf
+local final string init="final"		! rkf
+local slash string init="/"		! rkf
+local dot string init="."		! rkf
+
+local iloop int
+local numimg int
+local loopkey string
+local mkstring string
+local lnstring string
+local nah int
+local nav int
+local qexist int
+local qexist2 int
+local qexistn int
+local qcheck int
+
+local lu integer
+local ll integer
+local sl integer
+local sr integer
+local lsp string
+local lslsp string
+local btype string
+
+local ffile string
+local ffile2 string
+local nband int
+
+refgbl $echo
+body
+let $echo="yes"
+write "qbmoslog 090406"
+
+let t_onfail=_onfail
+let _onfail="return"
+
+let btype = "1M"
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="numimg=" val=numimg vtype=4
+asc2tcl &parfile keyword="nah=" val=nah vtype=4
+asc2tcl &parfile keyword="nav=" val=nav vtype=4
+asc2tcl &parfile keyword="dted=" val=dted vtype=0
+asc2tcl &parfile keyword="lsat=" val=lsat vtype=0
+asc2tcl &parfile keyword="pathraw=" val=pathraw vtype=0
+asc2tcl &parfile keyword="pathmsp=" val=pathmsp vtype=0
+asc2tcl &parfile keyword="pathxy=" val=pathxy vtype=0
+write "numimg &numimg nah &nah nav &nav"
+write "dted &dted ."
+write "lsat &lsat ."
+write "pathraw &pathraw ."
+write "pathmsp &pathmsp ."
+
+if (loopstart=0)
+   let iloop = 0
+else
+   let iloop = loopstart-1
+end-if
+
+loop
+let iloop = iloop+1
+if (iloop>numimg) goto endiloop
+
+   let shortname = "z&iloop"
+   
+   let loopkey = "&key" // "k&iloop"
+
+   if ("&band"="2")
+      let rawfileix = "raw&iloop" // "="
+      asc2tcl &parfile keyword="&rawfileix" val=rawfile vtype=0
+      write "rawfile &rawfile"
+      let mkstring = "rm -fr final&loopkey"
+      ush &mkstring
+      let mkstring = "mkdir final&loopkey"
+      ush &mkstring
+      let mkstring = "rm -fr raw&loopkey"
+      ush &mkstring
+      let mkstring = "mkdir raw&loopkey"
+      ush &mkstring
+      let mkstring = "rm -f raw&loopkey" // "/&rawfile" // ".NTF"
+      ush &mkstring
+      let lnstring = "ln -s &pathraw" // "/&rawfile" // ".NTF" // +
+         " raw&loopkey" // "/&rawfile" // ".NTF"
+      ush &lnstring
+      let loginfile = "raw&loopkey" // "/&rawfile" // ".NTF"
+      let loginmeta = "raw&loopkey" // "/&rawfile" // ".IMD"
+      let outfile = "final&loopkey" // "/&rawfile" // "&btype" // "_map4.&band" 
+      let map0file = "final&loopkey" // "/&rawfile" // "&btype" // "_map0.&band" 
+   
+      asc2tcl &parfile keyword="raw&"iloop"lu=" val=lu vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"ll=" val=ll vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"sl=" val=sl vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"sr=" val=sr vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"lsp=" val=lsp vtype=0
+      asc2tcl &parfile keyword="raw&"iloop"lslsp=" val=lslsp vtype=0
+   else
+      let rawfileix = "msp&iloop" // "="
+      asc2tcl &parfile keyword="&rawfileix" val=rawfile vtype=0
+      write "rawfile &rawfile"
+      
+      let mkstring = "rm -f raw&loopkey" // "/&rawfile" // ".NTF"
+      ush &mkstring
+      let mkstring = "rm -f raw&loopkey" // "/&rawfile" // ".IMD"
+      ush &mkstring
+      let lnstring = "ln -s &pathmsp" // "/&rawfile" // ".NTF" // +
+         " raw&loopkey" // "/&rawfile" // ".NTF"
+      ush &lnstring
+      let lnstring = "ln -s &pathmsp" // "/&rawfile" // ".IMD" // +
+         " raw&loopkey" // "/&rawfile" // ".IMD"
+      ush &lnstring
+
+      let loginfile = "raw&loopkey" // "/&rawfile" // ".NTF"
+      let loginmeta = "raw&loopkey" // "/&rawfile" // ".IMD"
+      let outfile = "final&loopkey" // "/&rawfile" // "&btype" // "_map4.&band" 
+      let map0file = "final&loopkey" // "/&rawfile" // "&btype" // "_map0.&band" 
+   
+      asc2tcl &parfile keyword="raw&"iloop"lu=" val=lu vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"ll=" val=ll vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"sl=" val=sl vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"sr=" val=sr vtype=4
+      asc2tcl &parfile keyword="raw&"iloop"lsp=" val=lsp vtype=0
+      asc2tcl &parfile keyword="raw&"iloop"lslsp=" val=lslsp vtype=0
+   end-if
+   
+   if (lu<0) let lu = 0
+   if (ll<0) let ll = 0
+   if (sl<0) let sl = 0
+   if (sr<0) let sr = 0
+   if (lsp="-999") let lsp = "(-999,-999,-999,-999,-999,-999)"
+   if (lslsp="-999") let lslsp = "(-999,-999,-999,-999,-999,-999)"
+   
+   write "raw&"iloop"lu= &lu"
+   write "raw&"iloop"ll= &ll"
+   write "raw&"iloop"sl= &sl"
+   write "raw&"iloop"sr= &sr" 
+   write "raw&"iloop"lsp= &lsp"
+   write "raw&"iloop"lslsp= &lslsp"
+  
+   if ("&band"="2")
+      
+      ! section to avoid re=doing afids on band 2
+      let checkfile = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band"
+      file2tcl &checkfile val=qexist
+
+      write "outfile &outfile"
+      write "map0file &map0file"
+      write "checkfile &checkfile qexist &qexist"
+      
+      if (qexist=0)
+
+        ikqbcall2 key="&loopkey" rawimg="&loginfile" +
+         rawmeta="&loginmeta" +
+         rawhdr="" +
+         outimg="&outfile" +
+         outrpc="&map0file" +
+         outrpctp="vic" nah=&nah nav=&nav rtype=master +
+         dted=&dted +
+         base=&lsat +
+         maptype=pc xvdonly=n +
+         line_upper="&lu" line_lower="&ll" samp_left="&sl" samp_right="&sr" +
+         linesamp=&lsp +
+         lsatls=&lslsp mpix=1.0
+
+         plab2tcl inp=&outfile property="COREG_META_DATA" val=bobgrid +
+            keyword=bobdate vtype=0
+
+         let ffile = "../&outfile"
+         let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band" 
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&map0file"
+         let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map0.&band"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&outfile" // ".grid1"
+   let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band" // ".grid1"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&outfile" // ".grid2"
+   let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band" // ".grid2"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&outfile" // ".grid3"
+   let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band" // ".grid3"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&outfile" // ".grid1"
+         let ffile2 = "final&loopkey" // "/&bobgrid" // "gridfinal1"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../&outfile" // ".grid2"
+         let ffile2 = "final&loopkey" // "/&bobgrid" // "gridfinal2"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+         
+         let ffile = "../&outfile" // ".grid3"
+         let ffile2 = "final&loopkey" // "/&bobgrid" // "gridfinal3"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         let ffile = "../raw&loopkey" // "/&outfile" // ".txt"    ! check on this ???
+         
+   let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map4.&band" // ".txt"
+         ush /bin/rm -f &ffile2
+         ush ln -s &ffile &ffile2
+
+         write "ffile &ffile"
+         write "ffile2 &ffile2"
+!         ibis-l bugg5
+      
+      end-if
+   else
+      ! band not equal 2 case
+
+      let rawmainix = "raw&iloop" // "="
+      asc2tcl &parfile keyword="&rawmainix" val=rawmain vtype=0
+      write "rawmain &rawmain"
+
+      let rawmainfile = "&pathxy" // "/&rawmain" // "&btype" // "_map4.2"
+      write "rawmainfile &rawmainfile"
+            
+      !let lnstring = "ln -s &rawmainfile" // ".grid* final&loopkey" // "/."
+      !ush &lnstring
+      
+      ! section to avoid re=doing afids on band &band
+      let checkfile = "&pathxy" // "/&rawmainfile" // "&btype" // "_map4.&band"
+      file2tcl &checkfile val=qexist2
+      let checkfile = "&pathxy" // "/&rawmainfile" // "&btype" // "_map0.&band"
+      file2tcl &checkfile val=qexistn
+      
+      if ((qexist2+qexistn)<2)
+         let qexist = 0
+      else
+         let qexist = 1
+      end-if
+      
+      write "qexist &qexist"
+      if (qexist=0)
+      
+         if ("&band"="11") let nband = 1
+         if ("&band"="12") let nband = 2
+         if ("&band"="13") let nband = 3
+         if ("&band"="14") let nband = 4
+      
+         ikqbwarpad2 key="&loopkey" +
+            fnamein="&rawmainfile" +
+            rawimg="&loginfile" +
+            rawmeta="&loginmeta" +
+            outimg="&outfile" +
+            zoomfac=4.0 band=&nband senstype="q"
+!            outrpc="&map0file" outrpctp="vic" +
+
+      end-if
+
+      let ffile = "../&map0file"
+      let ffile2 = "&pathxy" // "/&rawfile" // "&btype" // "_map0.&band"
+      ush /bin/rm -f &ffile2
+      ush ln -s &ffile &ffile2
+   end-if
+
+   let mkstring = "rm -f &shortname"
+   ush &mkstring
+   if (qexist=0)
+      let lnstring = "ln -s final&loopkey" // "/&rawfile" // +
+             "&btype" // "_map4.&band &shortname"
+      ush &lnstring
+   else
+      let lnstring = "ln -s &pathxy" // "/&rawfile" // +
+             "&btype" // "_map4.&band &shortname"
+      ush &lnstring
+   end-if
+   
+   ingest_q2 &key &loopkey &rawfile &band &shortname &iloop
+      
+   ! now have to keep these for multispectral
+   !
+   !let mkstring = "rm -f raw&loopkey" // "/*"
+   !ush &mkstring
+   !let mkstring = "rm -fr raw&loopkey"
+   !ush &mkstring
+   !if ("&band"<>"2")
+      !let mkstring = "rm -f final&loopkey" // "/*grid*"
+      !ush &mkstring
+   !end-if
+   
+end-loop
+endiloop>
+
+theend>
+let _onfail = t_onfail
+end-proc

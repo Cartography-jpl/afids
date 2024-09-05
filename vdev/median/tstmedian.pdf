@@ -1,0 +1,108 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+refgbl $echo
+
+! Jul 12, 2016 - RJB
+! TEST SCRIPT FOR MEDIAN
+! tests BYTE, HALF, images
+!
+! Vicar Programs:
+!       gausnois list  
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!            
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!            
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+
+body
+let $echo="no"
+let _onfail="stop"
+
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+
+write "afidsroot = &afidsroot"
+write "aftestdata = &aftestdata"
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+
+
+let $echo="yes"
+!This is a test file for MEDIAN
+!This example performs the lowpass median filter of default size 3 lines
+!by 3 samples.
+gausnois out=a.img nl=10 ns=10 seed=7382382
+list a.img
+median inp=a.img out=b.img nlw=3 nsw=3
+list b.img
+!This example performs the highpass median filter of default size 3 lines
+!by 3 samples.
+median inp=a.img out=b.img 'high nlw=3 nsw=3 dclevel=100. dctran=0.
+list b.img
+!This example outputs the value corresponding to the 20% level of a 
+!histogram
+median inp=a.img out=b.img perc=20.0 nlw=5 nsw=5
+list b.img
+gausnois out=a.img nl=10 ns=10 seed=7382382 format=half sigma=10. +
+  mean=-1000
+list a.img
+median inp=a.img out=b.img nlw=3 nsw=3
+list b.img
+!This example performs the highpass median filter of default size 3 lines
+!by 3 samples.
+median inp=a.img out=b.img 'high nlw=3 nsw=3 dclevel=100. dctran=0.
+list b.img
+!This example outputs the value corresponding to the 20% level of a 
+!histogram
+median inp=a.img out=b.img perc=20.0 nlw=5 nsw=5
+list b.img
+
+let $echo="no"
+write " "
+write " New test of image > 2 GB"
+write " "
+write "  get median image of a large image"
+write " "
+let $echo="yes"
+median ct/pre_reg.hlf bigmed.img
+list ct/pre_reg.hlf size=(5000,5000,10,10)
+
+list bigmed.img  size=(5000,5000,10,10)
+
+!
+! clean up
+!
+rm>
+let $echo="no"
+ush rm ct
+
+end-proc
+

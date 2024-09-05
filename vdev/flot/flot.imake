@@ -1,0 +1,18 @@
+#define PROGRAM flot
+
+#if VMS_OS
+#define MODULE_LIST flot.f flot_vms.f 
+#define CLEAN_OTHER_LIST flot_unix.f 
+#else
+#define MODULE_LIST flot.f flot_unix.f 
+#define CLEAN_OTHER_LIST flot_vms.f 
+#endif
+
+#define MAIN_LANG_FORTRAN
+#define R2LIB
+
+#define USES_FORTRAN
+
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB

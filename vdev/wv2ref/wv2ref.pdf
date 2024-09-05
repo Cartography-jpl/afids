@@ -1,0 +1,69 @@
+PROCESS      HELP=*
+
+PARM INP       TYPE=STRING COUNT=0:9
+PARM MULTIMETA TYPE=STRING COUNT=0:1 DEFAULT=""
+PARM PANMETA   TYPE=STRING COUNT=0:1 DEFAULT=""
+PARM BAND      TYPE=INTEGER COUNT=0:1 DEFAULT=0 VALID=(0:9)
+PARM OUT       TYPE=STRING COUNT=0:9
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "wv2ref"
+.HELP
+PURPOSE
+ This program converts raw dn images
+ into top of atmosphere reflectance 
+ images where the values range from 
+ 0 to 1.  The output image(s) is in 
+ "REAL" format. 
+
+.LEVEL1
+.VARIABLE INP
+ Input raw dn worldview2 image(s).
+ The number of inputs must
+ be either 1 or all 9 bands.
+ !!! PAN BAND IS 9 !!!
+
+.VARIABLE OUT
+ Output reflectance image(s).
+ Either 1 or all 9 bands depending
+ on the input
+ !!! PAN BAND IS 9 !!!
+
+.VARIABLE MULTIMETA
+ .IMD file containing metadata
+ regarding the multispectral
+ input images.
+
+.VARIABLE PANMETA
+ .IMD file containing metadata
+ regarding the pan input image
+
+.VARIABLE BAND
+ Specifies which band the input
+ image is.  Ignored if all 9
+ bands are input.
+ !!! PAN BAND IS 9 !!!
+ Coastal=1
+ Blue=2
+ Green=3
+ Yellow=4
+ Red=5
+ Red Edge=6
+ NIR1=7
+ NIR2=8
+ Pan=9
+
+.END
+
+
+
+
+
+
+
+
+
+
+

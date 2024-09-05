@@ -1,0 +1,26 @@
+procedure
+parm inp string def="tstinp.img" 
+parm ref string def="tstref.img"
+
+refgbl $echo
+body
+let $echo="yes"
+
+! test case for gtpswarp
+
+! first case, make ref file smaller
+
+gtcopy &ref xxxref size=(3,3,0,0)
+gtpswarp inp=&inp out=xxxtstout1 ref=xxxref ibistmp=xxxibistmp
+! Comment this out, because automated runs shouldn't try to run xvd
+!util6 xxxtstout1 xxxref
+
+! second case, make inp file smaller
+
+gtcopy &inp xxxinp size=(3,3,0,0)
+gtpswarp inp=xxxinp out=xxxtstout2 ref=&ref ibistmp=xxxibistmp
+! Comment this out, because automated runs shouldn't try to run xvd
+!util6 xxxtstout2 &ref
+
+theend>
+end-proc

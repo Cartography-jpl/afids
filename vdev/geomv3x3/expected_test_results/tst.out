@@ -1,0 +1,88 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xxxim1 10 10 SINC=40 LINC=40
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+geomv3x3 xxxim1 xxxim2 sl=1 ss=1 nl=20 ns=20  +
+   TIEPOINT=(1.,1.,5.,-5.,1.,20.,-5.,5.,  +
+                20.,1.,15.,5.,20.,20.,5.,15.)
+let pixsiz = 1
+let inp1 = inp(1)
+lab2tcl xxxim1 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let totpix = nline * nsamp * pixsiz
+write "inp1 xxxim1 totpix 100"
+inp1 xxxim1 totpix 100
+   geomv inp=xxxim1+
+        out=xxxim2 sl=1 ss=1  +
+      nl=20 ns=20 interp=BILIN cols=(1,2,3,4)  +
+      tiepoint=(1.000000000000e+00,1.000000000000e+00,5.000000000000e+00,-5.000000000000e+00,1.000000000000e+00,2.000000000000e+01,+
+-5.000000000000e+00,5.000000000000e+00,2.000000000000e+01,1.000000000000e+00,1.500000000000e+01,5.000000000000e+00,2.000000000000e++
+01,2.000000000000e+01,5.000000000000e+00,1.500000000000e+01)
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 1 nav = 1
+requested memory 256
+ goto theend
+if (totpix < MEMSIZE)
+end-if
+ END-PROC
+geomv3x3 xxxim1 xxxim3 sl=1 ss=1 nl=20 ns=20 memsize=1  +
+   TIEPOINT=(1.,1.,5.,-5.,1.,20.,-5.,5., +
+                20.,1.,15.,5.,20.,20.,5.,15.)
+let pixsiz = 1
+let inp1 = inp(1)
+lab2tcl xxxim1 v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let totpix = nline * nsamp * pixsiz
+write "inp1 xxxim1 totpix 100"
+inp1 xxxim1 totpix 100
+   geomv inp=xxxim1+
+        out=xxxim3 sl=1 ss=1  +
+      nl=20 ns=20 interp=BILIN cols=(1,2,3,4)  +
+      tiepoint=(1.000000000000e+00,1.000000000000e+00,5.000000000000e+00,-5.000000000000e+00,1.000000000000e+00,2.000000000000e+01,+
+-5.000000000000e+00,5.000000000000e+00,2.000000000000e+01,1.000000000000e+00,1.500000000000e+01,5.000000000000e+00,2.000000000000e++
+01,2.000000000000e+01,5.000000000000e+00,1.500000000000e+01)
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 1 nav = 1
+requested memory 256
+ goto theend
+if (totpix < MEMSIZE)
+end-if
+ END-PROC
+difpic (xxxim2,xxxim3)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+end-proc

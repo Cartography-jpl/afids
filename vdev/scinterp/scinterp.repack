@@ -1,0 +1,6 @@
+$ vpack scinterp.com -mixed -
+	-s scinterp.c -
+	-i scinterp.imake -
+	-p scinterp.pdf -
+	-t tstscinterp.pdf
+$ Exit

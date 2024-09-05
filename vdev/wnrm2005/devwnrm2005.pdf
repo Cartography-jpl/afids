@@ -1,0 +1,49 @@
+procedure
+refgbl $echo
+body
+
+goto curr
+
+tstwiener
+
+ush mv -f fftss.img fftss1.img
+ush mv -f ffts.img ffts1.img
+ush mv -f ffty.img ffty1.img
+ush mv -f fftz.img fftz1.img
+
+tstwnrm2005
+
+difpic (fftss.img,fftss1.img)
+difpic (ffts.img,ffts1.img)
+difpic (ffty.img,ffty1.img)
+difpic (fftz.img,fftz1.img)
+
+list fftss1.img nl=64 ns=64 linc=10 sinc=30 ndig=8
+list fftss.img nl=64 ns=64 linc=10 sinc=30 ndig=8
+
+list ffts1.img nl=64 ns=64 linc=10 sinc=30 ndig=8
+list ffts.img nl=64 ns=64 linc=10 sinc=30 ndig=8
+
+list ffty.img nl=64 ns=64 linc=10 sinc=30 ndig=8
+
+curr>
+
+let $echo="yes"
+!
+! generate asymmetric point spread function
+gen out=x.img nl=64 ns=64 linc=0 sinc=0
+qsar inp=x.img out=y.img area=(1,1,1,7,50,1,7,3,1,50)
+fft22 y.img ffty.img
+!
+! generate an image
+qsar inp=x.img out=z.img area=(32,32,5,5,200)
+fft22 z.img fftz.img
+!
+! blur the image
+wnrm2005 inp=(fftz.img,ffty.img) out=ffts.img 'direct
+
+gen xxsnr nl=64 ns=64 'real ival=0.05 linc=0.0 sinc=0.0
+wnrm2005 inp=(fftz.img,ffty.img,xxsnr) out=ffts1.img 'direct 'nsr
+difpic (ffts.img,ffts1.img)
+
+end-proc

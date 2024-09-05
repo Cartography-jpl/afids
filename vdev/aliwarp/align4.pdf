@@ -1,0 +1,383 @@
+procedure
+parm rawkey (string,99) count=1
+parm fnamein (string,99) count=1
+parm stripnl int count=1
+parm stripns int count=1
+parm band int count=1 default=3
+parm alignfile (string,99) default=""
+
+local xxstrip1 (string,99)
+local xxstrip2 (string,99)
+local xxstrip3 (string,99)
+local xxstrip4 (string,99)
+local xxstrip1a (string,99)
+local xxstrip2a (string,99)
+local xxstrip3a (string,99)
+local xxstrip4a (string,99)
+local xxstrip1b (string,99)
+local xxstrip2b (string,99)
+local xxstrip3b (string,99)
+local xxstrip4b (string,99)
+local xxgore1 (string,99)
+local xxgore2 (string,99)
+local xxmss (string,99)
+local xxmos (string,99)
+local xxout (string,99)
+local factor real
+local shft real
+local cval real
+local shft1 real
+local shft2 real
+local shft3 real
+local shft4 real
+local nshft1 int
+local nshft2 int
+local nshft3 int
+local nshft4 int
+local xshft real
+local xshft1 real
+local xshft2 real
+local xshft3 real
+local xshft4 real
+local nxshft1 int
+local nxshft2 int
+local nxshft3 int
+local nxshft4 int
+
+local sl1 int
+local sl2 int
+local sl3 int
+local sl4 int
+local sl1t int
+local sl2t int
+local sl3t int
+local sl4t int
+local ss1 int
+local ss2 int
+local ss3 int
+local ss4 int
+local ss1t int
+local ss2t int
+local ss3t int
+local ss4t int
+local nl1 int
+local nl2 int
+local nl3 int
+local nl4 int
+local ns1 int
+local ns2 int
+local ns3 int
+local ns4 int
+
+local nlgore int
+local aligncase int
+local alignval int
+
+body
+
+let xxstrip1 = "&rawkey" // "_" // "&band" // "_S1.img"
+let xxstrip2 = "&rawkey" // "_" // "&band" // "_S2.img"
+let xxstrip3 = "&rawkey" // "_" // "&band" // "_S3.img"
+let xxstrip4 = "&rawkey" // "_" // "&band" // "_S4.img"
+let xxstrip1a = "scratch/&fnamein" // "_" // "&band" // "_A1.img"
+let xxstrip2a = "scratch/&fnamein" // "_" // "&band" // "_A2.img"
+let xxstrip3a = "scratch/&fnamein" // "_" // "&band" // "_A3.img"
+let xxstrip4a = "scratch/&fnamein" // "_" // "&band" // "_A4.img"
+let xxstrip1b = "scratch/&fnamein" // "_" // "&band" // "_B1.img"
+let xxstrip2b = "scratch/&fnamein" // "_" // "&band" // "_B2.img"
+let xxstrip3b = "scratch/&fnamein" // "_" // "&band" // "_B3.img"
+let xxstrip4b = "scratch/&fnamein" // "_" // "&band" // "_B4.img"
+let xxgore1 = "scratch/&fnamein" // "_gore1.img"
+let xxgore2 = "scratch/&fnamein" // "_gore2.img"
+let xxmss = "scratch/&fnamein" // "_mss.img"
+let xxmos = "&rawkey" // ".mos"
+let xxout = "&rawkey" // "_b" // "&band" // ".img"
+
+!  alignfile logic
+
+if (alignfile="")
+   let aligncase = 1
+else
+   ibis2tcl &alignfile v1=alignval vartype=1 ibisloc=(1,1)
+   if (alignval<-900)
+      let aligncase = 2
+   else
+      let aligncase = 3
+   end-if
+end-if
+write "aligncase &aligncase"
+
+if (aligncase<3)
+   let shft1 = 0.0
+   let xshft1 = 0.0
+   linshft inp=(&xxstrip1,&xxstrip2) +
+      itie=(166.0,2.0,2500.0,2.0) +
+      otie=(166.0,307.0,2500.0,307.0) +
+      xdelta=(0.0,1.0) xnum=8 +
+      shiftmax=8.0 shift=shft xshift=xshft corval=cval 'apodize +
+      zthresh=(1,6000)
+   write "shft S1 S2 &shft &xshft &cval"
+   let shft2 = shft1-shft
+   let xshft2 = xshft1-xshft-4
+
+   linshft inp=(&xxstrip2,&xxstrip3) +
+      itie=(166.0,2.0,2500.0,2.0) +
+      otie=(166.0,307.0,2500.0,307.0) +
+      xdelta=(0.0,1.0) xnum=8 +
+      shiftmax=8.0 shift=shft xshift=xshft corval=cval 'apodize +
+      zthresh=(1,6000)
+   write "shft S2 S3 &shft &xshft &cval"
+   let shft3 = shft2-shft
+   let xshft3 = xshft2-xshft-4
+
+   linshft inp=(&xxstrip3,&xxstrip4) +
+      itie=(166.0,2.0,2500.0,2.0) +
+      otie=(166.0,307.0,2500.0,307.0) +
+      xdelta=(0.0,1.0) xnum=8 +
+      shiftmax=8.0 shift=shft xshift=xshft corval=cval 'apodize +
+      zthresh=(1,6000)
+   write "shft S3 S4 &shft &xshft &cval"
+   let shft4 = shft3-shft
+   let xshft4 = xshft3-xshft-4
+
+   if (shft1>0.0)
+      let nshft1 = $fix(shft1+0.000001)
+   else
+      let nshft1 = $fix(shft1-0.000001)
+   end-if
+   if (shft2>0.0)
+      let nshft2 = $fix(shft2+0.000001)
+   else
+      let nshft2 = $fix(shft2-0.000001)
+   end-if
+   if (shft3>0.0)
+      let nshft3 = $fix(shft3+0.000001)
+   else
+      let nshft3 = $fix(shft3-0.000001)
+   end-if
+   if (shft4>0.0)
+   let nshft4 = $fix(shft4+0.000001)
+   else
+      let nshft4 = $fix(shft4-0.000001)
+   end-if
+
+   if (xshft1>0.0)
+      let nxshft1 = $fix(xshft1+0.000001)
+   else
+      let nxshft1 = $fix(xshft1-0.000001)
+   end-if
+   if (xshft2>0.0)
+      let nxshft2 = $fix(xshft2+0.000001)
+   else
+      let nxshft2 = $fix(xshft2-0.000001)
+   end-if
+   if (xshft3>0.0)
+      let nxshft3 = $fix(xshft3+0.000001)
+   else
+      let nxshft3 = $fix(xshft3-0.000001)
+   end-if
+   if (xshft4>0.0)
+      let nxshft4 = $fix(xshft4+0.000001)
+   else
+      let nxshft4 = $fix(xshft4-0.000001)
+end-if
+else
+   ibis2tcl &alignfile v1=nshft1 v2=nshft2 v3=nshft3 v4=nshft4 +
+      vartype=(1,1,1,1) ibisloc=(1,1,1,2,1,3,1,4)
+   ibis2tcl &alignfile v1=nxshft1 v2=nxshft2 v3=nxshft3 v4=nxshft4 +
+      vartype=(1,1,1,1) ibisloc=(2,1,2,2,2,3,2,4)
+end-if 
+if (aligncase=2)
+   ibis-gen &alignfile nc=4 nr=2 format=("FULL","FULL","FULL","FULL") +
+      datacol=(1,2,3,4) data=(&nshft1,&nshft2,&nshft3,&nshft4, +
+      &nxshft1,&nxshft2,&nxshft3,&nxshft4)
+   ibis-l &alignfile
+end-if
+
+write "shift1234 &nshft1 &nshft2 &nshft3 &nshft4 "
+write "xshift1234 &nxshft1 &nxshft2 &nxshft3 &nxshft4 "
+
+!  turn gores into 0 value, trim and trim fenestrations
+
+f2 inp=&xxstrip1 out=&xxstrip1a func="(in1<11000)*in1"
+f2 inp=&xxstrip2 out=&xxstrip2a func="(in1<11000)*in1"
+f2 inp=&xxstrip3 out=&xxstrip3a func="(in1<11000)*in1"
+f2 inp=&xxstrip4 out=&xxstrip4a func="(in1<11000)*in1"
+
+imcorner &xxstrip1a sldat=sl1 ssdat=ss1 nldat=nl1 nsdat=ns1
+let sl1 = sl1+2
+let nl1 = nl1-4
+let sl1t = sl1+&nshft1
+let ss1t = ss1+&nxshft1+7
+lab2tcl &xxstrip1a v1=nlgore keyword=nl 'system
+gen &xxgore1 nl=&nlgore ns=7 ival=0 linc=0 sinc=0 'half
+copy &xxgore1 &xxgore2
+mss (&xxgore1,&xxstrip1a,&xxgore2) &xxmss
+copy &xxmss &xxstrip1b size=(&sl1t,&ss1t,&nl1,&ns1)
+
+
+imcorner &xxstrip2a sldat=sl2 ssdat=ss2 nldat=nl2 nsdat=ns2
+let sl2 = sl2+2
+let nl2 = nl2-4
+let sl2t = sl2+&nshft2
+let ss2t = ss2+&nxshft2+7
+lab2tcl &xxstrip2a v1=nlgore keyword=nl 'system
+gen &xxgore1 nl=&nlgore ns=7 ival=0 linc=0 sinc=0 'half
+copy &xxgore1 &xxgore2
+mss (&xxgore1,&xxstrip2a,&xxgore2) &xxmss
+copy &xxmss &xxstrip2b size=(&sl2t,&ss2t,&nl2,&ns2)
+
+imcorner &xxstrip3a sldat=sl3 ssdat=ss3 nldat=nl3 nsdat=ns3
+let sl3 = sl3+2
+let nl3 = nl3-4
+let sl3t = sl3+&nshft3
+let ss3t = ss3+&nxshft3+7
+lab2tcl &xxstrip3a v1=nlgore keyword=nl 'system
+gen &xxgore1 nl=&nlgore ns=7 ival=0 linc=0 sinc=0 'half
+copy &xxgore1 &xxgore2
+mss (&xxgore1,&xxstrip3a,&xxgore2) &xxmss
+copy &xxmss &xxstrip3b size=(&sl3t,&ss3t,&nl3,&ns3)
+
+imcorner &xxstrip4a sldat=sl4 ssdat=ss4 nldat=nl4 nsdat=ns4
+let sl4 = sl4+2
+let nl4 = nl4-4
+let sl4t = sl4+&nshft4
+let ss4t = ss4+&nxshft4+7
+lab2tcl &xxstrip4a v1=nlgore keyword=nl 'system
+gen &xxgore1 nl=&nlgore ns=7 ival=0 linc=0 sinc=0 'half
+copy &xxgore1 &xxgore2
+mss (&xxgore1,&xxstrip4a,&xxgore2) &xxmss
+copy &xxmss &xxstrip4b size=(&sl4t,&ss4t,&nl4,&ns4)
+
+write "sl1 ss1 nl1 ns1 &sl1 &ss1 &nl1 &ns1"
+write "sl2 ss2 nl2 ns2 &sl2 &ss2 &nl2 &ns2"
+write "sl3 ss3 nl3 ns3 &sl3 &ss3 &nl3 &ns3"
+write "sl4 ss4 nl4 ns4 &sl4 &ss4 &nl4 &ns4"
+write "sl1t ss1t nl1 ns1 &sl1t &ss1t &nl1 &ns1"
+write "sl2t ss2t nl2 ns2 &sl2t &ss2t &nl2 &ns2"
+write "sl3t ss3t nl3 ns3 &sl3t &ss3t &nl3 &ns3"
+write "sl4t ss4t nl4 ns4 &sl4t &ss4t &nl4 &ns4"
+
+!  first set
+
+aliramp &xxstrip1b &xxstrip2b points=(1000,6,3000,6) offset=309 npoints=80 ibisfile=xxxz1
+
+!ibis-l xxxz1 cols=(1,2,3,4,5)
+rowop2 xxxz1 xxxz6 keycol=3 range=(0.0,10.0) 'delete
+rowop2 xxxz6 xxxz5 keycol=4 range=(0.0,10.0) 'delete
+mf3 xxxz5 f="c6=c5$@avg(c6)$c7=c6-c5"
+rowop2 xxxz5 xxxz6 keycol=7 range=(-900.0,900.0) 'select
+mf3 xxxz6 f="c6=c5$@avg(c6)$@avg(c3)$@avg(c4)$c7=c3/c4"
+
+!ibis-l xxxz6
+
+ibis2tcl xxxz6 v1=factor vartype=0 ibisloc=(1,7)
+!write "factor &factor"
+let factor = (factor-1.0)/3.09
+write "factor &factor"
+
+gen xxxwedge nl=&stripnl ns=&stripns linc=0.0 sinc=&factor ival=100.0
+list xxxwedge linc=1000 sinc=30
+
+f2 inp=(&xxstrip2b,xxxwedge) out=&xxstrip2a func="min(in1*in2*0.01,65535)"
+
+!  second set
+
+aliramp &xxstrip2b &xxstrip3b points=(1000,6,3000,6) offset=309 npoints=80 ibisfile=xxxz2
+
+!ibis-l xxxz2 cols=(1,2,3,4,5)
+rowop2 xxxz1 xxxz6 keycol=3 range=(0.0,10.0) 'delete
+rowop2 xxxz6 xxxz5 keycol=4 range=(0.0,10.0) 'delete
+mf3 xxxz5 f="c6=c5$@avg(c6)$c7=c6-c5"
+rowop2 xxxz5 xxxz6 keycol=7 range=(-900.0,900.0) 'select
+mf3 xxxz6 f="c6=c5$@avg(c6)$@avg(c3)$@avg(c4)$c7=c3/c4"
+
+!ibis-l xxxz6
+
+ibis2tcl xxxz6 v1=factor vartype=0 ibisloc=(1,7)
+!write "factor &factor"
+let factor = (factor-1.0)/3.09
+write "factor &factor"
+
+gen xxxwedge nl=&stripnl ns=&stripns linc=0.0 sinc=&factor ival=100.0
+list xxxwedge linc=1000 sinc=30
+
+f2 inp=(&xxstrip3b,xxxwedge) out=&xxstrip3a func="min(in1*in2*0.01,65535)"
+
+!  third set
+
+aliramp &xxstrip3b &xxstrip4b points=(1000,6,3000,6) offset=309 npoints=40 ibisfile=xxxz3
+
+!ibis-l xxxz3 cols=(1,2,3,4,5)
+rowop2 xxxz1 xxxz6 keycol=3 range=(0.0,10.0) 'delete
+rowop2 xxxz6 xxxz5 keycol=4 range=(0.0,10.0) 'delete
+mf3 xxxz5 f="c6=c5$@avg(c6)$c7=c6-c5"
+rowop2 xxxz5 xxxz6 keycol=7 range=(-900.0,900.0) 'select
+mf3 xxxz6 f="c6=c5$@avg(c6)$@avg(c3)$@avg(c4)$c7=c3/c4"
+
+!ibis-l xxxz6
+
+ibis2tcl xxxz6 v1=factor vartype=0 ibisloc=(1,7)
+!write "factor &factor"
+let factor = (factor-1.0)/3.09
+write "factor &factor"
+
+gen xxxwedge nl=&stripnl ns=&stripns linc=0.0 sinc=&factor ival=100.0
+list xxxwedge linc=1000 sinc=30
+
+f2 inp=(&xxstrip4b,xxxwedge) out=&xxstrip4a func="min(in1*in2*0.01,65535)"
+
+!  use average for right hand image
+
+icat (xxxz1,xxxz2) xxxz4 'v
+icat (xxxz4,xxxz3) xxxz5 'v
+
+!ibis-l xxxz5 cols=(1,2,3,4,5)
+rowop2 xxxz1 xxxz6 keycol=3 range=(0.0,10.0) 'delete
+rowop2 xxxz6 xxxz5 keycol=4 range=(0.0,10.0) 'delete
+mf3 xxxz5 f="c6=c5$@avg(c6)$c7=c6-c5"
+rowop2 xxxz5 xxxz6 keycol=7 range=(-900.0,900.0) 'select
+mf3 xxxz6 f="c6=c5$@avg(c6)$@avg(c3)$@avg(c4)$c7=c3/c4"
+
+!ibis-l xxxz6
+
+ibis2tcl xxxz6 v1=factor vartype=0 ibisloc=(1,7)
+!write "factor &factor"
+let factor = (factor-1.0)/3.09
+write "factor &factor"
+
+gen xxxwedge nl=&stripnl ns=&stripns linc=0.0 sinc=&factor ival=100.0
+list xxxwedge linc=1000 sinc=30
+
+f2 inp=(&xxstrip1b,xxxwedge) out=&xxstrip1a func="min(in1*in2*0.01,65535)"
+
+
+ibis-gen &xxmos nr=4 nc=18 format=("A99","FULL","FULL","FULL","FULL","DOUB", +
+      "FULL","FULL","FULL","FULL","FULL","REAL","REAL","REAL","REAL","REAL","REAL","REAL") +
+      data=(&sl4,  1,&nl4,&ns4,1.0,104, 103,0,  0,0, +
+            &sl3,310,&nl3,&ns3,1.0,103, 102,0,104,0, +
+            &sl2,619,&nl2,&ns2,1.0,102, 101,0,103,0, +
+            &sl1,928,&nl1,&ns1,1.0,101,   0,0,102,0) +
+            datacols=(2,3,4,5,6,7,8,9,10,11) +
+            string=("&xxstrip4a","&xxstrip3a","&xxstrip2a","&xxstrip1a") +
+            strcols=(1)
+
+ibis-list &xxmos 'format
+
+featherv (&xxstrip4a,&xxstrip3a, +
+   &xxstrip2a,&xxstrip1a, +
+   &xxmos) +
+   &xxout +
+   sl=1 ss=1 nl=3600 ns=1257 +
+   dfeather=10 'factor 'progress 'ramp moorefac=1 +
+   rcols=(7,8,9,10,11,12,13,14,15,16)
+
+label-add inp=&xxout items="rawnl=3600" property="COREG_META_DATA"
+label-add inp=&xxout items="rawns=1257" property="COREG_META_DATA"
+
+ibis-list &xxmos 'format
+ush /bin/rm &xxstrip1a &xxstrip2a &xxstrip3a &xxstrip4a
+ush /bin/rm &xxstrip1b &xxstrip2b &xxstrip3b &xxstrip4b
+
+theend>
+end-proc

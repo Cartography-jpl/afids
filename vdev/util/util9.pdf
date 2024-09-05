@@ -1,0 +1,17 @@
+procedure
+parm inp type=(string,99)
+
+local vicortif int
+body
+
+! utility to info VICAR GeoTIFF label
+
+file2tcl &inp ftype=vicortif
+if (vicortif=1)
+   gtlist &inp
+   write "MSG: See Mapping Information in process window"
+else
+   write "MSG: Not a VICAR File"
+end-if
+
+end-proc

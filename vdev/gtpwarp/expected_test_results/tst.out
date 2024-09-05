@@ -1,0 +1,580 @@
+gtcopy tstref.img xxxref size=(3,3,0,0)
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+gtpswarp inp=tstinp.img out=xxxtstout1 ref=xxxref ibistmp=xxxibistmp
+let $echo="yes"
+write "gtpswarp 1/24/2012"
+gtpswarp 1/24/2012
+let img1 = "xxxibistmp" // "xx3771"
+let img2 = "xxxibistmp" // "xx3772"
+let img3 = "xxxibistmp" // "xx3773"
+plab2tcl tstinp.img val=rtype keyword=GTRASTERTYPEGEOKEY vtype=4
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+if (rtype=2)
+   gtsize tstinp.img xxxibistmpxx3771 pzoom=0.2
+Beginning VICAR task gtsize
+gtsize version Fri Jan 11 2008
+else
+end-if
+gtwarp xxxref xxxibistmpxx3772 ref=xxxibistmpxx3771 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 08-jun-10"
+gtwarp version 08-jun-10
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl xxxref v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxibistmpxx3771 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,195,176)"
+geomv parameter (sl,ss,nl,ns) = (1,1,195,176)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=10201 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/101)/100)*195+(1-0.5)$",       +
+       "c2=(@mod(@index+100,101)/100)*176+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqgrid2qq,xxxibistmpxx3771) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+gtproj (xxqqgrid2qq,xxxibistmpxx3771,xxxref) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2qq,xxxref) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+geomv INP=(xxxref,xxqqgrid2qq,xxxibistmpxx3771) OUT=xxxibistmpxx37+
+72 size=(1,1,195,176)         cols=(1,2,7,8) interp="bilin" znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+end-proc
+f2 (xxxibistmpxx3771,xxxibistmpxx3772) out=xxxibistmpxx3773 fun="in1*in2"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 31110 TIMES
+imcorner xxxibistmpxx3773 line1=l1 samp1=s1 line2=l2+
+ samp2=s2        line3=l3 samp3=s3 line4=l4 samp4=s4 inside=3 'corrfoot
+Beginning VICAR task imcorner
+imcorner version Mon Mar 7 2011
+ibis-gen xxxibistmp nc=42 nr=4 deffmt=DOUB+
+     datacol=(21,22,23,24,25,26,27,28)+
+     data=(1.800000000000e+01,3.00000000000+
+0e+00,1.800000000000e+01,1.630000000000e+02+
+,1.780000000000e+02,3.000000000000e+00,1.78+
+0000000000e+02,1.630000000000e+02,           1.800000000000e+01,3.000000000000e+00,1.800000000000e+01,1.630000000000e+02,1.78000000+
+0000e+02,3.000000000000e+00,1.780000000000e+02,1.630000000000e+02,           1.800000000000e+01,3.000000000000e+00,1.800000000000e++
+01,1.630000000000e+02,1.780000000000e+02,3.000000000000e+00,1.780000000000e+02,1.630000000000e+02,           1.800000000000e+01,3.0+
+00000000000e+00,1.800000000000e+01,1.630000000000e+02,1.780000000000e+02,3.000000000000e+00,1.780000000000e+02,1.630000000000e+02)
+Beginning VICAR task ibis
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(21,22) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,tstinp.img) pixcol=(31,32) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(23,24) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,tstinp.img) pixcol=(33,34) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(25,26) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,tstinp.img) pixcol=(35,36) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(27,27) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,tstinp.img) pixcol=(37,38) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxibistmp f=("c1=(c31+c35)*0.5$c2=(c32+c34)*0.5$",+
+    "c39=c35-c31$c40=c39/1024")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxibistmp v1=magnif vartype=-1 ibisloc=(1,40)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+let magnif = magnif*magfiddl*0.9
+let zlim = gorfiddl*40.0
+mf3 xxxibistmp f="c41=@mod(@index,2)*2-1$c42=@int((@index+1.0)/2.0)*2-3"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c1=c1+c41*7.031249999995e-01*102.4"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c2=c2+c42*7.031249999995e-01*102.4"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+picmtch4 (tstinp.img,xxxref,xxxibistmp) search=1024 ffts+
+ize=1024         minsrch=1024 zrej=0 pred=linear autofit=+
+0 redo=0         zerolim=4.000000000000e+01 zerolim2=4.00+
+0000000000e+01 ffthalf=0 thr_res=0         magnif=(7.031249999995e-01,7.031249999995e-01)
+Beginning VICAR task picmtch4
+picmtch4 version Thu Dec 22 2011
+sort xxxibistmp sortcol=9 'descend
+Beginning VICAR task sort
+sort version Wed Jan  2 2008
+pixmap (xxxibistmp,xxxref) pixcol=(6,7) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,tstinp.img) pixcol=(12,13) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxibistmp f="c14=c1-c12$c15=c2-c13"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c16=c14+(c14>0)-0.5$c17=c15+(c15>0)-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (subpix=1)
+   if (badchk<-9998.0 or corchk<corthr)
+   end-if
+end-if
+ibis2tcl xxxibistmp v1=shiftl v2=shifts v3=badchk v4=corchk+
+        vartype=(-1,-1,-1,-1) ibisloc=(1,16,1,17,1,10,1,9)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+if (badchk<-9998.0 or corchk<corthr)
+   if (fmode=0)
+   else
+   end-if
+end-if
+let ishiftl = $fix(shiftl)
+let ishifts = $fix(shifts)
+ibis-list xxxibistmp
+Beginning VICAR task ibis
+ 
+Number of Rows:4  Number of Columns: 42      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+      416.00      485.00     -113.10       40.15     3281.16      413.94
+      560.00      341.00     -113.11       40.14     3490.59      557.94
+      560.00      485.00     -113.09       40.13     2940.43      616.91
+      416.00      341.00     -113.11       40.15     2880.56      413.95
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+      483.08     3164.17        0.29      -80.06      -59.92      335.94
+      339.08     3324.84        0.27      -80.06      -59.92      479.94
+      543.01     3483.12        0.26      -21.09        0.01      538.91
+      339.07     3266.68        0.09      -80.05      -59.93      335.95
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17        C:18
++-----------+-----------+-----------+-----------+-----------+-----------
+      425.08       80.06       59.92       80.56       60.42        0.00
+      281.08       80.06       59.92       80.56       60.42        0.00
+      485.01       21.09       -0.01       21.59       -0.51        0.00
+      281.07       80.05       59.93       80.55       60.43        0.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:19        C:20        C:21        C:22        C:23        C:24
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00        0.00       18.00        3.00       18.00      163.00
+        0.00        0.00       18.00        3.00       18.00      163.00
+        0.00        0.00       18.00        3.00       18.00      163.00
+        0.00        0.00       18.00        3.00       18.00      163.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:25        C:26        C:27        C:28        C:29        C:30
++-----------+-----------+-----------+-----------+-----------+-----------
+      178.00        3.00      178.00      163.00        0.00        0.00
+      178.00        3.00      178.00      163.00        0.00        0.00
+      178.00        3.00      178.00      163.00        0.00        0.00
+      178.00        3.00      178.00      163.00        0.00        0.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:31        C:32        C:33        C:34        C:35        C:36
++-----------+-----------+-----------+-----------+-----------+-----------
+       88.00       13.00       88.00      813.00      888.00       13.00
+       88.00       13.00       88.00      813.00      888.00       13.00
+       88.00       13.00       88.00      813.00      888.00       13.00
+       88.00       13.00       88.00      813.00      888.00       13.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:37        C:38        C:39        C:40        C:41        C:42
++-----------+-----------+-----------+-----------+-----------+-----------
+      888.00      888.00      800.00        0.78       -1.00        1.00
+      888.00      888.00      800.00        0.78        1.00       -1.00
+      888.00      888.00      800.00        0.78        1.00        1.00
+      888.00      888.00      800.00        0.78       -1.00       -1.00
+gtmove tstinp.img xxxtstout1 shift=(80,60)
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl tstinp.img v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(490,443,0.,0.,0.,884)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,tstinp.img) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+   mf3 xxxgtmovetemp f="c1=c1+(8.000000000000e+01)$c2=c2+(6.000000000000e+01)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+gt2tcl tstinp.img val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=tstinp.img out=xxxtstout1 'add+
+ 'tiecnvrt     geotiff=("ModelTiePointTag=(5.020000000000+
+e+02,5.690000000000e+02,0,-1.130944409611e+02,4.0136161+
+44600e+01,0.0)",            "ModelTiePointTag=(5.900000000000e+01,7.900000000000e+01,0,-1.131356264122e+02,4.017187851914e+01,0.0)"+
+,            "ModelTiePointTag=(9.430000000000e+02,7.900000000000e+01,0,-1.130534414488e+02,4.017187851914e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+end-proc
+gtcopy tstinp.img xxxinp size=(3,3,0,0)
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+gtpswarp inp=xxxinp out=xxxtstout2 ref=tstref.img ibistmp=xxxibistmp
+let $echo="yes"
+write "gtpswarp 1/24/2012"
+gtpswarp 1/24/2012
+let img1 = "xxxibistmp" // "xx3771"
+let img2 = "xxxibistmp" // "xx3772"
+let img3 = "xxxibistmp" // "xx3773"
+plab2tcl xxxinp val=rtype keyword=GTRASTERTYPEGEOKEY vtype=4
+Beginning VICAR task plab2tcl
+plab2tcl version Wed Jan  2 2008
+if (rtype=2)
+   gtsize xxxinp xxxibistmpxx3771 pzoom=0.2
+Beginning VICAR task gtsize
+gtsize version Fri Jan 11 2008
+else
+end-if
+gtwarp tstref.img xxxibistmpxx3772 ref=xxxibistmpxx3771 'coverref
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 08-jun-10"
+gtwarp version 08-jun-10
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl tstref.img v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let inpsize = tnl*tns
+if ("coverref"="coverinp")
+else
+   lab2tcl xxxibistmpxx3771 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+   let sl=1-gorewid
+   let ss=1-gorewid
+   let nl=tnl+gorewid*2
+   let ns=tns+gorewid*2
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (1,1,195,176)"
+geomv parameter (sl,ss,nl,ns) = (1,1,195,176)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=10201 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/101)/100)*195+(1-0.5)$",       +
+       "c2=(@mod(@index+100,101)/100)*176+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+pixmap (xxqqgrid2qq,xxxibistmpxx3771) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+gtproj (xxqqgrid2qq,xxxibistmpxx3771,tstref.img) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Wed Oct 29 2008
+pixmap (xxqqgrid2qq,tstref.img) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+geomv INP=(tstref.img,xxqqgrid2qq,xxxibistmpxx3771) OUT=xxxibistmp+
+xx3772 size=(1,1,195,176)         cols=(1,2,7,8) interp="bilin" znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Tue Nov 11 2008
+end-proc
+f2 (xxxibistmpxx3771,xxxibistmpxx3772) out=xxxibistmpxx3773 fun="in1*in2"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 using hash table lookup
+FUNCTION EVALUATED 30827 TIMES
+imcorner xxxibistmpxx3773 line1=l1 samp1=s1 line2=l2+
+ samp2=s2        line3=l3 samp3=s3 line4=l4 samp4=s4 inside=3 'corrfoot
+Beginning VICAR task imcorner
+imcorner version Mon Mar 7 2011
+ibis-gen xxxibistmp nc=42 nr=4 deffmt=DOUB+
+     datacol=(21,22,23,24,25,26,27,28)+
+     data=(1.800000000000e+01,3.00000000000+
+0e+00,1.800000000000e+01,1.620000000000e+02+
+,1.770000000000e+02,3.000000000000e+00,1.77+
+0000000000e+02,1.620000000000e+02,           1.800000000000e+01,3.000000000000e+00,1.800000000000e+01,1.620000000000e+02,1.77000000+
+0000e+02,3.000000000000e+00,1.770000000000e+02,1.620000000000e+02,           1.800000000000e+01,3.000000000000e+00,1.800000000000e++
+01,1.620000000000e+02,1.770000000000e+02,3.000000000000e+00,1.770000000000e+02,1.620000000000e+02,           1.800000000000e+01,3.0+
+00000000000e+00,1.800000000000e+01,1.620000000000e+02,1.770000000000e+02,3.000000000000e+00,1.770000000000e+02,1.620000000000e+02)
+Beginning VICAR task ibis
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(21,22) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxinp) pixcol=(31,32) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(23,24) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxinp) pixcol=(33,34) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(25,26) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxinp) pixcol=(35,36) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxibistmpxx3773) pixcol=(27,27) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxinp) pixcol=(37,38) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxibistmp f=("c1=(c31+c35)*0.5$c2=(c32+c34)*0.5$",+
+    "c39=c35-c31$c40=c39/1024")
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxibistmp v1=magnif vartype=-1 ibisloc=(1,40)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+let magnif = magnif*magfiddl*0.9
+let zlim = gorfiddl*40.0
+mf3 xxxibistmp f="c41=@mod(@index,2)*2-1$c42=@int((@index+1.0)/2.0)*2-3"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c1=c1+c41*6.987304687494e-01*102.4"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c2=c2+c42*6.987304687494e-01*102.4"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+picmtch4 (xxxinp,tstref.img,xxxibistmp) search=1024 ffts+
+ize=1024         minsrch=1024 zrej=0 pred=linear autofit=+
+0 redo=0         zerolim=4.000000000000e+01 zerolim2=4.00+
+0000000000e+01 ffthalf=0 thr_res=0         magnif=(6.987304687494e-01,6.987304687494e-01)
+Beginning VICAR task picmtch4
+picmtch4 version Thu Dec 22 2011
+sort xxxibistmp sortcol=9 'descend
+Beginning VICAR task sort
+sort version Wed Jan  2 2008
+pixmap (xxxibistmp,tstref.img) pixcol=(6,7) mapcol=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+pixmap (xxxibistmp,xxxinp) pixcol=(12,13) mapcol=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxibistmp f="c14=c1-c12$c15=c2-c13"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+mf3 xxxibistmp f="c16=c14+(c14>0)-0.5$c17=c15+(c15>0)-0.5"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (subpix=1)
+   if (badchk<-9998.0 or corchk<corthr)
+   end-if
+end-if
+ibis2tcl xxxibistmp v1=shiftl v2=shifts v3=badchk v4=corchk+
+        vartype=(-1,-1,-1,-1) ibisloc=(1,16,1,17,1,10,1,9)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+if (badchk<-9998.0 or corchk<corthr)
+   if (fmode=0)
+   else
+   end-if
+end-if
+let ishiftl = $fix(shiftl)
+let ishifts = $fix(shifts)
+ibis-list xxxibistmp
+Beginning VICAR task ibis
+ 
+Number of Rows:4  Number of Columns: 42      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+      557.05      482.05     -113.09       40.13     2936.93      620.88
+      413.95      482.05     -113.10       40.15     3275.27      415.95
+      557.05      338.95     -113.11       40.14     3493.03      559.07
+      413.95      338.95     -113.11       40.15     2881.47      415.95
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+      544.04     3481.33        0.29      -18.17       -0.01      538.88
+      484.02     3145.02        0.24      -80.00      -60.03      333.95
+      340.92     3320.69        0.23      -79.98      -60.03      477.07
+      340.93     3262.02        0.23      -80.00      -60.02      333.95
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17        C:18
++-----------+-----------+-----------+-----------+-----------+-----------
+      482.04       18.17        0.01       18.67        0.51        0.00
+      422.02       80.00       60.03       80.50       60.53        0.00
+      278.92       79.98       60.03       80.48       60.53        0.00
+      278.93       80.00       60.02       80.50       60.52        0.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:19        C:20        C:21        C:22        C:23        C:24
++-----------+-----------+-----------+-----------+-----------+-----------
+        0.00        0.00       18.00        3.00       18.00      162.00
+        0.00        0.00       18.00        3.00       18.00      162.00
+        0.00        0.00       18.00        3.00       18.00      162.00
+        0.00        0.00       18.00        3.00       18.00      162.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:25        C:26        C:27        C:28        C:29        C:30
++-----------+-----------+-----------+-----------+-----------+-----------
+      177.00        3.00      177.00      162.00        0.00        0.00
+      177.00        3.00      177.00      162.00        0.00        0.00
+      177.00        3.00      177.00      162.00        0.00        0.00
+      177.00        3.00      177.00      162.00        0.00        0.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:31        C:32        C:33        C:34        C:35        C:36
++-----------+-----------+-----------+-----------+-----------+-----------
+       88.00       13.00       88.00      808.00      883.00       13.00
+       88.00       13.00       88.00      808.00      883.00       13.00
+       88.00       13.00       88.00      808.00      883.00       13.00
+       88.00       13.00       88.00      808.00      883.00       13.00
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:37        C:38        C:39        C:40        C:41        C:42
++-----------+-----------+-----------+-----------+-----------+-----------
+      883.00      883.00      795.00        0.78        1.00        1.00
+      883.00      883.00      795.00        0.78       -1.00        1.00
+      883.00      883.00      795.00        0.78        1.00       -1.00
+      883.00      883.00      795.00        0.78       -1.00       -1.00
+gtmove xxxinp xxxtstout2 shift=(18,0)
+write "gtmove 11/22/05"
+gtmove 11/22/05
+let xxibis = "xxxgtmovetemp"
+lab2tcl xxxinp v1=nline v2=nsamp keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL - 09 Dec 2012 - rjb - (64-bit)
+let nl2 = 1 + nline/2
+let ns2 = 1 + nsamp/2
+ibis-gen xxxgtmovetemp version=ibis-2 org=column nr=3 nc=10 deff="D+
+OUB"        datacols=(1,2) data=(489,442,0.,0.,0.,882)
+Beginning VICAR task ibis
+pixmap (xxxgtmovetemp,xxxinp) pixcols=(1,2) mapcols=(3,4) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+mf3 xxxgtmovetemp f="c1=c1/(1.000000000000e+00)$c2=c2/(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+if (hskew <> 0.0)
+end-if
+if (rotation <> 0.0)
+end-if
+let lineshift = shift(1)
+let sampshift = shift(2)
+if ((lineshift <> 0.0) or (sampshift <> 0.0))
+   mf3 xxxgtmovetemp f="c1=c1+(1.800000000000e+01)$c2=c2+(0.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+end-if
+gt2tcl xxxinp val=rastype keyword=GTRasterTypeGeoKey vtype=4
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (rastype = 1) mf3 xxxgtmovetemp f="c1=c1-0.5$c2=c2-0.5"
+if (rastype = 2) mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+ mf3 xxxgtmovetemp f="c1=c1-1.0$c2=c2-1.0"
+Beginning VICAR task mf3
+mf3 version Wed Oct 07 2008
+ibis2tcl xxxgtmovetemp v1=l1 v2=s1 v3=e1 v4=n1 vartype=(-1,-1,-1+
+,-1)      ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l2 v2=s2 v3=e2 v4=n2 vartype=(-1,-1,-1+
+,-1)      ibisloc=(2,1,2,2,2,3,2,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+ibis2tcl xxxgtmovetemp v1=l3 v2=s3 v3=e3 v4=n3 vartype=(-1,-1,-1+
+,-1)      ibisloc=(3,1,3,2,3,3,3,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+gtgen inp=xxxinp out=xxxtstout2 'add 'ti+
+ecnvrt     geotiff=("ModelTiePointTag=(4.410000000000e+02+
+,5.060000000000e+02,0,-1.130943479916e+02,4.01360885540+
+1e+01,0.0)",            "ModelTiePointTag=(-1.000000000000e+00,1.700000000000e+01,0,-1.131354404733e+02,4.017173273517e+01,0.0)",  +
+          "ModelTiePointTag=(8.810000000000e+02,1.700000000000e+01,0,-1.130534414488e+02,4.017173273517e+01,0.0)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+end-proc
+end-proc
+end-proc
+disable-log

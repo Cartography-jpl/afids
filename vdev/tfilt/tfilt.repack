@@ -1,0 +1,6 @@
+$ vpack tfilt.com -mixed -
+	-s tfilt.f -
+	-i tfilt.imake -
+	-p tfilt.pdf -
+	-t tsttfilt.pdf tsttfilt.log
+$ Exit

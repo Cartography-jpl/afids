@@ -1,0 +1,6 @@
+$ vpack longsize.com -mixed -
+	-s longsize.c -
+	-i longsize.imake -
+	-p longsize.pdf -
+	-t tstlongsize.pdf
+$ Exit

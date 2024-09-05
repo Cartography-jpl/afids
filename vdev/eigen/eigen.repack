@@ -1,0 +1,5 @@
+$ vpack eigen.com -
+	-i eigen.imake -
+	-p eigen.pdf -
+	-t tsteigen.pdf
+$ Exit

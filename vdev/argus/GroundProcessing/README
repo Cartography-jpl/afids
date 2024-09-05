@@ -1,0 +1,21 @@
+This contains a GUI used to do the immediate ground processing when ARGUS
+lands. This includes copying the data needed to process the points of interest
+(POI), generating the map projected imagery, and copying the remaining
+data.
+
+This software uses the Ruby GTK bindings. These aren't normally installed
+with an AFIDS build (as of January 2010), but you can install them by building
+the additional target "ruby_gnome".
+
+The file ground_processing.glade contains the description of the GUI. This
+can be edited by the program "glade-3", which is installed if you build the
+ruby_gnome target. The program "ruby-glade-create-template" is used to create
+the file GroundProcessingGlade.rb - there is a small Makefile in the directory
+to help with doing that. You should not directly modify 
+GroundProcessingGlade.rb since it gets overwritten whenever the 
+ground_processing.glade file is modified. Instead, we have the class
+GroundProcessingGui which derives from GroundProcessingGlade and overrides 
+whatever functions we are changing.
+
+There is a small wrapper script argus_ground_processing which sets up the 
+environment and runs the 

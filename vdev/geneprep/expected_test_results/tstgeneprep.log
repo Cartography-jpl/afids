@@ -1,0 +1,10 @@
+tstgeneprep
+geneprep pb/all_backgrounds.int pb/materialofinterest2.ibis
+Beginning VICAR task geneprep
+geneprep - 10-4-2019 - rjb - 64-bit
+geneprep pb/all_background3.int pb/materialofinterest3.ibis 'trainfiles
+Beginning VICAR task geneprep
+geneprep - 10-4-2019 - rjb - 64-bit
+let $echo="no"
+exit
+slogoff

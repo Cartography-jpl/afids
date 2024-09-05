@@ -1,0 +1,30 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! TEST SCRIPT FOR IMLOG
+
+gen xxa nl=7 ns=5
+list xxa
+
+imlog xxa xxb lead_rm=330 nl=7 ns=5
+label-list xxb
+list xxb
+
+! test linehdr
+
+gen xxa nl=7 ns=5
+list xxa
+
+imlog xxa xxb lead_rm=329 nl=7 ns=4 linehdr=1
+label-list xxb
+list xxb
+
+
+theend>
+end-proc

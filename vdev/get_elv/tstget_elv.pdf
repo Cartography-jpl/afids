@@ -1,0 +1,18 @@
+procedure
+refgbl $echo
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST get_elv HANDYPROC
+
+get_elv 45 45
+
+get_elv 75 20
+
+get_elv -75 -13
+
+
+theend>
+end-proc

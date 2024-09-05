@@ -1,0 +1,107 @@
+process help=*
+parm inp        type=(string,99)
+parm out        type=(string,99)
+
+PARM doavg       TYPE=INTEGER                       DEFAULT=1
+PARM dogainoff   TYPE=INTEGER                       DEFAULT=1
+PARM dostretch   TYPE=INTEGER                       DEFAULT=0
+PARM sgcolumn    TYPE=INTEGER                       DEFAULT=0
+!parm xdoavg      type=keyword default=0 count=(0:1) valid=doavg default=--
+!parm xdogainoff  type=keyword default=1 count=(0:1) valid=dogainoff default=--
+!parm xdostretch  type=keyword default=0 count=(0:1) valid=dostretch default=--
+
+parm subnl      type=int default=19
+parm subns      type=int default=11
+parm skip       type=int default=5
+
+parm fileformat type=string valid=("vicar","geotiff") default="vicar"
+end-proc
+
+.title
+VICAR Program unstreak - removes streaks
+.help
+PURPOSE
+
+     UNSTREAK removes streaks.
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     unstreak INP=I OUT=O
+     
+     where
+
+     I is a VICAR input images
+     O is a VICAR output images
+
+.PAGE
+OPERATION
+
+     UNSTREAK removes streaks.
+   
+.PAGE
+
+RESTRICTIONS
+
+     None known.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch, R. Nathan
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, R. Nathan
+
+REVISIONS: 
+    Nov 10 2003
+    Initial version
+
+.level1
+
+.var inp
+
+Input file.
+
+.var out
+
+Output file.
+
+.var doavg
+
+Flag enabling offset correction.
+
+.var dogainoff
+
+Flag enabling gain correction.
+
+.var dostretch
+
+Flag enabling a linear stretch.
+
+.var subnl
+
+Subwindow height, used by gain correction.
+
+.var subns
+
+Subwindow width, used by gain correction.
+
+.var skip
+
+Subwindow sampling skip, used by gain correction.
+
+.var fileformat
+
+In/out file format, one of (vicar, geotiff).
+
+.level2
+
+.var skip
+
+Subwindow sampling skip, used by gain correction. This is the distance
+between the window tops.
+
+.var fileformat
+
+In/out file format, one of (vicar, geotiff). GeoTIFF files are
+converted to VICAR (using VTIFF3) before processing.
+
+.end

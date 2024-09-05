@@ -1,0 +1,67 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+Beginning VICAR task file2tcl
+file2tcl version Sat Dec 29 2007
+MSG: FLAT AREA SUBSTITUTED FOR dtedraw/dted/w111/n33.dt1
+write "in dtedlog, level 1"
+in dtedlog, level 1
+if (level=1) let dns = 1201
+ let dns = 1201
+if (level=2) let dns = 3601
+let dnsm1 = dns-1
+let slon = lon
+if (hemi1="w") let slon = -lon
+ let slon = -lon
+let slat = lat
+if (hemi2="s") let slat = -lat
+let slonp1 = slon+1
+let slatp1 = slat+1
+file2tcl dtedraw/dted/w111/n33.dt1 val=isfile1
+Beginning VICAR task file2tcl
+file2tcl version Sat Dec 29 2007
+if (isfile1=1)
+else
+   gen xxxtmpfile nl=1201 ns=1201 ival=0 linc=0 sinc=0 format=half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+end-if
+lab2tcl xxxtmpfile v1=nl keyword=nl 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let nlm1 = nl-1
+flot xxxtmpfile dtedraw/w111n33.log 'counter
+Beginning VICAR task flot
+[VIC2-GENERR] Exception in XVOPEN, processing file: dtedraw/w111n33.log
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+RETURN
+RETURN
+RETURN

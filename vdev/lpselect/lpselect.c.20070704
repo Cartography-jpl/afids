@@ -1,0 +1,128 @@
+#include "defines.h"
+#include "ibisfile.h"
+#include "ibiserrs.h"
+#include "/home/pkim/utilities/LPUtils.h"
+#include "/home/pkim/utilities/shapefil.h"
+
+#include "vicmain_c.h"
+#include "applic.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+int getRowsNeeded(data1, data2, nr1, nr2)
+   void *data1;
+   unsigned int *data2;
+   int nr1, nr2;
+{
+   int index1, index2, rowsNeeded, tempIndex;
+   int fmt, type, cycle;
+
+   rowsNeeded = 0;
+   for(index2 = 0; index2 < nr2; index2++)
+   {
+      index1 = 0;
+
+      while(index1 < nr1 && data2[index2] != getTag(data1))
+      {
+         tempIndex = nextEntityIndex(data1);
+         type = getType(data1);
+         if(type == 8) (double *)data1 += tempIndex;
+         else if(type == 4 || type == 7) (unsigned int*)data1 += tempIndex;
+         index1 += tempIndex;
+      }
+
+      if(data2[index2] == getTag(data1))
+         rowsNeeded += nextEntityIndex(data1);
+      else
+         zmabend("An index requested is not in the .slp file");
+   }
+
+   return rowsNeeded;
+}
+
+void writeData(ibis, data1, data2, rowsNeeded, nEntities)
+   int ibis, nEntities, rowsNeeded;
+   void *data1;
+   unsigned int *data2;
+{
+   void *data3;
+   int i, j, fmt, fmtCheck, index, length;
+
+   fmt = getType(data1);
+   if(fmt == 8) mz_alloc1((unsigned char**)&data3, rowsNeeded, sizeof(double));
+   else if(fmt == 4 || fmt == 7) mz_alloc1((unsigned char **)&data3, rowsNeeded, sizeof(float));
+
+   index = i = 0;
+   while(i < nEntities)
+   {
+      fmtCheck = getType(data1);
+      if(fmt != fmtCheck) zmabend("Different formats in the same file!!!");
+      length = getLength(data1);
+      if(fmt == 8 && getTag(data1) == data2[i])
+      {
+         for(j = 0; j < length; j++)
+            ((double *)data3)[index++] = ((double *)data1)[j+2];
+         ++i;
+      }
+      else if(fmt == 7 && getTag(data1) == data2[i])
+      {
+         for(j = 0; j < length; j++)
+            ((float *)data3)[index++] = ((float *)data1)[j+4];
+         ++i;
+      }
+      else if(fmt == 4 && getTag(data1) == data2[i])
+      {
+         for(j = 0; j < length; j++)
+            ((unsigned int*)data3)[index++] = ((unsigned int*)data1)[j+4];
+         ++i;
+      }
+
+      if(fmt == 8)(double *)data1 += nextEntityIndex(data1);
+      else if(fmt == 7)(float *)data1 += nextEntityIndex(data1);
+      else if(fmt == 4)(unsigned int *)data1 += nextEntityIndex(data1);
+   }
+
+   if(fmt == 8)
+      IBISColumnWrite(ibis, (double *)data3, 1, 1, rowsNeeded);
+   else if(fmt == 7)
+      IBISColumnWrite(ibis, (float *)data3, 1, 1, rowsNeeded);
+   else if(fmt == 4)
+      IBISColumnWrite(ibis, (unsigned int *)data3, 1, 1, rowsNeeded);
+
+   free(data3);
+}
+      
+
+main44()
+{
+   int status, ibis1, ibis2, ibis3;
+   int nr1, nr2, key, parmct, parmdf, rowsNeeded;
+   void *data1;
+   unsigned int *data2;
+
+   ibis1 = openIBISInp(1);
+   ibis2 = openIBISInp(2);
+   IBISFileGet(ibis1, "nr", &nr1, 0, 0, 0);
+   IBISFileGet(ibis2, "nr", &nr2, 0, 0, 0);
+   zvparm("key", &key, &parmct, &parmdf, 1, 0);
+
+   mz_alloc1((unsigned char**)&data1, nr1, sizeof(double));
+   mz_alloc1((unsigned char**)&data2, nr2, sizeof(double));
+   status = IBISColumnRead(ibis1, data1, 1, 1, nr1);
+   if(status != 1) IBISSignal(ibis1, status, 1);
+   status = IBISColumnRead(ibis2, data2, key, 1, nr2);
+   if(status != 1) IBISSignal(ibis2, status, 1);
+   status = IBISFileClose(ibis1, 0);
+   if(status != 1) IBISSignal(ibis1, status, 1);
+   status = IBISFileClose(ibis2, 0);
+   if(status != 1) IBISSignal(ibis2, status, 1);
+   printf("nr1: %d nr2: %d\n", nr1, nr2);
+
+   rowsNeeded = getRowsNeeded(data1, data2, nr1, nr2);
+   ibis3 = openIBISOut(1, rowsNeeded, 1);
+   writeData(ibis3, data1, data2, rowsNeeded, nr2);
+
+   free(data1);
+   free(data2);
+   IBISFileClose(ibis3, 0);
+}

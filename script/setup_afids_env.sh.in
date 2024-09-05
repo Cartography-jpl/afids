@@ -1,0 +1,103 @@
+BASEDIR=@prefix@
+if [ -f ${BASEDIR}/setup_afids_moved.sh ]; then
+    source ${BASEDIR}/setup_afids_moved.sh
+else
+    export AFIDSTOP=@prefix@
+    export AFIDSXVDTOP=@AFIDS_XVD_PREFIX_ABS@
+    export AFIDSDATATOP=@AFIDS_DATA_ABS@
+    export AFIDS_TESTDATA=@afidstestdatadir@
+    export VICARTOP=@VICAR_PREFIX_ABS@
+    export VICARGDALPLUGIN=@VICAR_GDALPLUGIN_HOME_ABS@
+    export GNUPLOT=@GNUPLOT_ABS@
+fi
+if [ -z "$AFIDSPYTHONTOP" ]; then
+    export AFIDSPYTHONTOP=@prefix@
+fi
+if [ -n "$PYTHONPATH" ]; then
+    export PYTHONPATH=${BASEDIR}/lib/python3.9/site-packages:${BASEDIR}/lib64/python3.9/site-packages:${PYTHONPATH}
+else
+    export PYTHONPATH=${BASEDIR}/lib/python3.9/site-packages:${BASEDIR}/lib64/python3.9/site-packages
+fi
+export AFIDS_ROOT=${AFIDSTOP}/afids
+source ${AFIDSDATATOP}/setup_afids_data.sh
+export DATUM_DATA=${AFIDSTOP}/share/geotrans
+export ELLIPSOID_DATA=${AFIDSTOP}/share/geotrans
+export AFIDS_TCL=${AFIDS_ROOT}/tcl 
+export AFIDS_VERSION="@VERSION@"
+export VRDIFONTS=${VICARTOP}/share/fonts/vrdi
+# We use to include vdev in the path. This causes problems, because
+# the unix command 'sort' gets replaced by the vicar proc sort which
+# isn't the same at all. The PATH was from before we introduced TAE_PATH.
+# I don't think we need this added to the path any more, so we'll remove this.
+# If this ends up causing a problem, we can revisit this.
+if [ -n "$PATH" ]; then
+  export PATH=${AFIDSTOP}/bin:${VICARTOP}/bin:${PATH}
+else
+  export PATH=${AFIDSTOP}/bin:${VICARTOP}/bin:/bin:/usr/bin:/usr/ucb
+fi
+if [ -z "$TAE_PATH" ]; then
+    export TAE_PATH="${AFIDSTOP}/pommos:${AFIDSTOP}/afids/vdev:${AFIDSXVDTOP}/afids/vdev:${VICARTOP}/vicar/bin:${VICARTOP}/vicar/lib:${VICARTOP}/vicar/vids/lib:${AFIDSTOP}/afids_python/pommos"
+fi
+if [ -n "$GDAL_DRIVER_PATH" ]; then
+   export GDAL_DRIVER_PATH=${VICARGDALPLUGIN}:${GDAL_DRIVER_PATH}
+else
+   export GDAL_DRIVER_PATH=${VICARGDALPLUGIN}
+fi
+if [ -n "$LD_LIBRARY_PATH" ]; then
+  export LD_LIBRARY_PATH=${AFIDSTOP}/lib:${VICARTOP}/lib:${LD_LIBRARY_PATH}
+else
+  export LD_LIBRARY_PATH=${AFIDSTOP}/lib:${VICARTOP}/lib
+fi
+if [ -f ${AFIDSPYTHONTOP}/etc/afids/setup_afids_python.sh ]; then
+   source ${AFIDSPYTHONTOP}/etc/afids/setup_afids_python.sh
+fi
+
+if [ -f ${AFIDSXVDTOP}/etc/afids/setup_afids_xvd.sh ]; then
+   source ${AFIDSXVDTOP}/etc/afids/setup_afids_xvd.sh
+fi
+export ITCL_LIBRARY=@ITCL_PREFIX@
+export DFFPATH=${AFIDSTOP}/data/vextract 
+export AFIDS_JOERC=${AFIDSTOP}/share/joe
+export TCLLIBPATH="${AFIDSTOP}/afids/tma_tcl/dbtcl ${AFIDSTOP}/afids/tma_tcl/maptcl ${AFIDSTOP}/afids/tma_tcl/tma"
+# Point to installed location for GNUPLOT
+
+if [ "@build_gnuplot@" = "yes" ]; then
+  export GNUPLOT_DRIVER_DIR=${AFIDSTOP}/libexec/gnuplot/5.4
+  export GNUHELP=${AFIDSTOP}/share/gnuplot/5.4/gnuplot.gih
+  export GNUPLOT_PS_DIR=${AFIDSTOP}/share/gnuplot/5.4/PostScript
+fi
+
+# Make sure we can reach any of the binaries we were given. Don't worry
+# yet about duplicates, we will clean that up in the next step
+if [ -n "@GDAL_PREFIX@" ]; then
+  PATH=@GDAL_PREFIX@/bin:${PATH}
+  LD_LIBRARY_PATH=@GDAL_PREFIX@/lib:@GDAL_PREFIX@/lib64:${LD_LIBRARY_PATH}
+fi
+if [ -n "@GNUPLOT_PREFIX@" ]; then
+  PATH=@GNUPLOT_PREFIX@/bin:${PATH}
+  LD_LIBRARY_PATH=@GNUPLOT_PREFIX@/lib:@GNUPLOT_PREFIX@/lib64:${LD_LIBRARY_PATH}
+fi
+if [ -n "@THIRDPARTY_PATH@" ]; then
+  PATH=@THIRDPARTY_PATH@/bin:${PATH}
+  LD_LIBRARY_PATH=@THIRDPARTY_PATH@/lib:@THIRDPARTY_PATH@/lib64:${LD_LIBRARY_PATH}
+fi
+
+# Clean up duplicates in PATH variables
+export PATH=`echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}'`
+export LD_LIBRARY_PATH=`echo "$LD_LIBRARY_PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}'`
+
+# The JPEG 2000 reader in the ECW library will gladly suck up all
+# memory. This limits the amount of space used to 1 GB. We can up this
+# as machines get larger, but on minaret this is a good compromise.
+
+export GDAL_ECW_CACHE_MAXMEM=1000000000
+
+if [ `ulimit -s` != "unlimited" ] ; then 
+   if [ `ulimit -s` -lt 32768 ]; then
+       # For AFIDS, we need a larger stack size than the default value on
+       # some machines.  This is because the IBIS library tends to do
+       # everything on the Stack, which gets fairly large
+       ulimit -s 32768
+   fi
+fi
+    

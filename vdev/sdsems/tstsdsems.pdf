@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+local elevroot type=(string,128)
+body
+let _onfail="continue"
+let $echo="yes"
+
+enable-log
+
+ush ln -s ../test_data/dem.hlf test_compress.hlf
+comprs test_compress.hlf test.hlf
+sdsems test.hlf out.hlf debline=50 debsamp=150
+
+disable-log
+
+end-proc

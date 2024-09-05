@@ -1,0 +1,50 @@
+procedure ! runpair
+
+parm master    string def="28DEC10WV020500010DEC28063416-P1BS-052455396040_02_P005"
+parm secondary string def="05JAN11WV020500011JAN05064346-P1BS-052455396050_03_P004"
+parm aoi       string def=AFX
+parm pre       string def=10DEC28
+parm post      string def=11JAN05
+
+local u string init="_"
+
+local afidsvdevdata string
+local elevdata string
+
+body
+
+write "runpair version Sat May  7 2011"
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+let elevdata = "&afidsvdevdata/middle_east_elv.hlf"
+
+let master="10NOV17062303-P1BS-052434679090_01_P001_m"
+let secondary="10NOV22064234-P1BS-052434679170_01_P001"
+let aoi="TST"
+let pre="10NOV17"
+let post="10NOV22"
+
+goto secondary
+
+! Orthorectify the master (coregister to CIB)
+wv2master &master &elevdata
+
+secondary>
+
+! Orthorectify the secondaries (coregister to master)
+wv2secondary &secondary &master &elevdata
+
+norm>
+
+! Normalize and pan-sharpen pairs
+normpansharpwv2 &aoi&u&pre&u&post &master &secondary
+
+chg>
+
+! Change
+changewv2 &aoi &pre &post &master &secondary
+
+theend>
+
+end-proc
+

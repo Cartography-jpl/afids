@@ -1,0 +1,360 @@
+procedure help=*
+parm key type=string default="q"
+parm qlon type=string count=2
+parm qlat type=string count=2
+parm localdir type=string  default="" !no longer used
+parm vdevdir type=string  default="/home/alz/vdev"
+parm out type=string
+parm diskimg type=string default="/cdrom/cdrom0"
+parm res type=(string,3) default="5M"
+
+local iloop int
+local curcdromfile string
+local curcdromfile2 string
+local curfile string
+local reffile string
+local mosrec type=string
+local mosfile type=string
+local gtfile type=string
+local logfile type=string
+local mostemp type=string
+local offset type=string
+
+local rawdir type=string
+local parmstr string
+local parmstr2 type=string
+local parmstr3 type=string
+local parmstr4 type=string
+local ushstring string
+local tmpstring string
+
+local minsl int
+local minss int
+local maxnl int
+local maxns int
+local curnl int
+local curns int
+local fcurol real
+local fcuros real
+local curol int
+local curos int
+local tval int
+local parmswch int
+
+local fsl real
+local fss real
+local fnl real
+local fns real
+local sl int
+local ss int
+local nl int
+local ns int
+
+local nfile int
+local getfile string
+local curfileraw string
+local curfilemid string
+local outfile string
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+
+local lon1 string
+local lat1 string
+local lon2 string
+local lat2 string
+
+local pixdeg real
+local latpixdeg real
+local reflon real
+local reflat real
+local ireflon real
+local ireflat real
+local ireflonp1 real
+local ireflatm1 real
+local siglat real
+
+local ldir type=(string,99)
+
+refgbl $echo
+body
+let $echo="yes"
+
+!  created from FTHMOS HANDYPROC
+
+!  need links for walt's logger to work
+
+ush /bin/rm -f rasimpcl
+let ushstring = "&vdevdir" // "/rasimpcl ."
+ush ln -s &ushstring
+
+!  set up the file names
+
+ldir2tcl strvar=ldir
+
+let rawdir = "&ldir" // "/scratch"
+!!!!!!!!!!!!!!!!!!!!let rawdir = "./" // "scratch" doesn't work
+let mosrec = "xxx" // "&key" // "fmosrec"
+let mosfile = "xxx" // "&key" // "fmosfile"
+let logfile = "scratch/&key" // "filelog"
+let outfile = "basemos/&out"
+let curfilemid = "scratch/&key" // "_curfilemid"
+let mostemp = "xxx" // "&key" // "fmostemp"
+let offset = "xxx" // "&key" // "foffset"
+
+! logger call here, the logger ends with a failure in good cases
+
+let _onfail="continue"
+ciblog key=&key qlon=&qlon qlat=&qlat rawdir=&rawdir diskimg=&diskimg +
+   res=&res
+let _onfail="return"   !No failures after this point
+
+! get the number of files
+
+asc2tcl &logfile keyword="numfile=" val=nfile vtype=4
+write "nfile &nfile"
+if (nfile=0)
+   write "ERROR: NO CIB FILES FOUND IN REQUESTED QUADRANGLE"
+   goto theend
+end-if
+      
+! main loop
+
+let iloop = 0
+let parmstr = "("
+let parmstr2 = ""
+let parmstr3 = ""
+let parmstr4 = ""
+let parmswch = 0
+let minsl = 999999
+let minss = 999999
+let maxnl = -999999
+let maxns = -999999
+   
+loop
+   let iloop = iloop+1
+   if (iloop>nfile) goto iloopdone
+   
+   ! put geoTIFF labels on images
+   
+   let getfile = "file" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=curcdromfile vtype=0 +
+      btrim=1 etrim=1
+   
+   ! process curcdromfile to curfile (Walt used to do)
+   
+   let curcdromfile2 = "scratch/" // "&curcdromfile"
+   let curfile = "scratch/" // "&curcdromfile" // ".img"
+   label-create &curcdromfile2 &curfile nl=1536 ns=1536
+   
+   ! end process curcdromfile to curfile (Walt used to do)
+   
+   let curfileraw = curfile
+   
+   let reffile = "scratch/" // "&key" // "reffile"
+   write "curcdromfile &curcdromfile"
+   write "curcdromfile2 &curcdromfile2"
+   write "curfileraw &curfileraw"
+   write "curfile &curfile"
+   
+   let getfile = "NITF_IGEOLO_ULLON" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=ullon vtype=7
+   let getfile = "NITF_IGEOLO_ULLAT" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=ullat vtype=7
+   let getfile = "NITF_IGEOLO_URLON" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=urlon vtype=7
+   let getfile = "NITF_IGEOLO_URLAT" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=urlat vtype=7
+   let getfile = "NITF_IGEOLO_LLLON" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=lllon vtype=7
+   let getfile = "NITF_IGEOLO_LLLAT" // "&iloop" // "="
+   asc2tcl &logfile keyword="&getfile" val=lllat vtype=7
+   
+   write "ullon ullat &ullon &ullat"
+   gtgen inp=&curfileraw out=&curfilemid 'tiecnvrt 'rectfit +
+    geotiff=("ModelTiePointTag=(0,0,0,&ullon,&ullat,0.0)", +
+     "ModelTiePointTag=(1536,0,0,&urlon,&urlat,0.0)", +
+     "ModelTiePointTag=(0,1536,0,&lllon,&lllat,0.0)", +
+     "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+     "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+     "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+   !gtlist &curfilemid
+      
+   if (iloop=1)
+      ! set up the reffile to butt to degree boundaries
+      
+      let reflon = ullon
+      let reflat = (ullat+lllat)*0.5
+      let ireflon = $fix(reflon+360.5)-360
+      let ireflat = $fix(reflat+180.5)-180
+      let ireflonp1 = ireflon+1
+      let ireflatm1 = ireflat-1
+      
+      ! polar not handled yet
+      let siglat = reflat
+      if (siglat<0.0) let siglat = -siglat
+      if (siglat>80.0)
+         let pixdeg = 6430
+      else-if (siglat>76.0)
+         let pixdeg = 6430
+      else-if (siglat>72.0)
+         let pixdeg = 6430
+      else-if (siglat>68.0)
+         let pixdeg = 7860
+      else-if (siglat>64.0)
+         let pixdeg = 9675
+      else-if (siglat>56.0)
+         let pixdeg = 11900
+      else-if (siglat>48.0)
+         let pixdeg = 14600
+      else-if (siglat>32.0)
+         let pixdeg = 17300
+      else
+         let pixdeg = 21600
+      end-if
+      let latpixdeg = 21600
+      
+      gtgen out=&reffile 'tiecnvrt 'rectfit +
+       geotiff=("ModelTiePointTag=(0,0,0,&ireflon,&ireflat,0.0)", +
+        "ModelTiePointTag=(&pixdeg,0,0,&ireflonp1,&ireflat,0.0)", +
+        "ModelTiePointTag=(0,&latpixdeg,0,&ireflon,&ireflatm1,0.0)", +
+        "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+        "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+        "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+      gtlist &reffile
+   end-if
+   
+   gtsize (&curfilemid,&reffile) &curfile 'coverinp
+   lab2tcl &curfile v1=curnl v2=curns keyword=(nl,ns) 'system
+   gtoffset &reffile &curfile &offset
+   ibis2tcl &offset v1=fcurol v2=fcuros vartype=(-1,-1) ibisloc=(1,7,1,8)
+   if (fcurol>0.0) let fcurol = fcurol+0.5
+   if (fcurol<0.0) let fcurol = fcurol-0.5
+   if (fcuros>0.0) let fcuros = fcuros+0.5
+   if (fcuros<0.0) let fcuros = fcuros-0.5
+   let curol = $fix(fcurol)
+   let curos = $fix(fcuros)
+   if (curol<minsl) let minsl = curol
+   if (curos<minss) let minss = curos
+   let tval = curol+curnl-1
+   if (tval>maxnl) let maxnl = tval
+   let tval = curos+curns-1
+   if (tval>maxns) let maxns = tval
+         
+   let ushstring = "x" // "&key" // "&iloop"
+   ush /bin/rm  -f &ushstring
+   ush ln -s &curfile &ushstring 
+   
+   ibis-gen &mosrec nr=1 nc=6 format=("A99","FULL","FULL","FULL","FULL","DOUB") +
+      data=(0,0,0,0,1.0) datacols=(2,3,4,5,6) +
+      string=("&ushstring") strcols=(1)
+   
+   if (iloop=1) 
+      ibis-copy &mosrec &mosfile
+   else
+      ibis-cat (&mosfile,&mosrec) &mostemp
+      ibis-copy &mostemp &mosfile
+   end-if
+   
+   if (parmswch=0)
+      let parmstr = parmstr // "&ushstring" // ","
+   else-if (parmswch=1)
+      let parmstr2 = parmstr2 // "&ushstring" // ","
+   else-if (parmswch=2)
+      let parmstr3 = parmstr3 // "&ushstring" // ","
+   else
+      let parmstr4 = parmstr4 // "&ushstring" // ","
+   write "parmstr: &parmstr"
+   write "parmstr2: &parmstr2"
+   write "parmstr3: &parmstr3"
+   write "parmstr4: &parmstr4"
+   end-if
+   let parmswch = parmswch+1
+   if (parmswch=4) let parmswch = 0
+end-loop
+
+iloopdone>
+
+ibis-l &mosfile cols=(1,6) cfor="%45s%11.5f"
+let maxnl = maxnl-minsl+1
+let maxns = maxns-minss+1
+featherv +
+ inp=&parmstr +
+ &parmstr2 +
+ &parmstr3 +
+ &parmstr4 +
+ &mosfile,&reffile) +
+ out=&curfilemid sl=&minsl ss=&minss nl=&maxnl ns=&maxns toler=0.001 +
+ dfeather=700  moorefac=3 'factor 'progress 'noramp 'geotiff
+
+! cut the output by the quad
+
+let lon1 = qlon(1)
+let lon2 = qlon(2)
+let lat2 = qlat(1)
+let lat1 = qlat(2)
+ibis-gen &mostemp nr=2 nc=4 format=("DOUB","DOUB","DOUB","DOUB") +
+   datacol=(1,2) data=(&lon1,&lat1,&lon2,&lat2)
+pixmap (&mostemp,&curfilemid) mapcols=(1,2) pixcols=(3,4) 'maptopix
+ibis-l &mostemp
+! these map to the center of vicar pixels
+ibis2tcl &mostemp v1=fsl v2=fss v3=fnl v4=fns vartype=(-1,-1,-1,-1) +
+   ibisloc=(1,3,1,4,2,3,2,4)
+write "fsl,fss &fsl,&fss"
+write "fnl,fns &fnl,&fns"
+let sl = $fix(fsl+50000.5)-50000
+let ss = $fix(fss+50000.5)-50000
+let nl = $fix(fnl+50000.5)-50000
+let ns = $fix(fns+50000.5)-50000
+let nl = nl-sl+1
+let ns = ns-ss+1
+
+gtcopy &curfilemid &outfile size=(&sl,&ss,&nl,&ns)
+gtlist &outfile
+
+! remove the link file names
+
+let ushstring = "x" // "&key" // "*"
+ush /bin/rm -f &ushstring
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc
+.TITLE
+FTHMOS - automatically mosaic and feather a bunch of GeoTIFF images
+.HELP
+PURPOSE
+     
+     
+CALL
+
+      
+  
+OPERATION
+
+
+PERFORMANCE
+
+
+.PAGE
+
+Restrictions
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 03 Jan, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+ 
+.level1
+.var key
+used to make temp files unique
+.var toler
+passed to featherv (see)
+.var localdir
+no longer used as parm
+.END

@@ -1,0 +1,6 @@
+$ vpack ccdslope.com -mixed -
+	-s ccdslope.f -
+	-i ccdslope.imake -
+	-p ccdslope.pdf -
+	-t tstccdslope.pdf tstccdslope.log
+$ Exit

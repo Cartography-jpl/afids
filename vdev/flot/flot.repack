@@ -1,0 +1,6 @@
+$ vpack flot.com -mixed -
+	-s flot.f -
+	-p flot.pdf -
+	-t tstflot.pdf tstflot.log -
+	-i flot.imake
+$ Exit

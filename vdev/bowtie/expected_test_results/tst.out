@@ -1,0 +1,192 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gengrid2 out=xxx1 ncol=8 nah=3 nav=4  +
+     l1=21.0 s1=1.0  +
+     l2=21.0 s2=9.0  +
+     l3=12.0 s3=1.0  +
+     l4=18.0 s4=9.0
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxx1 version="ibis-2" org="column" nc=8      +
+ nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxx1 func="c3=@int((@index-1)/4)/4"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/4)/4
+20 records in
+mf3 xxx1 func="c4=@mod(@index+3,4)/3"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+3,4)/3
+20 records in
+mf3 xxx1 func="c5=c3*(1.200000000000e+01-(2.100000000000e+01))+(2.100000000000e+01)$c6=c3*(1.800000000000e+01-(2.100000000000e+01))+
++(2.100000000000e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(1.200000000000e+01-(2.100000000000e+01))+(2.100000000000e+01)$c6=c3*(1.800000000000e+01-(2.100000000000e+01))+(2.100000000000e+01)
+20 records in
+mf3 xxx1 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+20 records in
+mf3 xxx1 func="c7=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)$c8=c4*(9.000000000000e+00-(1.000000000000e+00))+
++(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)$c8=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)
+20 records in
+mf3 xxx1 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+20 records in
+mf3 xxx1 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+20 records in
+end-proc
+ibis-list xxx1 cols=(1,2)
+Beginning VICAR task ibis
+ 
+Number of Rows:20  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:20
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+       21.00        1.00
+       21.00        3.67
+       21.00        6.33
+       21.00        9.00
+       18.75        1.00
+       19.25        3.67
+       19.75        6.33
+       20.25        9.00
+       16.50        1.00
+       17.50        3.67
+       18.50        6.33
+       19.50        9.00
+       14.25        1.00
+       15.75        3.67
+       17.25        6.33
+       18.75        9.00
+       12.00        1.00
+       14.00        3.67
+       16.00        6.33
+       18.00        9.00
+gengrid2 out=xxx2 ncol=8 nah=3 nav=4  +
+     l1=19.0 s1=1.0  +
+     l2=17.0 s2=9.0  +
+     l3=10.0 s3=1.0  +
+     l4=10.0 s4=9.0
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxx2 version="ibis-2" org="column" nc=8      +
+ nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxx2 func="c3=@int((@index-1)/4)/4"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/4)/4
+20 records in
+mf3 xxx2 func="c4=@mod(@index+3,4)/3"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+3,4)/3
+20 records in
+mf3 xxx2 func="c5=c3*(1.000000000000e+01-(1.900000000000e+01))+(1.900000000000e+01)$c6=c3*(1.000000000000e+01-(1.700000000000e+01))+
++(1.700000000000e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(1.000000000000e+01-(1.900000000000e+01))+(1.900000000000e+01)$c6=c3*(1.000000000000e+01-(1.700000000000e+01))+(1.700000000000e+01)
+20 records in
+mf3 xxx2 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+20 records in
+mf3 xxx2 func="c7=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)$c8=c4*(9.000000000000e+00-(1.000000000000e+00))+
++(1.000000000000e+00)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)$c8=c4*(9.000000000000e+00-(1.000000000000e+00))+(1.000000000000e+00)
+20 records in
+mf3 xxx2 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+20 records in
+mf3 xxx2 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+20 records in
+end-proc
+ibis-list xxx2 cols=(1,2)
+Beginning VICAR task ibis
+ 
+Number of Rows:20  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:20
++-----------+-----------
+         C:1         C:2
++-----------+-----------
+       19.00        1.00
+       18.33        3.67
+       17.67        6.33
+       17.00        9.00
+       16.75        1.00
+       16.25        3.67
+       15.75        6.33
+       15.25        9.00
+       14.50        1.00
+       14.17        3.67
+       13.83        6.33
+       13.50        9.00
+       12.25        1.00
+       12.08        3.67
+       11.92        6.33
+       11.75        9.00
+       10.00        1.00
+       10.00        3.67
+       10.00        6.33
+       10.00        9.00
+ibis-cat (xxx1,xxx2) xxx3
+Beginning VICAR task ibis
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstbowtie', line 24
+RETURN

@@ -1,0 +1,6 @@
+spotref inp=(../test_data/spot6_blu.hlf, ../test_data/spot6_grn.hlf, ../test_data/spot6_red.hlf, ../test_data/spot6_nir.hlf, ../tes+
+t_data/spot6_pan.hlf) multimeta=../test_data/spot6_multi_meta.xml panmeta=../test_data/spot6_pan_meta.xml out=(blu1.img, grn2.img, +
+red3.img, nir4.img, pan.img)
+Beginning VICAR task spotref
+END-PROC
+disable-log

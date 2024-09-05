@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! DEV SCRIPT FOR NITFLOG
+
+! Quickbird
+nitflog inp=03MAY05072951-P1BS-000000050393_01_P005.NTF
+
+! Ikonos
+nitflog inp=po_91275_pan_0000000.ntf
+
+end-proc

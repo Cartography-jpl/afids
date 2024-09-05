@@ -1,0 +1,6 @@
+$ vpack ikonoslog.com -mixed -
+	-s ikonoslog.c -
+	-i ikonoslog.imake -
+	-p ikonoslog.pdf -
+	-t tstikonoslog.pdf devikonoslog.pdf
+$ Exit

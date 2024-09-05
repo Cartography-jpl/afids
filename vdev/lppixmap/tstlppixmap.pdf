@@ -1,0 +1,26 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR lppixmap
+
+gen xim0 nl=100 ns=200
+gtgen xim0 xim 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(102,83,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,83,0,350807.4,5316081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtlist xim
+
+lppixmap inp=(lpxxx1.slp,xim) out=lpxxxPix.slp 'maptopix
+
+ibis-list lpxxx1.slp 'format
+ibis-list lpxxxPix.slp 'format
+
+end-proc

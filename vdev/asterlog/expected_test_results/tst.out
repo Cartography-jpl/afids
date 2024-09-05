@@ -1,0 +1,5 @@
+asterlog inp=../test_data/AST_L1B_00307072001171513_20080320032829_30979.hdf sensor=TIR
+Beginning VICAR task asterlog
+asterlog version Sat Dec 29 2007
+end-proc
+disable-log

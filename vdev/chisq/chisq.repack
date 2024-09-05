@@ -1,0 +1,6 @@
+$ vpack chisq.com -mixed -
+	-s chisq.c -
+	-i chisq.imake -
+	-p chisq.pdf -
+	-t tstchisq.pdf
+$ Exit

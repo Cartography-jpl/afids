@@ -1,0 +1,4 @@
+$ vpack asmos.com -mixed -
+	-p asmoslog.pdf ingest_a2.pdf asmapgen.pdf quadmos_a.pdf zprocess_a.pdf -
+	-t processxy.pdf asmaster.pdf waris_params waris.pdf
+$ Exit

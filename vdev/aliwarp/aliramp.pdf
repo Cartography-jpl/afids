@@ -1,0 +1,32 @@
+procedure
+parm im1 type=(string,99)
+parm im2 type=(string,99)
+parm points type=real count=4
+parm offset type=real
+parm npoints type=int
+parm ibisfile type=(string,99)
+
+local x1 type=real
+local y1 type=real
+local x2 type=real
+local y2 type=real
+body
+
+let x1 = points(1)
+let y1 = points(2)
+let x2 = points(3)
+let y2 = points(4)
+
+ibis-gen &ibisfile nr=&npoints nc=7 +
+   format=("REAL","REAL","REAL","REAL","REAL","REAL","REAL") +
+   datacol=(1,2,3,4) data=(&x1,&y1,&x2,&y2)
+mf3 &ibisfile f="c5=@index-1$c6=c3-c1$c7=c4-c2$@rsum(c6)$@rsum(c7)$@rsum(c1)"
+mf3 &ibisfile f="@rsum(c2)$c1=c1+c6*c5/(&npoints-1)$c2=c2+c7*c5/(&npoints-1)"
+
+getzval (&im1,&ibisfile) cols=(1,2,3) win=2
+mf3 &ibisfile f="c2=c2+&offset"
+getzval (&im2,&ibisfile) cols=(1,2,4) win=2
+mf3 &ibisfile f="c5=c4-c3"
+
+theend>
+end-proc

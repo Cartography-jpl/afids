@@ -1,0 +1,178 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! THIS FILE CONTAINS IMPORTANT ERROR CASES, MISMATCHED GEOTIFF LABELS
+
+! correctly mapped case
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtlist xxxim2
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtlist xxxim4
+gtmss (xxxim2,xxxim4) xxxim5
+gtlist xxxim5
+
+
+! error case, 2d input no geotiff label
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtmss (xxxim2,xxxim3) xxxim5
+
+! huge error in mapping across seam
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! very tiny error in mapping across seam, still exceeds toler
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.00001,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! very tiny error in mapping across seam, just below toler
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.000001,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! error: difference in rotation of two images
+
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.0,16000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,17000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,16000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! error: non-rectangular mapping
+
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.0,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,17000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,16000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! error: different scales for inputs
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.0,17000.,0.0)", +
+          "ModelTiePointTag=(199,104,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! error: mappings not compatible
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abc(just a test)")
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.0,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GTMODELTYPEGEOKEY=abd(just a test)")
+gtmss (xxxim2,xxxim4) xxxim5
+
+! correctly mapped case, but size parm not allowed
+
+gen xxxim1 nl=5 ns=3
+gtgen inp=xxxim1 out=xxxim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(202,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(202,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtlist xxxim2
+gen xxxim3 nl=5 ns=2
+gtgen inp=xxxim3 out=xxxim4 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-1,3,0,30000.,17000.,0.0)", +
+          "ModelTiePointTag=(199,103,0,31000.,16000.,0.0)", +
+          "ModelTiePointTag=(199,3,0,31000.,17000.,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+gtlist xxxim4
+gtmss (xxxim2,xxxim4) xxxim5 size=(2,1,0,0)
+
+theend>
+end-proc

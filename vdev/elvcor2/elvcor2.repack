@@ -1,0 +1,4 @@
+$ vpack elvcor2.com -mixed -
+	-p elvcor2.pdf elvcor3.pdf -
+	-t tstelvcor2.pdf develvcor2.pdf
+$ Exit

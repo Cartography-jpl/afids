@@ -1,0 +1,329 @@
+<html>
+<head>
+<meta name=Title content=Help>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<link rel=Edit-Time-Data href="help_nlc_files/editdata.mso">
+<title>Help</title>
+<style>
+<!--
+.Section1
+	{page:Section1;}
+-->
+</style>
+</head>
+<body bgcolor=#FFFFFF link=blue vlink=blue class="Normal" lang=EN-US>
+<div class=Section1>
+  <p><b>NLCv1.3 -- 09AUG2005&nbsp; (NTM Logger
+      / Chipper) Support Sub-System for SAFIRE:</b></p>
+  <p><b>HOW TO:&nbsp; Log NTM imagery and generate sub-image &quot;chip&quot; (tile)
+      files for input to the SAFIRE ATR (Automatic Target Recognition) Testbed. </b><span style='font-weight:normal'>&nbsp;This system creates small, user-defined image </span><b>&quot;</b><span style='font-weight:normal'>chips</span><b>&quot;</b><span
+style='font-weight:normal'> containing <span style='color:black'>'</span>training<span
+style='color:black'>'</span> targets and <span style='color:black'>'</span>test<span
+style='color:black'>'</span>&nbsp;&nbsp; imagery (that may contain targets), extracted from a parent NTM image. The Chips
+      are output in GeoTIFF format for input to the SAFIRE testbed, where a variety
+      of ATR algorithms can be applied to determine the best approaches for automatically
+      detecting desired object entities. The NLC is a co-system that functions
+      in parallel with the AFIDS (Automated Fusion of Image Data System), developed
+      at the NASA/Caltech/Jet Propulsion Laboratory in the Cartographic Applications
+      Laboratory (Section 387). For information, contact: Dr. Nevin A. Bryant,
+      818-354-7236. Refer to the NLC and AFIDS Users Guides for further information.</span></p>
+  <ul type=disc>
+    <li><a
+     href="#toproceed">Check List
+        - Here's What You Need To Proceed...</a> </li>
+    <li><a href="#step1">STEP 1: INPUT/OUTPUT SELECTION </a></li>
+    <li><a href="#step2">STEP 2: OPTIONAL GEOREFERENCE REFINEMENT CONTROL POINT</a></li>
+    <li><a href="#step3">STEP 3: CREATE CHIP IMAGES</a></li>
+    <li><a href="#step4">STEP 4: UTILITIES</a> </li>
+  </ul>
+  <div align=center style='
+text-align:center'>
+    <hr size=2 width="100%" align=center>
+  </div>
+  <p><a name=toproceed><b>Check List - Here's What
+        You Need To Proceed...</b></a> </p>
+  <ul type=disc>
+    <li><b>NTM Image - The directory path and filename </b><span style='font-weight:normal'>of
+        an NTM image (in NITF format) containing target(s) of interest. </span></li>
+    <li><b>DEM (Digital Elevation Model) - Identify the Directory
+        Path to the &quot;AFIDS/SRTM L2 World DEM&quot; database, OR if it</b><span style='color:black;
+     font-weight:normal'>'</span><b>s not available, find or generate a small Digital Elevation mosaic using the
+        AFIDS system (AFIDS Step 2). </b><span
+     style='font-weight:normal'>With the directory path to your resident AFIDS/SRTM L2 World DEM database, the
+        NLC software will automatically create the required DEM file without
+        user intervention. However, if the World DEM is not available, find an
+        existing AFIDS-generated DEM mosaic (in VICAR format), or make one using
+        AFIDS (See Section 6.4). Both DTED Level 1 and Level 2 are supported.
+        DEM data is used to improve the accuracy of the chip<span style='color:black'>'</span>s lat/long georeference through an iterative processing of the parent image<span
+     style='color:black'>'</span>s RPC (Rational Polynomial Coefficients) metadata.</span></li>
+    <li><b>Target List (Optional) - A single target location or list
+        of target locations. </b><span
+     style='font-weight:normal'>The target locations must be x,y pixel location(s) relative to the parent (input)
+        NTM image (lat/long coordinates are not currently supported due to georeference
+        inaccuracies). Multiple targets can be provided in a file, where the
+        file format is standard ascii text, two columns (x,y) with NO additional
+        letters, headers, columns, or other characters.&nbsp; &nbsp;</span></li>
+  </ul>
+  <p><a name=step1><b>STEP 1: INPUT/OUTPUT SELECTION</b></a> - <span style='color:black'>The
+      first step identifies all your input and output files, directories, and
+      prefixes required for creating chips. After filling in the required fields
+      and clicking the Accept button, the NLC software will begin logging the
+      input NTM image into VICAR (which may take a minute or two---progress bars
+      are provided).</span> </p>
+  <p><span style='color:black'>- <b>Input
+        Image</b></span><span style='color:
+black'>: &nbsp;Use the 'Browse' button to locate the parent INPUT image in NTM format. The 'black
+        diamond' will remember the last three field entries.</span></p>
+  <p><span style='color:black'>- <b>Elevation
+        Source</b></span><span
+style='color:black'>: Click the appropriate button to either: 1) Create a new DEM mosaic, or 2) Use
+        an existing AFIDS/VICAR DEM mosaic. To create a new mosaic, you must
+        have the </span>AFIDS/SRTM L2 World DEM database online and accessible. To use an existing DEM
+        mosaic, the mosaic must have been created previously using the AFIDS
+        system and be in AFIDS/VICAR format.</p>
+  <p><span style='color:black'>- <b>Elevation
+        Data Directory</b></span><span
+style='color:black'>: &nbsp;This field is available when the &quot;Elevation Source&quot; is marked for &quot;Create New Mosaic. &quot; Use the 'Browse' button to locate the DIRECTORY where the &quot;AFIDS/STRM L2 World DEM&quot; database files are located. The 'black diamond' will remember the last three
+        field entries.</span></p>
+  <p>- <b>Elevation Data Mosaic</b><span
+style='font-weight:normal'>:
+      This field is available when the <span
+style='color:black'>&quot;</span>Elevation Source<span style='color:black'>&quot;</span> is marked for <span style='color:black'>&quot;</span>Use Existing Mosaic.<span
+style='color:black'> &quot;</span> Use the <span style='color:black'>'</span>Browse<span
+style='color:black'>'</span> button to locate the specific DEM mosaic that covers your geographic area of
+      interest.</span></p>
+  <p><span style='color:black'>&nbsp;- <b>Working
+        Directory</b></span><span style='color:black'>: &nbsp;Use the 'Browse' button to locate or create a new DIRECTORY where all subsequent
+        NLC output files (e.g., chips, etc.) will be placed. To create a new
+        directory, use the Browse tool to find a location, then enter the new
+        directory name after the path (in the field). Avoid names that start
+        with an x, and don't use any special characters or spaces. The 'black
+        diamond' will remember the last three field entries.</span></p>
+  <p><span style='font-family:"Times New Roman";color:black'>- <b>Output
+        Prefix</b></span><span
+style='font-family:"Times New Roman";color:black'>: &nbsp;Enter a prefix to be attached to the beginning of every output chip</span><span style='color:black'>'</span><span
+style='font-family:"Times New Roman";color:black'>s filename. </span><span
+style='color:black'>Avoid names that start with an x, and don't use any special characters or spaces.
+        The 'black diamond' will remember the last three field entries.</span></p>
+  <p><span style='color:black'>- <b>TIFF
+        Output of Input Image</b></span><span
+style='color:black'>: &nbsp;This option creates a full-size or 16x-reduction (Small) of the parent input
+        image. Alternatively both sizes or 'none' can be requested. The file(s)
+        are output in GeoTIFF format. The default is 'None. '</span></p>
+  <p><span style='color:black'>- <b>Preview
+        Input Image</b></span><span
+style='color:black'>: &nbsp;Click this button to display the parent input image for locating targets, identifying
+        image subareas of interest, or for examining data quality. The image
+        is displayed using the vicar &quot;xvd&quot; display program. Click the <a name="OLE_LINK28"></a><a name="OLE_LINK27"></a>&quot;Zoom Factor&quot; button and choose 'Zoom to Fit' to see the entire image. Select &quot;Tools/Stretch...&quot; to display a variety of optional contrast enhancement options ('Gaussian' usually
+        works best). Select &quot;File/Exit&quot; to quit and close the display program. </span></p>
+  <p>- Click the &quot;<b>Accept</b><span style='font-weight:normal'>&quot; button
+      to begin the Step 1 processing. A progress box will appear while the parent
+      input image is logged and converted to AFIDS/VICAR format.</span></p>
+  <p><b><a name="step2">STEP 2: <span style='color:black'>OPTIONAL
+        GEOREFERENCE REFINEMENT CONTROL POINT</a></span></b><span style='color:black;font-weight:normal'> -- This </span>optional step allows the user to refine the accuracy of the input image's rational
+        polynomial coefficients (rpcs) for an improved image georeference. This
+        is accomplished by providing a precise Latitude and Longitude coordinate
+        for a Line (row) and Sample (Column) position in the NTM image. Be sure
+        to use signed decimal degrees (South and West are negative) with eight
+        decimal places preferred.</p>
+  <p><b>Entering values and clicking the</b><span style='font-weight:normal'> </span><span style='color:black'><b>'</b></span><b>Accept<span
+style='color:black'>'</span> button</b><span style='font-weight:normal'> will
+      integrate the control point and cause the input elevation data to be re-generated,
+      based on the assumption that the refined geographic coordinates may shift
+      the DEM by one degree. If an existing DEM mosaic is being used, it is not
+      changed. However, chances are that the user had already allowed for an
+      excess margin in selection of that mosaic, and no change would be necessary. </span></p>
+  <p>This step is optional unless subsequent processing fails due to a <span style='color:black'>&quot;</span>missing
+    elevation data<span style='color:black'>&quot;</span> or <span
+style='color:black'>&quot;</span>check your DTED<span style='color:black'>&quot;</span> error. These <span style='color:black'>&quot;</span>DEM<span style='color:black'>&quot;</span> errors usually occur when an NTM imag<span style='color:black'>'</span>s rpcs are less accurate than usual, requiring the NLC software to request a
+    larger geographic area within the DEM data to complete its Georeference modeling
+    (hence the DEM is not <span style='color:black'>&quot;</span>large<span
+style='color:black'>&quot;</span> enough).</p>
+  <p>To find a control point, select a well-defined object in the image
+    such as a road intersection or water/stream feature, and locate its Line
+    (row) and Sample (Column) position. Use the <span
+style='color:black'>&quot;</span>Preview Input Image<span style='color:black'>&quot;</span> option in Step 1, or the <span style='color:black'>&quot;</span>Display Image<span
+style='color:black'>&quot;</span> option from the Utilities (Step 4), to identify a candidate point and its Line/Sample.
+    To determine the Latitude and Longitude of the point, use a CIB (Controlled
+    Image Base) image or other georeferenced image to locate the point and read
+    the coordinates using the VICAR <span style='color:black'>&quot;</span>xvd<span style='color:black'>&quot;</span> program (via the Utilities), or a third party software display program. Coordinates
+    can also be read off a large-scale paper map.</p>
+  <p><a name=step3><b>STEP 3: </b><span style='color:black'><b>CREATE
+          CHIP IMAGES</b></span></a><span style='color:black'> - This step provides several options for creating image Chips from the parent
+          NTM image. The options include: 1) Chipping the Entire Image; 2) Creating
+          a number of Random chips based upon a user-supplied percentage of the
+          parent image's original size, or a user-selected number; and 3) Creating
+          chips based upon user-supplied target x,y locations. Note that in all
+          three options, the output chip locations are 'chunked' out using the
+          'grid' as defined when chipping the entire image (i.e., chips are NOT
+          CENTERED on target x,y locations). The user-supplied 'overlap' parameter
+          prevents a target from being cut at the chip boundary by automatically
+          generating an adjacent chip image. This often results in additional
+          chips being generated (beyond the requested number, or expected number
+          when using the 'percentage' option. </span></p>
+  <ul type=disc>
+    <li style='color:black;'><b>Sub Image Area
+        (AOI) Selection (if available):</b><span style='font-weight:
+     normal'> Leave blank to process the entire image, or enter starting and ending image
+        lines (rows) and samples (columns) to define a subarea for processing. </span><span style='color:windowtext'>To generate a Single Chip, enter the starting top line and left sample, then
+        enter the number </span>&quot;<span
+     style='color:windowtext'>999999</span>&quot;<span style='color:windowtext'> (six nines) in the two ending fields. A single chip will be generated with the
+        size specified in the </span>&quot;<span style='color:windowtext'>Chipping Parameters</span>&quot;<span style='color:windowtext'> section. If the starting fields are provided with offsets, but the ending fields
+        are blank, or if the ending fields are erroneously specified as smaller
+        than the starting entries, the offset coordinates are subtracted from
+        the parent image</span>'<span style='color:windowtext'>s total number of lines and samples and used as the ending coordinates. If the
+        ending coordinates are greater than the starting coordinates, but less
+        than or equal to the Chip Size, the ending coordinates are set to the
+        Chip Size. This will result in four output chips (not one as might be
+        expected, unless the overlap is set to zero).</span> Click the &quot;View Input Image&quot; button to display the image and help identify the line/sample subarea limits.
+        In the display program, click the &quot;Zoom Factor&quot; button and choose 'Zoom to Fit' to see the entire image. Select &quot;Tools/Stretch...&quot; to display a variety of optional contrast enhancement options ('Gaussian' usually
+        works best). Select &quot;File/Exit&quot; to quit and close the display program. The display may take a minute or two;
+        be patient!</li>
+    <li style='color:black;'><b>Target Selection:</b><span style='font-weight:normal'> Used
+        to identify input target (train or test) locations.</span></li>
+    <ul type=circle>
+      <li style='color:black;'><b>Number of
+          Chips:</b><span style='font-weight:normal'> The desired number of Random Chips to be generated from the parent image (Integer).
+          Note that this process works by generating random x,y target locations,
+          and if a location falls in a chip's 'overlap' area, additional ships
+          will be generated (so more chips will be produced than requested). </span></li>
+      <li style='color:black;'><b>Percent
+          of Image:</b><span style='font-weight:normal'> The entered (integer, e.g, 3 = 3%) percent of the (approximate) total number
+          of Possible chips will be produced at Random. Note that this process
+          works by generating random x,y target locations, and if a location
+          falls in a chip's 'overlap' area, additional ships will be generated
+          (so more chips will be produced than requested). </span></li>
+      <li style='color:black;'><b>Random Seed:</b><span style='font-weight:normal'> This
+          is a number used to feed the random generator. The default seed number
+          is the average of a 25x25 pixel box located at the center of the parent
+          image. By unselecting the default button, the user can input an independent
+          integer seed number.</span></li>
+      <li style='color:black;'><b>X-Sample
+          and Y-Line:</b><span style='font-weight:normal'> For generating a chip covering a single desired target location, these are the
+          x (sample/column) and y (line/row) coordinates. Note that if the location
+          falls in a chip's 'overlap' area, additional ships will be generated
+          (so more chips will be produced than requested).</span></li>
+      <li style='color:black;'><b>File of
+          Targets:</b><span style='font-weight:normal'> Use the &quot;Browse&quot; button to locate a Pre-Prepared text file containing multiple x,y target locations.
+          This file MUST be standard ascii text, containing ONLY two columns
+          (x,y), and with NO additional letters, headers, columns, or other characters.
+          Use spaces, tabs, or commas to separate the x and y columns, and use
+          a carriage-return and line-feed to separate the rows. The x,y coordinates
+          are x,y target locations in the parent image.</span></li>
+    </ul>
+    <li style='color:black;'><b>Chipper Parameters:</b></li>
+    <ul type=circle>
+      <li style='color:black;'><b>Output Lines:</b><span style='font-weight:normal'> &nbsp;This
+          is the output chip's number of lines (y, rows). The default is 1024.</span></li>
+      <li style='color:black;'><b>Output Samples:</b><span style='font-weight:normal'> This
+          is the output chip's number of samples (x, columns). The default is
+          1024.</span></li>
+      <li style='color:black;'><b>Overlap:</b><span style='font-weight:normal'> This
+          is the number of pixels that will overlap between two adjacent chips,
+          if the given target is at the edge of the primary chip (insures full
+          spectral coverage of the target). &nbsp;The default is 128 pixels.</span></li>
+    </ul>
+    <li style='color:black;'><b>Utility Execution:</b></li>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process. </span><span style='color:windowtext'>Note that a progress box will be displayed. A job status box will also appear
+          when done: </span>&quot;<span style='color:windowtext'>MSG: Processing Completed.</span>&quot; <span style='color:windowtext'>Click the </span>&quot;<span
+      style='color:windowtext'>OK</span>&quot; <span style='color:windowtext'>button to proceed.</span></li>
+    </ul>
+  </ul>
+  <p><a name=step4><span style='color:black'><b>Step 4: </b></span><span style='color:black'><b>UTILITIES</b></span></a><span
+style='color:black'> - This set of OPTIONAL utilities includes Processing, Displaying, and Informational
+          file tools.</span></p>
+  <p><span style='color:black'><b>'Process
+        Utilities'</b></span><span
+style='color:black'> provide special image processing functions, including trimming and matching
+        images in VICAR and GeoTIFF (.tif) formats, usually for export to another
+        image processing software package. </span></p>
+  <ul type=disc>
+    <li style='color:black;'><b>Cut VICAR Sub-Image
+        (VICAR Output): </b><span style='font-weight:normal'>Use this option to cut a piece out of a parent image (in VICAR format). Both
+        the input and output will remain in VICAR 'gt' format. </span></li>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Setup</b><span style='font-weight:normal'>&quot; button
+          to display a dialog box. Use the browse buttons to locate the input
+          image, usually the parent image in VICAR format (&quot;prefix.img&quot;), and an output filename and path.</span></li>
+      <li style='color:black;'>Click the &quot;<b>View
+          Input Image</b><span
+      style='font-weight:normal'>&quot; button to view the input band, and write down the Beginning Line and Sample,
+          and Ending Line and Sample of the desired subarea. Enter those numbers
+          into the AOI slots.</span></li>
+      <li style='color:black;'>Click the &quot;<b>View
+          image when complete</b><span
+      style='font-weight:normal'>&quot; button to automatically display the subarea image after it has been generated.</span></li>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process.</span></li>
+    </ul>
+    <li style='color:black;'><b>Cut VICAR Sub-Image
+        (GeoTIFF Output): </b><span style='font-weight:normal'>Use this option to cut a piece out of a parent image (in VICAR format). The output
+        will be converted to GeoTIFF (georeferenced TIFF) format for export to
+        another image processing software package. </span></li>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Setup</b><span style='font-weight:normal'>&quot; button
+          to display a dialog box. Use the browse buttons to locate the input
+          image, usually the parent image in VICAR format (&quot;prefix.img&quot;), and an output filename and path.</span></li>
+      <li style='color:black;'>Click the &quot;<b>View
+          Input Image</b><span
+      style='font-weight:normal'>&quot; button to view the input band, and write down the Beginning Line and Sample,
+          and Ending Line and Sample of the desired subarea. Enter those numbers
+          into the AOI slots.</span></li>
+      <li style='color:black;'>Click the &quot;<b>View
+          image when complete</b><span
+      style='font-weight:normal'>&quot; button to automatically display the subarea image after it has been generated.</span></li>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process.</span></li>
+    </ul>
+  </ul>
+  <p><span style='color:black'><b>'Display
+        Utilities'</b></span><span
+style='color:black'> are for displaying and comparing image datasets. The VICAR <i>xvd display</i></span><span style='color:black'> program is used for all image displays.</span></p>
+  <ul type=disc>
+    <li style='color:black;'><b>Display Image:</b><span style='font-weight:normal'> This
+        option displays the requested VICAR or GeoTIFF image.</span></li>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Setup</b><span style='font-weight:normal'>&quot; button
+          to display a dialog box. Use the Browse button and a select an image
+          to be displayed.</span></li>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process.</span></li>
+    </ul>
+  </ul>
+  <p><span style='color:black'><b>'Information
+        Utilities'</b></span><span
+style='color:black'> are for displaying image georeference and label/metadata information. </span></p>
+  <ul type=disc>
+    <li style='color:black;'><b>GeoTIFF label: </b><span style='font-weight:normal'>This
+        option lists the metadata label of a selected image (either VICAR or
+        GeoTIFF). The output is displayed in the process window. &nbsp; </span></li>
+  </ul>
+  <ul type=disc>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Setup</b><span style='font-weight:normal'>&quot; button
+          to display a dialog box. Use the Browse button and a select an image
+          to be processed (usually the parent image in VICAR format (&quot;prefix.img&quot;)).</span></li>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process.</span></li>
+    </ul>
+  </ul>
+  <ul type=disc>
+    <li style='color:black;'><b>VICAR Mapping: </b><span style='font-weight:normal'>This
+        option lists a VICAR image's GeoTIFF map coordinates and georeference
+        information (i.e., VICAR program 'gtlist'). The output is displayed in
+        the process window. &nbsp;</span></li>
+  </ul>
+  <ul type=disc>
+    <ul type=circle>
+      <li style='color:black;'>Click the &quot;<b>Setup</b><span style='font-weight:normal'>&quot; button
+          to display a dialog box. Use the Browse button and a select an image
+          to be processed (usually the parent image in VICAR format (&quot;prefix.img&quot;)).</span></li>
+      <li style='color:black;'>Click the &quot;<b>Start</b><span style='font-weight:normal'>&quot; button
+          to begin the process.</span></li>
+    </ul>
+  </ul>
+</div>
+</body>
+</html>

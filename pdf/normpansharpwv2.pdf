@@ -1,0 +1,27 @@
+procedure
+
+parm outdir  string def="IZ1_10SEP09_10SEP14"
+parm prepan  string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm postpan string def="10SEP14082717-P1BS-052403186290_01_P001"
+
+local normprepan string init="nxprepan.img"
+local normpostpan string init="nxpostpan.img"
+
+body
+
+write "normpansharpwv2 version Sat May  7 2011"
+
+! Create dir for pairwise products
+ush mkdir -p &outdir
+
+! pre to post normalization
+wv2norm &prepan &postpan &outdir
+
+! pan sharpen the normalized pre and post products
+wv2pansharp &outdir &prepan &normprepan
+wv2pansharp &outdir &postpan &normpostpan
+
+!ush cd &outdir ; rm *.n? nx*pan.img
+
+done>
+end-proc

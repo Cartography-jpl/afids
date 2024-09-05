@@ -1,0 +1,20 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = mf4
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+# other possible CFLAGS that are not included in -Wall are:
+# CFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wunreachable-code -Wsign-compare
+# CFLAGS += -Wmissing-prototypes -Wstrict-prototypes -Wno-globals
+CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+CFLAGS += -Wmissing-prototypes -Wstrict-prototypes
+CFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wsign-compare
+CFLAGS += -Wunreachable-code

@@ -1,0 +1,6 @@
+$ vpack fft11.com -mixed -
+	-s fft11.f -
+	-i fft11.imake -
+	-p fft11.pdf -
+	-t tstfft11.pdf tstfft11.log
+$ Exit

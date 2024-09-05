@@ -1,0 +1,20 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+!
+! generate asymmetric point spread function
+gen out=x.img nl=64 ns=64 linc=0 sinc=0
+qsar inp=x.img out=y.img area=(1,1,1,7,50,1,7,3,1,50)
+fft22 y.img ffty.img
+!
+! generate an image
+qsar inp=x.img out=z.img area=(32,32,5,5,200)
+fft22 z.img fftz.img
+!
+! restore the image
+wnrm2005 inp=(fftz.img,ffty.img) out=wnr.img
+list wnr.img nl=5 ns=5
+!xvd restored.img
+!
+end-proc

@@ -1,0 +1,30 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR RGB2ISH
+
+! BYTE
+rgb2ish inp=(walt_red.img,walt_grn.img,walt_blu.img) out=(walt_h.img,walt_s.img,walt_i.img) fileformat=vicar
+rgb2ish inp=(walt_h.img,walt_s.img,walt_pan.img) out=(walt_red_out.img,walt_grn_out.img,walt_blu_out.img) reverse=1 fileformat=vicar
+
+! HALF WORD
+rgb2ish inp=(walt_red.hlf,walt_grn.hlf,walt_blu.hlf) +
+        out=(walt_h.hlf,walt_s.hlf,walt_i.hlf) fileformat=vicar
+rgb2ish inp=(walt_h.hlf,walt_s.hlf,walt_pan.hlf) +
+        out=(walt_red_out.hlf,walt_grn_out.hlf,walt_blu_out.hlf) reverse=1 fileformat=vicar
+
+! Nathan's HALF WORD
+!rgb2ish inp=(TEST4REFC.HLF;1,TEST4GRFC.HLF;1,TEST4BLFC.HLF;1) +
+!        out=(NATHAN_H.HLF,NATHAN_S.HLF,NATHAN_I.HLF) fileformat=vicar
+!rgb2ish inp=(NATHAN_H.HLF,NATHAN_S.HLF,TEST1F.HLF;1) +
+!        out=(NATHAN_RED_OUT.HLF,NATHAN_GRN_OUT.HLF,NATHAN_BLU_OUT.HLF) reverse=1 fileformat=vicar
+
+
+end-proc

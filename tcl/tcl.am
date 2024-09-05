@@ -1,0 +1,9 @@
+dist_afidstcl_DATA+= @srctcl@/afids.tcl @srctcl@/api.tcl @srctcl@/cibmos.tcl
+dist_afidstcl_DATA+= @srctcl@/cibaoi.tcl
+dist_afidstcl_DATA+= @srctcl@/classes.tcl @srctcl@/ctv2.tcl 
+dist_afidstcl_DATA+= @srctcl@/gui.tcl @srctcl@/html_library.tcl 
+dist_afidstcl_DATA+= @srctcl@/ngclasses.tcl @srctcl@/nlc.tcl @srctcl@/asc2fade.tcl
+dist_afidstcl_DATA+= @srctcl@/taehelp.tcl @srctcl@/asc2shp.tcl
+dist_afidstcl_DATA+= @srctcl@/decodeIgeoloDms.tcl @srctcl@/wv2asc2fade.tcl
+dist_afidstcl_DATA+= @srctcl@/getNitfImageHeaderField.tcl @srctcl@/cbSupport.tcl @srctcl@/getnitfcorners.tcl
+dist_datagui_DATA = @srctcldata@/helpicon.gif @srctcldata@/filledTriangle.gif

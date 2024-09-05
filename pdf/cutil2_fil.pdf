@@ -1,0 +1,100 @@
+!cutil2_fil.pdf version 1.0
+!L1 AMT Image Processing Subsystem, Build 4.3
+!Latest Change Date: 19MAR2007 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 2 - Fill/Interpolate User-Specified Regions
+
+!This OPTIONAL VICAR procedure reads L1N AMT Dark Current and Flat Field
+!imagery PREPARED by cutil1_log, and allows the user to specify the value
+!and location of a SPECIFIC bad point, line, or rectangular area for
+!interpolation and removal. Alternatively, the user can skip this step
+!and use the Zero-Fill and/or Cosmic Ray removal options in cutil3_ave.pdf.
+!This program can be applied to SHC imagery using very tight area
+!parameters, but it is not recommended. 
+
+!This code should be executed from the "run2_cutil.pdf" program.      
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  dir    string   def="/raid12/amt/sw/vic2/"
+parm  infile string   def="AL1N_PRC_c8_g1_f001_int00005.013_C00000001_1.hlf"
+parm  mode   string   def="nfill"  !nfill=Fill rval; ray=Cosmic Ray Removal
+parm  rval   integer  def=0 !Specific DN value to be removed (nfill only)
+parm  tol    integer  def=200 !Cosmic Ray removal tolerance
+parm  sl     integer  !Starting Line of point, line, or rectangle
+parm  ss     integer  !Starting Sample of point, line, or rectangle
+parm  nl     integer  !Number of Lines
+parm  ns     integer  !Number of Samples
+!Local parameters used within this program
+local sec    integer  !Clock Seconds for temporary variable names
+local found  integer  !File found (1) or not found (0)
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl     &dir val=found
+if          (found=0) goto error1
+!**********************************************************************
+
+if          (mode = "nfill")
+!Interpolate specified area and replace
+  zfill      &"dir"&infile &"dir"xx1tmp&sec size=(&sl,&ss,&nl,&ns) +
+             replace=&rval
+  insect    (&"dir"&infile,&"dir"xx1tmp&sec) &"dir"xx2tmp&sec +
+             insect=(1,1,&nl,&ns,&sl,&ss)
+  gtcopy     &"dir"xx2tmp&sec &"dir"&infile
+  write     "*** DN &rval interpolated at (&sl,&ss,&nl,&ns) ***"
+else
+end-if
+!**********************************************************************
+
+if          (mode = "ray")
+!Repair specified Cosmic Ray damaged area
+!Requires generation of a median image to identify spikes from the background.
+  median     &"dir"&infile &"dir"xx1tmp&sec nlw=5 nsw=5
+  remray    (&"dir"&infile,&"dir"xx1tmp&sec) &"dir"xx2tmp&sec +
+             tol=&tol
+  copy       &"dir"xx2tmp&sec &"dir"xx1tmp&sec size=(&sl,&ss,&nl,&ns)
+  insect    (&"dir"&infile,&"dir"xx1tmp&sec) &"dir"xx2tmp&sec +
+             insect=(1,1,&nl,&ns,&sl,&ss)
+  gtcopy     &"dir"xx2tmp&sec &"dir"&infile
+  write     "*** Cosmic Ray Removal Performed ***"
+else 
+end-if
+!**********************************************************************
+
+!Delete Temporary Files, Handle Errors,  and Print Closing Message
+file2tcl      &"dir"xx1tmp&sec val=found
+if           (found = 1) ush rm &"dir"xx1tmp&sec
+file2tcl      &"dir"xx2tmp&sec val=found
+if           (found = 1) ush rm &"dir"xx2tmp&sec
+goto          theend1
+
+error1>
+!Missing Directory Specification
+write        " "
+write        "*** ERROR: Specified Directory Not Found ***"
+write        "*** Calibration Utility-2 Filling: Stopped Due to Errors ***"
+write        " "
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-2 Filling: Successfully Completed ***"
+write        " "
+theend2>
+!**********************************************************************
+
+end-proc
+

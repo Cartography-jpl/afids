@@ -1,0 +1,55 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+
+! NESTED CALL FROM AVWARP
+
+gen xxxim0 nl=300 ns=310
+f2 inp=xxxim0 out=xxxdted func="(line-samp)%256"
+
+gtgen in=xxxdted 'tiecnvrt 'rectfit +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,-110,35,0.0)", +
+          "ModelTiePointTag=(0,300,0,-110,33,0.0)", +
+          "ModelTiePointTag=(310,0,0,-108,35,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+
+
+gen xxxim0 nl=300 ns=310
+f2 inp=xxxim0 out=xxx18.B3 +
+  func="(line+samp)%256"
+
+gtgen in=xxx18.B3 'tiecnvrt 'rectfit +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,-110.01,35.01,0.0)", +
+          "ModelTiePointTag=(0,300,0,-110.02,33.03,0.0)", +
+          "ModelTiePointTag=(310,0,0,-108.01,35.02,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+gengrid xxx18.int ncol=4 nah=20 nav=20 hbase =0.5 hsize=309.0 +
+   vbase=0.5 vsize=299.0
+mf3 xxx18.int func="c3=c1/150.0+33+@rand*.01" seed=1
+mf3 xxx18.int func="c4=c2/150.0-110+@rand*.01" seed=2
+ibis-list xxx18.int nr=10
+
+avwarp root=xxx18  dted=xxxdted seq=qq  pixdeg=120.0 +
+   quad1=33.5 quad2=-109.0 quadsiz1=1.0 quadsiz2=1.0 +
+   quadunit=0 master=xxx18.B3 +
+   loff=2.87 soff=0 +
+   loff=0 soff=0.56 +
+   sensE1=150.5 sensN1=1 senselv1=850000 +
+   sensE2=150.5 sensN2=300 senselv2=850000 +
+   sensunit=1 +
+   nah=40 nav=40 stopat=4
+
+
+end-proc

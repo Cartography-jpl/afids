@@ -1,0 +1,156 @@
+process help=*
+parm shp        type=(string,99)
+parm prefix     type=(string,99) default="mask_"
+parm suffix     type=(string,99) default=".img"
+parm minLat     type=int default=-90
+parm maxLat     type=int default=90
+parm minLon     type=int default=-180
+parm maxLon     type=int default=180
+parm fg         type=int default=1
+parm bg         type=int default=0
+parm pixperdeg  type=int default=1200
+parm margin     type=keyword count=0:1 valid=margin default=-- 
+parm nofill     type=keyword count=0:1 valid=nofill default=--
+parm mapfeat    type=(string,99) default=""
+parm mapfile    type=(string,99) default=""
+parm maxdn      type=keyword count=0:1 valid=maxdn default=--
+parm fillextent type=keyword count=0:1 valid=fillextent default=--
+parm geotype    type=keyword valid=(POINT,AREA,NOGEO) default=NOGEO
+end-proc
+
+.title
+VICAR Program shp2rast - rasterize shape data to 1x1 degree cell files
+.help
+PURPOSE
+
+     SHP2RAST
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     shp2rast INP=(A) OUT=(B) PARMS
+     
+     where
+
+     A		is a an input Esri Shape format file
+     B		is a prefix used to generate output VICAR image file names
+
+     PARMS
+                suffix is an optional filename suffix
+                minLat, maxLat, minLon, maxLon limit cell file generation
+		fg, bg specify drawing and background DNs
+                pixperdeg sets the rasterization resolution
+		margin add a one-pixel margin on the bottom and right edges, 
+		    for tiling overlap, as is done with DTED
+		nofill keeps polygons from being filled
+		mapfeat and mapfile are used together to provide shape dbf
+		    feature-based DN overriding the fg parm.
+		maxdn causes DN-maximizing drawing.
+		fillextent causes empty 1x1 degree cells to be created, though
+		    completely filled with the bg color.
+
+.PAGE
+OPERATION
+
+  The input file must be in Esri Shapefile format, including only
+  SHPT_ARC and SHPT_POLYGON types.  The input file shape vector points
+  are assumed to have x, y values respectively in the ranges -180 to
+  180 and -90 to 90. The world extent is divided into 1x1 degree
+  cells. Each cell that is within the AOI specified by the min/max
+  Lon/Lat parms and has shape data will be rasterized and have a
+  square VICAR image generated, with the NL, NS = the pixperdeg
+  parm. The 1x1 degree cell is filled with the bg parm value. Then the
+  arcs/polygons are drawn using the fg parm value. If the
+  nofill keyword is provided, then polygons are only drawn, not
+  filled.
+
+  The output files are named with the lon/lat of their lower left
+  corners and any output name and suffix provided respectively as OUT
+  and SUFFIX parms:
+
+     preYyyXxxxsuf
+
+  where pre is the OUT parm, suf is the SUFFIX parm, Y is either n or
+  s, yy is a zero-filled latitude, X is either w or e, xxx is a
+  zero-filled longitude. OUT defaults to "mask_". SUFFIX defaults to
+  ".img". Use the margin keyword to add a one-pixel margin on the bottom
+  and right edges, for tiling overlap, as is done with DTED.
+   
+  mapfeat and mapfile are used together to provide shape dbf DN values
+  for drawing. Suppose mapfile names a file containing:
+			5124,1
+			5151,2
+			5152,3
+  And suppose that mapfeat is "code". Then if the shape dbf has a
+  "code" field, and the code value for a given vector is 5151, then
+  the DN of 2 will be used for drawing. Otherwise, the default fg parm
+  will be used.  See tstshp2rast.pdf for example use.
+
+  maxdn causes drawing to change the image only when the new DN value
+  to be drawn is greater than the current DN, from either the bg value
+  or an earlier drawn vector.
+
+  fillextent causes empty 1x1 degree cells to be created, though
+  completely filled with the bg color.
+ 
+  geotype adds a GeoTIFF label. Either POINT or AREA must be selected.
+  Using area causes the pixel coordinated system to be shifted 0.5
+  pixels in both dimensions in the MODELTIEPOINTTAG. Choosing POINT
+  adds no offset.
+
+.PAGE
+WRITTEN BY:            W. L. Bunch Thu Feb  5 2004
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  2008-01-03 WLB - Switched to USES_ANSI_C AND LIB_CARTO; misc cleanup.
+  2017-06-30 WLB - Added NL, NS, margin parms; migrated to MIPL.
+  2018-12-04 WLB - Fixed north pole bug.
+  2019-07-10 WLB - IDS-7965: added nofill keyword.
+  2019-07-18 WLB - IDS-7923: replaced sprintf with snprintf.
+  2019-08-15 WLB - IDS-7965: added mapfeat, mapfile, maxdn, fillextent and geotype keywords.
+
+.level1
+.var inp
+Input shape format file
+.var out
+Prefix for output files
+.var suffix
+Suffix for output files
+.var minLat
+Minimum output latitude
+.var maxLat
+Maximum output latitude
+.var minLon
+Minimum output longitude
+.var maxLon
+Maximum output longitude
+.var fg
+Foreground polygon fill color
+.var bg
+Background color
+.var pixperdeg
+NL and NS for generated 1x1 deg image files
+.var margin
+Add one pixel margin to bottom and right edges
+.var nofill
+Draw object edges only, do not fill
+.var mapfeat
+mapfeat and mapfile are used together to provide shape dbf
+feature-based DN overriding the fg parm.
+maxdn causes DN-maximizing drawing.
+.var mapfile
+mapfeat and mapfile are used together to provide shape dbf
+feature-based DN overriding the fg parm.
+maxdn causes DN-maximizing drawing.
+.var maxdn
+causes DN-maximizing drawing.
+.var fillextent
+causes empty 1x1 degree cells to be created, though
+completely filled with the bg color.
+.var geotype
+Chooses a GeoTIFF label or none. Valid values are POINT, AREA, and
+NOGEO (default).
+.level2
+.end

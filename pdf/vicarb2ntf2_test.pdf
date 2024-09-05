@@ -1,0 +1,6 @@
+procedure
+body
+
+vicar2ntf2 inp=nitf/AB_wv1tst.hlf out=AB_wv1tst.ntf
+
+end-proc

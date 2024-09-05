@@ -1,0 +1,9 @@
+procedure
+parm inp type=(string,99)
+body
+
+! utility to display image with RMS 90% vectors
+
+revacc2 &inp
+
+end-proc

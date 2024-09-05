@@ -1,0 +1,6 @@
+$ vpack entropy.com -
+	-s entropy.f -
+	-i entropy.imake -
+	-p entropy.pdf -
+	-t tstentropy.pdf
+$ Exit

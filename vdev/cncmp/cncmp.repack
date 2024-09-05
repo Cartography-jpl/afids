@@ -1,0 +1,4 @@
+$ vpack cncmp.com -mixed -
+	-p cncmp.pdf -
+	-t tstcncmp.pdf
+$ Exit

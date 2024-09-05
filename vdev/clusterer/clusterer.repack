@@ -1,0 +1,6 @@
+$ vpack clusterer.com -mixed -
+	-s clusterer.c -
+	-i clusterer.imake -
+	-p clusterer.pdf -
+	-t tstclusterer.pdf
+$ Exit

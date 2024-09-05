@@ -1,0 +1,6 @@
+$ vpack boxflt2.com -
+	-s boxflt2.f boxflt2c.c -
+	-i boxflt2.imake -
+	-p boxflt2.pdf -
+	-t tstboxflt2.pdf tstboxflt2.log
+$ Exit

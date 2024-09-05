@@ -1,0 +1,19 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm mean real def=0.0
+parm sdev real def=1.0
+parm seed real def=9.0
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="yes"
+
+
+!  should set up quadratic, keystone, cubic etc, esp with offset normalization
+!  see the devibislsqf cases
+
+
+
+theend>
+END-PROC

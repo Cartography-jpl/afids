@@ -1,0 +1,6 @@
+$ vpack idgen.com -mixed -
+	-s idgen.c -
+	-i idgen.imake -
+	-p idgen.pdf -
+	-t tstidgen.pdf
+$ Exit

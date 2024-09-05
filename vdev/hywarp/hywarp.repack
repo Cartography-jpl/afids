@@ -1,0 +1,5 @@
+$ vpack hywarp.com -mixed -
+	-p hywarp.pdf hycall.pdf hywarpad.pdf piclsq.pdf piclsqqd.pdf -
+	   piclsqm.pdf piclsqm2.pdf finalwarp.pdf hywarp2.pdf hycall2.pdf -
+	   hywarpad2.pdf
+$ Exit

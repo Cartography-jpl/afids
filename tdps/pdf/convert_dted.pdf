@@ -1,0 +1,144 @@
+!Convert a region of dted-formatted dems to vicar gt format
+!
+!At sometime in the future, NGA will release an official version of
+!srtm-based DEMs with the voids filled and coasts corrected. When
+!this happens, the new DEMs should replace the old DEMs.
+!
+!This utility converts NGA DEMs in "dted" format to vicar gt format
+!for use by the tdps. It can process multiple DEMs at a time, and cross
+!the equator and prime merdian, but NOT the INTERNATIONAL DATELINE (180EW).
+!
+!Input Parameters:                                                              
+!slat - Startling latitude of DEM AOI; Bottom lat of AOI box
+!slon - Starting longitude of DEM AOI; Left lon of AOI box
+!elat - Ending latitude of DEM AOI; Top lat of AOI bounding box
+!elon - Ending longitute of DEM AOI; Right lon of AOI bounding box
+! (NOTE: DEMs are specified by their LOWER LEFT lat/lon, when viewed North up)
+! (NOTE: a DEM with elat and elon coordinates is NOT processed)
+!DIRin - Directory path for input dem data (disk or cdrom/dvd)
+!DIRout - Output directory path; Example: /data/tdps_srtm
+!insuf - Input DEM's suffix. Example: .dt1
+!
+!Example call:
+!convert_dted 21 -106 23 -104
+!convert_dted -24 -64 -21 -62 /data/raw_dtedL1 /home/tll/work dat1
+!convert_dted 21 -106 23 -104 /mnt/cdrom/dted
+!
+!Assumptions:
+! 1. The new files are in standard "dted" format.
+! 2. The new files will come in a directory like "w118" and "e063".
+! 3. Actual file names will look like "n34.dt1" and "s02.dt1".
+! 4. All file and directory characters are in LOWER CASE, except for
+!the suffix (e.g., "dt1") which can be supplied by parameter.
+! 5. Any deviations WILL NOT WORK!
+! 6. Output DEMS are in vicar format, in one directory, and have
+!filenames that look like "n34w118_L1.hlf"
+!
+!WARNING:
+!Don't overwrite your original DEMs (just in case a mistake occurs).
+!Backup your original DEMs!!!  Then backup your new DEMS!!!
+
+procedure
+parm       slat    integer          !bottom lat of playbox
+parm       slon    integer          !left lon of playbox
+parm       elat    integer          !top lat of playbox
+parm       elon    integer          !right lon of playbox
+parm       DIRin   string    def="/data/raw_dtedL1" !Input dem data dir
+parm       DIRout  string    def="/home/tll/work"   !Ouput dem data dir
+parm       insuf   string    def="dt1" !Input dem suffix
+local      mlat    integer          !elat minus 1
+local      mlon    integer          !elon minus 1
+local      lns     string    init="n"  !north or south in lowercase
+local      lew     string    init="e"  !east or west in lowercase
+local      I       integer          !Increment lat (n/s)
+local      J       integer          !Increment lon (e/w)
+local      I2      integer          !I without the - sign
+local      J2      integer          !J without the - sign
+local      found   integer          !0=no file; 1=file found (file2tcl)
+
+body
+
+!Set n/s/e/w codes
+if             (slat >= 0) let lns = "n"
+if             (slat <  0) let lns = "s"
+if             (slon >= 0) let lew = "e"
+if             (slon <  0) let lew = "w"
+let             mlat = elat - 1
+let             mlon = elon - 1
+
+
+!Master Loop
+
+   let          I = slat - 1        !Inc latitude; n/s
+   let          J = slon - 1        !Inc longitude; e/w
+
+loop
+   let          J = J + 1
+   if          (J > mlon) break
+
+   loop
+      let       I = I + 1
+      if       (I > mlat) break
+!Remove I and J negative signs
+      if       (I < 0) 
+               let I2 = I * (-1)
+      else
+               let I2 = I
+      end-if     
+      if       (J < 0) 
+               let J2 = J * (-1)
+      else 
+               let J2 = J
+      end-if
+!Reset n/s/e/w codes for crossing the Equator/Prime Meridian
+       if      (I >= 0) let lns = "n"
+       if      (I <  0) let lns = "s"
+       if      (J >= 0) let lew = "e"
+       if      (J <  0) let lew = "w"
+!Log srtmL2 input file; Correct leading 0s (zeros; 01)
+      if          (I2 >= 10)
+           if         (J2 < 10)
+        file2tcl       inp=&"DIRin"/&"lew"00&"J2"/&"lns"&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"00&"J2"/&"lns"&"I2".&"insuf" +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           else-if    (J2 > 9  and J2 < 100)
+        file2tcl       inp=&"DIRin"/&"lew"0&"J2"/&"lns"&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"0&"J2"/&"lns"&"I2".&"insuf" +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           else
+        file2tcl       inp=&"DIRin"/&"lew"&"J2"/&"lns"&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"&"J2"/&"lns"&"I2".&"insuf"  +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           end-if
+      else
+           if         (J2 < 10)
+        file2tcl       inp=&"DIRin"/&"lew"00&"J2"/&"lns"0&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"00&"J2"/&"lns"0&"I2".&"insuf" +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           else-if    (J2 > 9 and J2 < 100)
+        file2tcl       inp=&"DIRin"/&"lew"0&"J2"/&"lns"0&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"0&"J2"/&"lns"0&"I2".&"insuf" +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           else
+        file2tcl       inp=&"DIRin"/&"lew"&"J2"/&"lns"0&"I2".&"insuf" val=found
+           if          (found = 0) goto next1
+        dtedlog        inp=&"DIRin"/&"lew"&"J2"/&"lns"0&"I2".&"insuf" +
+                       out=&"DIRout"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                       lon=&J2 lat=&I2 hemi1=&lew hemi2=&lns level=1
+           end-if
+           next1>
+      end-if
+   end-loop
+   let          I = slat - 1
+end-loop
+end-proc

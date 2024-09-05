@@ -1,0 +1,25 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+newimd INP="10MAY07185950-P1BS-052360784030_01_P001.NTF"  BAND=1 OUT="10MAY07185950-P1BS-052360784030_01_P001-x.IMD" KER="kernels" ABSCAL=1.03e-1 effbw=2.01
+! ../wv2ref/wv2ref inp=(10MAY07185950-P1BS-052360784030_01_P001.img) panmeta=10MAY07185950-P1BS-052360784030_01_P001.IMD out=(pan_ref1.img) band=9
+! ../wv2ref/wv2ref inp=(10MAY07185950-P1BS-052360784030_01_P001.img) panmeta=10MAY07185950-P1BS-052360784030_01_P001-x.IMD out=(pan_ref2.img) band=9
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

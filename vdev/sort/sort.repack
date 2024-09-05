@@ -1,0 +1,6 @@
+$ vpack sort.com -mixed -
+	-s sort.c -
+	-i sort.imake -
+	-p sort.pdf -
+	-t tstsort.pdf
+$ Exit

@@ -1,0 +1,207 @@
+procedure
+parm inp1 type=string
+parm inp2 type=string
+
+parm skipto type=int default=0
+parm tool type=int default=0
+parm toolval type=int default=1
+
+parm thresh type=int default=40
+parm mthresh type=int default=-999999
+parm shadow type=int default=-999999
+
+parm minarea type=int default=1
+parm maxarea type=int default=999999999
+
+parm mindiam type=int default=1
+parm maxdiam type=int default=999999999
+
+parm minadratio type=real default=0.0
+parm maxadratio type=real default=999999.0
+
+parm minimg1 type=int default=0
+parm maximg1 type=int default=999999
+parm minimg2 type=int default=0
+parm maximg2 type=int default=999999
+
+parm bkminimg1 type=int default=0
+parm bkmaximg1 type=int default=999999
+parm bkminimg2 type=int default=0
+parm bkmaximg2 type=int default=999999
+
+parm mirror string valid=("n","y") default="y"
+
+local uthresh type=int
+local lthresh type=int
+
+local histeqdelta type=int init=0  ! a do nothing for now
+local icmp int
+local clen int
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+local fmt1 string
+body
+
+write "cncmp 11/17/05"
+
+if (tool=1)
+   xvd &inp1
+   xvd &inp2
+   goto theend
+end-if
+
+let uthresh = thresh
+if (mthresh>-9999)
+   let lthresh = mthresh
+else
+   let lthresh = -thresh
+end-if
+
+if (skipto=1) goto skip1
+
+! histogram equalization
+
+imcorner &inp1 line1=l1 samp1=s1 line2=l2 samp2=s2 +
+   line3=l3 samp3=s3 line4=l4 samp4=s4 inside=20
+ibis-gen xxxclip nc=2 nr=5 deffmt=DOUB +
+   data=(&l1,&s1,&l2,&s2,&l4,&s4,&l3,&s3,&l1,&s1) datacols=(1,2)
+
+lab2tcl &inp1 v1=fmt1 keyword=format 'system
+if (fmt1="BYTE")
+   gtcrop (&inp1,xxxclip) xxxinp1a 'coverinp
+   gtcrop (&inp2,xxxclip) xxxinp2a 'coverinp
+   f2 inp=xxxinp1a out=xxxinp1 fun="in1" format=half
+   f2 inp=xxxinp2a out=xxxinp2 fun="in1" format=half
+else
+   gtcrop (&inp1,xxxclip) xxxinp1 'coverinp
+   gtcrop (&inp2,xxxclip) xxxinp2 'coverinp
+end-if
+
+if (tool=2)
+   hist xxxinp1
+   hist xxxinp2
+   goto theend
+end-if
+
+stretch inp=xxxinp1 out=xxxinp1a rexclude=(0,0) 'gauss +
+   gmean=1000.0 gsigma=333.3
+stretch inp=xxxinp2 out=xxxinp2a rexclude=(0,0) 'gauss +
+   gmean=1000.0 gsigma=333.3
+
+if (tool=3)
+   !xvd xxxinp1a needs stretch based on 1000/333
+   !xvd xxxinp2a needs stretch based on 1000/333
+   hist xxxinp1a
+   hist xxxinp2a
+   f2 inp=(xxxinp1a,xxxinp2a) out=xx_diff_image func="im2-im1"
+   xvd xx_diff_image
+   hist xx_diff_image
+   goto theend
+end-if
+
+gen xxxinp1 nl=1 ns=1 !reclaim space
+gen xxxinp2 nl=1 ns=1 !reclaim space
+
+! get the diff image thresh 260 for 3 trucks
+
+f2 inp=(xxxinp1a, +
+       xxxinp2a), +
+       out=xx_plus_component func="(im1-im2-&histeqdelta)>(&uthresh)"
+f2 inp=(xxxinp1a, +
+       xxxinp2a), +
+       out=xx_minus_component func="(im1-im2-&histeqdelta)<(&lthresh)"
+
+if (tool=4)
+   xvd xx_plus_component
+   xvd xx_minus_component
+   goto theend
+end-if
+
+concomp xx_plus_component (xxxim2p,xxxim9) thresh=2 lastcmp=icmp
+concomp xx_minus_component (xxxim2m,xxxim9) thresh=2 startcmp=&icmp
+
+f2 inp=(xxxim2p,xxxim2m), +
+       out=xxxim2 func="im1+im2"
+
+if (tool=5)
+   let icmp = icmp-1
+   f2 inp=xxxim2 out=xx_comp_numbr +
+      func="(im1>0)*(im1+1000000*(2-(im1>&icmp)))"
+   xvd xx_comp_numbr
+   goto theend
+end-if
+
+comptab (xxxim2,xxxinp1a,xxxinp2a) xx_property_list
+mf3 xx_property_list f="c11=@abs(c6-c7)$c12=@abs(c8-c9)"
+mf3 xx_property_list f="c13=(c11>c12)+1$c14=c2/c5"
+pixmap (xx_property_list,&inp1) mapcols=(15,16) pixcols=(3,4) 'pixtomap
+ibis-copy xx_property_list xxxtab9 
+
+if (tool=6)
+   ilist xx_property_list sr=&toolval +
+     cols=(1,2,3,4,15,16,5,6,7,8,9,14) +
+     labels=("component id","area (pixels)","line","sample", +
+     "easting","northing","diameter","average brightness", +
+     "background","2d image","background","area/diameter ratio")
+   goto theend
+end-if
+
+skip1>
+
+rowop2 xx_property_list xxxtab2 keycol=2 range=(&minarea,&maxarea) prec=0.5 'select
+rowop2 xxxtab2 xxxtab2a keycol=(6,8) range=(0,&shadow,0,&shadow) prec=0.5 'delete
+rowop2 xxxtab2a xxxtab3 keycol=(5,14) range=(&mindiam,&maxdiam,&minadratio,&maxadratio) 'select
+rowop2 xxxtab3 xxxtab4 keycol=(6,8) range=(&minimg1,&maximg1,&minimg2,&maximg2) prec=0.5 'select
+rowop2 xxxtab4 xxxtab5 keycol=(7,9) range=(&bkminimg1,&bkmaximg1,&bkminimg2,&bkmaximg2) prec=0.5 'select
+
+if (mirror="y")
+   rowop2 xxxtab9 xxxtab2 keycol=2 range=(&minarea,&maxarea) prec=0.5 'select
+   rowop2 xxxtab2 xxxtab2a keycol=(6,8) range=(0,&shadow,0,&shadow) prec=0.5 'delete
+   rowop2 xxxtab2a xxxtab3 keycol=(5,14) range=(&mindiam,&maxdiam,&minadratio,&maxadratio) 'select
+   rowop2 xxxtab3 xxxtab4 keycol=(8,6) range=(&minimg1,&maximg1,&minimg2,&maximg2) prec=0.5 'select
+   rowop2 xxxtab4 xxxtab6 keycol=(9,7) range=(&bkminimg1,&bkmaximg1,&bkminimg2,&bkmaximg2) prec=0.5 'select
+   icat (xxxtab5,xxxtab6) xx_filtered_list
+else
+   ibis-copy xxxtab5 xx_filtered_list
+end-if
+
+if (tool=7)
+   ibis2tcl xx_filtered_list vclen=clen vartype=1
+   if (clen=0) goto theend
+   if (clen>30) let clen = 30
+   ilist xx_filtered_list sr=1 nr=&clen 'prnt_rec +
+     cols=(1,2,3,4,15,16,5,6,7,8,9,14) +
+     labels=("component id","size (pixels)","line","sample", +
+     "easting","northing","diameter","average brightness", +
+     "background","2d image","background","area/diameter ratio")
+   goto theend
+end-if
+
+compject (xxxim2,xx_filtered_list) xxxim3 cols=(1,13) backgrnd=0
+
+f2 inp=(&inp1 +
+ ,xxxim3) out=xxxred fun= +
+ "im1*(im2<0.5)+(im2>0.5)*(im2<1.5)*900+(im2>1.5)*1500"
+
+f2 inp=(&inp2, +
+ xxxim3) out=xxxgrn fun= +
+ "im1*(im2<0.5)+(im2>0.5)*(im2<1.5)*1500+(im2>1.5)*900"
+
+f2 inp=(&inp2, +
+ xxxim3) out=xxxblu fun= +
+ "im1*(im2<0.5)+(im2>0.5)*(im2<1.5)*1500+(im2>1.5)*900"
+
+xvd (xxxred,xxxgrn,xxxblu)
+
+ 
+
+theend>
+end-proc

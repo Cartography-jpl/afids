@@ -1,0 +1,320 @@
+procedure
+refgbl $echo
+parm key string
+parm fnamein string
+parm acorn string default="no" valid=("no","yes")
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted string
+parm lsat string
+parm line_upper int def=0
+parm line_lower int def=0
+parm linesamp type=real count=4 +
+   default=(-999.0,-999.0,-999.0,-999.0)
+parm longlat type=real count=4 default=(0.0,0.0,0.0,0.0)
+parm maptype type=string valid=("pc","utm") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm fftinit int def=512
+parm xvdonly string valid=("n","y") default="n"
+
+parm ecor1 type=real default=0.00
+parm ecor2 type=real default=0.00
+
+local loff real
+local wroll real
+local roll real
+
+local qlon real
+local qloninc real
+local qlat real
+local qlatinc real
+local iblat1 real
+local iblat2 real
+local iblon1 real
+local iblon2 real
+
+local ixclosest int
+local ixnext int
+
+local fname3 string
+local fname4 string
+local fname5 string
+
+local inroot string
+local outroot string
+local scratchroot string
+
+local rawl1r string
+
+local rawacs string
+local rawacorn string
+local rawkey string
+
+local inloc string
+local outloc string
+
+local masterloc string
+local gridinfoloc string
+local gridfinalloc string
+
+local slat1 real
+local slon1 real
+local slat2 real
+local slon2 real
+
+local lognl real
+local logns real
+local avlat real
+local avlat2 real
+local coslat real
+
+local nl1 real
+local ns1 real
+local nl2 real
+local ns2 real
+local nl3 real
+local ns3 real
+
+local lon1 real
+local lat1 real
+local lon2 real
+local lat2 real
+local lon3 real
+local lat3 real
+
+local dlon real
+local dlat real
+
+local tstacs real
+local zchk1 real
+local zchk2 real
+
+local stopat int
+
+body
+let $echo="yes"
+
+! now the master is registered to landsat again, both are 6
+
+if (rtype="master")
+   let stopat=6
+else
+   let stopat=6
+end-if
+
+!  log the hyperion bands 28-34 (averaged) matches landsat band 3
+
+let rawl1r = "raw" // "&key" // "/&fnamein" // "_Hyp.L1R"
+let rawacs = "raw" // "&key" // "/&fnamein" // "_acs.hdf"
+let rawacorn = "raw" // "&key" // "/&fnamein" // "_acorn"
+let rawkey = "raw" // "&key" // "/&fnamein"
+if (acorn="no")
+   hyperionlog inp=&rawl1r acs=&rawacs out=&rawkey
+else
+   hyperionlog inp=&rawl1r acs=&rawacs out=&rawkey acorn=&rawacorn
+end-if
+
+let inloc = "raw&key/"
+let outloc = "final&key/"
+
+let fname3 = "&inloc" // "&fnamein" // "_28-34" // ".img"
+let fname4 = "&inloc" // "&fnamein" // ".txt"
+let fname5 = "scratch/" // "&fnamein" // ".nav"
+
+if (xvdonly="y")
+   xvd &fname3
+   goto theend
+end-if
+   
+!   calculating the satellite position from Walt's log file
+
+asc2tcl &fname4 keyword="CALC_STARTLON=" val=slon1 vtype=8
+asc2tcl &fname4 keyword="CALC_STARTLAT=" val=slat1 vtype=8
+asc2tcl &fname4 keyword="CALC_STOPLON=" val=slon2 vtype=8
+asc2tcl &fname4 keyword="CALC_STOPLAT=" val=slat2 vtype=8
+if (slon1>180.0) let slon1 = slon1-360.0
+if (slon2>180.0) let slon2 = slon2-360.0
+
+let tstacs = linesamp(1)
+if (tstacs>(-990.0))
+   let slon1 = longlat(1)
+   let slat1 = longlat(2)
+   let slon2 = longlat(3)
+   let slat2 = longlat(4)
+end-if
+
+let avlat = (slat1+slat2)*0.5
+let avlat = avlat*3.141592/180.0
+let avlat2 = avlat*avlat
+let coslat = 1.0-avlat2/2.0+avlat2*avlat2/24.0-avlat2*avlat2*avlat2/720.0
+
+!   map the roll that walt calculates to my roll
+
+asc2tcl &fname4 keyword="CALC_STOP_LOOK_ANGLE=" val=wroll vtype=8
+let roll = 1.019688*wroll-3.641734+1.010088/&coslat
+write "calculated roll = &wroll, program roll = &roll"
+let loff = 3.435525*wroll-231.461334-8.636198/&coslat
+write "program loff = &loff, cos(lat) = &coslat"
+
+!calibration 723 russia 1
+!let roll = 7.870
+!let loff = -229.0
+
+!calibration 725 russia 2
+!let roll = -6.88
+!let loff = -270.0
+
+!calibration 926 kabul (kabulrun1)
+!let roll = 2.52
+!let loff = -239
+
+!calibration 1005 kabul (kabulrun2)
+!let roll = -8.74
+!let loff = -235.0
+
+!calibration 253 tahoe (tahoerun1)
+
+!let roll = -2.43
+!let loff = -129.0
+
+!calibration 244 tahoe (tahoerun2)
+!let roll = 7.91
+!let loff = -101.0
+
+!calibration 314 tahoe (tahoerun3) 
+!let roll = -2.26
+!let loff = -270.0
+
+!calibration 129 irwin (irwinrun2) 
+!let roll = -14.71
+!let loff = -282.0
+
+!calibration 209 irwin (irwinrun5) 
+!let roll = -14.75
+!let loff = -244.0
+
+!calibration 216 irwin (irwinrun6) 
+!let roll = -3.62
+!let loff = -280.0
+
+!calibration 120 irwin (irwinrun1) 
+!let roll = -5.76
+!let loff = -322.0
+
+!calibration 136 irwin (irwinrun3) 
+!let roll = -1.995
+!let loff = -317.0
+
+!calibration 207 irwin (irwinrun4) 
+!let roll = 9.07
+!let loff = -243.0
+
+if (tstacs>(-990.0))
+   let roll = 0.0
+   let loff = 0.0
+end-if
+
+asc2tcl &fname4 keyword="LOG_NL=" val=lognl vtype=8
+asc2tcl &fname4 keyword="LOG_NS=" val=logns vtype=8
+
+!   need to gen a nav file, needs to be close enough for picmatch
+
+let nl1=1
+let ns1=logns*0.5
+let nl2=lognl
+let ns2=logns*0.5
+if (tstacs>(-990.0))
+   let nl1 = linesamp(1)
+   let ns1 = linesamp(2)
+   let nl2 = linesamp(3)
+   let ns2 = linesamp(4)
+end-if
+let nl3=ns1-ns2+nl1     ! 90 degree rotation formula, based on square pixels
+let ns3=nl2-nl1+ns1
+
+let lat1=slat1
+let lon1=slon1
+let lat2=slat2
+let lon2=slon2
+let lat3=(lon2-lon1)*coslat+lat1     ! 90 degree rotation formula, lat minused
+let lon3=(lat1-lat2)/coslat+lon1
+
+let dlon = lon3-lon1
+let dlat = lat3-lat1
+
+ibis-gen &fname5 version="ibis-2" org=column nc=11 nr=3 deffmt=DOUB +
+   data=(&nl1,&ns1,&lat1,&lon1,&dlat,&dlon, +
+     &nl2,&ns2,&lat2,&lon2,&dlat,&dlon, +
+     &nl3,&ns3,&lat3,&lon3,&dlat,&dlon) +
+   datacols=(1,2,5,6,7,8)
+   
+! special section for bad ACS file plus failure to input substitute control pts
+! via the longlat and linesamp parameters
+
+pixmap (&fname5,&lsat) mapcol=(6,5) pixcol=(9,10) 'maptopix
+getzval (&lsat,&fname5) cols=(9,10,11) win=2
+ibis2tcl &fname5 v1=zchk1 v2=zchk2 vartype=(-1,-1) ibisloc=(1,11,2,11)
+ibis-l &fname5
+if ((zchk1<(-998.0)) and (zchk1>(-1000.0))) 
+   write "The first control point is not in the Landsat data area"
+   write "Possibly a bad ACS file"
+   goto theend
+end-if
+if ((zchk2<(-998.0)) and (zchk2>(-1000.0)))
+   write "The second control point is not in the Landsat data area"
+   write "Possibly a bad ACS file"
+   goto theend
+end-if
+
+! adjust for the roll of the platform   
+   
+mf3 &fname5 f="c9=704000.0*(&roll)/6378206.0"
+!mf3 &fname5 f="c11=&coslat"  the next line works better
+mf3 &fname5 f="c11=@cos(c5*3.141592/180.0)"
+mf3 &fname5 f="c10=@sqrt(c7*c7+c8*c8*(c11*c11))"
+mf3 &fname5 f="c3=c5+c9*c7/c10$c4=c6+c9*c8/c10"
+
+ibis-l &fname5
+ibis-l &fname5 cols=(1,2,3,4) +
+     csiz=(12,12,12,12) cfor="%12.6f%12.6f%12.6f%12.6f"
+
+!   now the test, real satellite at 704000, pixdeg is coarse for test
+
+let inroot = "&inloc" // "&fnamein"
+let outroot = "&outloc" // "&fnamein"
+let scratchroot = "scratch/" // "&fnamein"
+let masterloc = "&outloc" // "&key" // "master.img"
+let gridinfoloc = "&outloc" // "&fnamein"// "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein"// "gridfinal"
+
+ibis2tcl &fname5 v1=iblat1 v2=iblat2 v3=iblon1 v4=iblon2 +
+      vartype=(-1,-1,-1,-1) ibisloc=(1,3,2,3,1,4,2,4)
+let qlon = iblon1-0.35
+let qloninc = iblon1-iblon2+0.7
+let qlat = iblat1+1.40
+let qlatinc = iblat1-iblat2+2.4
+
+
+write "iblon1,iblat1 &iblon1,&iblat1"
+write "iblon2,iblat2 &iblon2,&iblat2"
+write "slon1,slat1 &slon1,&slat1"
+write "slon2,slat2 &slon2,&slat2"
+
+hywarp inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted=&dted lsat=&lsat +
+   seq=rr  pixdeg=3600.0 fftinit=&fftinit+
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc quadunit=0 +
+   master=&masterloc +
+   gridinfo=&gridinfoloc ecor1=&ecor1 ecor2=&ecor2 +
+   gridfinal=&gridfinalloc loff=&loff soff=0 modelfit=&modelfit +
+   loff2=0 soff2=0 sensE1=&slon1 sensN1=&slat1 senselv1=704000 +
+   sensE2=&slon2 sensN2=&slat2 senselv2=704000 sensunit=0 +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype +
+   line_upper=&line_upper line_lower=&line_lower maptype=&maptype
+
+
+
+theend>
+end-proc

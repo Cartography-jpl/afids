@@ -1,0 +1,4 @@
+$ vpack cutquad.com -mixed -
+	-p cutquad.pdf -
+	-t tstcutquad.pdf
+$ Exit

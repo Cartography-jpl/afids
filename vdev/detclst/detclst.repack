@@ -1,0 +1,6 @@
+$ vpack detclst.com -mixed -
+	-s detclst.c -
+	-i detclst.imake -
+	-p detclst.pdf -
+	-t tstdetclst.pdf
+$ Exit

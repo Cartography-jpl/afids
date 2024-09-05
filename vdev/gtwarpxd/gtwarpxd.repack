@@ -1,0 +1,4 @@
+$ vpack gtwarpxd.com -mixed -
+	-p gtwarpxd.pdf gtwrpsub.pdf -
+	-t tstgtwarpxd.pdf gtwarpxd.dat gtwarpxd2.dat
+$ Exit

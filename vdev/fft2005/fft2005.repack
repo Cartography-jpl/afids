@@ -1,0 +1,6 @@
+$ vpack fft2005.com -mixed -
+	-s fft2005.c my_fftw3.h -
+	-i fft2005.imake -
+	-p fft2005.pdf -
+	-t tstfft2005.pdf devfft2005.pdf
+$ Exit

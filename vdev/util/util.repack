@@ -1,0 +1,6 @@
+$ vpack util.com -mixed -
+	-p util1.pdf util2.pdf util3.pdf util4.pdf util5.pdf util6.pdf -
+	   util7.pdf utile.pdf -
+	-t util8.pdf util9.pdf utila.pdf utilb.pdf utilc.pdf utild.pdf -
+	   tstutil.pdf utilf.pdf utilg.pdf
+$ Exit

@@ -1,0 +1,4 @@
+$ vpack lsatlog.com -mixed -
+	-p lsatlog.pdf -
+	-t tstlsatlog.pdf
+$ Exit

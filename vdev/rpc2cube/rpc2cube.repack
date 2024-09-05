@@ -1,0 +1,4 @@
+$ vpack rpc2cube.com -mixed -
+	-p rpc2cube.pdf -
+	-t tstrpc2cube.pdf
+$ Exit

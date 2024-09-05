@@ -1,0 +1,32 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! TEST SCRIPT FOR amtlnfix
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*100"
+list xxa
+
+amtlnfix xxa xxb blemln=(4,99) blemwid=2 'add
+list xxb
+
+amtlnfix xxa xxb blemln=(99,4) blemwid=2 'add
+list xxb
+
+! edge cases and two blems
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line<2)*100+(line>7)*50"
+list xxa
+
+amtlnfix xxa xxb blemln=(0,8) blemwid=2 'add
+list xxb
+
+theend>
+end-proc

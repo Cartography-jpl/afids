@@ -1,0 +1,6 @@
+$ vpack lave.com -
+	-s lave.f -
+	-i lave.imake -
+	-p lave.pdf -
+	-t tstlave.pdf new_session.log
+$ Exit

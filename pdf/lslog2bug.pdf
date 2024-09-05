@@ -1,0 +1,10 @@
+procedure
+body
+write "hello"
+lsatlog2 inroot="/home/rkf/prtazboy/p166r60" +
+         outroot="/home/alz/ikapp/scratch" +
+   frame="p166r60_5t870126" +
+   band="xxnn3" maptype=xxpc hdrtype=earlxxxy +
+   master=/home/rkf/africa3/africa_master
+   
+end-proc

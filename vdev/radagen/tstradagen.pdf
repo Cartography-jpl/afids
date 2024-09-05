@@ -1,0 +1,64 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR RADAGEN
+! tests BYTE and HALF images
+!
+! Vicar Programs:
+!       fracgen list
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+
+refgbl $echo
+refgbl $autousage
+body
+let _onfail="stop"
+let $echo="no"
+let $autousage="none"
+write " "
+write " GENERATE TEST IMAGE "
+let $echo="yes"
+fracgen out=terrain.img nl=10 ns=10 format=byte seed=32161267
+let $echo="no"
+write " "
+write "-----------------------------------"
+write "!! !! !! TEST ALL DEFAULTS !! !! !!"
+write "-----------------------------------"
+write " "
+!write "radagen inp=terrain.img out=rada.img"
+let $echo="yes"
+radagen inp=terrain.img out=rada.img
+list rada.img
+let $echo="no"
+write " "
+write "------------------------------------------------------------"
+write "!1 !! !! TEST MAGELLAN BACKSCATTER MODEL"
+write "                    AND "
+write "         INTERNAL RECTIFICATION ADDITIONS !! !! !! "
+write "------------------------------------------------------------"
+write " "
+!write "radagen inp=terrain.img out=radb.img 'mgn 'rectify 'log 'fill 'half"
+let $echo="yes"
+radagen inp=terrain.img out=radb.img 'mgn 'rectify 'log 'fill 'half
+list radb.img
+let $echo="no"
+write " "
+write "---------------------------------------"
+write "!! !! !! TEST SAMPLE EXECUTION !! !! !!"
+write "---------------------------------------"
+write " "
+!write "radagen inp=terrain.img out=radd.img height=229. sscale=98.4252 +"
+!write "            lscale=98.4252 toff=0 zscale=3.280840 el=15."
+let $echo="yes"
+radagen inp=terrain.img out=radd.img height=229. sscale=98.4252 +
+            lscale=98.4252 toff=0 zscale=3.280840 el=15.
+!write "list radd.img"
+list radd.img
+let $echo="no"
+end-proc

@@ -1,0 +1,130 @@
+procedure
+
+parm joblab  string def=AF1A
+parm prelab  string def=10SEP28
+parm postlab string def=10OCT01
+parm prepan  string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm postpan string def="10SEP14082717-P1BS-052403186290_01_P001"
+
+local outdir  string init="IZ1_10SEP09_10SEP14"
+local premul  string init="10SEP09080931-M1BS-052401306030_01_P001"
+local postmul string init="10SEP14082717-M1BS-052403186290_01_P001"
+local fadetar string init="_fade.tar"
+
+local normpostpan string init="nxpostpan.img"
+local ps string init="_pan_sharp"
+local img string init=".img"
+local ntf string init=".NTF"
+local sep string init="_"
+local size int init=0
+local cmt string init="cmt_"
+local pan string init="_pan"
+
+local b1 string init="_b1"
+local b2 string init="_b2"
+local b3 string init="_b3"
+local b4 string init="_b4"
+local b5 string init="_b5"
+local b6 string init="_b6"
+local b7 string init="_b7"
+local b8 string init="_b8"
+
+local n1 string init=".n1"
+local n2 string init=".n2"
+local n3 string init=".n3"
+local n4 string init=".n4"
+local n5 string init=".n5"
+local n6 string init=".n6"
+local n7 string init=".n7"
+local n8 string init=".n8"
+
+body
+
+local afidstcl string
+
+write "changewv2 version Sat May  7 2011"
+
+tcl2tcl "puts time_changewv2_begins[exec date]"
+
+translog AFIDS_TCL afidstcl
+
+let outdir = "&joblab&sep&prelab&sep&postlab"
+
+tcl2tcl script=("set i [string first P1B &"prepan"]; ", +
+        "string replace &"prepan" $i [expr $i+2] M1B") strvar=premul
+tcl2tcl script=("set i [string first P1B &"postpan"]; ", +
+        "string replace &"postpan" $i [expr $i+2] M1B") strvar=postmul
+
+tcl2tcl "puts time_detwv5_begins[exec date]"
+
+! pre to post change detection
+! detwv5 &outdir +
+! second parm is pre pan file prefix; gets _pan.img added
+! third parm is post prefix; gets _pan.img and _bx.img added
+! normpansharpwv2 created:
+!   nxprepan.img
+!   nxpostpan.img
+!   05JAN11WV020500011JAN05064346-M1BS-052455396050_03_P004_s_pan_sharp_bX.img
+!   or &postmul&ps
+
+ush rm -f nxprepan.img &outdir/nxpre_pan.img
+ush ln -s nxprepan.img &outdir/nxpre_pan.img
+ush rm -f nxpostpan.img &outdir/&postmul&ps&pan&img
+ush ln -s nxpostpan.img &outdir/&postmul&ps&pan&img
+
+ush ls -l &outdir
+
+detwvpan &outdir +
+  &outdir/nxpre +
+  &outdir/&postmul&ps +
+  &outdir 3 100
+
+tcl2tcl "puts time_detwv5_ends[exec date]"
+
+ush cp outtab &outdir/
+
+tcl2tcl "puts time_genfade_begins[exec date]"
+
+genfade &outdir &outdir&img
+
+tcl2tcl "puts time_genfade_ends[exec date]"
+
+tcl2tcl "puts time_wv2asc2fade_begins[exec date]"
+
+write "tclsh8.5 &afidstcl/wv2asc2fade.tcl &outdir/ &prepan&ntf &postpan&ntf &joblab"
+ush tclsh8.5 &afidstcl/wv2asc2fade.tcl &outdir/ &prepan&ntf &postpan&ntf &joblab
+
+tcl2tcl "puts time_wv2asc2fade_ends[exec date]"
+
+getlinesamplonlat
+
+tcl2tcl script="file size linesamplonlat.dat" intvar=size
+
+if (size > 0)
+  ush cp linesamplonlat.dat &outdir/
+
+  tcl2tcl "puts time_chipextract_begins[exec date]"
+
+  extract_aoi_chips &prepan&img &outdir &postpan&img fadetab
+
+  tcl2tcl "puts time_chipextract_ends[exec date]"
+
+  ush cd &outdir/ ; tclsh8.5 &afidstcl/ls2ll.tcl
+
+  tcl2tcl "puts time_chiptar_begins[exec date]"
+
+  ush cd &outdir/ ; tar chf &outdir&fadetar *.csv fchip* ftrip*
+
+  tcl2tcl "puts time_chiptar_ends[exec date]"
+
+else
+  ush cd &outdir/ ; tar chf &outdir&fadetar *.csv
+end-if
+
+! ush cd &outdir/ ; rm xxxim* dif? rat* nxpost3byte nxpre3byte
+
+done>
+
+tcl2tcl "puts time_changewv2_ends[exec date]"
+
+end-proc

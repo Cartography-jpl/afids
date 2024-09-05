@@ -1,0 +1,61 @@
+PROCEDURE
+! Oct 3, 2012 - RJB
+! TEST SCRIPT FOR ROTATE
+!   tests BYTE and HALF images
+!
+! Vicar Programs:
+!   gen, list
+!
+! External Programs"
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+refgbl $echo
+refgbl $autousage
+body
+let $echo="no"
+let _onfail="stop"
+write "*************************************************"
+WRITE "THIS IS A TEST OF PROCEDURE ROTATE"
+WRITE "WE WILL ROTATE A GEN'D IMAGE BY -45 DEG SUCH THAT"
+WRITE "SHADING SHOULD APPEAR IN THE SAMPLE DIRECTION ONLY"
+write "************************************************"
+let $autousage="none"
+let $echo="yes"
+gen A NL=15 NS=15 IVAL=90
+list A
+! TEST 1 - Assign name and size
+rotate A B ANGLE=-45. IDSNAM=IDS.DAT IDSNS=1000
+list B
+!
+! TEST 2 - LOGICAL ASSIGNMENT OF IDS
+let $echo="no"
+write "************************************************"
+WRITE "SHIFT THE OUTPUT CENTER OF ROTATION AND USE NOINTERP"
+write "************************************************"
+let $echo="yes"
+rotate A B ANGLE=-45. 'NOIN CENTER=(8,4)
+list B
+! TEST 3 - HALF WORD
+let $echo="no"
+write "************************************************"
+WRITE "NOW LET'S ROTATE ABOUT (10,6) [104 DN]"
+WRITE " AND MAKE IT END UP AT (3,3)....AND IN HALFWORD"
+write "************************************************"
+let $echo="yes"
+gen C NL=15 NS=16 IVAL=90 'HALF
+list C
+rotate C D ANGLE=-45. LINE=10 SAMP=6 CENTER=(3,3)
+list D
+!
+! TEST 4 - AND ONE CASE WHERE LGEOM IS CALLED:
+rotate C D ANGLE=-85
+list D
+let $echo="no"
+end-proc

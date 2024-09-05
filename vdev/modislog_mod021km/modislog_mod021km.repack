@@ -1,0 +1,6 @@
+$ vpack modislog_mod021km.com -mixed -
+	-s modislog_mod021km.c -
+	-i modislog_mod021km.imake -
+	-p modislog_mod021km.pdf -
+	-t tstmodislog_mod021km.pdf
+$ Exit

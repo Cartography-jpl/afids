@@ -1,0 +1,857 @@
+tsteigenvec
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s /media/sf_raid3/test_data/mipl/vgr vgr
+    end-if
+end-if
+let $echo="no"
+ THIS IS A TEST FOR PROGRAM EIGENVEC
+ TEST BYTE INPUT
+ TEST PARM INC
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img) INC=10
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 10   SINC= 10
+
+
+COVARIANCE MATRIX
+
+    180.561
+
+    188.710     368.967
+
+    139.423     364.354     486.670
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    872.708      0.3148      0.6309      0.7091
+
+    137.469      0.7960      0.2315     -0.5593
+
+     26.021     -0.5170      0.7406     -0.4293
+
+write " TEST PARM LINC"
+ TEST PARM LINC
+let $echo="yes"
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img) LINC=20
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    182.148
+
+    188.843     373.268
+
+    136.846     382.601     535.672
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    915.188      0.2952      0.6176      0.7290
+
+    151.022      0.7948      0.2647     -0.5461
+
+     24.877     -0.5302      0.7406     -0.4127
+
+let $echo="no"
+ TEST PARM AREA
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr+
+/blub.img)   AREA=(20,1,10,20,40,11,10,20)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        20    1   10   20
+        40   11   10   20
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      6.836
+
+      2.308      10.329
+
+      5.940      25.828      71.204
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     81.232      0.0853      0.3435      0.9353
+
+      6.293      0.9961     -0.0089     -0.0876
+
+      0.845     -0.0218      0.9391     -0.3429
+
+let $echo="no"
+ TEST PARM EXCLUD
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img)+
+ EXCLUD=11   AREA=(20,1,10,20,40,11,10,20)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        20    1   10   20
+        40   11   10   20
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN= 11 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+      6.836
+
+      2.308      10.329
+
+      5.940      25.828      71.204
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     81.232      0.0853      0.3435      0.9353
+
+      6.293      0.9961     -0.0089     -0.0876
+
+      0.845     -0.0218      0.9391     -0.3429
+
+let $echo="no"
+ TEST PARM CORR
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img) 'CORR INC=50
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 50   SINC= 50
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.747544    1.000000
+
+   0.520154    0.842609    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.415      0.5378      0.4461      0.3527
+
+      0.486     -0.7725      0.0673      0.3897
+
+      0.099      0.3377     -0.5567      0.3297
+
+let $echo="no"
+ TEST PARM SIZE
+eigenvec INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img) SIZE=(11,11,20,20)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   20   20
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      7.405
+
+      0.965       4.057
+
+      1.054      12.553      48.319
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     51.667      0.0286      0.2554      0.9664
+
+      7.434      0.9947      0.0882     -0.0527
+
+      0.679     -0.0987      0.9628     -0.2515
+
+let $echo="no"
+ TEST HALFWORD DATA
+ TEST PARM INC
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) INC=100
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+ 525092.625
+
+ 589913.500 1345668.500
+
+ 496893.719 1294901.000 1864999.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3145960.167      0.2786      0.6193      0.7341
+
+ 431116.375      0.7029      0.3894     -0.5952
+
+ 158683.668     -0.6545      0.6818     -0.3268
+
+let $echo="no"
+ TEST PARM LINC
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) LINC=20
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 751408.562
+
+ 779199.438 1539877.750
+
+ 564333.188 1581488.625 2224324.750
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3785975.023      0.2941      0.6164      0.7305
+
+ 626665.111      0.7936      0.2684     -0.5460
+
+ 102970.926     -0.5326      0.7403     -0.4102
+
+let $echo="no"
+ TEST PARM AREA
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) AREA=(400,1,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       400    1   10   10
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  16435.516
+
+   -100.501     765.364
+
+  -1153.479    1117.430   12192.370
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+  16737.637      0.9676     -0.0237     -0.2514
+
+  11998.502      0.2525      0.0935      0.9631
+
+    657.109     -0.0007      0.9953     -0.0965
+
+let $echo="no"
+ TEST PARM EXCLUD
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img)+
+ EXCLUD=12   AREA=(101,11,10,10,201,11,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101   11   10   10
+       201   11   10   10
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN= 12 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+ 304443.531
+
+ 400370.625  576208.812
+
+ 214850.438  327080.938  211181.969
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+1046264.911      0.5222      0.7399      0.4241
+
+  38119.233     -0.6695      0.0475      0.7413
+
+   7450.128      0.5283     -0.6710      0.5202
+
+let $echo="no"
+ TEST PARM CORR
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) INC=50 'CORR
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 50   SINC= 50
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.746435    1.000000
+
+   0.518858    0.842855    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.414      0.5375      0.4457      0.3521
+
+      0.488     -0.7732      0.0678      0.3883
+
+      0.099     -0.3367      0.5559     -0.3297
+
+let $echo="no"
+ TEST PARM SIZE
+eigenvec INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) SIZE=(100,101,10,100)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       100  101   10  100
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  38477.406
+
+  -1465.034   45575.191
+
+   8609.928   85850.758  209950.141
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 246870.707      0.0352      0.3918      0.9194
+
+  38961.907      0.9872     -0.1566      0.0289
+
+   8170.120      0.1553      0.9066     -0.3924
+
+let $echo="no"
+ TEST PARM DATA
+eigenvec NVAR=3 DATA=(1.,33.,179.,991.,127.3,0.,341.0,987.6,99.3,111.,123., +
+ 50.,333.,15.,999.,1234.,378.,111.1,255.,678.,1911.)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+
+COVARIANCE MATRIX
+
+ 214255.281
+
+   4714.213  137845.109
+
+ -94345.773   57033.133  517337.781
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+ 551259.621     -0.2657      0.1288      0.9554
+
+ 193667.197      0.9285      0.3008      0.2177
+
+ 124511.346     -0.2594      0.9450     -0.1995
+
+mss INP=(vgr/uvh.img,vgr/vioh.img,vgr/bluh.img) OUT=eigen.msh
+Beginning VICAR task mss
+MSS - 14-JUL-2016 - 64bit - RJB
+* OUTPUT CONTAINS   3 INTERLEAVED DATA SETS **
+* ACTUAL OUTPUT RECORD LENGTH   5400 SAMPLES **
+mss INP=(vgr/uvb.img,vgr/viob.img,vgr/blub.img) OUT=eigen.msb
+Beginning VICAR task mss
+MSS - 14-JUL-2016 - 64bit - RJB
+* OUTPUT CONTAINS   3 INTERLEAVED DATA SETS **
+* ACTUAL OUTPUT RECORD LENGTH   5400 SAMPLES **
+let $echo="no"
+ TEST MSS MODE OF BYTE DATA
+ TEST PARM INC
+eigenvec  eigen.msb MSS=3 INC=100
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+    127.521
+
+    143.552     326.212
+
+    121.169     313.573     450.408
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    761.917      0.2803      0.6198      0.7330
+
+    103.875      0.7025      0.3879     -0.5967
+
+     38.350     -0.6542      0.6821     -0.3267
+
+let $echo="no"
+ TEST PARM LINC
+eigenvec  eigen.msb MSS=3 LINC=20
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    182.148
+
+    188.843     373.268
+
+    136.846     382.601     535.672
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    915.188      0.2952      0.6176      0.7290
+
+    151.022      0.7948      0.2647     -0.5461
+
+     24.877     -0.5302      0.7406     -0.4127
+
+let $echo="no"
+ TEST PARM AREA
+eigenvec  eigen.msb MSS=3 AREA=(101,1,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   10   10
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+      7.460
+
+     -0.080       0.405
+
+      1.322       0.306       1.621
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      7.745      0.9775     -0.0019      0.2109
+
+      1.433     -0.2010      0.2940      0.9344
+
+      0.308      0.0638      0.9558     -0.2870
+
+let $echo="no"
+ TEST PARM USE
+eigenvec  eigen.msb MSS=3 USE=(1,3) LINC=100
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=  1
+
+
+COVARIANCE MATRIX
+
+    153.690
+
+    109.443     621.199
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+    645.551      0.2172      0.9761
+
+    129.338      0.9761     -0.2172
+
+let $echo="no"
+ TEST PARM CORR AND AREA
+eigenvec  eigen.msb MSS=3 'CORR AREA=(101,1,10,10,201,11,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   10   10
+       201   11   10   10
+
+     LINC=  1   SINC=  1
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.946211    1.000000
+
+   0.921848    0.976301    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.896      0.5716      0.3739      0.4979
+
+      0.083     -0.7980      0.1480      0.4799
+
+      0.020      0.1913     -0.5002      0.5142
+
+let $echo="no"
+ TEST PARM EXCLUD AND SIZE
+eigenvec  eigen.msb MSS=3 EXCLUD=8 SIZE=(11,11,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   10   10
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN=  8 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+      5.424
+
+      1.435       1.504
+
+      3.862       2.595       7.326
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+     11.236      0.5783      0.2887      0.7630
+
+      2.504      0.8157     -0.2191     -0.5354
+
+      0.515      0.0126      0.9320     -0.3622
+
+let $echo="no"
+ TEST MSS MODE OF HALFWORD DATA
+ TEST PARM INC
+eigenvec  eigen.msh MSS=3 INC=100
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=100
+
+
+COVARIANCE MATRIX
+
+ 525092.625
+
+ 589913.500 1345668.500
+
+ 496893.719 1294901.000 1864999.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3145960.167      0.2786      0.6193      0.7341
+
+ 431116.375      0.7029      0.3894     -0.5952
+
+ 158683.668     -0.6545      0.6818     -0.3268
+
+let $echo="no"
+ TEST PARM LINC
+eigenvec  eigen.msh MSS=3 LINC=20
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC= 20   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 751408.562
+
+ 779199.438 1539877.750
+
+ 564333.188 1581488.625 2224324.750
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+3785975.023      0.2941      0.6164      0.7305
+
+ 626665.111      0.7936      0.2684     -0.5460
+
+ 102970.926     -0.5326      0.7403     -0.4102
+
+let $echo="no"
+ TEST PARM AREA
+eigenvec  eigen.msh MSS=3 AREA=(101,1,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   10   10
+
+     LINC=  1   SINC=  1
+
+
+COVARIANCE MATRIX
+
+  30326.252
+
+   -494.332    1350.619
+
+   5442.898    1403.111    6371.209
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+  31506.105      0.9774     -0.0062      0.2113
+
+   5693.915     -0.1981      0.3217      0.9259
+
+    848.061      0.0737      0.9468     -0.3132
+
+let $echo="no"
+ TEST PARM USE
+eigenvec  eigen.msh MSS=3 USE=(1,3) LINC=100
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+         1    1  450 1800
+
+     LINC=100   SINC=  1
+
+
+COVARIANCE MATRIX
+
+ 633665.500
+
+ 449855.750 2608433.000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+2706082.459      0.2121      0.9772
+
+ 536016.143      0.9772     -0.2121
+
+let $echo="no"
+ TEST PARM CORR AND AREA
+eigenvec  eigen.msh MSS=3 'CORR AREA=(101,1,10,10,201,11,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+       101    1   10   10
+       201   11   10   10
+
+     LINC=  1   SINC=  1
+
+
+CORRELATION MATRIX
+
+   1.000000
+
+   0.947412    1.000000
+
+   0.923128    0.977794    1.000000
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+      2.899      0.5715      0.3739      0.4972
+
+      0.082     -0.7983      0.1489      0.4782
+
+      0.019      0.1898     -0.4999      0.5143
+
+let $echo="no"
+ TEST PARM EXCLUD AND SIZE
+eigenvec  eigen.msh MSS=3 EXCLUD=8 SIZE=(11,11,10,10)
+Beginning VICAR task eigenvec
+
+EIGENVEC version 01-JULY-94
+
+AREA(S) PROCESSED
+
+        11   11   10   10
+
+     LINC=  1   SINC=  1
+
+     PIXEL EXCLUDED IF DN=  8 IN ALL BANDS
+
+
+COVARIANCE MATRIX
+
+  21778.414
+
+   6098.316    5688.806
+
+  15786.542    9893.481   29638.928
+
+
+
+  EIGEN
+  VALUE             EIGEN-VECTOR
+
+  45345.239      0.5832      0.2799      0.7625
+
+   9645.317      0.8114     -0.1571     -0.5630
+
+   2115.591     -0.0378      0.9471     -0.3187
+
+let $echo="no"
+exit
+slogoff

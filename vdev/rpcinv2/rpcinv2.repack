@@ -1,0 +1,6 @@
+$ vpack rpcinv2.com -mixed -
+	-s rpcinv2.c -
+	-i rpcinv2.imake -
+	-p rpcinv2.pdf -
+	-t tstrpcinv2.pdf
+$ Exit

@@ -1,0 +1,25 @@
+procedure
+parm key string
+parm in string
+parm band string
+
+local parfile string
+local pathin string
+local pathout string
+local master string
+
+local pin string
+local pout string
+body
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="pathin=" val=pathin vtype=0
+asc2tcl &parfile keyword="pathin10x=" val=pathout vtype=0
+
+let pin = "&pathin" // "/&in" // "_&band" // ".img"
+let pout = "&pathout" // "/&in" // "_&band" // ".img"
+let master = "&key" // "_master10x"
+
+gtwarp &pin &pout ref=&master 'coverinp
+
+end-proc

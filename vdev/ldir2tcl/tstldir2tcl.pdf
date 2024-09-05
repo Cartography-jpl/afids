@@ -1,0 +1,41 @@
+procedure
+local ldir string
+local msg string
+! Oct 1, 2013 - RJB
+! TEST SCRIPT FOR LDIR2TCL
+!
+! Vicar Programs:
+!       <none>   
+! 
+! External programs
+!     <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! This test file contains the String UNIQUE: 
+! Do not remove it - It allows the line to be ignored
+! in the AFIDS automated Regression Test System.
+! UNIQUE: is used for lines that are dependent on
+! the testing environment such as date/time, userid,
+! directory path, process ID or other such conditions. 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+refgbl $echo
+body
+let _onfail="stop"
+let $echo="yes"
+
+! Get the local directory
+! NOTE The phrase LOCAL DIRECTORY: is required to pass diff "IGNORE" in automated
+!      unit testing, so don't remove it
+
+ldir2tcl strvar=ldir
+let $echo="no"
+let msg = "UNIQUE: The local directory is " // "&ldir" // "."
+write "&msg"
+
+end-proc

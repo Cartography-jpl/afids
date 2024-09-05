@@ -1,0 +1,143 @@
+procedure
+parm key type=string
+parm lsatfile type=string
+parm band type=string
+parm shortname type=string
+
+local pathin type=string
+local lsatfileext type=string
+local pathlsatfile type=string
+local gridfile1 type=string
+local gridfile2 type=string
+local gridfile3 type=string
+local gridfile4 type=string
+local gridfile5 type=string
+local parfile type=string
+local zfile type=string
+
+local tnl int
+local tns int
+local gnl int
+local gns int
+local fnl real
+local fns real
+local gridspace real
+local clon real
+local clat real
+local hsize real
+local vsize real
+local path int
+local row int
+local pathrow int
+local waterthresh int
+local watercount int
+local getzvalwin int
+local cclen int
+local clen1 int
+local clen2 int
+local clen3 int
+local prprod int
+local pchk int
+local rchk int
+
+body
+
+!  get the path names
+
+let parfile = "&key" // "_params"
+asc2tcl &parfile keyword="pathin=" val=pathin vtype=0
+asc2tcl &parfile keyword="waterthresh=" val=waterthresh vtype=4
+asc2tcl &parfile keyword="watercount=" val=watercount vtype=4
+asc2tcl &parfile keyword="getzvalwin=" val=getzvalwin vtype=4
+
+!  get the filenames
+
+let lsatfileext = "&lsatfile" // "_&band" // ".img"
+let pathlsatfile = "&pathin" // "/&lsatfileext"
+let gridfile1 = "scratch/&key" // "gridfile1"
+let gridfile2 = "scratch/&key" // "gridfile2"
+let gridfile3 = "scratch/&key" // "gridfile3"
+let gridfile4 = "scratch/&key" // "gridfile4"
+let gridfile5 = "scratch/&key" // "gridfile5"
+let zfile = "&key" // "_&band" // "_zfile"
+
+!  logging goes here?, fake for now, names must be pxxxrxx...
+!  also need bigger footprint for getzval below
+
+ush /bin/rm -f &shortname
+ush ln -s &pathlsatfile &shortname
+
+!  calculate the grid then gen the grid
+
+asc2tcl &parfile keyword="gridspace=" val=gridspace vtype=8
+write "gridspace &gridspace"
+
+lab2tcl &shortname v1=tnl v2=tns keyword=(nl,ns) 'system
+let fnl = $float(tnl)*1.1
+let fns = $float(tns)*1.1
+ibis-gen &gridfile1 nc=10 nr=2 +
+   format=("DOUB","DOUB","DOUB","DOUB","DOUB","DOUB","DOUB","DOUB","FULL","FULL") +
+   datacol=(1,2) data=(1.0,1.0,&fnl,&fns)
+pixmap (&gridfile1,&shortname) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+mf3 &gridfile1 f=("c5=c3-@mod(c3,&gridspace)$c6=c4-@mod(c4,&gridspace)$", +
+   "c7=c5$c8=c6$@diff(c7)$@diff(c8)$c7=c7/(&gridspace)$c8=-c8/(&gridspace)$", +
+   "c9=c7+0.5$c10=c8+0.5$@vmin(c5)$@vmin(c6)")
+ibis-l &gridfile1
+
+ibis2tcl &gridfile1 v1=gnl v2=gns vartype=(1,1) ibisloc=(2,9,2,10)
+ibis2tcl &gridfile1 v1=clon v2=clat vartype=(-1,-1) ibisloc=(1,5,1,6)
+let hsize = gridspace*$float(gns)
+let vsize = gridspace*$float(gnl)
+write "hsize &hsize vsize &vsize"
+write "gns &gns gnl &gnl"
+write "clon &clon clat &clat"
+
+gengrid &gridfile2 ncol=6 nah=&gns nav=&gnl +
+    hbase=&clat hsize=&hsize vbase=&clon vsize=&vsize
+ibis-l &gridfile2 'format nr=15
+
+!  get the z values and prune
+
+pixmap (&gridfile2,&shortname) mapcols=(1,2) pixcols=(3,4) 'maptopix
+getzval (&shortname,&gridfile2) cols=(3,4,5,6) win=&getzvalwin +
+   reject=&watercount threject=&waterthresh
+rowop2 &gridfile2 &gridfile3 keycol=5 range=(&waterthresh,256.5) 'select
+ibis-l &gridfile3 'format nr=15
+
+!  cat to the z_file, rerunnable
+
+ibis-gen &gridfile4 nr=1 nc=7 +
+      format=("A30","A3","FULL","FULL","FULL","FULL","FULL")
+icat (&gridfile4,&gridfile3) &gridfile5 'h
+mf3 &gridfile5 f="c1=@ljust('&lsatfileext',30)$c2=@ljust('&shortname',3)"
+mf3 &gridfile5 f="c3=@num(@fstr(@bstr(c1,@pos(c1,'p')),3))"
+mf3 &gridfile5 f="c4=@num(@adelete(@break(@fstr(@bstr(c1,@pos(c1,'r')),3),'_'),'_'))"
+mf3 &gridfile5 f=("c6=c8*10000.0+(c8>=0)*0.5-(c8<0)*0.5$", +
+  "c7=c9*10000.0+(c9>=0)*0.5-(c9<0)*0.5$c5=c3*100+c4")
+ibis-l &gridfile5 'format csiz=(30,3,6,6) nr=3 +
+     cfor="%30s%3s%6d%6d" cols=(1,2,3,4)
+ibis-l &gridfile5 nr=3
+
+ibis2tcl &gridfile5 v1=path v2=row vartype=(1,1) ibisloc=(1,3,1,4)
+let pathrow = path*100+row
+rowop2 &zfile &gridfile1 keycol=(5) range=(&pathrow,&pathrow) +
+    prec=0.1 'delete
+
+ibis2tcl &gridfile1 vclen=clen1 vartype=1
+ibis2tcl &gridfile5 vclen=clen2 vartype=1
+let clen3 = clen1+clen2
+if (clen1=0)
+   ibis-copy &gridfile5 &zfile
+else
+   icat (&gridfile1,&gridfile5) &zfile
+end-if
+
+let prprod = path/25
+let pchk = prprod*25-path
+let prprod = row/25
+let rchk = prprod*25-row
+if (pchk=0 and rchk=0) label-delete &zfile
+
+ibis-l &zfile nr=3
+
+end-proc

@@ -1,0 +1,4 @@
+$ vpack picoff.com -mixed -
+	-p picoff.pdf -
+	-t tstpicoff.pdf
+$ Exit

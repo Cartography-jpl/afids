@@ -1,0 +1,107 @@
+procedure
+refgbl $echo
+
+local path    string
+local outpath string
+local band2   string
+local band3   string
+local band4   string
+local band5   string
+local band61  string
+local meta    string
+local filt1   string
+local filt2   string
+local filt3   string
+local filt4   string
+local filt5   string
+local filt6   string
+local filt7   string
+local filt8   string
+local filt9   string
+local rad2    string
+local rad3    string
+local rad4    string
+local rad5    string
+local rad61   string
+local ref2    string
+local ref3    string
+local ref4    string
+local ref5    string
+local ref2ds  string
+local ref3ds  string
+local ref4ds  string
+local ref5ds  string
+local bt61    string
+local cmvalid string
+local cmambig string
+local final   string
+local ndsiout string
+local svout   string
+local gvout   string
+local rsout   string
+local bcmpout string
+
+body
+let $echo="yes"
+
+let path    = "../test_data"
+let outpath = "regression_output"
+
+!!! DEFINE INPUT FILES !!!
+let band2   = "&path"//"/b2"
+let band3   = "&path"//"/b3"
+let band4   = "&path"//"/b4"
+let band5   = "&path"//"/b5"
+let band61  = "&path"//"/b6"
+let meta    = "&path"//"/met.txt"
+
+!!! DEFINE OUTPUT FILES !!!
+let filt1   = "&outpath"//"/filt1"
+let filt2   = "&outpath"//"/filt2"
+let filt3   = "&outpath"//"/filt3"
+let filt4   = "&outpath"//"/filt4"
+let filt5   = "&outpath"//"/filt5"
+let filt6   = "&outpath"//"/filt6"
+let filt7   = "&outpath"//"/filt7"
+let filt8   = "&outpath"//"/filt8"
+let filt9   = "&outpath"//"/filt9"
+let rad2    = "&outpath"//"/rad2"
+let rad3    = "&outpath"//"/rad3"
+let rad4    = "&outpath"//"/rad4"
+let rad5    = "&outpath"//"/rad5"
+let rad61   = "&outpath"//"/rad61"
+let ref2    = "&outpath"//"/ref2"
+let ref3    = "&outpath"//"/ref3"
+let ref4    = "&outpath"//"/ref4"
+let ref5    = "&outpath"//"/ref5"
+let bt61    = "&outpath"//"/bt61"
+let cmvalid = "&outpath"//"/validmask"
+let cmambig = "&outpath"//"/ambigmask"
+let final   = "&outpath"//"/finalout"
+let rsout   = "&outpath"//"/rs"
+let ref2ds  = "&outpath"//"/ref2ds"
+let ref3ds  = "&outpath"//"/ref3ds"
+let ref4ds  = "&outpath"//"/ref4ds"
+let ref5ds  = "&outpath"//"/ref5ds"
+let ndsiout = "&outpath"//"/ndsi"
+let svout   = "&outpath"//"/sv"
+let gvout   = "&outpath"//"/gv"
+let bcmpout = "&outpath"//"/bcomp"
+
+!goto theend
+
+acca inp=("&band2", "&band3", "&band4", "&band5", "&band61") +
+      filter1out="&filt1" filter2out="&filt2" filter3out="&filt3" +
+      filter4out="&filt4" filter5out="&filt5" filter6out="&filt6" +
+      filter7out="&filt7" filter8out="&filt8" +
+      ref2out="&ref2" ref3out="&ref3" ref4out="&ref4" ref5out="&ref5" +
+      rad2out="&rad2" rad3out="&rad3" rad4out="&rad4" rad5out="&rad5" +
+      rad61out="&rad61" out="&final" meta="&meta" btemp61out="&bt61" +
+      maskvalid="&cmvalid" maskambig="&cmambig" ref2dsout="&ref2ds" +
+      ref3dsout="&ref3ds" ref4dsout="&ref4ds" ref5dsout="&ref5ds" +
+      rsout="&rsout" ndsiout="&ndsiout" +
+      svout="&svout" gvout="&gvout" tempcompout="&bcmpout"
+
+theend>
+
+END-PROC

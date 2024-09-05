@@ -1,0 +1,6 @@
+$ vpack qplot2.com -mixed -
+	-s qplot2.f -
+	-i qplot2.imake -
+	-p qplot2.pdf -
+	-t tstqplot2.pdf tstqplot2.log
+$ Exit

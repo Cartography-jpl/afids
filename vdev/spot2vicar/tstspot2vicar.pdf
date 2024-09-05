@@ -1,0 +1,8 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+spot2vicar inp=../test_data/METADATA.DIM out=test.img
+spot2vicar inp=../test_data/METADATA.DIM out=test2.img sl=10 ss=20 nl=50
+ush ruby chktst.rb
+end-proc

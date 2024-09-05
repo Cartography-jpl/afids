@@ -1,0 +1,6 @@
+$ vpack qbref.com -mixed -
+	-s qbref.c -
+	-i qbref.imake -
+	-p qbref.pdf -
+	-t tstqbref.pdf
+$ Exit

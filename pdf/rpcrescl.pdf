@@ -1,0 +1,117 @@
+procedure
+
+
+the procedure is under development.  also see rpcsccub.c for more 
+current approach .. also see the amt proc for more current approach.
+note that rpcsccub adheres to A/B scale-offset numeric specs
+
+in fact, this procedure should be rewritten per rpcsccub/amt
+
+
+parm inp type=(string,99) count=2
+parm key type=string default="xxqq"
+
+local rpcimg type=(string,99)
+local dted type=(string,99)
+local temp1 type=(string,99)
+local temp2 type=(string,99)
+local temp3 type=(string,99)
+local temp4 type=(string,99)
+local lon1 real
+local lat1 real
+local lon2 real
+local lat2 real
+local lon3 real
+local lat3 real
+local lon4 real
+local lat4 real
+local lnl int
+local lns int
+
+local lonoff real
+local lonscl real
+local latoff real
+local latscl real
+local lineoff real
+local linescl real
+local sampoff real
+local sampscl real
+local htoff real
+local htscl real
+body
+
+! rescale an rpc
+
+let rpcimg = inp(1)
+let dted = inp(2)
+let temp1 = "&key" // "rpcrescaletemp1"
+let temp2 = "&key" // "rpcrescaletemp2"
+let temp3 = "&key" // "rpcrescaletemp3"
+let temp4 = "&key" // "rpcrescaletemp4"
+
+ibis-gen &temp1 nr=80 nc=3 deffmt="DOUB"
+rpc2ibis (&rpcimg,&temp1) cols=(1,2)
+
+gt2tcl &rpcimg val=lon1 keyword=NITF_CORNERLON1 vtype=8
+gt2tcl &rpcimg val=lat1 keyword=NITF_CORNERLAT1 vtype=8
+gt2tcl &rpcimg val=lon2 keyword=NITF_CORNERLON2 vtype=8
+gt2tcl &rpcimg val=lat2 keyword=NITF_CORNERLAT2 vtype=8
+gt2tcl &rpcimg val=lon3 keyword=NITF_CORNERLON3 vtype=8
+gt2tcl &rpcimg val=lat3 keyword=NITF_CORNERLAT3 vtype=8
+gt2tcl &rpcimg val=lon4 keyword=NITF_CORNERLON4 vtype=8
+gt2tcl &rpcimg val=lat4 keyword=NITF_CORNERLAT4 vtype=8
+lab2tcl &rpcimg v1=lnl v2=lns keyword=(nl,ns) 'system
+
+ibis-gen &temp2 nc=12 nr=4 deffmt=DOUB datacol=(1,2) +
+   data=(&lon1,&lat1,&lon2,&lat2,&lon3,&lat3,&lon4,&lat4)
+mf3 &temp2 f="c3=c1$c4=c2$@vmin(c1)$@vmin(c2)$@vmax(c3)$@vmax(c4)" 
+mf3 &temp2 f="c5=(c1+c3)*0.5$c6=c3-c5$c7=(c2+c4)*0.5$c8=c4-c7"
+
+ibis-l &temp2 cols=(1,2,3,4) csiz=(18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f"
+ibis-l &temp2 cols=(5,6,7,8) csiz=(18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f"
+
+mf3 &temp2 f="c1=0.0$c2=0.0$c3=(&lnl)$c4=(&lns)"
+mf3 &temp2 f="c9=(c1+c3)*0.5$c10=c3-c9$c11=(c2+c4)*0.5$c12=c4-c11"
+
+ibis-l &temp2 cols=(1,2,3,4) csiz=(18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f"
+ibis-l &temp2 cols=(9,10,11,12) csiz=(18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f"
+
+ibis2tcl &temp2 v1=lonoff v2=lonscl v3=latoff v4=latscl +
+   v5=lineoff v6=linescl v7=sampoff v8=sampscl +
+   vartype=(-1,-1,-1,-1,-1,-1,-1,-1) +
+   ibisloc=(1,5,1,6,1,7,1,8,1,9,1,10,1,11,1,12)
+let htoff = 1017.0
+let htscl = 634.0
+ibis-gen &temp3 nc=4 nr=80 deffmt=DOUB datacol=1 +
+   data=(0,0,0,0,0,&lineoff,&sampoff,&latoff,&lonoff,&htoff, +
+   &linescl,&sampscl,&latscl,&lonscl,&htscl)
+icat (&temp1,&temp3) &temp4 'h
+mf3 &temp4 f="c4=(@index<5.5)*c2+(@index>5.5)*c4"
+ibis-l &temp4 nr=15 cols=(1,2,3,4) csiz=(18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f"
+
+rpc2grid inp=(&rpcimg,&dted) out=&temp1 nah=12 nav=12 ncol=13
+ibis-l &temp1 nr=15 cols=(1,2,3,4,5) csiz=(18,18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f %16.9f"
+rpcscale (&temp4,&temp1) rpccol=4 'scale
+ibis-l &temp1 nr=15 cols=(1,2,3,4,5) csiz=(18,18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f %16.9f"
+
+ibislsqf (&temp1,&temp4) func="rpcn20" datacol=(1,2,3) depcol=4 rescol=6 +
+    solcol=(1,3) rpctype=B rpcls=L
+ibislsqf (&temp1,&temp4) func="rpcn20" datacol=(1,2,3) depcol=4 rescol=6 +
+    solcol=(3,5) rpctype=B rpcls=S
+ibisnlsq (&temp1,&temp4) func="rpcd20" datacol=(1,2,3) depcol=4 rescol=6 +
+    solcol=(5,6) rpctype=B rpcls=L
+ibisnlsq (&temp1,&temp4) func="rpcd20" datacol=(1,2,3) depcol=4 rescol=6 +
+    solcol=(6,7) rpctype=B rpcls=S
+ibis-l &temp4 nr=40 sr=41 cols=(1,3,5,6,7) csiz=(18,18,18,18,18) +
+   cfor="%16.10f %16.10f %16.9f %16.9f %16.9f"
+rpcfix21 &temp4 col=7
+
+theend>
+end-proc

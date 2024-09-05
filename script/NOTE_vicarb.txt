@@ -1,0 +1,48 @@
+I encountered a fairly obscure error when calling vicarb from another vicar
+proc. This brief note documents the issue and how it was resolved.
+
+The vicar program taetm interacts with subprocesses through pipes. The
+relevant code is in process.np.c for taetm, and taskpro.np.c for the
+subprocess. taetm creates 2 pipes, one for sending data to the subprocess
+and one for receiving it. These pipes get passed down the the suprocess.
+Usually these are file descriptors 4 and 5 for the two ends of the first pipe,
+and 6 and 7 for the second pipe. In principle different file descriptors could
+be used, the actual ones used are passed to the subprocess through the
+environment variables DOWN_PIPE0, DOWN_PIPE1 (for taetm sending to the
+subprocess) and UP_PIPE0 and UP_PIPE1 (for taetm receiving from the
+subprocess).
+
+After starting the subprocess, taetm goes into a wait state, waiting for the
+child process to end.  If the child process needs to communicate with
+taetm (e.g., send a message to print to the screen, or return a variable), it
+sends a SIGUSR1 signal to the taetm process. taetm has a signal handler which
+catchs this signal, then read the message from the subprocess and send back
+an acknowledgement message to the subprocess.
+
+The subprocess knows its parent taetm process id by reading the environment
+variable PARENT.
+
+We have cases where we can have taetm call a subprocess that is implemented
+through something like a python script. This script can then in turn call
+another vicar proc through vicarb. So we have a call tree like:
+
+A (taetm) -> B (python script) -> C (vicarb) -> D (another vicar proc)
+
+C sets up pipes to talk with D. However, because of the way taetm works
+the PARENT environment variable is not overriden, so it points to A.
+
+So we can have D send a message to C, but then send a SIGUSR1 to A (not C).
+C never wakes up, so the message is never actually received nor the
+acknowledgement sent to D. And A spends get locked up waiting for a message
+from D that never comes.
+
+I'm not sure why taetm doesn't override PARENT. My guess is that this is
+somehow internally used by taetm to handle nested tae scripts, but I don't
+actually know. In any case, what we clearly want is for C and D to communicate
+with each other, but have no contact with A.
+
+In practice this is easy to ensure. We just remove any existing PARENT
+environment variables in vicarb before calling the nested taetm. We also
+remove the PIPE environment variables. I'm not sure that is strictly needed,
+but it is easy enough to remove just to make sure there is no pollution for
+A for the C/D interface.

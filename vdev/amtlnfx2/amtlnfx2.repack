@@ -1,0 +1,6 @@
+$ vpack amtlnfx2.com -mixed -
+	-s amtlnfx2.c -
+	-i amtlnfx2.imake -
+	-p amtlnfx2.pdf -
+	-t tstamtlnfx2.pdf
+$ Exit

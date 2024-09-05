@@ -1,0 +1,6 @@
+$ vpack fftmagic.com -mixed -
+	-s fftmagic.f -
+	-i fftmagic.imake -
+	-p fftmagic.pdf -
+	-t tstfftmagic.pdf tstfftmagic.log
+$ Exit

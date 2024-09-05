@@ -1,0 +1,42 @@
+#! /usr/bin/env python3
+#
+# This is a short program that reads and image metadata to get the bounding box in latitude and
+# longitude. This either gets this from NITF corner metadata, or from the GCPs which GDAL
+# creates from the igeolo metadata.
+
+from geocal import *
+import osgeo.gdal as gdal
+import sys
+
+# Use VICAR argument interface, because we need to return TCL values.
+va = VicarArgument(sys.argv)
+fname = va["inp"]
+
+# Get corners from RPC
+
+f = GdalRasterImage(fname)
+if(f.has_rpc()):
+    d = SimpleDem(f.rpc().height_offset)
+    lat = []
+    lon = []
+    pt = f.rpc().ground_coordinate(ImageCoordinate(-0.5,-0.5), d)
+    lat.append(pt.latitude())
+    lon.append(pt.longitude())
+    pt = f.rpc().ground_coordinate(ImageCoordinate(-0.5,f.number_sample() - 0.5), d)
+    lat.append(pt.latitude())
+    lon.append(pt.longitude())
+    pt = f.rpc().ground_coordinate(ImageCoordinate(f.number_line()-0.5,-0.5), d)
+    lat.append(pt.latitude())
+    lon.append(pt.longitude())
+    pt = f.rpc().ground_coordinate(ImageCoordinate(f.number_line()-0.5,f.number_sample()-0.5), d)
+    lat.append(pt.latitude())
+    lon.append(pt.longitude())
+else:
+    raise RuntimeError("The file " + fname + " does not have an RPC. This is required by imagebound.")
+
+# Write out to the TCL variables passed in
+va["min_lat"] = min(lat)
+va["max_lat"] = max(lat)
+va["min_lon"] = min(lon)
+va["max_lon"] = max(lon)
+

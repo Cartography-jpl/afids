@@ -1,0 +1,48 @@
+procedure help=*
+parm inp     type=(string,99) count=1
+parm outpre  type=(string,99) count=1
+body
+
+ush vextract &inp &outpre -t
+
+end-proc
+
+.title
+VICAR Program vextractags - extracts NITF image tags, ignoring image pixels
+.help
+PURPOSE
+
+     VEXTRACTAGS extracts NITF image tags (no pixels)
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     vextract INP=A OUTPRE=B
+     
+     where
+
+     A           is an NITF input image
+     B           is a prefix for output files
+
+.PAGE
+OPERATION
+
+.PAGE
+
+RESTRICTIONS
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  Tue Mar 13 2007
+    Initial version, derived from vextract.pdf
+
+.level1
+.var inp
+Input NITF image file
+.var outpre
+Output file prefix
+.end

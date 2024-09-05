@@ -1,0 +1,11 @@
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+goto done
+if (found<1) goto done
+if (found = 0) goto done
+if ((compress <> "BASIC") and (compress <> "BASIC2"))
+end-if
+end-proc
+end-proc
+disable-log

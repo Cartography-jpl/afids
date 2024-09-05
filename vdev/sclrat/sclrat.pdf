@@ -1,0 +1,25 @@
+procedure
+
+! gives the ratio of scales of two GeoTIFF images in
+! ibis location (2,7) and its square root (the geometric
+! mean) in (2,8)
+
+! useful for getting a good correlation size for two images
+
+! the ratio is of the first scale over the second scale
+
+parm in1 type=(string,99)
+parm in2 type=(string,99)
+parm i28 type=(string,99)
+
+body
+
+ibis-gen &i28 nc=8 nr=2 deffmt=DOUB datacols=(1,2) +
+      data=(1.0,1.0,1.0,2.0)
+pixmap (&i28,&in1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+gtproj2 (&i28,&in1,&in2) incol=(3,4) outcol=(5,6) 'tec
+pixmap (&i28,&in2) mapcol=(5,6) pixcol=(7,8) 'maptopix
+mf3 &i28 +
+ f="@diff(c7)$@diff(c8)$c7=@sqrt(c7*c7+c8*c8)$c8=@sqrt(c7)"
+
+end-proc

@@ -1,0 +1,61 @@
+tstascnum
+typetext ct/ascnum.dat
+Beginning VICAR task typetext
+lat=22,118
+lon= 44
+
+  GROUP                  = SPATIALDOMAINCONTAINER
+
+    GROUP                  = HORIZONTALSPATIALDOMAINCONTAINER
+
+      GROUP                  = ZONEIDENTIFIERCLASS
+
+        OBJECT                 = ZONEIDENTIFIER
+          NUM_VAL              = 1
+          VALUE                = "-.1e+0"
+        END_OBJECT             = ZONEIDENTIFIER
+
+      END_GROUP              = ZONEIDENTIFIERCLASS
+
+ 
+    OBJECT                 = ADDITIONALATTRIBUTESCONTAINER
+      CLASS                = "-26"
+
+      OBJECT                 = ADDITIONALATTRIBUTENAME
+        CLASS                = "26"
+        NUM_VAL              = 1
+        VALUE                = "ReferencePixelNorthing"
+      END_OBJECT             = ADDITIONALATTRIBUTENAME
+
+      GROUP                  = INFORMATIONCONTENT
+        CLASS                = "26"
+
+        OBJECT                 = PARAMETERVALUE
+          NUM_VAL              = 1
+          CLASS                = "26"
+          VALUE                = "6473775.00"
+        END_OBJECT             = PARAMETERVALUE
+
+      END_GROUP              = INFORMATIONCONTENT
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="lat"
+Beginning VICAR task ascnum
+ascnum version Wed Apr 17 2009
+let $echo="no"
+lat = 2.200000000000e+01
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="lon"
+Beginning VICAR task ascnum
+ascnum version Wed Apr 17 2009
+let $echo="no"
+lon = 4.400000000000e+01
+ascnum ct/ascnum.dat seq=1 val=tclreal lineno=1 keyword="VALUE"
+Beginning VICAR task ascnum
+ascnum version Wed Apr 17 2009
+let $echo="no"
+VALUE  seq 1 = -1.000000000000e-01
+ascnum ct/ascnum.dat seq=4 val=tclreal lineno=1 keyword="VALUE"
+Beginning VICAR task ascnum
+ascnum version Wed Apr 17 2009
+let $echo="no"
+VALUE  seq 4 = 6.473775000000e+06
+exit
+slogoff

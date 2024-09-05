@@ -1,0 +1,14 @@
+procedure
+refgbl $echo
+
+local message string
+
+body
+
+let $echo="no"
+
+! Get the value
+fifor pipename=foo strvar=message
+write "Read '&message'"
+
+end-proc

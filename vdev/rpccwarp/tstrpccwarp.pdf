@@ -1,0 +1,54 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST RPCCWARP HANDYPROC
+
+goto curr
+
+utilf inp=../test_data/03MAY05072951-P1BS-000000050393_01_P005.NTF +
+   out= xxchip1.tif scr_key=xxqq xvd=n
+
+
+vtiff3-tovic xxchip1.tif xxchip1.img
+label-list xxchip1.img
+
+gtcopy xxchip1.img +
+   xxchip2.img size=(1,1,5764,5000)
+
+rpccorn in=(xxchip2.img, +
+     ../test_data/qb1_iraq_dem.hlf)
+
+curr>
+
+rpccwarp inp=(../test_data/xxchip2.img, +
+   ../test_data/qb1_iraq_dem.hlf) +
+   out=xxxmap nah=500 nav=500 'coverinp +
+   ref=../test_data/qb1_cib.img
+
+util6 xxxmap ../test_data/qb1_cib.img
+xvd xxxmap
+xvd ../test_data/qb1_cib.img
+
+goto theend
+
+curr2>
+
+ibis-gen xxxb nc=5 nr=1 deffmt=DOUB +
+  datacol=(4,5) data=(0.5,0.5)
+
+rpcinv (xxxb,../test_data/xxchip2.img, +
+   ../test_data/qb1_iraq_dem.hlf) +
+   thresh=0.0000000001
+ibis-l xxxb  csiz=(16,16,16,16,16) +
+       cfor="%16.12f %16.12f %16.12f %16.12f %16.12f"
+
+
+theend>
+end-proc
+

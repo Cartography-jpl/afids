@@ -1,0 +1,36 @@
+process help=*
+PARM PAN TYPE=STRING
+PARM INP TYPE=STRING COUNT=(8)
+PARM OUT TYPE=STRING COUNT=(8)
+
+END-PROC
+.TITLE
+brovey - use RGB/ISH to pan sharpen WV2 msi
+.HELP
+PURPOSE:
+
+The input is a pan image plus n multi-spectral images, all of the same
+nl, ns. It is assumed that the 8 msi images have been scaled up to
+the pan resolution. There are 8 output images, i.e. the pan-sharpened
+msi.
+
+EXECUTION:
+
+Example
+
+brovey PAN inp=(B1,B2,B3,B4,B5,B6,B7,B8) out=(S1,S2,S3,S4,S5,S6,S7,S8)
+                               
+ ORIGINAL PROGRAMMER:    W. Bunch Wed Aug 11 2010
+ COGNIZANT PROGRAMMER:   W. Bunch Wed Aug 11 2010
+ 
+ REVISION HISTORY
+  Wed Aug 11 2010 WB   Initial version
+  
+.LEVEL1
+.VARIABLE PAN
+STRING - Input PAN image file
+.VARIABLE INP
+STRING - Input image files
+.VARIABLE OUT
+STRING - Output sharpened images
+.END

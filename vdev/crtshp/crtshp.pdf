@@ -1,0 +1,36 @@
+process help=*
+PARM INP         TYPE=(STRING,99)
+PARM OUT         TYPE=(STRING,99)
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+to create test shapes for lp programs
+
+EXECUTION:
+
+Currently, makes only one data set, inPolys.
+
+
+Example
+
+crtshp INP=l    OUT=testShapes
+
+ TIMING: 
+
+As fast as C can read and write the lines.  
+
+ORIGINAL PROGRAMMER:    P. KIM          4 JUN 2007
+
+11-11-2019 - Ray Bambery
+
+ 
+.LEVEL1
+.VARIABLE INP
+This variable specifies the
+text file.
+.VARIABLE OUT
+filename for 3 output files.
+(out.dbf, out.shp, out shx)
+
+.END

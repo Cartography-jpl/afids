@@ -1,0 +1,223 @@
+process help=*
+
+parm inp       string      count=2
+parm out       string      count=1
+parm index     integer     count=1     def=1
+
+end-proc
+
+
+.TITLE
+IBIS Program Indexmerge
+.HELP
+IBIS is an IBIS-2 program, designed to merge rows from one 
+ibis file to another using an index to control merge operations.
+
+OPERATION
+
+This program allows the user to merge rows from one ibis tabular 
+file to another.  This is accomplished byusing an index value
+such as that created by the @index function in program mf or mf3.
+The index operation puts the sequential row number in a column
+designated by the user. If one then selects or rearranges data
+in an ibis file by rowop, the user then can replace selected 
+data back into the original file after many operations by
+using indexcopy.  
+
+There are three restrictions:
+
+Both tabular files must have the same number of columns.
+
+The index value must be in the same column in each ibis table.
+The first restriction is that the second file must have less or
+equal number of rows than the first.i
+
+The third restriction is that the index cannot be in an ascii
+column.
+
+The output file always has the same number of rows and columns
+as input 1. You cannot insert rows from file2 into file1.
+If there is no similar index in file1 then the file2 data 
+is not copied into file1 and no warning is given.
+
+It is assumed that the indices are in order in both input files.
+If they aren't then run ibis program sort on the index column of the
+file to get them back in order. The internal algorithm assumes
+that the indices increase in value towards the bottom row.
+
+The entries in parameters incol1 and incol2 must pair one 
+for one and must be of like internal format (ASCII,FULL,REAL (DOUB).
+In the special case where the number of columns in file1 equal
+the number of columns in file2 (and correspond 1 for 1 in format) 
+then if you want all of the columns of file 2 to replace those of
+file 1 in the output, then you may omit entries in incol1 and
+incol2.
+
+If you try to copy a column from file2 into a column in
+file2 with a different format an error will be generated,
+
+In order to use this program you must have put the row index
+in both file1 and file2 by using either ibis program mf or mf3.
+
+This program is typically used in cases where an ibis tabular
+file was created from a vicar image. The tabular file is then
+modified by any number of algorithms that require rowop 'select
+After processing you want to restore it to an image but you 
+would like to only modify selected portions.  
+
+What you would do in such a case is to run mf3 on the original
+data to add an index column. Do the rowop 'select processing
+and the use index copy to overwrite the old data with the
+new and then restore it to an image with mssibis.
+ 
+
+LIMITATIONS
+
+This program does not work with older ibis-1 files.
+
+
+The program has not been tested with ASCII columns.
+
+Does not work unless indices are in proper sort order,
+
+CALLING SEQUENCE:
+                                                                                                                  
+  INDEXMERGE INP=(INP1.IBIS,INP2.IBIS) OUT=OUT.IBIS PARAMS
+
+EXAMPLES
+
+
+Before:
+
+ibis-li yyC2 
+
+Rows: 1:22
++-----------+-----------+-----------+-----------+-----------+-----------+
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------+
+      282.70   357700.00     7300.00        1.00       49.00        0.00
+      284.00   357726.00     7301.00        1.00       26.00        0.00
+      283.90   357727.00     7301.00        1.00       27.00        0.00
+      283.50   357728.00     7301.00        1.00       28.00        0.00
+      284.00   357729.00     7301.00        1.00       29.00        0.00
+      283.40   357735.00     7301.00        1.00       35.00        0.00
+      282.80   357736.00     7301.00        1.00       36.00        0.00
+      282.90   357737.00     7301.00        1.00       37.00        0.00
+      282.70   357738.00     7301.00        1.00       38.00        0.00
+      282.50   357739.00     7301.00        1.00       39.00        0.00
+      282.70   357740.00     7301.00        1.00       40.00        0.00
+      282.50   357741.00     7301.00        1.00       41.00        0.00
+      282.30   357742.00     7301.00        1.00       42.00        0.00
+      283.40   357743.00     7301.00        1.00       43.00        0.00 
+      282.70   357744.00     7301.00        1.00       44.00        0.00
+      282.50   357745.00     7301.00        1.00       45.00        0.00
+      282.30   357747.00     7301.00        1.00       47.00        0.00
+      282.20   357748.00     7301.00        1.00       48.00        0.00
+      281.80   357749.00     7301.00        1.00       49.00        0.00
+      283.80   357775.00     7302.00        1.00       26.00        0.00
+      284.10   357776.00     7302.00        1.00       27.00        0.00
+      283.30   357777.00     7302.00        1.00       28.00        0.00
+
+
+ibis-li yyD2
+
+Rows: 1:20
++-----------+-----------+-----------
+         C:1         C:2         C:3
++-----------+-----------+-----------
+       65.00        0.00     7300.00
+       67.00        0.00     7301.00
+       80.00        0.00     7302.00
+       72.00        0.00     7303.00
+       84.00        0.00     7304.00
+       92.00        0.00     7305.00
+      141.00        0.00     7306.00
+      251.00        0.00     7307.00
+      364.00        0.00     7308.00
+      275.00        0.00     7309.00
+      376.00        0.00     7310.00
+      343.00        0.00     7311.00
+      589.00        0.00     7312.00
+      871.00        0.00     7313.00
+      540.00        0.00     7314.00
+      793.00        0.00     7315.00
+      878.00        0.00     7316.00
+      657.00        0.00     7317.00
+      728.00        0.00     7318.00
+     1090.00        0.00     7319.00
+
+
+indexmerge (yyC2,yyD2) yyC21 index=3
+
+After:
+
+Rows: 1:22
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+      282.70   357700.00     7300.00        1.00       49.00       65.00
+      284.00   357726.00     7301.00        1.00       26.00       67.00
+      283.90   357727.00     7301.00        1.00       27.00       67.00
+      283.50   357728.00     7301.00        1.00       28.00       67.00
+      284.00   357729.00     7301.00        1.00       29.00       67.00
+      283.40   357735.00     7301.00        1.00       35.00       67.00
+      282.80   357736.00     7301.00        1.00       36.00       67.00
+      282.90   357737.00     7301.00        1.00       37.00       67.00
+      282.70   357738.00     7301.00        1.00       38.00       67.00
+      282.50   357739.00     7301.00        1.00       39.00       67.00
+      282.70   357740.00     7301.00        1.00       40.00       67.00
+      282.50   357741.00     7301.00        1.00       41.00       67.00
+      282.30   357742.00     7301.00        1.00       42.00       67.00
+      283.40   357743.00     7301.00        1.00       43.00       67.00
+      282.70   357744.00     7301.00        1.00       44.00       67.00
+      282.50   357745.00     7301.00        1.00       45.00       67.00
+      282.30   357747.00     7301.00        1.00       47.00       67.00
+      282.20   357748.00     7301.00        1.00       48.00       67.00
+      281.80   357749.00     7301.00        1.00       49.00       67.00
+      283.80   357775.00     7302.00        1.00       26.00       80.00
+      284.10   357776.00     7302.00        1.00       27.00       80.00
+      283.30   357777.00     7302.00        1.00       28.00       80.00
+
+.page
+REVISION HISTORY
+
+   Written by:            R. J. Bambery    24-Aug-2008  
+
+    Aug 24, 2008 - RJB - Created from indexcopy.c if 7-28-2008 and 8-08-2008
+    Jan 30, 2010 - RJB - Made compatible with 64-bit afids Build 793      
+                          Linux, MacOSX (both Intel/PowerPC)          
+    Aug 12, 2010 - RJB - got rid of warning:
+                /usr/local/afids/include/vicmain_c:63: warning: function declaration isn't a prototype
+                #include vicmain_c to #include vicmain_c.h
+    Sep 17, 2013 - RJB - Removed errant indexcopy.h from include list
+
+.LEVEL1
+!
+.VAR inp  
+2 Input IBIS files
+1st one must have the
+same or more
+rows than the second
+The data of the 2nd
+file is merged into 
+the first 
+.VAR out 
+Output IBIS file with
+rows equal to the first
+ input file
+.VAR indexcol  
+Column number of index
+in both files
+
+.LEVEL2
+
+
+.VAR inp  
+Input IBIS files
+.VAR out 
+Output IBIS file
+.VAR indexcol
+Column number of index
+in both files
+
+.END

@@ -1,0 +1,4 @@
+$ vpack rpcfix21.com -mixed -
+	-p rpcfix21.pdf -
+	-t tstrpcfix21.pdf
+$ Exit

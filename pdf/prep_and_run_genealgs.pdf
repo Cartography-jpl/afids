@@ -1,0 +1,242 @@
+procedure	! prep_and_run_genealgs
+
+parm fname string	! example: 10MAY04190857-M1BS-052356639050_01_P001
+			! leave off the trailing band specific name: _r_b1.img
+
+! NOTE: Required files must be present
+
+!	gen_geneplot_cmd.py
+
+!	materialofinterest3.ibis
+!	mat1.int .. mat11.int
+
+!	The procedure generates 2 .gif files representing the band ratios for the specific known
+!	ground covers as well as the background. These can be viewed with the gimp program.
+
+parm cpu_mode string def="multi_cpu"
+parm xgrid integer def=200
+parm ygrid integer def=200
+parm numclust integer def=400
+parm maxiter integer def=1000
+parm path string def="./"		! directory location of the reflectance files
+parm class_dist_sw string def="yes"	! 2 files will be generated: 'fname'_class.img and 'fname'_dist.img
+
+local ushcmd string init="grep algorithm genealg2_c*log | wc > gen_loop_count.txt "
+local ushcmd2 string init="ls bkrdplot_*ibis | wc > num_bckgd_plots.txt "
+local ushcmd3 string init="ls -tr bkrdplot_*ibis > all_bckgd_plots.txt "
+local ushcmd4 string init="grep ABEND genealg2_c*log | wc > ABEND.txt "
+local num_bk_plots integer
+
+local testnum integer
+local val real
+local found integer
+
+!	Orthorectified reflectance
+local b1 string init="_r_b1.img"
+local b2 string init="_r_b2.img"
+local b3 string init="_r_b3.img"
+local b4 string init="_r_b4.img"
+local b5 string init="_r_b5.img"
+local b6 string init="_r_b6.img"
+local b7 string init="_r_b7.img"
+local b8 string init="_r_b8.img"
+
+local star string init="*"
+local slash string init="/"
+local int string init=".int"
+local gif string init=".gif"
+local img string init=".img"
+local smp string init="_sampler"
+local cls string init="_cluster"
+local cls2 string init="_cluster2"
+local class string init="_class"
+local dist string init="_dist"
+local final string init="_final"
+local bkgn string init="_background"
+local plt string init="_back_plot"
+
+local 1 string init="1"
+local 2 string init="2"
+local 3 string init="3"
+local 4 string init="4"
+local 5 string init="5"
+local 6 string init="6"
+local 7 string init="7"
+local 8 string init="8"
+local 9 string init="9"
+local 10 string init="10"
+local 11 string init="11"
+
+local afidsdata type=string
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+let _onfail="continue"
+
+translog AFIDS_DATA afidsdata
+ush ln -fs &afidsdata/genealg/mat1.int
+ush ln -fs &afidsdata/genealg/mat2.int
+ush ln -fs &afidsdata/genealg/mat3.int
+ush ln -fs &afidsdata/genealg/mat4.int
+ush ln -fs &afidsdata/genealg/mat5.int
+ush ln -fs &afidsdata/genealg/mat6.int
+ush ln -fs &afidsdata/genealg/mat7.int
+ush ln -fs &afidsdata/genealg/mat8.int
+ush ln -fs &afidsdata/genealg/mat9.int
+ush ln -fs &afidsdata/genealg/mat10.int
+ush ln -fs &afidsdata/genealg/mat11.int
+ush ln -fs &afidsdata/genealg/materialofinterest3.ibis
+
+ush rm -f bkrdplot_*ibis		! OK to attempt deletion even if files are not present
+write "Beginning task."
+ush date > start_run.txt
+
+!	Check for inputs
+file2tcl &path&fname&b1 val=found
+if (found=0)
+  write "The file &path&fname&b1 was not found ... aborting ..."
+  write " "
+  goto theendend
+end-if
+		! SAMPLER
+sampler inp=(&path&fname&b1, &path&fname&b2, +
+&path&fname&b3, &path&fname&b4, +
+&path&fname&b5, &path&fname&b6, +
+&path&fname&b7, &path&fname&b8) +
+out=&fname&smp&int ngridx=&xgrid ngridy=&ygrid
+
+		! CLUSTERER
+clusterer &fname&smp&int (&fname&cls&int,&fname&cls2&int) nclusters=&numclust maxiter=&maxiter
+geneprep &fname&cls2&int temp1
+
+!	Generate background files for plotting only
+plotbkrd temp1				! Generates the bkrdplot_*.ibis files used by plotting
+file2tcl num_bckgd_plots.txt val=found
+if (found=1) ush rm -f num_bckgd_plots.txt
+ush &ushcmd2
+vquic num_bckgd_plots.txt temp99 ncol=3
+ibis2tcl temp99 val vartype=0 varcnt=1 ibisloc=(1,1)
+let num_bk_plots=$fix(&val+.5)
+write "num_bk_plots: &num_bk_plots"
+ush &ushcmd3
+vquic all_bckgd_plots.txt all_bckgd_plots.int ncol=1 format="(A40)"
+icat (materialofinterest3.ibis,temp1) &fname&bkgn&int 'v
+
+let _onfail="continue"
+ush rm -f tempx*		! remove the outputs of previous runs of genealg2
+
+if (cpu_mode="single_cpu")	! Run them one at a time in series
+
+!	Skip over classes 2, 7 and 8
+  genealg2 (&fname&bkgn&int,mat1.int) tempx&1
+!	SKIP	genealg2 (&fname&bkgn&int,mat2.int) tempx&2
+  genealg2 (&fname&bkgn&int,mat3.int) tempx&3
+  genealg2 (&fname&bkgn&int,mat4.int) tempx&4
+  genealg2 (&fname&bkgn&int,mat5.int) tempx&5
+  genealg2 (&fname&bkgn&int,fine-mat6.int) tempx&6
+!	SKIP	genealg2 (&fname&bkgn&int,mat7.int) tempx&7
+!	SKIP	genealg2 (&fname&bkgn&int,mat8.int) tempx&8
+  genealg2 (&fname&bkgn&int,mat9.int) tempx&9
+  genealg2 (&fname&bkgn&int,mat10.int) tempx&10
+  genealg2 (&fname&bkgn&int,mat11.int) tempx&11
+
+else	! Run on multiple cpu's in parallel
+
+!	Tuck the filename into current_id.int so the batch jogs can run.
+  ibis-gen current_id.int nc=1 nr=1  format=("A50") string=("&fname") strcols=1
+
+  ush vicarb genealg2_c1 >& genealg2_c1.log &
+!	ush vicarb genealg2_c2 >& genealg2_c2.log &
+  ush vicarb genealg2_c3 >& genealg2_c3.log &
+  ush vicarb genealg2_c4 >& genealg2_c4.log &
+  ush vicarb genealg2_c5 >& genealg2_c5.log &
+  ush vicarb genealg2_c6 >& genealg2_c6.log &
+!	ush vicarb genealg2_c7 >& genealg2_c7.log &
+!	ush vicarb genealg2_c8 >& genealg2_c8.log &
+  ush vicarb genealg2_c9 >& genealg2_c9.log &
+  ush vicarb genealg2_c10 >& genealg2_c10.log &
+  ush vicarb genealg2_c11 >& genealg2_c11.log &
+
+  loop
+    write "Checking ..."
+    file2tcl gen_loop_count.txt val=found
+    if (found=1) ush rm -f gen_loop_count.txt
+    ush &ushcmd
+    vquic gen_loop_count.txt temp99 ncol=3
+    ibis2tcl temp99 val vartype=0 varcnt=1 ibisloc=(1,1)
+    let found=$fix(&val+.5)
+    if (found=0) goto sleep_15
+    if (found>1)
+      write "There are &found runs complete"
+    else-if (found=1)
+      write "One run has completed."
+    end-if
+    if (found=8) goto prep_plots	! All have processed !!!
+! Take a 15 second rest and then check again ...
+    sleep_15>
+    file2tcl ABEND.txt val=found
+    if (found=1) ush rm -f ABEND.txt
+    ush &ushcmd4
+    vquic ABEND.txt temp99 ncol=3
+    ibis2tcl temp99 val vartype=0 varcnt=1 ibisloc=(1,1)
+    let found=$fix(&val+.5)
+    if (found>0)
+      write "An ABEND has occured ... aborting ..."
+      goto failend
+    end-if
+    ush sleep 15
+  end-loop
+end-if
+prep_plots>
+!	Stuff all of the resulting file together 
+!	with the exception of class 2, 7 and 8
+icat (tempx1,tempx3) temp1 'v
+icat (temp1,tempx4) temp2 'v
+icat (temp2,tempx5) temp1 'v
+icat (temp1,tempx6) temp2 'v
+icat (temp2,tempx9) temp1 'v
+icat (temp1,tempx10) temp2 'v
+icat (temp2,tempx11) &fname&final&bkgn&int 'v
+
+! this should be an option to skip plotting
+goto theendend
+
+!	Plot the ground truth results
+geneplot inp=(tempx1,tempx3,tempx4,tempx5,tempx6,tempx9,tempx10,tempx11) out=&fname&gif
+ush gnuplot tmp_geneplot.pg	! NOTE: always use this name
+
+!	Put all of the background plots together
+ush gen_geneplot_cmd.py &fname&bkgn&gif
+ush gnuplot tmp_geneplot.pg	! NOTE: always use this name
+
+write " "
+write "==========================&fname processed ================================="
+write " "
+write " "
+
+theend>
+if (cpu_mode="multi_cpu")
+  write "Background job have completed on multiple CPUs"
+  ush ls -l genealg2_c*log
+end-if
+write "All runs complete."
+ush date > end_run.txt
+
+let found=0
+failend>
+if (found>0) ush grep ABEND *log
+
+! CLASSIFIER
+if (class_dist_sw="yes")
+  classifier inp=(&path&fname&b1,&path&fname&b2, +
+  &path&fname&b3,&path&fname&b4, +
+  &path&fname&b5,&path&fname&b6, +
+  &path&fname&b7,&path&fname&b8) +
+  classibis=&fname&cls&int +
+  out=(&fname&class&img,&fname&dist&img)
+  write "Class_image and Dist_image complete."
+end-if
+theendend>
+end-proc

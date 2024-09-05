@@ -1,0 +1,234 @@
+procedure help=*
+parm inp type=(string,99) count=2
+parm out type=(string,99) count=1
+parm ncol type=int default=8
+parm nah type=int count=1 default=7
+parm nav type=int count=1 default=7
+parm naz type=int count=1 default=4
+parm lon1 type=real default=-999.0
+parm lat1 type=real default=-999.0
+parm lon2 type=real default=-999.0
+parm lat2 type=real default=-999.0
+parm lon3 type=real default=-999.0
+parm lat3 type=real default=-999.0
+parm lon4 type=real default=-999.0
+parm lat4 type=real default=-999.0
+parm dz type=real default=100.0
+
+local rpcimg type=(string,99)
+local dted type=(string,99)
+
+local gridtemp1 type=(string,99)
+local gridtemp2 type=(string,99)
+local iloop int
+local elev real
+local clon1 type=real
+local clat1 type=real
+local clon2 type=real
+local clat2 type=real
+local clon3 type=real
+local clat3 type=real
+local clon4 type=real
+local clat4 type=real
+local baseelv type=real
+refgbl $echo
+body
+let $echo="yes"
+
+!  RPC2CUBE HANDYPROC
+
+write "rpc2cube 11/08/05"
+
+if (ncol<8)
+   write "ncol must be at least 8"
+   goto theend
+end-if
+
+let rpcimg = inp(1)
+let dted = inp(2)
+
+let gridtemp1 = "&rpcimg" // "gridtemp1"
+let gridtemp2 = "&rpcimg" // "gridtemp2"
+
+if (lon1>-200.0)
+   let clon1 = lon1
+   let clat1 = lat1
+   let clon2 = lon2
+   let clat2 = lat2
+   let clon3 = lon4 ! note diff order
+   let clat3 = lat3
+   let clon4 = lon3
+   let clat4 = lat4
+else
+   gt2tcl &rpcimg val=clon1 keyword=NITF_CORNERLON1 vtype=8
+   gt2tcl &rpcimg val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+   gt2tcl &rpcimg val=clon2 keyword=NITF_CORNERLON2 vtype=8
+   gt2tcl &rpcimg val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+   gt2tcl &rpcimg val=clon3 keyword=NITF_CORNERLON4 vtype=8 ! note diff order
+   gt2tcl &rpcimg val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+   gt2tcl &rpcimg val=clon4 keyword=NITF_CORNERLON3 vtype=8
+   gt2tcl &rpcimg val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+   ! actually want to move further outside for solving base, not like rpc2grid
+   let clon1 = clon1+0.2*(clon1-clon2)
+   let clat1 = clat1+0.2*(clat1-clat3)
+   let clon2 = clon2+0.2*(clon2-clon1)
+   let clat2 = clat2+0.2*(clat2-clat4)
+   let clon3 = clon3+0.2*(clon3-clon4)
+   let clat3 = clat3+0.2*(clat3-clat1)
+   let clon4 = clon4+0.2*(clon4-clon3)
+   let clat4 = clat4+0.2*(clat4-clat2)
+end-if
+
+let elev = 0.0
+let iloop = -1
+loop
+let iloop = iloop+1
+if (iloop>&naz) goto loopdone 
+
+   gengrid2 out=&gridtemp1 ncol=&ncol nah=&nah nav=&nav +
+     l1=&clon1 s1=&clat1 +
+     l2=&clon2 s2=&clat2 +
+     l3=&clon3 s3=&clat3 +
+     l4=&clon4 s4=&clat4
+   mf3 &gridtemp1 f="c3=&elev"
+   if (iloop=0)
+      ibis-copy &gridtemp1 &out
+   else
+      icat (&out,&gridtemp1) &gridtemp2
+      ibis-copy &gridtemp2 &out
+   end-if
+   let elev = elev+dz
+end-loop
+
+loopdone>
+
+mf3 &out f="c5=@index"
+rowop2 &out &gridtemp2 keycol=5 range=(0.0,1.5) 'select
+pixmap (&gridtemp2,&dted) mapcols=(1,2) pixcols=(4,5) 'maptopix
+getzval (&dted,&gridtemp2) cols=(4,5,3) win=2
+ibis2tcl &gridtemp2 v1=baseelv vartype=-1 ibisloc=(1,3)
+mf3 &out f="c3=c3+&baseelv"
+
+rpcfwd (&out,&rpcimg)
+
+theend>
+end-proc
+.TITLE
+RPC2GRID - Convert RPC in image label to a cubic grid of image to geographic.
+.HELP
+PURPOSE
+     The RPC's in a label give the transformation of a non-orthorectified image
+     (line,sample) to rectified (lon,lat) coordinates.  Mathematically, the
+     equations (RPF's) are reversed from lon-lat to line-sample.  This routine
+     creates an ultrafine grid (should be finer than the underlying DTED used)
+     that is equivalent to the transformations.
+
+     The cubic form of the grid is useful for solving for rpc's.  A spacecraft
+     modelled distortion to the cube of points can be used to update an rpc.  It
+     is envisioned that the spacecraft angles can be updated this way.
+	   
+CALL
+
+There are two modes
+
+     rpc2cube INP=rpcim OUT=outgrid NAH=nah NAV=nav NAZ=naz DZ=dz
+  WHERE:
+     rpcim          is the input data set (must have a GeoTIFF label with RPC's)
+     dted           is a dted data set (must have a GeoTIFF label, lon-lat)
+     outgrid        is the output ultrafine grid cols=(lon,lat,elv,line,samp)
+     nah            is the number of areas horizontally in the grid (points-1)
+     nav            is the number of areas vertically in the grid (points-1)
+     naz            is the number of areas in the z direction in the grid (points-1)
+     dz             is the distance between the elevation layers
+
+and
+
+     rpc2cube INP=(rpcim,dted) OUT=outgrid NAH=nah NAV=nav NAZ=naz DZ=dz LON1=lon1 +
+               LAT1=lat1 LON2=lon2 ...etc
+  WHERE:
+     rpcim          is the input data set (must have a GeoTIFF label with RPC's)
+     dted           is a dted data set (must have a GeoTIFF label, lon-lat)
+     outgrid        is the output ultrafine grid cols=(lon,lat,elv,line,samp)
+     nah            is the number of areas horizontally in the grid (points-1)
+     nav            is the number of areas vertically in the grid (points-1)
+     naz            is the number of areas in the z direction in the grid (points-1)
+     dz             is the distance between the elevation layers
+     lon1,lat1      is the first corner in clockwise order
+     lon2,lat2      is the second corner in clockwise order
+     lon3,lat3      is the third corner in clockwise order
+     lon4,lat4      is the fourth corner in clockwise order
+  
+OPERATION
+
+In mode one, the corner (lon,lat) points are obtained from the label (these should
+always be present for RPC labels).  The corners are enlarged outward by 5% so the
+generated quadrangle will cover the image data better.
+
+In mode two, the (lon,lat) points are given by the user.  The user should take care
+to cover data.
+
+Then the dted us used to look up elevation for each point using bilinear interp-
+olation.  Then the RPCFWD routine is used to calculate (line,sample) for each
+point.
+
+The columns are always in that order.  The ncols parameter can add extra columns to
+the file.
+
+PERFORMANCE
+
+The file is (nah+1)*(NAV+1)*(NAZ+1) in length.  Almost all of the time will be spent in
+RPCFWD.
+
+.PAGE
+Restrictions
+------------
+
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 16 Mar, 2005
+Current Cognizant Programmer: A. L. Zobrist
+.LEVEL1
+.VARI INP
+Input file with GeoTIFF, RPC's
+and a DTED file
+.VARI OUT
+Output file name, ultra-fine
+grid for image warping
+.VARI NCOL
+Number of columns to put in
+grid
+.VARI NAH
+Number of areas horizontally
+.VARI NAV
+Number of areas vertically
+.VARI NAZ
+Number of areas in elevation
+.VARI LON1
+Longitude of 1st corner point
+clockwise
+.VARI LAT1
+Latitude of 1st corner point
+clockwise
+.VARI LON2
+Longitude of 2d corner point
+clockwise
+.VARI LAT2
+Latitude of 2d corner point
+clockwise
+.VARI LON3
+Longitude of 3d corner point
+clockwise
+.VARI LAT3
+Latitude of 3d corner point
+clockwise
+.VARI LON4
+Longitude of 4th corner point
+clockwise
+.VARI LAT4
+Latitude of 4th corner point
+clockwise
+.VARI DZ
+distance (meters) between
+elevation layers
+.END

@@ -1,0 +1,6 @@
+$ vpack lgeom.com -mixed -
+	-s lgeom.f lgeom_unix.f mvb.c -
+	-p lgeom.pdf -
+	-t tstlgeom.pdf tstlgeom.log tlgeom.f tlgeom.pdf tlgeom.imake timelgeom.pdf -
+	-i lgeom.imake
+$ Exit

@@ -1,0 +1,101 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+! Sep 15, 2013 - RJB
+! TEST SCRIPT FOR INTERLV
+! tests BYTE images, supports all formats
+!
+! Vicar Programs:
+!       translog copy list difpic
+! 
+! External programs
+!       <none>
+!
+! Parameters:
+!       <none>
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+
+refgbl $echo
+
+body
+let _onfail="stop"
+let $echo="no"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+           
+if (afidsroot = "")
+!MIPL       
+    ush ln -s /project/test_work/testdata/carto cl
+else        
+!CARTLAB 
+    if (aftestdata = "")   
+        ush ln -s /raid1/vicar_test_images/testdata/carto cl
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto cl
+    end-if
+end-if     
+let _onfail="goto rm"
+
+let $echo="yes"  
+copy cl/frame1.bw f1.bw
+!
+! TEST 1 - TV Frame 1 - Left direction 1 pixel 
+!
+list f1.bw size=(1,1,10,10)
+interlv f1.bw f1.l1 pixoff=1 dirction=left
+list f1.l1 size=(1,1,10,10) 
+!
+! TEST 2 - TV Frame 1 - Right direction 1 pixel 
+!
+interlv f1.bw f1.r1 PIXOFF=1 dirction=right
+list f1.r1 size=(1,1,10,10)
+!
+
+
+copy cl/frame2.bw f2.bw
+!
+! TEST 3 - TV Frame 2 - left direction 1 pixel 
+!
+list f2.bw size=(1,1,10,10)
+interlv f2.bw f2.l1 pixoff=1 dirction=left
+list f2.l1 size=(1,1,10,10)
+!
+! TEST 4 - TV Frame 2 - right direction 1 pixel 
+!
+interlv f2.bw f2.r1 PIXOFF=1 dirction=right
+list f2.r1 size=(1,1,10,10)
+!
+! TEST 5 - TV Frame 1 - Reverse left 1 pixel
+!
+interlv f2.l1 f2.rev PIXOFF=1 dirction=right
+list f2.rev size=(1,1,10,10)
+
+difpic (f2.bw,f2.rev)
+
+!f2 (f2.bw,f2.rev) f2.diff func=("in1-in2")
+
+let $echo="no"
+write "***************************************"
+write "There should be 239 pixels different"
+write "All differences are in pixel 1 of   "
+write "alternate lines                     "
+write "***************************************"
+let $echo="yes"
+difpic (f2.bw,f2.rev) size=(1,2,282,511)
+
+let $echo="no"
+write "***************************************"
+write " Now the differences should be 0"
+write "***************************************"
+
+rm>
+let $echo="no"
+   ush rm -f cl
+
+end-proc

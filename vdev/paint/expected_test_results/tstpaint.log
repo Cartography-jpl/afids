@@ -1,0 +1,165 @@
+tstpaint
+f2       OUT=P1.IMG SIZE=(1,1,27,27) FORMAT=BYTE  +
+         FUNC=("IN1+((MOD(LINE,3).EQ.0).OR.(MOD(SAMP,3).EQ.0))*255")
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 729 TIMES
+list     P1.IMG SIZE=(18,18,10,10)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp    18      20      22      24      26
+   Line
+     18     255 255 255 255 255 255 255 255 255 255
+     19     255   0   0 255   0   0 255   0   0 255
+     20     255   0   0 255   0   0 255   0   0 255
+     21     255 255 255 255 255 255 255 255 255 255
+     22     255   0   0 255   0   0 255   0   0 255
+     23     255   0   0 255   0   0 255   0   0 255
+     24     255 255 255 255 255 255 255 255 255 255
+     25     255   0   0 255   0   0 255   0   0 255
+     26     255   0   0 255   0   0 255   0   0 255
+     27     255 255 255 255 255 255 255 255 255 255
+f2       OUT=P2.IMG SIZE=(1,1,54,54) FORMAT=HALF  +
+         FUNC=("IN1+((MOD(LINE,3).EQ.0).OR.(MOD(SAMP,3).EQ.0))*255")
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 2916 TIMES
+list     P2.IMG SIZE=(45,45,10,10) FORMAT=HALF
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp      45    46    47    48    49    50    51    52    53    54
+   Line
+     45       255   255   255   255   255   255   255   255   255   255
+     46       255     0     0   255     0     0   255     0     0   255
+     47       255     0     0   255     0     0   255     0     0   255
+     48       255   255   255   255   255   255   255   255   255   255
+     49       255     0     0   255     0     0   255     0     0   255
+     50       255     0     0   255     0     0   255     0     0   255
+     51       255   255   255   255   255   255   255   255   255   255
+     52       255     0     0   255     0     0   255     0     0   255
+     53       255     0     0   255     0     0   255     0     0   255
+     54       255   255   255   255   255   255   255   255   255   255
+f2       OUT=P3.IMG SIZE=(1,1,546,546) FORMAT=HALF  +
+         FUNC=("IN1+((MOD(LINE,3).EQ.0).OR.(MOD(SAMP,3).EQ.0))*255")
+Beginning VICAR task f2
+F2 version 09-Feb-2015 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 298116 TIMES
+list     P3.IMG SIZE=(537,537,10,10) FORMAT=HALF
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp     537   538   539   540   541   542   543   544   545   546
+   Line
+    537       255   255   255   255   255   255   255   255   255   255
+    538       255     0     0   255     0     0   255     0     0   255
+    539       255     0     0   255     0     0   255     0     0   255
+    540       255   255   255   255   255   255   255   255   255   255
+    541       255     0     0   255     0     0   255     0     0   255
+    542       255     0     0   255     0     0   255     0     0   255
+    543       255   255   255   255   255   255   255   255   255   255
+    544       255     0     0   255     0     0   255     0     0   255
+    545       255     0     0   255     0     0   255     0     0   255
+    546       255   255   255   255   255   255   255   255   255   255
+paint    P1.IMG (A,D) 'BYTE 'PBORDER THRESH=2
+Beginning VICAR task paint
+PAINT version 6-MAR-10
+      81 PRELIMINARY REGIONS
+      81 REGIONS PAINTED
+list     A SIZE=(18,18,10,10)
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+ Task:PAINT     User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp    18      20      22      24      26
+   Line
+     18      61  52  61  62  53  53  63  54  54  54
+     19      61  61  61  61  62  62  62  63  63  63
+     20      60  61  61  61  62  62  63  63  63  63
+     21      60  61  70  61  71  71  62  63  72  63
+     22      70  70  70  71  71  71  72  72  72  72
+     23      70  70  70  71  71  71  71  72  72  72
+     24      79  79  70  80  71  71  81  72  81  72
+     25      78  79  79  79  80  80  81  81  81  81
+     26      78  79  79  79  80  80  81  81  81  81
+     27      78  79  79  79  80  80  80  81  81  81
+paint    P2.IMG (B,D) 'HALF 'PBORDER THRESH=2
+Beginning VICAR task paint
+PAINT version 6-MAR-10
+     324 PRELIMINARY REGIONS
+     324 REGIONS PAINTED
+list     B SIZE=(45,45,10,10) FORMAT=HALF
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+ Task:PAINT     User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp      45    46    47    48    49    50    51    52    53    54
+   Line
+     45       267   268   286   268   287   269   269   270   270   270
+     46       285   286   286   287   287   287   288   288   288   288
+     47       286   286   286   286   287   287   288   288   288   288
+     48       304   286   286   286   305   287   287   306   306   288
+     49       303   304   304   304   305   305   305   306   306   306
+     50       304   304   304   304   305   305   306   306   306   306
+     51       322   304   322   323   323   305   305   324   324   306
+     52       322   322   322   322   323   323   324   324   324   324
+     53       321   322   322   322   323   323   324   324   324   324
+     54       321   322   322   322   323   323   323   324   324   324
+paint    P3.IMG (C,D) 'HALF 'PBORDER THRESH=2
+Beginning VICAR task paint
+PAINT version 6-MAR-10
+   33124 PRELIMINARY REGIONS
+   33124 REGIONS PAINTED
+list     C SIZE=(537,537,10,10) FORMAT=HALF
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+ Task:PAINT     User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp     537   538   539   540   541   542   543   544   545   546
+   Line
+    537     32575 32758 32758 32576 32577 32759 32760 32760 32760 32578
+    538     32758 32758 32758 32758 32759 32759 32759 32760 32760 32760
+    539     32758 32758 32758 32759 32759 32759 32760 32760 32760 32760
+    540     32757 32758 32758-32595-32595 32759 32759-32594-32594 32760
+    541    -32596-32596-32596-32596-32595-32595-32594-32594-32594-32594
+    542    -32596-32596-32596-32596-32595-32595-32595-32594-32594-32594
+    543    -32597-32414-32596-32413-32413-32595-32412-32412-32594-32594
+    544    -32414-32414-32414-32414-32413-32413-32413-32412-32412-32412
+    545    -32414-32414-32414-32414-32413-32413-32413-32412-32412-32412
+    546    -32415-32414-32414-32414-32413-32413-32413-32412-32412-32412
+paint    P3.IMG (E,D) 'HALF 'PBORDER 'ZEDGE
+Beginning VICAR task paint
+PAINT version 6-MAR-10
+   32762 PRELIMINARY REGIONS
+   32761 REGIONS PAINTED
+list     E SIZE=(537,537,10,10) FORMAT=HALF
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:F2        User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+ Task:PAINT     User:afids     Date_Time:Mon Oct  7 13:10:45 2019
+     Samp     537   538   539   540   541   542   543   544   545   546
+   Line
+    537     32215 32397 32397 32216 32217 32398 32399 32399 32399 32218
+    538     32397 32397 32397 32397 32398 32398 32398 32399 32399 32399
+    539     32397 32397 32397 32398 32398 32398 32399 32399 32399 32399
+    540     32396 32397 32397 32579 32579 32398 32398 32580 32580 32399
+    541     32578 32578 32578 32578 32579 32579 32580 32580 32580 32580
+    542     32578 32578 32578 32578 32579 32579 32579 32580 32580 32580
+    543     32577 32759 32578 32760 32760 32579 32761 32761 32580 32580
+    544     32759 32759 32759 32759 32760 32760 32760 32761 32761 32761
+    545     32759 32759 32759 32759 32760 32760 32760 32761 32761 32761
+    546     32758 32759 32759 32759 32760 32760 32760 32761 32761 32761
+let $echo="no"
+exit
+slogoff

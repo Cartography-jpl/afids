@@ -1,0 +1,514 @@
+!cutil5_light.pdf version 2.1
+!L1 AMT Image Processing Subsystem, Build 4.13
+!Latest Change Date: 04SEP2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 5 - Create Flat Field Gain/Offset Calibration Files
+
+!This VICAR procedure reads PRC/SHC L1N AMT Flat Field imagery (from all
+!Filters except 007) that have been averaged by cutil3_ave, and applies a
+!(per pixel) linear regression to generate gain and offset parameters.
+!Calibration files prepared for one Clock Rate should work for other
+!Clock Rates of the same Integration Time, Filter, and Gain. 
+
+!Requires Dark Rate products from cutil4_dark.
+
+!This code should be executed from the "run5_light.pdf" program.
+!**********************************************************************
+
+!VICAR Parameter Defintions
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  inpdir string   def="/raid12/amt/sw/vic/"
+parm  outdir string   def="/raid12/amt/sw/vic/" 
+parm  caldir string   def="/raid12/amt/sw/vic/"  !Location of Dark Rate Calibration
+parm  filter string   def="001" !Filter Number of the Flat Field (3 digits)
+parm  clock  string   def="8"   !Abreviated Clock rate for filename use (8,4,2,etc)
+parm  gain   string   def="4"   !Gain value (1,4,6)
+parm  subt   string   def="PRC" !File Subtype PRC or SHC
+Parm  vers   string   !Calibration Version Number
+parm  numint integer  !Number of Integration Times to Process
+parm  int1   string   def=0 !1st  integration time in ms
+parm  int2   string   def=0 !2nd  integration time in ms
+parm  int3   string   def=0 !3rd  integration time in ms
+parm  int4   string   def=0 !4th  integration time in ms
+parm  int5   string   def=0 !5th  integration time in ms
+parm  int6   string   def=0 !6th  integration time in ms
+parm  int7   string   def=0 !7th  integration time in ms
+parm  int8   string   def=0 !8th  integration time in ms
+parm  int9   string   def=0 !9th  integration time in ms
+parm  int10  string   def=0 !10th integration time in ms
+parm  int11  string   def=0 !11th integration time in ms
+parm  int12  string   def=0 !12th integration time in ms
+parm  int13  string   def=0 !13th integration time in ms
+parm  int14  string   def=0 !14th integration time in ms
+parm  int15  string   def=0 !15th integration time in ms
+parm  int16  string   def=0 !16th integration time in ms
+parm  int17  string   def=0 !17th integration time in ms
+parm  int18  string   def=0 !18th integration time in ms
+parm  int19  string   def=0 !19th integration time in ms
+parm  int20  string   def=0 !20th integration time in ms
+parm  int21  string   def=0 !21st integration time in ms
+parm  int22  string   def=0 !22nd integration time in ms
+!Parameters used within this program
+local I      integer  !Index Counter
+local found  integer  !File found (1) or not found (1)
+local sec    integer  !Clock Seconds for temporary variable names
+local rowt   integer  !Integration Rows
+local strn1  string   !Dark Rate Filename
+local strn2  string   !Dark Offset Filename
+local int    string   !Integration Time Variable
+local rint    real    !Integration Time Varialbe
+local m1      real    !1st  IntTime Mean
+local m2      real    !2nd  IntTime Mean
+local m3      real    !3rd  IntTime Mean   
+local m4      real    !4th  IntTime Mean
+local m5      real    !5th  IntTime Mean   
+local m6      real    !6th  IntTime Mean
+local m7      real    !7th  IntTime Mean   
+local m8      real    !8th  IntTime Mean
+local m9      real    !9th  IntTime Mean   
+local m10     real    !10th IntTime Mean
+local m11     real    !11th IntTime Mean   
+local m12     real    !12th IntTime Mean
+local m13     real    !13th IntTime Mean   
+local m14     real    !14th IntTime Mean
+local m15     real    !15th IntTime Mean   
+local m16     real    !16th IntTime Mean
+local m17     real    !17th IntTime Mean   
+local m18     real    !18th IntTime Mean
+local m19     real    !19th IntTime Mean   
+local m20     real    !20th IntTime Mean
+local m21     real    !21st IntTime Mean   
+local m22     real    !22nd IntTime Mean
+local std     real    !IntTime Standard Deviation
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl     &inpdir val=found
+if          (found=0) goto error1
+file2tcl     &outdir val=found
+if          (found=0) goto error1
+
+write       " "
+write       "numint = &numint"
+write       " "
+
+!Validate Input Files
+let          I = 0		!Loop Counter
+loop        
+let          I = I + 1
+if          (I > numint) break
+let          int = int&I
+write       "int = &int"
+file2tcl     &"inpdir"ave_AL1N_&"subt"_c&"clock"_g&"gain"_f&"filter"_int&"int".hlf +
+             val=found
+if          (found=0) goto error2
+
+!Check for invalid Filter Numbers
+if          ("&filter" = "007") goto error3
+!**********************************************************************
+
+!Convert Integration Time String Variables to Real Format
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "strVal2RealVar &int") realvar=rint
+
+!Get Dark Rate Calibration Filenames
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir DEC_DRATE-&subt &int") strvar=strn1
+write       "DARK RATE = &strn1"
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir DEC_DOFFS-&subt &int") strvar=strn2
+write       "DARK OFFS = &strn2"
+
+if          ("&strn1" = "NOMATCH") goto error4
+if          ("&strn2" = "NOMATCH") goto error4
+
+!Subtract Out the Dark Rate (Dark Current)
+f2           inp=(&"inpdir"ave_AL1N_&"subt"_c&"clock"_g&"gain"_f&"filter"_int&"int".hlf, +
+             &"outdir"&"strn1",&"outdir"&"strn2") +
+             out=xx&"I"tmp&sec func="(in1-in3-in2*&"rint")"
+!            Same as: func="(in1-(in2*&"rint"+in3)"
+hist         inp=xx&"I"tmp&sec mean=m&I sigma=std 'nohi 'exclude
+end-loop
+
+if          (numint = 1) goto error5     !Must have at least 2 Int Time Images
+!**********************************************************************
+
+!Go to the Next Processing Step Based on the Number of Input Integration Times (numint)
+if          (numint = 2)   goto next2
+if          (numint = 3)   goto next3
+if          (numint = 4)   goto next4
+if          (numint = 5)   goto next5
+if          (numint = 6)   goto next6
+if          (numint = 7)   goto next7
+if          (numint = 8)   goto next8
+if          (numint = 9)   goto next9
+if          (numint = 10)  goto next10
+if          (numint = 11)  goto next11
+if          (numint = 12)  goto next12
+if          (numint = 13)  goto next13
+if          (numint = 14)  goto next14
+if          (numint = 15)  goto next15
+if          (numint = 16)  goto next16
+if          (numint = 17)  goto next17
+if          (numint = 18)  goto next18
+if          (numint = 19)  goto next19
+if          (numint = 20)  goto next20
+if          (numint = 21)  goto next21
+if          (numint = 22)  goto next22
+!**********************************************************************
+
+next2>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int2".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int2".rel) +          
+             calval=(&m1,&m2) +
+             mode=fitonly 'inverse
+goto         next23
+
+next3>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec) +       
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int3".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int3".rel) +
+             calval=(&m1,&m2,&m3) +
+             mode=fitonly 'inverse
+goto         next23
+
+next4>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int4".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int4".rel) +
+             calval=(&m1,&m2,&m3,&m4) +
+             mode=fitonly 'inverse
+goto         next23
+
+next5>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int5".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int5".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5) +
+             mode=fitonly 'inverse
+goto         next23
+
+next6>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int6".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int6".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6) +
+             mode=fitonly 'inverse
+goto         next23
+
+next7>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int7".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int7".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7) +
+             mode=fitonly 'inverse
+goto         next23
+
+next8>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int8".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int8".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8) +
+             mode=fitonly 'inverse
+goto         next23
+
+next9>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int9".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int9".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9) +
+             mode=fitonly 'inverse
+goto         next23
+
+next10>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int10".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int10".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10) +
+             mode=fitonly 'inverse
+goto         next23
+
+next11>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int11".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int11".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11) +
+             mode=fitonly 'inverse
+goto         next23
+
+next12>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int12".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int12".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12) +
+             mode=fitonly 'inverse
+goto         next23
+
+next13>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int13".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int13".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13) +
+             mode=fitonly 'inverse
+goto         next23
+
+next14>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int14".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int14".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14) +
+             mode=fitonly 'inverse
+goto         next23
+
+next15>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_&V"vers"_&"int1"-&"int15".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int15".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15) +
+             mode=fitonly 'inverse
+goto         next23
+
+next16>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int16".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int16".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +         
+             &m15,&m16) +
+             mode=fitonly 'inverse
+goto         next23
+
+next17>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int17".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int17".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15,&m16,&m17) +
+             mode=fitonly 'inverse
+goto         next23
+
+next18>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec,xx18tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int18".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int18".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15,&m16,&m17,&m18) +
+             mode=fitonly 'inverse
+goto         next23
+
+next19>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec,xx18tmp&sec,xx19tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int19".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int19".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15,&m16,&m17,&m18,&m19) +
+             mode=fitonly 'inverse
+goto         next23
+
+next20>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec,xx18tmp&sec,xx19tmp&sec,xx20tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int20".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int20".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15,&m16,&m17,&m18,&m19,&m20) +
+             mode=fitonly 'inverse
+goto         next23
+
+next21>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec,xx18tmp&sec,xx19tmp&sec,xx20tmp&sec, +
+             xx21tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int21".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int21".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14, +
+             &m15,&m16,&m17,&m18,&m19,&m20,&m21) +
+             mode=fitonly 'inverse
+goto         next23
+
+next22>
+calfit       inp=(xx1tmp&sec,xx2tmp&sec,xx3tmp&sec,xx4tmp&sec,xx5tmp&sec, +
+             xx6tmp&sec,xx7tmp&sec,xx8tmp&sec,xx9tmp&sec,xx10tmp&sec, +
+             xx11tmp&sec,xx12tmp&sec,xx13tmp&sec,xx14tmp&sec,xx15tmp&sec, +
+             xx16tmp&sec,xx17tmp&sec,xx18tmp&sec,xx19tmp&sec,xx20tmp&sec, +
+             xx21tmp&sec,xx22tmp&sec) +
+out=(&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int22".rel, +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int22".rel) +
+             calval=(&m1,&m2,&m3,&m4,&m5,&m6,&m7,&m8,&m9,&m10,&m11,&m12,&m13,&m14,&m15, +
+             &m16,&m17,&m18,&m19,&m20,&m21,&m22) +
+             mode=fitonly 'inverse
+
+next23>
+hist         +
+&"outdir"ACAL_FPA_LGAIN-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int".rel
+hist         +
+&"outdir"ACAL_FPA_LOFFS-&"subt"-C&"clock"-F&"filter"-G&"gain"_V&"vers"_&"int1"-&"int".rel
+!**********************************************************************
+
+!Delete Temporary Files, Handle Errors, and Print Closing Message
+file2tcl      xx1tmp&sec val=found 
+if           (found = 1) ush rm xx1tmp&sec
+file2tcl      xx2tmp&sec val=found
+if           (found = 1) ush rm xx2tmp&sec
+file2tcl      xx3tmp&sec val=found
+if           (found = 1) ush rm xx3tmp&sec
+file2tcl      xx4tmp&sec val=found
+if           (found = 1) ush rm xx4tmp&sec
+file2tcl      xx5tmp&sec val=found 
+if           (found = 1) ush rm xx5tmp&sec
+file2tcl      xx6tmp&sec val=found
+if           (found = 1) ush rm xx6tmp&sec
+file2tcl      xx7tmp&sec val=found
+if           (found = 1) ush rm xx7tmp&sec
+file2tcl      xx8tmp&sec val=found
+if           (found = 1) ush rm xx8tmp&sec
+file2tcl      xx9tmp&sec val=found
+if           (found = 1) ush rm xx9tmp&sec
+file2tcl      xx10tmp&sec val=found
+if           (found = 1) ush rm xx10tmp&sec
+file2tcl      xx11tmp&sec val=found
+if           (found = 1) ush rm xx11tmp&sec
+file2tcl      xx12tmp&sec val=found          
+if           (found = 1) ush rm xx12tmp&sec         
+file2tcl      xx13tmp&sec val=found         
+if           (found = 1) ush rm xx13tmp&sec         
+file2tcl      xx14tmp&sec val=found         
+if           (found = 1) ush rm xx14tmp&sec         
+file2tcl      xx15tmp&sec val=found         
+if           (found = 1) ush rm xx15tmp&sec         
+file2tcl      xx16tmp&sec val=found          
+if           (found = 1) ush rm xx16tmp&sec         
+file2tcl      xx17tmp&sec val=found         
+if           (found = 1) ush rm xx17tmp&sec         
+file2tcl      xx18tmp&sec val=found         
+if           (found = 1) ush rm xx18tmp&sec         
+file2tcl      xx19tmp&sec val=found         
+if           (found = 1) ush rm xx19tmp&sec         
+file2tcl      xx20tmp&sec val=found         
+if           (found = 1) ush rm xx20tmp&sec         
+file2tcl      xx21tmp&sec val=found         
+if           (found = 1) ush rm xx21tmp&sec         
+file2tcl      xx22tmp&sec val=found         
+if           (found = 1) ush rm xx22tmp&sec
+goto          theend1
+!**********************************************************************
+
+error1>
+!Error Messages
+write        " "
+write        "*** ERROR: Specified Directory Not Found ***"
+goto          next24
+error2>
+write        " "
+write        "*** ERROR: The Expected Input Data was NOT Found ***"
+goto          next24
+error3>     
+write        " "
+write        "*** ERROR: Filter 007 is NOT Valid for this PROC ***" 
+goto          next24
+error4>
+write        " "
+write        "*** ERROR: Dark Rate Calibration Files NOT Found ***"
+goto          next24
+error5>
+write        " "
+write        "*** ERROR: numint Must Be Greater Than 1"
+next24>
+write        "*** Calibration Utility-5 Flat Field Program: Stopped Due to Errors ***"
+write        " "
+file2tcl      xx1tmp&sec val=found    
+if           (found = 1) ush rm xx1tmp&sec
+file2tcl      xx2tmp&sec val=found
+if           (found = 1) ush rm xx2tmp&sec
+file2tcl      xx3tmp&sec val=found
+if           (found = 1) ush rm xx3tmp&sec
+file2tcl      xx4tmp&sec val=found
+if           (found = 1) ush rm xx4tmp&sec
+file2tcl      xx5tmp&sec val=found    
+if           (found = 1) ush rm xx5tmp&sec
+file2tcl      xx6tmp&sec val=found
+if           (found = 1) ush rm xx6tmp&sec
+file2tcl      xx7tmp&sec val=found
+if           (found = 1) ush rm xx7tmp&sec
+file2tcl      xx8tmp&sec val=found
+if           (found = 1) ush rm xx8tmp&sec
+file2tcl      xx9tmp&sec val=found   
+if           (found = 1) ush rm xx9tmp&sec
+file2tcl      xx10tmp&sec val=found
+if           (found = 1) ush rm xx10tmp&sec
+file2tcl      xx11tmp&sec val=found
+if           (found = 1) ush rm xx11tmp&sec
+file2tcl      xx12tmp&sec val=found          
+if           (found = 1) ush rm xx12tmp&sec         
+file2tcl      xx13tmp&sec val=found         
+if           (found = 1) ush rm xx13tmp&sec 
+file2tcl      xx14tmp&sec val=found
+if           (found = 1) ush rm xx14tmp&sec
+file2tcl      xx15tmp&sec val=found
+if           (found = 1) ush rm xx15tmp&sec
+file2tcl      xx16tmp&sec val=found
+if           (found = 1) ush rm xx16tmp&sec
+file2tcl      xx17tmp&sec val=found
+if           (found = 1) ush rm xx17tmp&sec         
+file2tcl      xx18tmp&sec val=found         
+if           (found = 1) ush rm xx18tmp&sec         
+file2tcl      xx19tmp&sec val=found
+if           (found = 1) ush rm xx19tmp&sec         
+file2tcl      xx20tmp&sec val=found   
+if           (found = 1) ush rm xx20tmp&sec
+file2tcl      xx21tmp&sec val=found
+if           (found = 1) ush rm xx21tmp&sec
+file2tcl      xx22tmp&sec val=found
+if           (found = 1) ush rm xx22tmp&sec
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-5 Flat Field: Successfully Completed ***"
+write        " "
+theend2>
+!**********************************************************************
+end-proc

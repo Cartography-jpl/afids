@@ -1,0 +1,62 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR POLARECT
+! tests BYTE and HALF images
+!
+! Vicar Programs:
+!       spot label-list difpic list cform
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+refgbl $echo
+body
+let _onfail="stop"
+let $echo="yes"
+
+!goto skip
+! Generate BYTE test image and test BYTE mode.
+spot a nl=100 ns=100 
+!list a size=(51 51 20 20)
+polarect a b (1 1 100 50) 'AUTO XCEN=50 YCEN=50
+!list b size=(1 1 20 20)
+label-li b
+polarect b c (1 1 100 100) 'INVERSE 
+!list c size=(51 51 20 20)
+label-li c
+!1798 differences
+difpic (a,c) d
+! 3 at 38,55
+list d (30,50,10,10)
+let $echo="no"
+end-proc
+! Generate HALF test image and test HALF mode.
+cform a ah oform=half
+list ah size=(51 51 20 20)
+polarect ah bh (1 1 100 50) 'AUTO XCEN=50 YCEN=50
+list bh size=(1 1 20 20)
+polarect bh ch (1 1 100 100) 'INVERSE
+list ch size=(51 51 20 20)
+
+
+!skip>
+gen x nl=100 ns=100 linc=50 sinc=50
+polarect x y (1 1 100 50)  XCEN=50 YCEN=50
+label-li y
+polarect y z (1 1 100 100) 'INVERSE
+label-li z
+skip>
+gen xx nl=1000 ns=1000 linc=50 sinc=50
+polarect xx yy size=(1,1,300,500) XCEN=-1000. YCEN=500. +
+    RANGE=(-15.,+15.) RMIN=1250. RMAX=1750. +
+    RESO=(0.01) RSCALE=1.0
+label-li yy
+polarect yy zz size=(1,1,1000,1000) 'INVERSE
+label-li zz
+let $echo="no"
+end-proc

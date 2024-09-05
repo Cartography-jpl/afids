@@ -1,0 +1,39 @@
+procedure
+
+! Sep 02, 2013 - RJB
+!
+! TEST SCRIPT FOR MOOREINS
+!
+! Vicar Programs:
+!   gen f2 list
+!
+! External Programs:
+!   <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!
+
+refgbl $echo
+body
+let $echo="no"
+let _onfail="stop"
+let $echo="yes"
+
+gen xxxa nl=10 ns=10
+f2 xxxa xxxb +
+   fun="(line>2)*(line<9)*(samp>2)*(samp<9)-(line==6)*(samp==6)"
+list xxxb 'zero
+! remove any residual xxxc files from prior processing
+ush rm -f xxxc
+mooreins xxxb xxxc
+list xxxc 'zero
+
+mooreins xxxb xxxc
+list xxxc 'zero
+
+let $echo="no"
+end-proc
+

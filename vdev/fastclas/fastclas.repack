@@ -1,0 +1,6 @@
+$ vpack fastclas.com -
+	-s fastclas.f -
+	-i fastclas.imake -
+	-p fastclas.pdf -
+	-t tstfastclas.pdf new_session.log
+$ Exit

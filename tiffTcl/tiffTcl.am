@@ -1,0 +1,9 @@
+lib_LTLIBRARIES += tiffTcl.la
+tiffTcl_la_DEPENDENCIES = $(TK_LIB) 
+tiffTcl_la_LDFLAGS = -module -avoid-version
+tiffTcl_la_LIBADD = -L$(libdir) $(GEOTIFF_LIBS) $(PROJ_LIBS) $(TCLTK_LDFLAGS)
+
+tiffTcl_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -DAFIDS_GEOTIFF $(GEOTIFF_CFLAGS) $(TIFF_CFLAGS)
+
+tiffTcl_la_SOURCES = @srctifftcl@/tiffTcl.c
+

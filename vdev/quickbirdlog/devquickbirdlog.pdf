@@ -1,0 +1,16 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR QUICKBIRDLOG
+
+quickbirdlog inp=quickbirdArchiveFile out=(xxxQuickbirdImage,xxxQuickbirdIBIS) +
+	sl=1240 ss=1440 nl=100 ns=120
+
+end-proc

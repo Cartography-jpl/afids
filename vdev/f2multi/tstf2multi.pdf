@@ -1,0 +1,22 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! TEST SCRIPT FOR f2multi
+
+gen xxx1 nl=3 ns=4 linc=1 sinc=2
+gen xxx2 nl=3 ns=4 linc=3 sinc=4 'half
+
+f2multi inp=(xxx1,xxx2) out=xxx3 fcase=1
+
+list xxx1
+list xxx2
+list xxx3
+
+theend>
+end-proc

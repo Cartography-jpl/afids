@@ -1,0 +1,9 @@
+procedure
+
+body
+let _onfail="continue"
+
+gowpcall 92_180_1831
+
+
+end-proc

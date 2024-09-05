@@ -1,0 +1,6 @@
+$ vpack immerge.com -mixed -
+	-s immerge.c -
+	-i immerge.imake -
+	-p immerge.pdf -
+	-t tstimmerge.pdf
+$ Exit

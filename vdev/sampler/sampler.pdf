@@ -1,0 +1,65 @@
+PROCESS      HELP=*
+
+PARM INP        TYPE=STRING  COUNT=(1:30)
+PARM OUT        TYPE=STRING  COUNT=1
+PARM REMZEROS   TYPE=KEYWORD COUNT=(0:1)  VALID=REMZEROS       DEFAULT=REMZEROS
+PARM SAMPLETYPE TYPE=STRING  COUNT=0:1    VALID=("STRATIFIED") DEFAULT="STRATIFIED"
+PARM NGRIDX     TYPE=INTEGER COUNT=1      DEFAULT=100
+PARM NGRIDY     TYPE=INTEGER COUNT=1      DEFAULT=100
+PARM SEED       TYPE=INTEGER COUNT=1      DEFAULT=1
+
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "sampler"
+.HELP
+PURPOSE
+ Performs sampling on input images
+ and creates an output ibis file.
+ If sampletype is stratified then
+ a ngridx X ngridy grid is placed
+ over the image and a sample is 
+ randomly chosen from each of the 
+ grid.
+
+ ORIGINAL PROGRAMMER:   P. Kim  16 Sep 2011
+
+ 10-09-2019 - Ray Bambery - fixed warning messages and
+                cartoLinkedList.h and ibishelper.h
+ 10-17-2019 - Ray Bambery - fixed more warning messages
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+
+.VARIABLE OUT
+ Output ibis file
+
+.VARIABLE SAMPLETYPE
+ Sampling method
+
+.VARIABLE NGRIDX
+ Number of grid lines
+ along the x direction
+
+.VARIABLE NGRIDY
+ Number of grid lines
+ along the y direction
+
+.VARIABLE REMZEROS
+ Removes the samples
+ that have 0s in any
+ of the components.
+
+.END
+
+
+
+
+
+
+
+
+
+
+

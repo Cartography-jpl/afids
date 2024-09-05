@@ -1,0 +1,46 @@
+process help=*
+local dumreal   real
+
+parm path type=(string,99)
+parm leapfile   type=(string,99) ! Full path/name
+parm itim type=real
+parm val type=name default="dumreal"
+
+END-PROC
+.TITLE
+getdelta - lookup deltaUT1 for a time input and return as tcl variable
+.HELP
+PURPOSE:
+
+lookup deltaUT1 for a tstamp and return as tcl variable
+
+/* example test file data
+05-15-2008 12:34:56 -0.1234567
+05-16-2008 12:34:56 -0.1234568
+06-15-2008 12:34:56 -0.1234569
+05-15-2009 12:34:56 -0.1234560
+*/
+
+EXECUTION:
+
+
+TIMING: 
+
+less than one millisecond
+
+ ORIGINAL PROGRAMMER:    W. Bunch            24 Aug 2004
+ COGNIZANT PROGRAMMER:   A. Zobrist          28 May 2008
+ 
+ REVISION HISTORY
+  08-07-22    WLB  Added leapfile parm for M Burl's code; fixed pointer bug
+  08-05-28    AZ   Initial version
+  
+  
+.LEVEL1
+.var path
+path to lookup table
+.var itim
+time value to use for lookup
+.variable val
+TAE TCL variable name, real
+.END

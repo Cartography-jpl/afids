@@ -1,0 +1,16 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = imgsum
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+# FFLAGS += -Wunused -Wuninitialized -Wsurprising
+FFLAGS += -Wunused -Wuninitialized -Wsurprising
+
+

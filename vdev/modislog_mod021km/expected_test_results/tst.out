@@ -1,0 +1,40 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+modislog_mod021km inp=MOD021KM.A2002245.0605.004.2003122095614.hdf geo=MOD03.A2002245.0605.004.2003122094554.hdf band=20 out=Band20  +
+  minLat=38 maxLat=40 minLon=-121 maxLon=-119
+[TAE-IMSGERR] Error sending initiation message to process; host code = 32.;
+ proc 'tstmodislog_mod021km', line 22
+continue
+modislog_mod021km inp=MOD021KM.A2002245.0605.004.2003122095614.hdf geo=MOD03.A2002245.0605.004.2003122094554.hdf band=21 out=Band21  +
+  minLat=38 maxLat=40 minLon=-121 maxLon=-119
+[TAE-IMSGERR] Error sending initiation message to process; host code = 32.;
+ proc 'tstmodislog_mod021km', line 24
+continue
+end-proc

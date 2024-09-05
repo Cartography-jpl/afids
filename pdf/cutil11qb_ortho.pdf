@@ -1,0 +1,116 @@
+!cutil11qb_ortho.pdf Quickbird version
+!L1 AMT Image Processing Subsystem, Build 4.10
+!Latest Change Date: 06MAY2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 11 - Orthorectify Quickbird NITF Images
+
+!This VICAR procedure orthorectifies Quickbird images, and outputs
+!nitf and vicar product images. Separate elevation (DEM) and ortho-
+!base image (e.g., CIB) are required as inputs, and must be prepared
+!using AFIDS/VICAR. For a non-ortho registration, use cutil10_reg.
+
+!This code should be executed from the "run11qb_ortho.pdf" program.
+!**********************************************************************
+
+!Notes on this VICAR procedure:
+!Temporary Files start with: xxq* and xxx*
+!Three temporary directories are created and deleted::
+!raw&id     where &id is a date/time stamp
+!final&id
+!scratch
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program   
+!Type Name     Format   Description
+parm  inpntf   string   !Input NITF Master image to be orthorectified
+parm  inpmeta  string   !Metadata for input NITF Master image
+parm  demimg   string   !Elevation DEM covering Master image
+parm  baseimg  string   !Ortho base image (eg. CIB) covering Master image
+parm  outimg   string   !Output filename (don't specify the suffix)
+parm  pixsize  real     def=1.0  !Output pixel size in meters
+parm  fftsize  integer  def=256  !Size of the FFT
+parm  sl       integer  def=0 !Subarea delineation
+parm  el       integer  def=0 !Subarea delineation
+parm  ss       integer  def=0 !Subarea delineation
+parm  es       integer  def=0 !Subarea delineation
+parm  mastls   real     count=6 def=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+parm  basels   real     count=6 def=(-999.0,-999.0,-999.0,-999.0,-999.0,-999.0)
+!"mastls" are 3 LS tiepoints in the Master Image, in (parenthesis)
+!"basels" are 3 LS tiepoints in the ortho base image (eg. cib) in (parenthesis)
+!Parameters used within this program
+local id       integer  !Datetime stamp for deleting temporary files
+local ps2x     real     !Two-times the pixsize
+!**********************************************************************
+
+body
+
+let            _onfail="goto error1"
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=id 
+write         "***Initial Time = &id Seconds"
+
+!Create Directories Required by IKQBCALL2
+ush mkdir      raw&id
+ush chmod 777  raw&id
+ush mkdir      final&id     
+ush chmod 777  final&id
+ush mkdir      scratch     
+ush chmod 777  scratch
+
+let            ps2x = (pixsize * 2)
+
+!ALZ's do-all  orthorectification proc.
+ikqbcall2      key=&id +
+               rawimg=&inpntf +
+               rawmeta=&inpmeta +
+               rawhdr="" outimg=&"outimg".img +
+               nah=950 nav=950 rtype=master fftinit=&fftsize +
+               dted=&demimg +
+               base=&baseimg  rawtype=nitf senstype=q +
+               mpix=&pixsize mpixf=&ps2x maptype=pc xvdonly=n outrpc="" +
+               linesamp=&mastls +
+               lsatls=&basels +
+               usermapref="" interp=bilin rastype=area siteref="" +
+               siteout="" line_upper=&sl line_lower=&el +
+               samp_left=&el samp_right=&es hfit="n"
+
+!Create NITF output File
+vicar2ntf      inp=&"outimg".img out=&"outimg".ntf !pvtype="SI"
+!**********************************************************************
+
+
+!SUCCESSFUL Proc Ending Maintenance Module+++++++++++++++++++++++++++++
+!Print Closing Messages and Delete Temporary Files
+write         " "
+write         "*** Image Orthorectification Processing (cutil11_ortho) Successfully Completed ***"
+write         " "
+
+!Delete temporary files and directories
+tush          rm xx*
+ush           rm -rf scratch
+ush           rm -rf final&id
+ush           rm -rf raw&id
+goto          theend
+
+error1>
+write         " "
+write         "*** ERROR: Image Orthorectification FAILED ***"
+write         " "
+write         "*** See Accompanying Error Messages ***"
+
+!Delete temporary files and directories
+tush          rm xx* 
+ush           rm -rf scratch
+ush           rm -rf final&id
+ush           rm -rf raw&id
+let           $SFI=-1
+
+theend>
+!                ***Job Finished***
+!**********************************************************************
+end-proc

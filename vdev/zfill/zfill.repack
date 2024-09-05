@@ -1,0 +1,6 @@
+$ vpack zfill.com -mixed -
+	-s zfill.f -
+	-i zfill.imake -
+	-p zfill.pdf -
+	-t tstzfill.pdf tstzfill.log
+$ Exit

@@ -1,0 +1,310 @@
+procedure
+
+parm subdir type=string
+parm preroot type=string
+parm postroot type=string
+parm outtabroot type=string
+parm minsize int default=3
+parm maxsize int default=40
+
+local nxpre1 string
+local nxpre2 string
+local nxpre3 string
+local nxpre4 string
+local nxpre5 string
+local nxpre6 string
+local nxpre7 string
+local nxpre8 string
+local nxpost1 string
+local nxpost2 string
+local nxpost3 string
+local nxpost4 string
+local nxpost5 string
+local nxpost6 string
+local nxpost7 string
+local nxpost8 string
+
+local pre10 string
+local pre20 string
+local pre30 string
+local pre40 string
+local pre50 string
+local pre60 string
+local pre70 string
+local pre80 string
+local post10 string
+local post20 string
+local post30 string
+local post40 string
+local post50 string
+local post60 string
+local post70 string
+local post80 string
+local dif1 string
+local dif2 string
+local dif3 string
+local dif4 string
+local dif5 string
+local dif6 string
+local dif7 string
+local dif8 string
+local diftot string
+
+local rat23 string
+local rat34 string
+local rat45 string
+local rat56 string
+local rat14 string
+local rat46 string
+local rat68 string
+local rat35 string
+
+local nxpre3byte string
+local nxpost3byte string
+local nxred string
+local nxgrn string
+local nxblu string
+local xxxim4 string
+local xxxim5 string
+local xxxim6 string
+local outibis string
+local outimg string
+local lnstring string
+
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+
+body
+
+let $autousage = "none"
+let _onfail="return"
+let $echo="yes"
+
+write "detwv5 version Sat May  7 2011 - uses f2multi976"
+
+let pre10 = "&preroot" // "_b1.img"
+let pre20 = "&preroot" // "_b2.img"
+let pre30 = "&preroot" // "_b3.img"
+let pre40 = "&preroot" // "_b4.img"
+let pre50 = "&preroot" // "_b5.img"
+let pre60 = "&preroot" // "_b6.img"
+let pre70 = "&preroot" // "_b7.img"
+let pre80 = "&preroot" // "_b8.img"
+let post10= "&postroot" // "_b1.img"
+let post20= "&postroot" // "_b2.img"
+let post30= "&postroot" // "_b3.img"
+let post40= "&postroot" // "_b4.img"
+let post50= "&postroot" // "_b5.img"
+let post60= "&postroot" // "_b6.img"
+let post70= "&postroot" // "_b7.img"
+let post80= "&postroot" // "_b8.img"
+
+! subdir contents
+
+let nxpre1 = "&subdir" // "/nxpre1"
+let nxpre2 = "&subdir" // "/nxpre2"
+let nxpre3 = "&subdir" // "/nxpre3"
+let nxpre4 = "&subdir" // "/nxpre4"
+let nxpre5 = "&subdir" // "/nxpre5"
+let nxpre6 = "&subdir" // "/nxpre6"
+let nxpre7 = "&subdir" // "/nxpre7"
+let nxpre8 = "&subdir" // "/nxpre8"
+let nxpost1 = "&subdir" // "/nxpost1"
+let nxpost2 = "&subdir" // "/nxpost2"
+let nxpost3 = "&subdir" // "/nxpost3"
+let nxpost4 = "&subdir" // "/nxpost4"
+let nxpost5 = "&subdir" // "/nxpost5"
+let nxpost6 = "&subdir" // "/nxpost6"
+let nxpost7 = "&subdir" // "/nxpost7"
+let nxpost8 = "&subdir" // "/nxpost8"
+let nxpre3byte = "&subdir" // "/nxpre3byte"
+let nxpost3byte = "&subdir" // "/nxpost3byte"
+let nxred = "&subdir" // "/&outtabroot" // ".nxred"
+let nxgrn = "&subdir" // "/&outtabroot" // ".nxgrn"
+let nxblu = "&subdir" // "/&outtabroot" // ".nxblu"
+let dif1 = "&subdir" // "/dif1"
+let dif2 = "&subdir" // "/dif2"
+let dif3 = "&subdir" // "/dif3"
+let dif4 = "&subdir" // "/dif4"
+let dif5 = "&subdir" // "/dif5"
+let dif6 = "&subdir" // "/dif6"
+let dif7 = "&subdir" // "/dif7"
+let dif8 = "&subdir" // "/dif8"
+let diftot = "&subdir" // "/diftot"
+
+let rat23 = "&subdir" // "/rat23"
+let rat34 = "&subdir" // "/rat34"
+let rat45 = "&subdir" // "/rat45"
+let rat56 = "&subdir" // "/rat56"
+let rat14 = "&subdir" // "/rat14"
+let rat46 = "&subdir" // "/rat46"
+let rat68 = "&subdir" // "/rat68"
+let rat35 = "&subdir" // "/rat35"
+
+let xxxim4 = "&subdir" // "/xxxim4"
+let xxxim5 = "&subdir" // "/xxxim5"
+let xxxim6 = "&subdir" // "/xxxim6"
+let outibis = "&subdir" // "/&outtabroot" // ".asc"
+let outimg = "&subdir" // "/&outtabroot" // ".img"
+
+! normalization shut off because data sets are normalized and then pan-sharpened
+
+!cvdnorm (&pre10,&pre20,&pre30,&pre40,&pre50,&pre60,&pre70,&pre80 +
+!   &post10,&post20,&post30,&post40,&post50,&post60,&post70,&post80) +
+!   out=(&nxpre1,&nxpre2,&nxpre3,&nxpre4,+
+!   &nxpre5,&nxpre6,&nxpre7,&nxpre8 +
+!   &nxpost1,&nxpost2,&nxpost3,&nxpost4,+
+!   &nxpost5,&nxpost6,&nxpost7,&nxpost8) +
+!   sigma=(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0, +
+!   1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0) +
+!   printls=(5863,4093) window=11 donut=5 
+
+!copy &pre10 &nxpre1
+!copy &pre20 &nxpre2
+!copy &pre30 &nxpre3
+!copy &pre40 &nxpre4
+!copy &pre50 &nxpre5
+!copy &pre60 &nxpre6
+!copy &pre70 &nxpre7
+!copy &pre80 &nxpre8
+
+!copy &post10 &nxpost1
+!copy &post20 &nxpost2
+!copy &post30 &nxpost3
+!copy &post40 &nxpost4
+!copy &post50 &nxpost5
+!copy &post60 &nxpost6
+!copy &post70 &nxpost7
+!copy &post80 &nxpost8
+
+   ush rm -f &nxpre1
+   let lnstring = "ln -s ../&pre10 &nxpre1"
+   ush &lnstring
+
+   ush rm -f &nxpre2
+   let lnstring = "ln -s ../&pre20 &nxpre2"
+   ush &lnstring
+
+   ush rm -f &nxpre3
+   let lnstring = "ln -s ../&pre30 &nxpre3"
+   ush &lnstring
+
+   ush rm -f &nxpre4
+   let lnstring = "ln -s ../&pre40 &nxpre4"
+   ush &lnstring
+
+   ush rm -f &nxpre5
+   let lnstring = "ln -s ../&pre50 &nxpre5"
+   ush &lnstring
+
+   ush rm -f &nxpre6
+   let lnstring = "ln -s ../&pre60 &nxpre6"
+   ush &lnstring
+
+   ush rm -f &nxpre7
+   let lnstring = "ln -s ../&pre70 &nxpre7"
+   ush &lnstring
+
+   ush rm -f &nxpre8
+   let lnstring = "ln -s ../&pre80 &nxpre8"
+   ush &lnstring
+
+   ush rm -f &nxpost1
+   let lnstring = "ln -s ../&post10 &nxpost1"
+   ush &lnstring
+
+   ush rm -f &nxpost2
+   let lnstring = "ln -s ../&post20 &nxpost2"
+   ush &lnstring
+
+   ush rm -f &nxpost3
+   let lnstring = "ln -s ../&post30 &nxpost3"
+   ush &lnstring
+
+   ush rm -f &nxpost4
+   let lnstring = "ln -s ../&post40 &nxpost4"
+   ush &lnstring
+
+   ush rm -f &nxpost5
+   let lnstring = "ln -s ../&post50 &nxpost5"
+   ush &lnstring
+
+   ush rm -f &nxpost6
+   let lnstring = "ln -s ../&post60 &nxpost6"
+   ush &lnstring
+
+   ush rm -f &nxpost7
+   let lnstring = "ln -s ../&post70 &nxpost7"
+   ush &lnstring
+
+   ush rm -f &nxpost8
+   let lnstring = "ln -s ../&post80 &nxpost8"
+   ush &lnstring
+
+!!!!!!!!!!!!!!!!!!!goto curr
+
+f2multi976 inp=(&nxpre1,&nxpre2,&nxpre3,&nxpre4, +
+   &nxpre5,&nxpre6,&nxpre7,&nxpre8, +
+   &nxpost1,&nxpost2,&nxpost3,&nxpost4, +
+   &nxpost5,&nxpost6,&nxpost7,&nxpost8) +
+   out=(&xxxim4,&dif1,&dif2,&dif3,&dif4, +
+   &dif5,&dif6,&dif7,&dif8,&diftot,&rat23,&rat34, +
+   &rat45,&rat56,&rat14,&rat46,&rat68,&rat35) +
+   fcase=2 option=1
+
+!xvd &xxxim4
+!hist &xxxim4
+!goto theend
+
+cform &nxpre3 &nxpre3byte irange=(100,700) orange=(0,255) oform=byte
+cform &nxpost3 &nxpost3byte irange=(100,700) orange=(0,255) oform=byte
+
+!hist &xxxim4
+!xvd (&xxxim4,&nxpre3byte,&nxpost3byte)
+
+! connected component
+
+cform &xxxim4 &xxxim5 oform=full
+
+concomp &xxxim5 (&xxxim6, xxxim6work)
+
+!xvd xxxim6
+
+comptab inp=(&xxxim6, &xxxim5) out=xxxltab.ibis
+
+getzval (&xxxim4, xxxltab.ibis) cols=(3,4,11) 'NOIN
+
+
+mf3 xxxltab.ibis f="c17=c5/c2"
+!rowop2 xxxltab.ibis outtabx keycol=17 range=(0.0,0.45) 'select
+rowop2 xxxltab.ibis outtabx keycol=17 range=(0.0,0.51) 'select
+rowop2 outtabx outtab keycol=2 range=(&minsize,&maxsize) 'select
+
+compject (&xxxim6, outtab) out=&outimg cols=(1,11)
+
+pixmap (outtab, &outimg) mapcols=(9,10) pixcol=(3,4) 'pixtomap
+
+ibis-l outtab cols=(1,9,10,11) 'noheader 'nocol +
+   outfile=&outibis cfor="%7d %15.8f %14.8f %7.0f"
+
+! paint the objects in alternate byte images
+
+ibis-gen xxxpaint nr=13 nc=4 deffmt=FULL datacol=(1,2,3,4) +
+ data=(1,0,0,255,      2,255,255,255,    3,254,254,254,  4,253,253,253,  +
+       5,255,255,0,    6,255,0,255,      7,255,255,1,    8,255,255,2,  +
+       9,255,1,255,   10,255,2,255,     11,255,255,3,   12,255,255,4,  +
+      13,255,0,0)
+ibis-l xxxpaint
+
+paint (&outimg,xxxpaint) xxxtest1 cols=(1,2)
+paint (&outimg,xxxpaint) xxxtest2 cols=(1,3)
+paint (&outimg,xxxpaint) xxxtest3 cols=(1,4)
+
+f2multi976 inp=(&outimg,xxxtest1,xxxtest2,xxxtest3,&nxpre3byte) +
+   out=(&nxred,&nxgrn,&nxblu) fcase=3
+
+!xvd (&nxred,&nxgrn,&nxblu)
+
+theend>
+end-proc

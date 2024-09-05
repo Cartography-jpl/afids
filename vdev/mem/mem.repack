@@ -1,0 +1,6 @@
+$ vpack mem.com -mixed -
+	-s mem.f mem.inc -
+	-i mem.imake -
+	-p mem.pdf -
+	-t tstmem.pdf
+$ Exit

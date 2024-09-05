@@ -1,0 +1,6 @@
+$ vpack getzval.com -mixed -
+	-s getzval.c -
+	-i getzval.imake -
+	-p getzval.pdf -
+	-t tstgetzval.pdf
+$ Exit

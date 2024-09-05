@@ -1,0 +1,24 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+lsatref  out=regression_output/ref.img meta=../test_data/met.txt band=2
+difpic (regression_output/ref.img, ../test_data/ref2)
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+$ vpack crtshp.com -mixed -
+	-s crtshp.c -
+	-i crtshp.imake -
+	-p crtshp.pdf -
+	-t tstcrtshp.pdf
+$ Exit

@@ -1,0 +1,6 @@
+$ vpack alilog.com -mixed -
+	-s alilog.c -
+	-i alilog.imake -
+	-p alilog.pdf -
+	-t tstalilog.pdf devalilog.pdf
+$ Exit

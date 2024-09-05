@@ -1,0 +1,6 @@
+$ vpack ibislsq3.com -mixed -
+	-s ibislsq3.c -
+	-i ibislsq3.imake -
+	-p ibislsq3.pdf -
+	-t tstibislsq3.pdf
+$ Exit

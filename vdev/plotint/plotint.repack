@@ -1,0 +1,6 @@
+$ vpack plotint.com -
+	-s plotint.f -
+	-i plotint.imake -
+	-p plotint.pdf -
+	-t tstplotint.pdf new_session.log
+$ Exit

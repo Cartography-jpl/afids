@@ -1,0 +1,29 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+goto diff
+rpdeyeref inp=../test_data/rapideye1.img out=regression_output/ref.img meta=../test_data/rapideye.xml band=1
+rpdeyeref inp=../test_data/rapideye21.img out=regression_output/ref2.img meta=../test_data/rapideye2.xml band=1
+
+diff>
+f2 inp=(regression_output/ref.img, regression_output/ref2.img) out=regression_output/diff.img func="in1-in2"
+xvd diff.img
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

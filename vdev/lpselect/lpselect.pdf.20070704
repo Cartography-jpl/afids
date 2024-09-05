@@ -1,0 +1,25 @@
+process help=*
+PARM INP         TYPE=(STRING,99) COUNT=2
+PARM OUT         TYPE=(STRING,99)
+PARM KEY         TYPE=INTEGER
+END-PROC
+.TITLE
+.HELP
+PURPOSE:
+EXECUTION:
+
+Example
+
+lpselect A B C D
+
+TIMING: 
+
+As fast as C can read and write the lines.  
+
+ ORIGINAL PROGRAMMER:    P. Kim          26 Apr 2007
+
+.LEVEL1
+.VARIABLE INP
+.VARIABLE OUT
+.VARIABLE KEY
+.END

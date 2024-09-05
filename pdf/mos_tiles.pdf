@@ -1,0 +1,152 @@
+procedure	! mos_tiles
+
+parm t string
+parm num integer
+parm curr integer def=0
+
+local a1 integer init=1
+local a2 integer init=2
+local a3 integer init=3
+local a4 integer init=4
+local a5 integer init=5
+local a6 integer init=6
+local a7 integer init=7
+local a8 integer init=8
+local a9 integer init=9
+local a10 integer init=10
+local b1 integer init=11
+local b2 integer init=12
+local b3 integer init=13
+local b4 integer init=14
+local b5 integer init=15
+local b6 integer init=16
+local b7 integer init=17
+local b8 integer init=18
+local b9 integer init=19
+local b10 integer init=20
+local c1 integer init=21
+local c2 integer init=22
+local c3 integer init=23
+local c4 integer init=24
+local c5 integer init=25
+local c6 integer init=26
+local c7 integer init=27
+local c8 integer init=28
+local c9 integer init=29
+local c10 integer init=30
+local out string
+
+body
+
+if (t="h")
+  let out="v"
+else-if (t="x")
+  let out="y"
+else-if (t="v")
+  let out="xfinal"
+else-if (t="y")
+  let out="yfinal"
+else
+  let out="mos_final"
+end-if
+if (num = 30)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 &t&c6 &t&c7 &t&c8 &t&c9 &t&c10 +
+    out=&out&curr tol=.5
+else-if (num = 29)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 &t&c6 &t&c7 &t&c8 &t&c9 +
+    out=&out&curr tol=.5
+else-if (num = 28)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 &t&c6 &t&c7 &t&c8 out=&out&curr tol=.5
+else-if (num = 27)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 &t&c6 &t&c7 out=&out&curr tol=.5
+else-if (num = 26)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 &t&c6 out=&out&curr tol=.5
+else-if (num = 25)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 &t&c5 out=&out&curr tol=.5
+else-if (num = 24)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3 &t&c4 out=&out&curr tol=.5
+else-if (num = 23)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 &t&c3  out=&out&curr tol=.5
+else-if (num = 22)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 &t&c2 out=&out&curr tol=.5
+else-if (num = 21)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    &t&c1 out=&out&curr tol=.5
+else-if (num = 20)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 &t&b10 +
+    out=&out&curr tol=.5
+else-if (num = 19)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 &t&b9 +
+    out=&out&curr tol=.5
+else-if (num = 18)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 &t&b8 +
+    out=&out&curr tol=.5
+else-if (num = 17)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 &t&b7 out=&out&curr tol=.5
+else-if (num = 16)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 &t&b6 out=&out&curr tol=.5
+else-if (num = 15)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 &t&b5 out=&out&curr tol=.5
+else-if (num = 14)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 &t&b4 out=&out&curr tol=.5
+else-if (num = 13)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 &t&b3 out=&out&curr tol=.5
+else-if (num = 12)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 &t&b2 out=&out&curr tol=.5
+else-if (num = 11)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    &t&b1 out=&out&curr tol=.5
+else-if (num = 10)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 &t&a10 +
+    out=&out&curr tol=.5
+else-if (num = 9)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 &t&a9 +
+    out=&out&curr tol=.5
+else-if (num = 8)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 &t&a8 out=&out&curr tol=.5
+else-if (num = 7)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 &t&a7 out=&out&curr tol=.5
+else-if (num = 6)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 &t&a6 out=&out&curr tol=.5
+else-if (num = 5)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 &t&a5 out=&out&curr tol=.5
+else-if (num = 4)
+  fthmos tst &t&a1 &t&a2 &t&a3 &t&a4 out=&out&curr tol=.5
+else-if (num = 3)
+  fthmos tst &t&a1 &t&a2 &t&a3 out=&out&curr tol=.5
+else-if (num = 2)
+  fthmos tst &t&a1 &t&a2 out=&out&curr tol=.5
+else-if (num = 1)
+  gtcopy &t&a1 &out&curr
+end-if
+
+theend>
+end-proc

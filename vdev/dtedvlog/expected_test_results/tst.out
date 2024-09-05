@@ -1,0 +1,113 @@
+dtedvlog ../test_data/n33e130.02.dt2 xxx 130 33
+Beginning VICAR task dtedvlog
+dtedvlog version Thu Jan  3 2008
+label-list xxx
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxx ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                3601 lines per band
+                3601 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: DTEDVLOG -- User: smyth -- Fri Aug 16 21:43:46 2013 ----
+ 
+************************************************************
+list xxx nl=3 ns=3
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp       1     2     3
+   Line
+      1    -13311-12287-10751
+      2    -12543-11263-10239
+      3    -11775-10239 -9727
+list xxx nl=3 ns=3 ss=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp    3599  3600  3601
+   Line
+      1       640   384   384
+      2       384   384     0
+      3         0     0   256
+list xxx nl=3 ns=3 sl=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp       1     2     3
+   Line
+   3599     31235-31229-30205
+   3600     30211-32253-31485
+   3601     29443 32515-30973
+list xxx nl=3 ns=3 sl=3599 ss=3599
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:46 2013
+     Samp    3599  3600  3601
+   Line
+   3599      2432  1664   896
+   3600      1920  1152  1152
+   3601       896   896  1152
+dtedvlog ../test_data/n41.dt1 xxx 129 41
+Beginning VICAR task dtedvlog
+dtedvlog version Thu Jan  3 2008
+label-list xxx
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxx ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                1201 lines per band
+                1201 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: DTEDVLOG -- User: smyth -- Fri Aug 16 21:43:47 2013 ----
+ 
+************************************************************
+list xxx nl=3 ns=3
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+     Samp       1     2     3
+   Line
+      1    -27899-27643-28155
+      2    -27131-27899-29179
+      3    -26107-28411-30971
+list xxx nl=3 ns=3 ss=1199
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+     Samp    1199  1200  1201
+   Line
+      1     29188 28932 27140
+      2     27396 28164 28420
+      3     24068 25860 27140
+list xxx nl=3 ns=3 sl=1199
+Beginning VICAR task list
+ ** The specified window is all zero.
+list xxx nl=3 ns=3 sl=1199 ss=1199
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:DTEDVLOG  User:smyth     Date_Time:Fri Aug 16 21:43:47 2013
+     Samp    1199  1200  1201
+   Line
+   1199      3328  2816   768
+   1200      2816  2048   512
+   1201         0     0   512
+end-proc
+disable-log

@@ -1,0 +1,4 @@
+$ vpack astwarp.com -mixed -
+	-p astwarp.pdf astcall.pdf astwarpad.pdf astwarp2.pdf astcall2.pdf -
+	   astwarpad2.pdf
+$ Exit

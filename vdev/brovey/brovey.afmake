@@ -1,0 +1,29 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = brovey
+
+#==============================================================
+# Locations
+AFIDSTOP = /raid1/wlb/latestafids/install
+CARTOINC = /raid1/wlb/latestafids/branch/src/carto/inc
+VDEVROOT = /raid1/wlb/latestafids/build/src/vdev
+P1INC = /raid1/wlb/latestafids/branch/src/core-vicar/core-d/p1/inc
+RTLINC = /raid1/wlb/latestafids/branch/src/core-vicar/core-d/rtl/inc
+TAEINC = /raid1/wlb/latestafids/branch/src/core-vicar/core-d/tae53_changes/include
+TAEUNIXINC = /raid1/wlb/latestafids/branch/src/core-vicar/core-d/tae53_changes/include/unix
+
+# Include makefile to get rules
+include $(VDEVROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+
+CPPFLAGS += -I$(TAEINC) -I$(TAEUNIXINC) -I$(RTLINC) -I$(P1INC) -I$(CARTOINC)
+
+#CFLAGS += -Wmissing-prototypes -Wstrict-prototypes
+
+
+

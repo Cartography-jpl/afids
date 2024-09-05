@@ -1,0 +1,38 @@
+process help=*
+
+local dumint    integer
+
+parm intvar  type=name default="dumint"
+
+END-PROC
+
+.TITLE
+longsize - return the size of a long int
+
+.HELP
+PURPOSE:
+To return the size of a long int in a tae variable
+
+EXECUTION:
+
+Example:
+
+tcl2tcl intvar=ls
+            where ls is a TAE TCL variable of type int
+          
+TIMING: 
+
+Instantaneous.  
+
+ORIGINAL PROGRAMMER:    W Bunch
+COGNIZANT PROGRAMMER:   W Bunch
+ 
+REVISION HISTORY
+Thu May  8 2008 WLB    Initial release
+ 
+.LEVEL1
+.variable intvar
+TAE TCL variable name, integer, set to size of long int
+
+.END
+

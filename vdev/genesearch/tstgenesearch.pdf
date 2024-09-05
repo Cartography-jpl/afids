@@ -1,0 +1,23 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+genesearch
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

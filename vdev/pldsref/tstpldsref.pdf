@@ -1,0 +1,23 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+pldsref inp=(../test_data/pled_blu.hlf, ../test_data/pled_grn.hlf, ../test_data/pled_red.hlf, ../test_data/pled_nir.hlf, ../test_data/pled_pan.hlf) multimeta=../test_data/pled_multi_meta.xml panmeta=../test_data/pled_pan_meta.xml out=(regression_output/blu1.img, regression_output/grn2.img, regression_output/red3.img, regression_output/nir4.img, regression_output/pan.img)
+
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

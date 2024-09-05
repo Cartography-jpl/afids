@@ -1,0 +1,6 @@
+$ vpack fifow.com -mixed -
+	-s fifow.c -
+	-i fifow.imake -
+	-p fifow.pdf -
+	-t tstfifow.pdf
+$ Exit

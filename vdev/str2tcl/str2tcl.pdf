@@ -1,0 +1,68 @@
+process help=*
+parm inval     type=string
+parm val       type=name
+parm vtype     type=int valid=(2,4,7,8)
+END-PROC
+.TITLE
+str2tcl - get numeric value from string input to TAE TCL variable
+.HELP
+PURPOSE:
+str2tcl converts a number in string input format to a TAE TCL 
+intger or floating value output.
+
+EXECUTION:
+
+Four vtypes are allowed. Types 2 and 4 are for integers
+and types 7 and 8 are for floating point. These types
+are inheritance from internal programming standards
+where type 2 is 2-byte integer, type 4 is 4-byte integer,
+type 7 is single precision floating and type 8 is for
+double precison floating point. TCL variables are only
+of 2 types 4-byte integer and double precision floating.
+
+str2tcl parses the characters in inval to ensure that the
+characters are part of a number. If they are not then  it
+returns -999 if types 2 or 4 are specified or 
+-9.990000000000e+02 if typrs 7 or 8 are specified.
+
+
+
+EXAMPLES:
+
+str2tcl inval="23" val=ival vtype=4
+
+          converts the string 23 to the integer value 23 in
+          the TCL variable ival
+
+RESTRICTIONS:
+
+
+TIMING: 
+
+extremely fast 
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          20 Sept 2004
+ COGNIZANT PROGRAMMER:   A. Zobrist          20 Sept 2004
+ 
+ REVISION HISTORY
+  2004-09-20    AZ   Initial version
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  2013-01-10    Ray Bambery - Prior to this revision, strings of
+                        floating point format returned 
+                        real case need debugging
+                         ** ABEND called **
+                        Fixed this and added proper return values.
+  2013-02-10    Ray Bambery - Removed debugging statements
+  
+.LEVEL1
+.variable inval
+A string that contains a number
+.variable val
+TAE TCL name without &, gets
+the found value or -999
+.variable vtype
+2 - integer
+4 - integer
+7 - double
+8 - double
+.END

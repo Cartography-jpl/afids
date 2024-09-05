@@ -1,0 +1,303 @@
+procedure help=*
+parm key type=string
+parm fname type=string
+parm gridname type=string
+parm rawtype string valid=("nitf","tif") default="nitf"
+parm senstype string valid=("i","q") default="i"
+
+local inloc string
+local outloc string
+local rawname string
+!local metname string
+local hdrname string
+local logname string
+local fname3r string
+local fname3 string
+local fname4 string
+local fname4ref string
+
+local tempfile1 type=string
+local tempfile2 type=string
+local tempfile3 type=string
+local gridfinal1 type=string
+local gridfinal2 type=string
+local gridfinal3 type=string
+local gridinfo type=string
+local xxxtxt type=string
+local masterfile type=string
+local rawbase type=string
+local outfile type=string
+local utmstring type=string
+local xxxlab1 string
+local xxxlab3 string
+local xxxcoord string
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local sl int
+local ss int
+local nl int
+local ns int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+local utmzone int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+local nl1 int
+local ns1 int
+local nl2 int
+local ns2 int
+
+local azoom real
+local ip1 int
+local p1 real
+local p2 real
+
+local ullon real
+local ullat real
+local urlon real
+local urlat real
+local lllon real
+local lllat real
+
+body
+
+
+!  log the ikonos band
+
+let inloc = "raw&key/"
+let outloc = "final&key/"
+
+let fname3r = "&inloc" // "&fname"
+let fname3 = "&inloc" // "&fname" // ".img"
+let fname4 = "&inloc" // "&fname" // ".met"
+let fname4ref = "&inloc" // "&gridname" // ".txt"
+let hdrname = "&inloc" // "&fname" // ".hdr"
+!let metname = "&inloc" // "&fname" // ".met"
+
+! logging here
+
+if (rawtype="nitf")
+   let rawname = "&inloc" // "&fname" // ".ntf"
+   nitflog &rawname &fname3r 'echometa
+   let logname = "&fname" // ".ntf"
+else
+   let rawname = "&inloc" // "&fname" // ".tif"
+   vtiff3-tovic &rawname &fname3
+   let logname = "&fname" // ".tif"
+end-if
+
+!if (senstype="i")
+!   ikonoslog &logname &hdrname &metname &fname4
+!else
+!   quickbirdlog &metname &fname4
+!end-if
+
+
+
+! other filenames
+
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+let gridfinal1 = "final&key" // "/&gridname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&gridname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&gridname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&gridname"  // "gridinfo"
+let outfile = "final&key" // "/&fname" // "_map.img"
+let rawbase = "final&key" // "/&gridname" // "_map0"
+let xxxlab1 = "scratch/xxxlab1" // "adproc"
+let xxxlab3 = "scratch/xxxlab3" // "adproc"
+let xxxcoord = "scratch/xxxcoord" // "adproc"
+
+let masterfile = "final&key" // "/&key" // "master.img"
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s v11=t3e v12=t3n +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2,3,3,3,4)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns +
+   vartype=(0,0,0,0) ibisloc=(1,7,1,8,1,9,1,10)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from ikqbwarp.pdf
+
+write "fname3 &fname3"
+write "fname4 &fname4"
+write "fname4ref &fname4ref"
+
+lab2tcl &fname3 v1=nl1 v2=ns1 keyword=(nl,ns) 'system
+let p1 = $float(nl1)
+write "p1 &p1"
+
+if (senstype="i")
+   asc2tcl &fname4ref keyword="IKONOS_ROWS=" val=p2 vtype=8
+else
+   asc2tcl &fname4ref keyword="QUICKBIRD_ROWS=" val=p2 vtype=8
+end-if
+
+! azoom used because of nesting of 4:1 or 1:4, BTW ikonos is area type
+let azoom = p2/p1
+write "azoom &azoom"
+
+if (azoom>0.9 and azoom<1.1)
+   copy &fname3 &tempfile1
+else-if (azoom>3.9 and azoom<4.1)
+   gtsize &fname3 &tempfile1 azoom=4.0
+else-if (azoom>0.23 and azoom<0.27)
+   gtsize &fname3 &tempfile1 azoom=0.25
+end-if
+
+lab2tcl &tempfile1 v1=nl2 v2=ns2 keyword=(nl,ns) 'system
+write "nl2,ns2 &nl2,&ns2"
+
+! get the utm zone from the ref txt file
+
+if (senstype="i")
+   asc2tcl &fname4ref keyword="IKONOS_UTM_ZONE=" val=utmzone vtype=4
+   write "met utmzone &utmzone"
+   if (utmzone<1)
+      asc2tcl &fname4ref keyword="IKONOS_COORD1_LON=" val=ullon vtype=8
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+   end-if
+else                 !quickbird case
+   asc2tcl &fname4ref keyword="QUICKBIRD_MAP_ZONE=" val=utmzone vtype=4
+   write "met utmzone &utmzone"
+   if (utmzone<1)
+      asc2tcl &fname4ref keyword="QUICKBIRD_UL_LON=" val=ullon vtype=8
+      let utmzone = $fix(ullon/6.0+31.0)
+      write "ullon &ullon utmzone &utmzone"
+   end-if
+end-if
+let utmstring = "326" // "&utmzone" // "(PCS_WGS84_UTM_zone_" // "&utmzone" // "N)"
+write "utmstring &utmstring"
+
+! new procedure here because quickbird color did not align with pan
+
+if (senstype="q")
+   asc2tcl &fname4 keyword="ULLon =   " val=ullon vtype=8
+   asc2tcl &fname4 keyword="ULLat =   " val=ullat vtype=8
+   asc2tcl &fname4 keyword="URLon =   " val=urlon vtype=8
+   asc2tcl &fname4 keyword="URLat =   " val=urlat vtype=8
+   asc2tcl &fname4 keyword="LLLon =   " val=lllon vtype=8
+   asc2tcl &fname4 keyword="LLLat =   " val=lllat vtype=8
+   let t1s = 0.0
+   let t1l = 0.0
+   let t2s = $float(ns2)
+   let t2l = 0.0
+   let t3s = 0.0
+   let t3l = $float(nl2)
+   write "ullon &ullon ullat &ullat"
+   
+   ibis-gen &xxxcoord nc=6 nr=3 datacol=(1,2) +
+      format=(DOUB,DOUB,DOUB,DOUB,DOUB,DOUB) +
+      data=(&ullon,&ullat,&urlon,&urlat,&lllon,&lllat)
+   ibis-l &xxxcoord
+   gtgen out=&xxxlab1 +
+      geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+     "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+   gtlist &xxxlab1
+   gtgen out=&xxxlab3 +
+      geotiff=("ProjectedCSTypeGeoKey=&utmstring")
+   gtlist &xxxlab3
+
+   gtproj2 (&xxxcoord,&xxxlab1,&xxxlab3) incol=(1,2,3) outcol=(4,5,6) 'tec
+   ibis2tcl &xxxcoord v1=t1e v2=t1n v3=t2e v4=t2n v5=t3e v6=t3n +
+      vartype=(-1,-1,-1,-1,-1,-1) +
+      ibisloc=(1,4,1,5,2,4,2,5,3,4,3,5)
+   write "t1e &t1e t1n &t1n"
+   write "t2e &t2e t2n &t2n"
+   write "t3e &t3e t3n &t3n"
+   ibis-l &xxxcoord
+end-if
+
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "ProjectedCSTypeGeoKey=&utmstring", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+if (senstype="i") 
+   gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+else
+   gtpwarp &tempfile1 &tempfile2 ref=&rawbase 'coverref nah=200 nav=200 +
+      fftsize=256 magnify=1 toler=1.5 polyfit=linear
+end-if
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv)
+gtsize (&tempfile3,&masterfile) &outfile 'coverref
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc
+.TITLE
+ikqbwarpad - warp one (or n) additional band(s) of ikonos
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.vari band
+the band symbol
+.END

@@ -1,0 +1,55 @@
+procedure
+refgbl $echo
+refgbl $autousage
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+
+local sl int
+local ss int
+local nl int
+local ns int
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="no"
+
+!vtiff3-tovic p172r13_5t19880802_nn3.tif p172r13.img
+
+!  simple case
+
+imcorner xxx172r13case +
+    line1=l1 samp1=s1 line2=l2 samp2=s2 +
+    line3=l3 samp3=s3 line4=l4 samp4=s4 inside=0 +
+    sldat=sl ssdat=ss nldat=nl nsdat=ns
+                
+write "c1 &l1 &s1"
+write "c2 &l2 &s2"
+write "c3 &l3 &s3"
+write "c4 &l4 &s4"
+write "sl,ss &sl &ss"
+write "nl,ns &nl &ns"
+
+imcorner xxx172r13case +
+    line1=l1 samp1=s1 line2=l2 samp2=s2 +
+    line3=l3 samp3=s3 line4=l4 samp4=s4 inside=-15 +
+    sldat=sl ssdat=ss nldat=nl nsdat=ns
+                
+write "c1 &l1 &s1"
+write "c2 &l2 &s2"
+write "c3 &l3 &s3"
+write "c4 &l4 &s4"
+write "sl,ss &sl &ss"
+write "nl,ns &nl &ns"
+
+gtcopy xxx172r13case p172r13.img.cut size=(&sl,&ss,&nl,&ns)
+xvd p172r13.img.cut
+
+theend>
+END-PROC

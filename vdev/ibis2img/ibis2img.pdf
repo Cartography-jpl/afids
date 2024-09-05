@@ -1,0 +1,42 @@
+process help=*
+parm inp type=string
+parm out type=string
+end-proc
+
+end-proc
+.TITLE
+ibis2img - turn IBIS columns into image samples
+.HELP
+PURPOSE
+  This program reads IBIS files with REAL and/or DOUB columns and
+  writes a double precision float VICAR image.
+
+CALL
+     ibis2img INP OUT
+  WHERE:
+     INP          is an ibis file with REAL and/or DOUB format columns
+     OUT          is a single-band double-precision float VICAR image
+     
+OPERATION
+
+
+PERFORMANCE
+
+.PAGE
+Restrictions
+------------
+
+Designed for floating point input data only -- no text or integer columns.
+
+.PAGE
+Original Programmer: wbunch, Tue Feb 11 2014
+Current Cognizant Programmer: wbunch
+Revisions:
+  Tue Feb 11 2014 - wlb - Initial implementation
+
+.LEVEL1
+.VARI INP
+An IBIS file
+.VARI OUT
+A generated single-band double-precision float VICAR image
+.END

@@ -1,0 +1,107 @@
+process help=*
+PARM INP TYPE=(STRING,99)
+PARM OUT TYPE=STRING  COUNT=(1:2)
+PARM FMT TYPE=INTEGER DEFAULT=8
+END-PROC
+.TITLE
+VICAR/IBIS Program shp2lp
+.HELP
+PURPOSE:
+
+This program creates a .slp from
+a .shp file and also optionally,
+a .dlp file from a .dbf file.  This
+program is the first step in
+processing a shape file through
+the lp programs.
+
+In the input, format 4 is to 
+convert the shape file into an 
+integer .slp file, 7 to a float 
+.slp file, and 8 to a double .slp 
+file.
+.PAGE
+EXAMPLES:
+
+shp2lp inp=lake out=lake.slp fmt=4
+
+The above example will take lake.shp
+and create a lake.slp file.  The format
+of the lake.slp file will be integer.
+
+shp2lp inp=lake out=(lake.slp, lake.dlp) fmt=7
+
+The above example will take lake.shp
+and create a lake.slp, lake.dlp files.
+The format of the lake.slp file will be
+float.
+.PAGE
+RESTRICTIONS:
+
+This program requires programs in the
+PKUtils.com.
+
+Only a format of 4(int), 7(float),
+8(double) can be used.
+
+.PAGE
+OPERATION:
+
+algorithm steps:
+1. read and map each entity in the shape data
+2. output shape data into .slp file
+3. read and map each record in the .dbf file
+4. output tabular data into .dlp file
+
+.PAGE
+WRITTEN BY:
+
+ORIGINAL PROGRAMMER:    PETER KIM      26 APR 2007
+ 
+.LEVEL1
+.VARIABLE INP
+Base root name of the .shp
+and .dbf files.
+
+.VARIABLE OUT
+Name of the .slp and .dlp
+output files.
+
+.LEVEL2
+.VARIABLE INP
+STRING - Input file
+(maximum string length 99)
+
+The user needs to specify the
+base name of the shape file.
+For example, if the shape files
+are "lake.shp", "lake.shx",
+"lake.dbf", then variable inp
+should be "lake".
+
+.VARIABLE OUT
+STRING - Output file
+(maximum string length 99)
+
+The user needs to specify the
+the name of the .slp and .dlp
+files.  The .slp MUST be
+specified whereas .dlp file
+is optional.  The .slp file
+MUST be specified before the
+".dlp" file.
+For example,
+out=(lake.slp)
+out=(lake.slp, lake.dlp)
+.VARIABLE FMT
+INTEGER - Format
+(4 - integer (full) format
+ 7 - float (real) format
+ 8 - double format)
+
+This variable allows the
+user to specify the .slp
+format.  The default format
+is double if not specified.
+.END
+

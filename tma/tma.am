@@ -1,0 +1,172 @@
+lib_LTLIBRARIES += tmaSrv.la
+tmaSrv_la_LDFLAGS = -module -avoid-version
+tmaSrv_la_LIBADD = $(TCL_LIBS)
+
+tmaSrv_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+tmaSrv_la_CPPFLAGS+= $(TCL_CFLAGS)
+
+# This is needed for using TCL 8.6. This makes the deprecated result 
+# available. Code should be changed at some point to use 
+# Tcl_GetStringResult instead.
+
+tmaSrv_la_CPPFLAGS+= -DUSE_INTERP_RESULT
+
+EXTRA_DIST+= @srctma@/inc/concave.h
+EXTRA_DIST+= @srctma@/inc/contours.h
+EXTRA_DIST+= @srctma@/inc/contoursTcl.h
+EXTRA_DIST+= @srctma@/inc/distanceBetween2Points.h
+EXTRA_DIST+= @srctma@/inc/dnet.h
+EXTRA_DIST+= @srctma@/inc/element.h
+EXTRA_DIST+= @srctma@/inc/gems.h
+EXTRA_DIST+= @srctma@/inc/intersect.h
+EXTRA_DIST+= @srctma@/inc/loadlines.h
+EXTRA_DIST+= @srctma@/inc/minpath.h
+EXTRA_DIST+= @srctma@/inc/minpathTcl.h
+EXTRA_DIST+= @srctma@/inc/mover.h
+EXTRA_DIST+= @srctma@/inc/plotline.h
+EXTRA_DIST+= @srctma@/inc/pointToSegment.h
+EXTRA_DIST+= @srctma@/inc/queryTerrain.h
+EXTRA_DIST+= @srctma@/inc/realwork.h
+EXTRA_DIST+= @srctma@/inc/region.h
+EXTRA_DIST+= @srctma@/inc/rnf.h
+EXTRA_DIST+= @srctma@/inc/sblinear.h
+EXTRA_DIST+= @srctma@/inc/shiftNscale.h
+EXTRA_DIST+= @srctma@/inc/subregion.h
+EXTRA_DIST+= @srctma@/inc/tma.h
+EXTRA_DIST+= @srctma@/inc/util.h
+EXTRA_DIST+= @srctma@/inc/xlines.h
+
+tmaSrv_la_SOURCES = @srctma@/src/appinit.C
+tmaSrv_la_SOURCES+= @srctma@/src/concave.c
+tmaSrv_la_SOURCES+= @srctma@/src/contour.C
+tmaSrv_la_SOURCES+= @srctma@/src/contours.C
+tmaSrv_la_SOURCES+= @srctma@/src/contoursTcl.C
+tmaSrv_la_SOURCES+= @srctma@/src/dijkstra.C
+tmaSrv_la_SOURCES+= @srctma@/src/distanceBetween2Points.C
+tmaSrv_la_SOURCES+= @srctma@/src/dnet.c
+tmaSrv_la_SOURCES+= @srctma@/src/element.C
+tmaSrv_la_SOURCES+= @srctma@/src/loadrnf.c
+tmaSrv_la_SOURCES+= @srctma@/src/minpath.C
+tmaSrv_la_SOURCES+= @srctma@/src/minpathTcl.C
+tmaSrv_la_SOURCES+= @srctma@/src/mover.C
+tmaSrv_la_SOURCES+= @srctma@/src/queryTerrain.C
+tmaSrv_la_SOURCES+= @srctma@/src/realwork.C
+tmaSrv_la_SOURCES+= @srctma@/src/region.C
+tmaSrv_la_SOURCES+= @srctma@/src/sblinear.C
+tmaSrv_la_SOURCES+= @srctma@/src/subregion.C
+tmaSrv_la_SOURCES+= @srctma@/src/util.C
+
+
+afids_PROGRAMS+= pgm2ppm
+pgm2ppm_SOURCES = @srctma@/src/pgm2ppm.c
+pgm2ppm_LDFLAGS = $(TCL_LIBS) -lm
+pgm2ppm_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+afids_PROGRAMS+= mintime2contours
+mintime2contours_SOURCES = @srctma@/src/mintime2contours.c
+mintime2contours_LDFLAGS = $(TCL_LIBS) -lm
+mintime2contours_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+afids_PROGRAMS+= overlay2polygons
+overlay2polygons_SOURCES = @srctma@/src/overlay2polygons.c
+overlay2polygons_LDFLAGS = $(TCL_LIBS) -lm
+overlay2polygons_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+afids_PROGRAMS+= rasterize
+rasterize_SOURCES = @srctma@/src/rasterize.c
+rasterize_SOURCES+= @srctma@/src/plotline.c
+rasterize_SOURCES+= @srctma@/src/concave.c
+rasterize_LDFLAGS = $(TCL_LIBS) -lm
+rasterize_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+# This is needed for using TCL 8.6. This makes the deprecated result 
+# available. Code should be changed at some point to use 
+# Tcl_GetStringResult instead.
+
+rasterize_CPPFLAGS+= -DUSE_INTERP_RESULT
+
+afids_PROGRAMS+= intersect
+intersect_SOURCES = @srctma@/src/intersect.c
+intersect_SOURCES+= @srctma@/src/loadlines.c
+intersect_SOURCES+= @srctma@/src/xlines.c
+intersect_LDFLAGS = $(TCL_LIBS) -lm
+intersect_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+afids_PROGRAMS+= rnf
+rnf_SOURCES = @srctma@/src/rnf.c
+rnf_SOURCES+= @srctma@/src/dnet.c
+rnf_SOURCES+= @srctma@/src/pointToSegment.c
+rnf_SOURCES+= @srctma@/src/loadlines.c
+rnf_SOURCES+= @srctma@/src/xlines.c
+rnf_SOURCES+= @srctma@/src/plotline.c
+rnf_SOURCES+= @srctma@/src/loadrnf.c
+rnf_LDFLAGS = $(TCL_LIBS) -lm
+rnf_CPPFLAGS = $(AM_CPPFLAGS) -I$(includedir) -I$(srcdir)/$(srctma)/inc
+
+# This is needed for using TCL 8.6. This makes the deprecated result 
+# available. Code should be changed at some point to use 
+# Tcl_GetStringResult instead.
+
+rnf_CPPFLAGS+= -DUSE_INTERP_RESULT
+
+tmadoc_DATA = @srctma@/TMA-TDPS_Overview.docx
+EXTRA_DIST+= $(tmadoc_DATA)
+
+dist_datatma_DATA = @srctma@/data/dbtcl/AMD_COORDINATE.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/AMD_COORDINATE.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/AMD_MUSEAOI.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/AMD_MUSEAOI.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_aoi.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_aoi.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_aoiData.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_aoiData.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_dnet.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_globalCosts.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_mapRegion.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_mapRegion.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_mover.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_mover.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_moverName.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_moverName.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_polygon.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_polygon.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_regionThemes.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_regionThemes.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_slope.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_slope.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_terrain.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_terrain.fmt
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_terrainMapping.dat
+dist_datatma_DATA+= @srctma@/data/dbtcl/tma_terrainMapping.fmt
+
+dist_tmatmatcl_DATA = @srctma@/tcllib/tma/MUSESRV.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/analysisHistory.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/analyst.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/colorwheel.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/contours.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/editMover.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/genMover.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/minpath.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/mover.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/obstacles.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/pkgIndex.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/polygon.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/queryTerrain.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/rainbow.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/regionCreate.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/reportCorrelation.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/tma.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/tmasrv.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/util.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/vpf2vec.tcl
+dist_tmatmatcl_DATA+= @srctma@/tcllib/tma/weather.tcl
+
+dist_tmadbtcl_DATA = @srctma@/tcllib/dbtcl/dbtcl.tcl
+dist_tmadbtcl_DATA+= @srctma@/tcllib/dbtcl/pkgIndex.tcl
+
+dist_tmamaptcl_DATA = @srctma@/tcllib/maptcl/map.tcl
+dist_tmamaptcl_DATA+= @srctma@/tcllib/maptcl/mapSrv.tcl
+dist_tmamaptcl_DATA+= @srctma@/tcllib/maptcl/pkgIndex.tcl
+dist_afids_SCRIPTS+= @srctma@/tcllib/maptcl/map_srv
+dist_afids_SCRIPTS+= @srctma@/bin/tma
+

@@ -1,0 +1,116 @@
+!Mosaick individual tdps dem files (in vicar gt format) into one mosaick.
+!
+!Output the mosaick in geotiff or, optionally, vicar format.
+! 
+!Input Parameters:
+!slat - Startling latitude of DEM AOI; Bottom lat of AOI box (integer)
+!slon - Starting longitude of DEM AOI; Left lon of AOI box (integer)
+!elat - Ending latitude of DEM AOI; Top lat of AOI bounding box (integer)
+!elon - Ending longitute of DEM AOI; Right lon of AOI bounding box (integer)
+! (NOTE: DEMs are specified by their LOWER LEFT lat/lon, when viewed North up)
+! (NOTE: A DEM with elat and elon coordinates is NOT processed)
+! (NOTE: AOI can cross the equator and Prime Meridian, but NOT the
+!        International Dateline)
+! (NOTE: An error in featherv sets negative values to zero. Add 500dn)
+!out - Output geotiff filename 
+!DIRin - Directory path for input dem data (hard disk or cdrom/dvd)
+!DIRout - Output directory path; Example: /data/tdps_srtm
+!
+!NOTE: This procedure SIGNIFICANTLY SLOWS DOWN with increasing numbers of
+!dems.
+!
+!Example call:
+!mos_dem 21 -106 23 -104 dem_mosaick.tif
+!mos_dem -2   33  2   35 dem_mosaick.tif /data/tdps_srtm /home/tll/work 
+
+procedure
+parm       slat    integer          !bottom lat of playbox
+parm       slon    integer          !left lon of playbox
+parm       elat    integer          !top lat of playbox
+parm       elon    integer          !right lon of playbox
+parm       out     string    def="dem_mosaick"      !Output mos tif name
+parm       DIRin   string    def="/data/tdps_srtm"  !Input dem data dir
+parm       DIRout  string    def="/home/tll/work"   !Ouput dem data dir
+parm       format  integer   def=0  !0 for geotiff, 1 for vicar
+local      mlat    integer          !elat minus 1
+local      mlon    integer          !elon minus 1
+local      lns     string    init="n"  !north or south in lowercase
+local      lew     string    init="e"  !east or west in lowercase
+local      I       integer          !Increment lat (n/s)
+local      J       integer          !Increment lon (e/w)
+local      M       integer          !Loop counter
+local      I2      integer          !I without the - sign
+local      J2      integer          !J without the - sign
+local      found   integer          !0=no file; 1=file found (file2tcl)
+
+body
+
+!Set n/s/e/w codes
+if             (slat >= 0) let lns = "n"
+if             (slat <  0) let lns = "s"
+if             (slon >= 0) let lew = "e"
+if             (slon <  0) let lew = "w"
+let             mlat = elat - 1
+let             mlon = elon - 1
+
+
+!Master Loop
+
+   let          I = slat - 1        !Inc latitude; n/s
+   let          J = slon - 1        !Inc longitude; e/w
+   let          M = 0               !Loop Counter
+
+loop
+   let          J = J + 1
+   if          (J > mlon) break
+
+   loop
+      let       I = I + 1
+      if       (I > mlat) break
+!Remove I and J negative signs
+      if       (I < 0)
+               let I2 = I * (-1)
+      else
+               let I2 = I
+      end-if
+      if       (J < 0)
+               let J2 = J * (-1)
+      else
+               let J2 = J
+      end-if
+!Reset n/s/e/w codes for crossing the Equator/Prime Meridian
+       if      (I >= 0) let lns = "n"
+       if      (I <  0) let lns = "s"
+       if      (J >= 0) let lew = "e"
+       if      (J <  0) let lew = "w"
+
+       file2tcl inp=&"DIRin"/&"lns"&"I2"&"lew"&"J2"_L1.hlf +
+                val=found
+       if      (found = 0) goto next1
+       let      M = M + 1
+       if      (M = 1)
+               f2 &"DIRin"/&"lns"&"I2"&"lew"&"J2"_L1.hlf xxA +
+                  func="in1+500"  !offset for featherv error
+       else
+       end-if
+       f2         &"DIRin"/&"lns"&"I2"&"lew"&"J2"_L1.hlf xxC +
+                  func="in1+500"    
+       if      (M = 1) goto next1
+       fthfastmos xxfth xxA xxC +
+                  out=xxB toler=.4
+       gtcopy   xxB xxA
+       next1>
+   end-loop
+   let          I = slat - 1
+end-loop
+f2              xxA xxB func="in1-500" !reset offset due to featherv
+stretch         xxB xxA dnmin=-500 dnmax=9000 table=(-500,0.,-499,-499,9000,9000)
+if (format = 1) 
+   gtcopy xxA &"out"
+else
+   vtiff3-fr xxA &"out"
+end-if
+
+write  "&M DEM tiles mosaicked**********************************"
+!ush            rm xx*
+end-proc

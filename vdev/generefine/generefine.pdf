@@ -1,0 +1,25 @@
+PROCESS      HELP=*
+PARM INP       TYPE=(STRING) COUNT=1
+PARM MASTER    TYPE=(STRING) COUNT=1
+PARM OUT       TYPE=(STRING) COUNT=1
+END-PROC
+
+.TITLE
+VICAR/IBIS Program "generefine"
+.HELP
+PURPOSE
+
+
+10-09-2019 - Ray Bambery -removed warnings with casting
+10-17-2019 - Ray Bambery - added ABEND when closestDist not found
+
+.LEVEL1
+.VARIABLE INP
+ Input image file
+
+.VARIABLE MASTER
+ Input ibis file
+.VARIABLE OUT
+ Output image file
+
+.END

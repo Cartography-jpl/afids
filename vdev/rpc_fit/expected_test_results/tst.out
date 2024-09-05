@@ -1,0 +1,590 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+goto curr
+vextract /home/alz/ikappt/copyfiles/03MAY05072951-P1BS-000000050393_01_P005.NTF  +
+    xxyz
+let _onfail="continue"
+local afidsroot type=(string,128)
+local osname type=(string,20)
+translog AFIDS_ROOT afidsroot
+translog OS_NAME osname
+ush /data/afids5/vdev/vextract.csh /home/alz/ikappt/copyfiles/03MAY05072951-P1BS-000000050393_01_P005.NTF xxyz -1 -1
+vextract version Tue Mar 13 2007
+*** Extract V7.5 /home/alz/ikappt/copyfiles/03MAY05072951-P1BS-000000050393_01_P005.NTF ***
+Reading NITF 2.0 file.  Please wait...user defined data length = 0
+
+Attempting to create file 'xxyzrpc00b_0_0.txt'. File exists. Trying file 'xxyzrpc00b_0_1.txt'.
+Attempting to create file 'xxyzrpc00b_0_1.txt'. File exists. Trying file 'xxyzrpc00b_0_2.txt'.
+Attempting to create file 'xxyzrpc00b_0_2.txt'. File exists. Trying file 'xxyzrpc00b_0_3.txt'.
+Attempting to create file 'xxyzrpc00b_0_3.txt'. File exists. Trying file 'xxyzrpc00b_0_4.txt'.
+Attempting to create file 'xxyzrpc00b_0_4.txt'. File exists. Trying file 'xxyzrpc00b_0_5.txt'.
+Attempting to create file 'xxyzrpc00b_0_5.txt'. File exists. Trying file 'xxyzrpc00b_0_6.txt'.
+Attempting to create file 'xxyzstdidc_0_0.txt'. File exists. Trying file 'xxyzstdidc_0_1.txt'.
+Attempting to create file 'xxyzstdidc_0_1.txt'. File exists. Trying file 'xxyzstdidc_0_2.txt'.
+Attempting to create file 'xxyzstdidc_0_2.txt'. File exists. Trying file 'xxyzstdidc_0_3.txt'.
+Attempting to create file 'xxyzstdidc_0_3.txt'. File exists. Trying file 'xxyzstdidc_0_4.txt'.
+Attempting to create file 'xxyzstdidc_0_4.txt'. File exists. Trying file 'xxyzstdidc_0_5.txt'.
+Attempting to create file 'xxyzstdidc_0_5.txt'. File exists. Trying file 'xxyzstdidc_0_6.txt'.
+Attempting to create file 'xxyzuse00a_0_0.txt'. File exists. Trying file 'xxyzuse00a_0_1.txt'.
+Attempting to create file 'xxyzuse00a_0_1.txt'. File exists. Trying file 'xxyzuse00a_0_2.txt'.
+Attempting to create file 'xxyzuse00a_0_2.txt'. File exists. Trying file 'xxyzuse00a_0_3.txt'.
+Attempting to create file 'xxyzuse00a_0_3.txt'. File exists. Trying file 'xxyzuse00a_0_4.txt'.
+Attempting to create file 'xxyzuse00a_0_4.txt'. File exists. Trying file 'xxyzuse00a_0_5.txt'.
+Attempting to create file 'xxyzuse00a_0_5.txt'. File exists. Trying file 'xxyzuse00a_0_6.txt'.
+local nitfnl int
+local nitfns int
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ",  +
+	"fileVar2DecVal ", xxyz.txt, " NITF_ROWS=")  	intv+
+ar=nitfnl
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+tcl2tcl script=("source $env(AFIDS_TCL)/taehelp.tcl; ",  +
+	"fileVar2DecVal ", xxyz.txt, " NITF_COLUMNS=")  	intv+
+ar=nitfns
+Beginning VICAR task tcl2tcl
+tcl2tcl version Thu Jan  3 2008
+if (force8="force8")
+else
+  if (osname="SunOS")
+  else
+    write "osname: Linux"
+osname: Linux
+    write "using host=sun-4"
+using host=sun-4
+    label-create inp=xxyz.hlf out=xxyz.img nl=5764 ns=27552 nb=1 format=half host=sun-4
+Beginning VICAR task label
+  end-if
+end-if
+ush rm xxyz.hlf
+vexlab inp=xxyz.img meta=xxyz.txt
+Beginning VICAR task vexlab
+vexlab version Thu Jan  3 2008
+end-proc
+rpc_fit inp=(xxyz.img /home/alz/ikappt/copyfiles/qb1_cib.img  +
+   /home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf)  +
+   maxdiff=1000.0  +
+   rpc_lnum=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)  +
+   rpc_snum=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19)
+Beginning VICAR task rpc_fit
+Starting iteration 1 of coarse fit
+Starting Interest Points
+Starting Matching
+Have 20 good points
+Average diff: 639.757 m
+Median diff:  635.955 m
+90% <= :      720.991 m
+Minimum diff: 541.23 m
+Maximum diff: 829.812 m
+Starting iteration 2 of coarse fit
+Starting Interest Points
+Starting Matching
+Have 74 good points
+Average diff: 125.741 m
+Median diff:  56.5081 m
+90% <= :      473.375 m
+Minimum diff: 15.8972 m
+Maximum diff: 871.331 m
+Starting iteration 3 of coarse fit
+Starting Interest Points
+Starting Matching
+Have 2013 good points
+Average diff: 77.6928 m
+Median diff:  65.5645 m
+90% <= :      147.882 m
+Minimum diff: 2.42714 m
+Maximum diff: 215.534 m
+Starting iteration 4 of coarse fit
+Starting Interest Points
+Starting Matching
+Have 2058 good points
+Average diff: 61.3355 m
+Median diff:  40.8068 m
+90% <= :      143.418 m
+Minimum diff: 1.17415 m
+Maximum diff: 228.04 m
+Starting iteration 1 of fine fit
+Starting Interest Points
+Starting Matching
+Have 1074 good points
+Average diff: 32.8196 m
+Median diff:  31.4343 m
+90% <= :      57.5679 m
+Minimum diff: 0.859733 m
+Maximum diff: 101.923 m
+Starting iteration 2 of fine fit
+Starting Interest Points
+Starting Matching
+Have 1104 good points
+Average diff: 19.7287 m
+Median diff:  9.57612 m
+90% <= :      61.6713 m
+Minimum diff: 0.412522 m
+Maximum diff: 109.476 m
+Starting iteration 3 of fine fit
+Starting Interest Points
+Starting Matching
+Have 1077 good points
+Average diff: 18.1316 m
+Median diff:  8.96339 m
+90% <= :      59.4081 m
+Minimum diff: 0.168255 m
+Maximum diff: 111.803 m
+Starting iteration 4 of fine fit
+Starting Interest Points
+Starting Matching
+Have 1037 good points
+Average diff: 17.9525 m
+Median diff:  8.20802 m
+90% <= :      59.7811 m
+Minimum diff: 0.0629287 m
+Maximum diff: 115.935 m
+rpcwarp (xxyz.img,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf)  +
+   test_out ref=xxyz.ref  +
+   'coverinp nah=800 nav=800
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "rpcwarp 04/26/07"
+rpcwarp 04/26/07
+let rpcimg = inp(1)
+let dted = inp(2)
+gt2tcl xxyz.img val=tstring1 keyword="MODELPIXELSCALETAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+gt2tcl xxyz.img val=tstring2 keyword="MODELTRANSFORMATIONTAG" vtype=0 seq=1
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+if (tstring1="-999" and tstring2="-999")
+   copy xxyz.img xxxrpcwarpt1
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+   rpc2gtlb (xxxrpcwarpt1,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf)
+write "rpc2gtlb version 29-may-06"
+rpc2gtlb version 29-may-06
+let out = inp(1)
+if (rastype="area")
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+rpc2grid inp=(xxxrpcwarpt1,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf) out=xxxrpc2grid1 nah=1 nav=1 ncol=8
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl xxxrpcwarpt1 val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxxrpc2grid1 ncol=8 nah=1 nav=1    +
+l1=4.481508888889e+01 s1=3.588338888889e+01+
+ l2=4.509059644444e+01 s2=3.587755555556e+01    l3=4.481583333333e+01 s3=3.584433111111e+01 l4=4.508623333333e+01 s4=3.583849777778+
+e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxxrpc2grid1 version="ibis-2" org="column" nc+
+=8       nr=4 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxxrpc2grid1 func="c3=@int((@index-1)/2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/2)/1
+4 records in
+mf3 xxxrpc2grid1 func="c4=@mod(@index+1,2)/1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+1,2)/1
+4 records in
+mf3 xxxrpc2grid1 func="c5=c3*(4.481583333333e+01-(4.481508888889e+01))+(4.481508888889e+01)$c6=c3*(4.508623333333e+01-(4.5090596444+
+44e+01))+(4.509059644444e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.481583333333e+01-(4.481508888889e+01))+(4.481508888889e+01)$c6=c3*(4.508623333333e+01-(4.509059644444e+01))+(4.509059644444e+01)
+4 records in
+mf3 xxxrpc2grid1 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+4 records in
+mf3 xxxrpc2grid1 func="c7=c4*(3.587755555556e+01-(3.588338888889e+01))+(3.588338888889e+01)$c8=c4*(3.583849777778e+01-(3.5844331111+
+11e+01))+(3.584433111111e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587755555556e+01-(3.588338888889e+01))+(3.588338888889e+01)$c8=c4*(3.583849777778e+01-(3.584433111111e+01))+(3.584433111111e+01)
+4 records in
+mf3 xxxrpc2grid1 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+4 records in
+mf3 xxxrpc2grid1 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+4 records in
+end-proc
+pixmap (xxxrpc2grid1,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf,xxxrpc2grid1) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxxrpc2grid1,xxxrpcwarpt1)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+ibis-l xxxrpc2grid1
+Beginning VICAR task ibis
+ 
+Number of Rows:4  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:4
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+       44.82       35.88      365.54     -153.32    -1794.92        0.00
+       45.09       35.88     1446.28     -142.99    28103.62        0.00
+       44.82       35.84      423.00     6093.16    -1859.99        0.00
+       45.09       35.84      820.47     6023.28    28033.41        0.00
+ 
+Rows: 1:4
++-----------+-----------
+         C:7         C:8
++-----------+-----------
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+        0.00        0.00
+grid3pt xxxrpc2grid1 cols=(4,5,1,2)  +
+  ix1=ixc1 ix2=ixc2 ix3=ixc3  +
+  v11=t1l v21=t1s v31=t1e v41=t1n  +
+  v12=t2l v22=t2s v32=t2e v42=t2n  +
+  v13=t3l v23=t3s v33=t3e v43=t3n
+Beginning VICAR task grid3pt
+grid3pt version Thu Mar 05 2008
+gtgen out=xxxrpc2grid1 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(-1.859992908919e+03,6.09316417+
+1448e+03,0,4.481583333333e+01,3.584433111111e+01,0.+
+0)",    "ModelTiePointTag=(-1.794920658524e+03,-1.5+
+33235281331e+02,0,4.481508888889e+01,3.58833888+
+8889e+01,0.0)",    "ModelTiePointTag=(2.8103619096+
+60e+04,-1.429944912342e+02,0,4.509059644444e+
++01,3.587755555556e+01,0.0)",    "GT+
+ModelTypeGeoKey=2(ModelTypeGeographic)",    "GeogAngularUnitsGeoKey=9102(Angular_Degree)",    "GeographicTypeGeoKey=4326(GCS_WGS_84+
+)",    "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",    "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtgenup (xxxrpcwarpt1,xxxrpc2grid1)
+Beginning VICAR task gtgenup
+gtgenup version Wed Jan  2 2008
+end-proc
+   let rpcimg = "xxxrpcwarpt1"
+end-if
+if (savegrid<>"")
+else
+   let finalgrid = "xxqqgrid31"
+end-if
+lab2tcl xxxrpcwarpt1 v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverinp"="coverinp")
+   rpc2grid inp=(xxxrpcwarpt1,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf) out=xxqqgrid1 nah=30 nav=30 ncol=13
+let $echo="yes"
+write "rpc2grid 11/08/05"
+rpc2grid 11/08/05
+if (ncol<8)
+end-if
+let rpcimg = inp(1)
+let dted = inp(2)
+if (lon1>-200.0)
+else
+   gt2tcl xxxrpcwarpt1 val=clon1 keyword=NITF_CORNERLON1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat1 keyword=NITF_CORNERLAT1 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon2 keyword=NITF_CORNERLON2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat2 keyword=NITF_CORNERLAT2 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon3 keyword=NITF_CORNERLON4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat3 keyword=NITF_CORNERLAT4 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clon4 keyword=NITF_CORNERLON3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   gt2tcl xxxrpcwarpt1 val=clat4 keyword=NITF_CORNERLAT3 vtype=8
+Beginning VICAR task gt2tcl
+gt2tcl version Fri Dec 28 2007
+   let clon1 = clon1+0.04*(clon1-clon2)
+   let clat1 = clat1+0.04*(clat1-clat3)
+   let clon2 = clon2+0.04*(clon2-clon1)
+   let clat2 = clat2+0.04*(clat2-clat4)
+   let clon3 = clon3+0.04*(clon3-clon4)
+   let clat3 = clat3+0.04*(clat3-clat1)
+   let clon4 = clon4+0.04*(clon4-clon3)
+   let clat4 = clat4+0.04*(clat4-clat2)
+end-if
+gengrid2 out=xxqqgrid1 ncol=13 nah=30 nav=30    +
+l1=4.481508888889e+01 s1=3.588338888889e+01+
+ l2=4.509059644444e+01 s2=3.587755555556e+01    l3=4.481583333333e+01 s3=3.584433111111e+01 l4=4.508623333333e+01 s4=3.583849777778+
+e+01
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid1 version="ibis-2" org="column" nc=13+
+       nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid1 func="c3=@int((@index-1)/31)/30"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=@int((@index-1)/31)/30
+961 records in
+mf3 xxqqgrid1 func="c4=@mod(@index+30,31)/30"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=@mod(@index+30,31)/30
+961 records in
+mf3 xxqqgrid1 func="c5=c3*(4.481583333333e+01-(4.481508888889e+01))+(4.481508888889e+01)$c6=c3*(4.508623333333e+01-(4.509059644444e+
++01))+(4.509059644444e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c5=c3*(4.481583333333e+01-(4.481508888889e+01))+(4.481508888889e+01)$c6=c3*(4.508623333333e+01-(4.509059644444e+01))+(4.509059644444e+01)
+961 records in
+mf3 xxqqgrid1 func="c1=c4*(c6-c5)+c5"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=c4*(c6-c5)+c5
+961 records in
+mf3 xxqqgrid1 func="c7=c4*(3.587755555556e+01-(3.588338888889e+01))+(3.588338888889e+01)$c8=c4*(3.583849777778e+01-(3.584433111111e+
++01))+(3.584433111111e+01)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c4*(3.587755555556e+01-(3.588338888889e+01))+(3.588338888889e+01)$c8=c4*(3.583849777778e+01-(3.584433111111e+01))+(3.584433111111e+01)
+961 records in
+mf3 xxqqgrid1 func="c2=c3*(c8-c7)+c7"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c2=c3*(c8-c7)+c7
+961 records in
+mf3 xxqqgrid1 func="c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=0$c4=0$c5=0$c6=0$c7=0$c8=0$
+961 records in
+end-proc
+pixmap (xxqqgrid1,/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf) mapcols=(1,2) pixcols=(4,5) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (4,5)
+getzval (/home/alz/ikappt/copyfiles/qb1_iraq_dem84.hlf,xxqqgrid1) cols=(4,5,3) win=2
+Beginning VICAR task getzval
+getzval version Fri Dec 28 2007
+rpcfwd (xxqqgrid1,xxxrpcwarpt1)
+Beginning VICAR task rpcfwd
+rpcfwd version Fri Dec 28 2007
+converting columns (1,2,3) to columns (4,5)
+processing RPC00B
+end-proc
+   gtproj (xxqqgrid1,xxxrpcwarpt1,xxyz.ref) incol=(1,2) outcol=(6,7)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+NITF_IMAGEDATIM=05072951ZMAY03
+NITF_CORNERLAT1=35.88194444444444
+NITF_CORNERLON1=44.82527777777778
+NITF_CORNERLAT2=35.87611111111111
+NITF_CORNERLON2=45.08000000000001
+NITF_CORNERLAT3=35.84
+NITF_CORNERLON3=45.07583333333334
+NITF_CORNERLAT4=35.84583333333334
+NITF_CORNERLON4=44.82583333333334
+NITF_CETAG=RPC00B
+NITF_ACQ_DATE=20030505072952
+NITF_OBL_ANG=28.55
+NITF_ANGLE_TO_NORTH=270
+NITF_SUN_EL=+62.5
+NITF_SUN_AZ=129.6
+NITF_MEAN_GSD=029.8
+NITF_DYNAMIC_RANGE=02047
+NITF_ROLL_ANG=-28.03
+RPC_FIELD1=1
+RPC_FIELD2=0019.88
+RPC_FIELD3=0000.15
+RPC_FIELD4=2935.5199
+RPC_FIELD5=13022.5137
+RPC_FIELD6=35.8606
+RPC_FIELD7=44.9534
+RPC_FIELD8=1017.0000
+RPC_FIELD9=2921.0000
+RPC_FIELD10=14238.0000
+RPC_FIELD11=0.0209
+RPC_FIELD12=0.1239
+RPC_FIELD13=634.0000
+RPC_FIELD141=2.775895e-02
+RPC_FIELD142=-1.820999e-01
+RPC_FIELD143=-1.131922e+00
+RPC_FIELD144=3.827130e-02
+RPC_FIELD145=8.691685e-03
+RPC_FIELD146=-1.094222e-01
+RPC_FIELD147=7.326363e-03
+RPC_FIELD148=1.912233e-02
+RPC_FIELD149=-2.248812e-03
+RPC_FIELD1410=9.292039e-02
+RPC_FIELD1411=8.249172e-03
+RPC_FIELD1412=-3.766564e-03
+RPC_FIELD1413=5.069152e-03
+RPC_FIELD1414=-8.732074e-02
+RPC_FIELD1415=-3.420534e-03
+RPC_FIELD1416=3.793046e-03
+RPC_FIELD1417=3.748561e-03
+RPC_FIELD1418=3.432737e-02
+RPC_FIELD1419=6.514998e-03
+RPC_FIELD1420=5.303382e-02
+RPC_FIELD151=1.000000e+00
+RPC_FIELD152=3.802560e-03
+RPC_FIELD153=6.431510e-03
+RPC_FIELD154=3.147900e-04
+RPC_FIELD155=1.849580e-05
+RPC_FIELD156=-1.982430e-06
+RPC_FIELD157=-1.164220e-06
+RPC_FIELD158=-1.926370e-05
+RPC_FIELD159=7.224010e-05
+RPC_FIELD1510=-1.617790e-05
+RPC_FIELD1511=4.950490e-06
+RPC_FIELD1512=1.267940e-06
+RPC_FIELD1513=1.907710e-04
+RPC_FIELD1514=-1.574290e-07
+RPC_FIELD1515=2.468150e-05
+RPC_FIELD1516=4.916600e-04
+RPC_FIELD1517=-5.410220e-07
+RPC_FIELD1518=3.209000e-07
+RPC_FIELD1519=1.814010e-05
+RPC_FIELD1520=1.435920e-07
+RPC_FIELD161=-5.043595e-03
+RPC_FIELD162=9.487714e-01
+RPC_FIELD163=5.828623e-04
+RPC_FIELD164=-7.634895e-03
+RPC_FIELD165=-7.007989e-03
+RPC_FIELD166=-5.253285e-02
+RPC_FIELD167=1.015503e-02
+RPC_FIELD168=2.434964e-02
+RPC_FIELD169=2.978498e-04
+RPC_FIELD1610=4.262559e-02
+RPC_FIELD1611=-1.134401e-02
+RPC_FIELD1612=2.200006e-03
+RPC_FIELD1613=1.230169e-04
+RPC_FIELD1614=-4.107836e-02
+RPC_FIELD1615=4.880138e-03
+RPC_FIELD1616=1.067056e-03
+RPC_FIELD1617=1.063651e-02
+RPC_FIELD1618=2.024441e-02
+RPC_FIELD1619=6.716809e-04
+RPC_FIELD1620=2.200823e-02
+RPC_FIELD171=1.000000e+00
+RPC_FIELD172=-3.198310e-04
+RPC_FIELD173=6.810920e-04
+RPC_FIELD174=-5.497620e-04
+RPC_FIELD175=-2.679770e-06
+RPC_FIELD176=-6.193880e-06
+RPC_FIELD177=2.679750e-08
+RPC_FIELD178=4.763710e-06
+RPC_FIELD179=-1.479850e-05
+RPC_FIELD1710=-4.234570e-06
+RPC_FIELD1711=1.440090e-08
+RPC_FIELD1712=-1.072130e-06
+RPC_FIELD1713=1.105900e-07
+RPC_FIELD1714=4.102170e-08
+RPC_FIELD1715=-1.694820e-07
+RPC_FIELD1716=1.081040e-06
+RPC_FIELD1717=0.000000e+00
+RPC_FIELD1718=-2.330380e-07
+RPC_FIELD1719=1.864130e-08
+RPC_FIELD1720=-1.356370e-08
+MODELTRANSFORMATIONTAG=(0.0000092146752,0.0000002151712,0,44.831661490586,-0.0000001929435,-0.0000062547683,0,35.882083567556,0,0,0,0,0,0,0,1)
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGANGULARUNITSGEOKEY=9102(Angular_Degree)
+GEOGRAPHICTYPEGEOKEY=4326(GCS_WGS_84)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+[VIC2-GENERR] Exception in XVOPEN, processing file: xxyz.ref
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+RETURN
+RETURN

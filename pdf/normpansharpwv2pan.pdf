@@ -1,0 +1,67 @@
+procedure
+
+parm outdir  string def="IZ1_10SEP09_10SEP14"
+parm prepan  string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm postpan string def="10SEP14082717-P1BS-052403186290_01_P001"
+
+local normprepan string init="nxprepan.img"
+local normpostpan string init="nxpostpan.img"
+
+local b1 string init="_b1"
+local b2 string init="_b2"
+local b3 string init="_b3"
+local b4 string init="_b4"
+local b5 string init="_b5"
+local b6 string init="_b6"
+local b7 string init="_b7"
+local b8 string init="_b8"
+
+local n1 string init=".n1"
+local n2 string init=".n2"
+local n3 string init=".n3"
+local n4 string init=".n4"
+local n5 string init=".n5"
+local n6 string init=".n6"
+local n7 string init=".n7"
+local n8 string init=".n8"
+
+local img string init=".img"
+
+local mname string
+
+body
+
+write "normpansharpwv2pan version Sat May  7 2011"
+
+! Create dir for pairwise products
+ush mkdir -p &outdir
+
+! pre to post normalization
+wv2normpan &prepan &postpan &outdir
+
+! pan sharpen the normalized pre and post products
+
+!wv2pansharp &outdir &prepan &normprepan
+
+tcl2tcl script=("set i [string first P1B &"postpan"]; ", +
+        "string replace &"postpan" $i [expr $i+2] M1B") strvar=mname
+
+ush ln -fs ../&mname&b1&img &outdir/&mname&n1
+ush ln -fs ../&mname&b2&img &outdir/&mname&n2
+ush ln -fs ../&mname&b3&img &outdir/&mname&n3
+ush ln -fs ../&mname&b4&img &outdir/&mname&n4
+ush ln -fs ../&mname&b5&img &outdir/&mname&n5
+ush ln -fs ../&mname&b6&img &outdir/&mname&n6
+ush ln -fs ../&mname&b7&img &outdir/&mname&n7
+ush ln -fs ../&mname&b8&img &outdir/&mname&n8
+
+wv2pansharp &outdir &postpan &normpostpan
+
+! keep nxprepan.img
+! keep nxpostpan.img
+
+! ush cd &outdir ; rm *.n? nx*pan.img
+
+theend>
+
+end-proc

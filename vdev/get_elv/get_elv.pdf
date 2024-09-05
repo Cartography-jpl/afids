@@ -1,0 +1,118 @@
+procedure help=*
+parm lon type=real count=1
+parm lat type=real count=1
+
+local afidsvdevdata type=(string,128)
+local elevroot type=(string,128)
+local elvref type=(string,128)
+local geoid96 type=(string,128)
+local etoporef type=(string,128)
+local ilon int
+local ilat int
+
+local etopo real
+local srtm real
+local corr100 real
+local srtmwgs real
+local etopowgs real
+refgbl $echo
+body
+let $echo="no"
+let _onfail="continue"
+
+!  get_elv HANDYPROC
+
+ibis-gen xxqqtemp1 nc=11 nr=1 +
+ format=(DOUB,DOUB,DOUB,DOUB,DOUB,DOUB,FULL,FULL,DOUB,DOUB,DOUB)
+mf3 xxqqtemp1 f=("c1=(&lon)$c2=(&lat)$c8=(c2>0)*@int(c2)+(c2<0)*@int(-c2+1)$", +
+    "c7=(c1>0)*@int(c1)+(c1<0)*@int(-c1+1)")
+ibis-l xxqqtemp1
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+translog ELEV_ROOT elevroot
+let etoporef = "&afidsvdevdata/etop02nobath.hlf"
+let geoid96 = "&afidsvdevdata/EGM96_20_x100.HLF"
+pixmap (xxqqtemp1,&etoporef) mapcols=(1,2) pixcols=(3,4) 'maptopix
+getzval (&etoporef,xxqqtemp1) cols=(3,4,5) win=2
+
+pixmap (xxqqtemp1,&geoid96) mapcols=(1,2) pixcols=(3,4) 'maptopix
+getzval (&geoid96,xxqqtemp1) cols=(3,4,9) win=2
+
+
+ibis2tcl xxqqtemp1 v1=ilon v2=ilat vartype=(1,1) ibisloc=(1,7,1,8)
+
+if (lon>0.0 and lat>0.0)
+   let elvref = "&elevroot/n" // "&ilat" // "e&ilon" // "_L2.hlf"
+else-if (lon>0.0 and lat<0.0)
+   let elvref = "&elevroot/s" // "&ilat" // "e&ilon" // "_L2.hlf"
+else-if (lon<0.0 and lat<0.0)
+   let elvref = "&elevroot/s" // "&ilat" // "w&ilon" // "_L2.hlf"
+else-if (lon<0.0 and lat>0.0)
+   let elvref = "&elevroot/n" // "&ilat" // "w&ilon" // "_L2.hlf"
+end-if
+
+pixmap (xxqqtemp1,&elvref) mapcols=(1,2) pixcols=(3,4) 'maptopix
+mf3 xxqqtemp1 f="c3=@min(@max(c3,1.01),3600.99)$c4=@min(@max(c4,1.01),3600.99)"
+getzval (&elvref,xxqqtemp1) cols=(3,4,6) win=2
+mf3 xxqqtemp1 f="c9=c9/100$c10=c6+c9$c11=c5+c9"
+ibis-l xxqqtemp1 'format
+
+ibis2tcl xxqqtemp1 v1=etopo v2=srtm v3=corr100 v4=srtmwgs v5=etopowgs+
+   vartype=(-1,-1,-1,-1,-1) ibisloc=(1,5,1,6,1,9,1,10,1,11)
+
+write " "
+write "longitude = &lon    latitude = &lat"
+write " "
+write "etopo (EGM96) = &etopo"
+write "srtm  (EGM96) = &srtm"
+write " "
+write "EGM96 to WGS84 correction    = &corr100"
+write " "
+write "etopo  (WGS84) = &etopowgs"
+write "srtm   (WGS84) = &srtmwgs"
+
+theend>
+end-proc
+.TITLE
+ELVREF - Gets elevation for a lon-lat
+.HELP
+PURPOSE
+
+Reads the ETOPO2 and SRTM datasets to get an elevation.  The ETOPO2 is a
+coarse (2 minute) map of the world.  This program uses a version without
+bathymetry (ocean depth, etc.) so ocean lon-lats yield 0.
+
+Both data sets read out in MSL or EGM96 (geoid).  The routine then converts
+these to the WGS84 spheroid (as a vertical datum).
+	   
+CALL
+     ELVREF lon lat
+  WHERE:
+     lon           is the longitude
+     lat           is the latitude
+     
+  
+OPERATION
+
+see above.
+
+PERFORMANCE
+
+less than a second
+
+.PAGE
+Restrictions
+
+We are still straightening out the high latitudes.
+------------
+
+
+.PAGE
+Original Programmer: A. L. Zobrist, 22 Sep, 2008
+Current Cognizant Programmer: A. L. Zobriste
+.LEVEL1
+.VARI lon
+longitude -180 to 180
+.VARI lat
+latitude -90 to 90
+.END

@@ -1,0 +1,69 @@
+#! /usr/bin/env ruby
+# -*-Ruby-*-
+#
+# This converts a SPOT DIMAP file into a set of orthorectified VICAR files. 
+
+require "rubygems"
+require "afids"
+include Afids
+va = VicarArgument.new
+
+# ----------------------------------------------------
+# Determine DEM to use.
+# ----------------------------------------------------
+
+if(va[:dem] =~ /\w/)
+  dem = VicarDem.new(va[:dem], true)
+else
+  dem = SrtmDem.new
+end
+d = SpotDimap.new(va[:inp])
+
+# ----------------------------------------------------
+# Create output file names.
+# ----------------------------------------------------
+
+outname = []
+if(va[:out].size > 0)
+  outname = va[:out]
+  if(outname.size < d.number_band)
+    raise "Need to supply an output name for #{d.number_band} bands"
+  end
+else
+  d.number_band.times {|b| outname << va[:outbase] + "_b#{b+1}.img"}
+end
+
+# ----------------------------------------------------
+# Determine output map to use, either covering the input data
+# or using a supplied output map.
+# ----------------------------------------------------
+
+mi = nil
+if(va[:typref] == "coverinp")
+# This gives 10 meter grid that matches the CIB pixel boundaries
+  mi = VicarMultiFile.new(ENV["AFIDS_DATA"] + "/cib1/cib01_db.int",
+                          ENV["AFIDS_DATA"] + "/cib1",
+                          ".img", 1000).map_info.zoom(0.1)
+  mi = mi.cover(d.ipi(1).footprint(dem), va[:gorewid].to_i)
+elsif(va[:typref] == "coverref")
+  mi = VicarMapProjectedImage.open(va[:ref]).map_info
+else
+  raise "I'm confused"
+end
+
+# ----------------------------------------------------
+# Generate output data.
+# ----------------------------------------------------
+
+d.number_band.times do |b|
+  VicarMapProjectedImage.open(outname[b], "w", mi, "BYTE") do |f|
+    puts "Doing band #{b + 1}"
+    IpiMapProjected.new(mi, SharedPtr_Ipi.to_ptr(d.ipi(b + 1)), 
+                        d.raster_image(b + 1).to_ptr, 
+                        dem.to_ptr).write_image(f, va[:gridspacing].to_i)
+  end
+end
+
+
+
+

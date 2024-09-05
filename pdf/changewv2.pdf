@@ -1,0 +1,44 @@
+procedure
+
+parm outdir string  def="IZ1_10SEP09_10SEP14"
+parm prepan  string def="10SEP09080931-P1BS-052401306030_01_P001"
+parm postpan string def="10SEP14082717-P1BS-052403186290_01_P001"
+
+parm chippre  type=keyword valid=chippre  count=(0:1) default=--
+parm chippost type=keyword valid=chippost count=(0:1) default=--
+parm chipchg  type=keyword valid=chipchg  count=(0:1) default=--
+parm chiptrp  type=keyword valid=chiptrp  count=(0:1) default=--
+parm hitlimit type=integer default=1000
+
+local premul  string init="10SEP09080931-M1BS-052401306030_01_P001"
+local postmul string init="10SEP14082717-M1BS-052403186290_01_P001"
+
+local normpostpan string init="nxpostpan.img"
+local ps string init="_pan_sharp"
+local img string init=".img"
+local ntf string init=".NTF"
+local sep string init="_"
+local size int init=0
+
+body
+
+write "changewv2 version Sat May  7 2011"
+
+local afidstcl string
+translog AFIDS_TCL afidstcl
+
+tcl2tcl script=("set i [string first P1B &"prepan"]; ", +
+        "string replace &"prepan" $i [expr $i+2] M1B") strvar=premul
+tcl2tcl script=("set i [string first P1B &"postpan"]; ", +
+        "string replace &"postpan" $i [expr $i+2] M1B") strvar=postmul
+
+! pre to post change detection
+detwv5 &outdir +
+  &outdir/&premul&ps +
+  &outdir/&postmul&ps +
+  &outdir 3 100
+
+ush cp outtab &outdir/
+
+theend>
+end-proc

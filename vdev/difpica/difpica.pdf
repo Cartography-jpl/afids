@@ -1,0 +1,43 @@
+process help=*
+PARM INP TYPE=STRING COUNT=2
+END-PROC
+.TITLE
+DIFPICA
+.HELP
+ PURPOSE:
+
+Program DIFPICA is a quick and dirty program to compare 2
+files.  If the files differ in NL, NS, PIXSIZE, FORMAT, or
+in data, it will abort.  For a more detailed comparison of
+files, use DIFPIC.
+
+ EXECUTION:
+
+The input images may have any VICAR data format: BYTE, HALF, FULL, REAL, DOUB,
+or COMP.  Both input images must have the same format.  The data format is taken
+from the VICAR label of the first input file.  The optional output 
+image has the same data format as the input images.  
+
+.PAGE
+EXAMPLES
+
+      difpic INP=(A1,A2) 
+
+      In this example, if the file A1 differs from A2, it
+      will abort.
+
+.PAGE
+
+RESTRICTIONS
+1. The input files must both have the same data format. 
+
+ COGNIZANT PROGRAMMER:   Peter Kim
+
+Revisions
+Fixed format string length from 5 to 8 P. Kim 7 Jul 09
+
+.LEVEL1
+.VARIABLE INP
+Input file names
+
+.END

@@ -1,0 +1,5 @@
+This contains scripts for working with ALIRT data.
+
+Right now, we don't do any kind of a camera calibration. Instead, the user
+just enters the orientation of the camera relative to the Applanix unit
+(read "guess").

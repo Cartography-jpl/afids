@@ -1,0 +1,10 @@
+key=austst
+pathin=/export/data1/landsat/auslog
+pathout=/export/data1/landsat/ausmos
+pathin10x=/export/data1/landsat/auslog10
+gridspace=0.05
+deltazthresh=5.0
+minnumzval=4
+waterthresh=5
+watercount=12
+getzvalwin=5

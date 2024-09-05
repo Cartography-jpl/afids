@@ -1,0 +1,6 @@
+$ vpack retrieve.com -mixed -
+	-s retrieve.c -
+	-i retrieve.imake -
+	-p retrieve.pdf -
+	-t tstretrieve.pdf devretrieve.pdf
+$ Exit

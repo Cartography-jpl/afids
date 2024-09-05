@@ -1,0 +1,438 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm mean real def=0.0
+parm sdev real def=1.0
+parm seed real def=9.0
+body
+let $autousage="none"
+!let _onfail="continue"
+let $echo="yes"
+
+!  TEC CASES FIRST... EPOSC PROJ4 STUFF STILL UNDER DEVELOPMENT
+
+! basic case, geogr-projective, lambert
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)", +
+          "GeogPrimeMeridianGeoKey=40.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=8(CT_LambertConfConic_2sp)", +
+          "PROJCENTERLATGEOKEY=40", +
+          "PROJCENTERLONGGEOKEY=30.5", +
+          "PROJSTDPARALLEL1GEOKEY=33.0", +
+          "PROJSTDPARALLEL2GEOKEY=45", +
+          "PROJFALSENORTHINGGEOKEY=0", +
+          "PROJFALSEEASTINGGEOKEY=0", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+
+mf3 xx1 f="c1=30.0+@index$c2=40.0$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+
+! basic case, geogr-projective,  albers
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)", +
+          "GeogPrimeMeridianGeoKey=40.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=11(CT_AlbersEqualArea)", +
+          "PROJCENTERLATGEOKEY=40", +
+          "PROJCENTERLONGGEOKEY=30.5", +
+          "PROJSTDPARALLEL1GEOKEY=33.0", +
+          "PROJSTDPARALLEL2GEOKEY=45", +
+          "PROJFALSENORTHINGGEOKEY=3000000", +
+          "PROJFALSEEASTINGGEOKEY=1000000", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+
+mf3 xx1 f="c1=30.0+@index$c2=40.0$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.8f %22.8f %22.8f %22.8f %22.8f %22.8f"
+
+
+! UTM case, WGS84
+
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32637(PCS_WGS84_UTM_zone_37N)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=39.77000000000123$c2=15.20000000000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+
+
+! UTM case, WGS72
+
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32237(PCS_WGS72_UTM_zone_37N)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=39.77000000000123$c2=15.20000000000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'tec
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.8f %22.8f %22.8f %22.8f"
+
+!  NOW THE EPOSC CASES 
+
+goto skip_ep
+
+keep the following 'eposc cases for eventual conversion to 'tec
+or nima code
+
+
+! basic case, geographic-projective
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0"+
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=7(CT_Mercator)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0" +
+          "ProjCenterLatGeoKey=39d30m" +
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+
+! basic case, geographic-projective, change spheroid
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=7(CT_Mercator)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+
+!"ProjLinearUnitsGeoKey=9015(Linear_Mile_International_Nautical)", +
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+
+
+! basic case, geographic-projective, change spheroid
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=7(CT_Mercator)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-C)")
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+
+! basic case, geographic-projective, miller
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+
+!"ProjLinearUnitsGeoKey=9015(Linear_Mile_International_Nautical)", +
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! basic case, projective-projective
+
+gtgen out=xxxlab1 +
+   geotiff=("ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)", +
+          "GeogPrimeMeridianGeoKey=40.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=19(CT_Gnomonic)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=.7$c2=.6$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+
+! test transverse mercator, then south oriented
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0"+
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=1(CT_TransverseMercator)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0" +
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+
+          
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123*(@index*2-3)$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+! south-oriented
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0"+
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=27(CT_TransverseMercator_SouthOriented)", +
+          "GeogSemiMajorAxisGeoKey=6378100.0" +
+          "GeogSemiMinorAxisGeoKey=6358100.0")
+
+          
+ibis-gen xx1 NC=6 NR=2 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123*(@index*2-3)$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+! UTM case
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32707(PCS_WGS84_UTM_zone_7S)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=-140.10704600000123$c2=-40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+! inverse case
+
+gtproj (xx1,xxxlab2,xxxlab1) incol=(4,5,6) outcol=(1,2,3) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+
+! following doesn't work
+!"ProjLinearUnitsGeoKey=9015(Linear_Mile_International_Nautical)", +
+
+! UTM case, developing datum
+
+gtgen out=xxxlab1 +
+     geotiff=("ProjectedCSTypeGeoKey=32211(PCS_WGS72_UTM_zone_11N)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32611(PCS_WGS84_UTM_zone_11N)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=550000.0$c2=4400000.0$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+
+gtgen out=xxxlab1 +
+    geotiff=("ProjectedCSTypeGeoKey=26911(PCSNAD83_UTM_zone_11N)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32611(PCS_WGS84_UTM_zone_11N)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=550000.0$c2=4400000.0$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+goto theend
+
+! UTM case, developing datum keyword
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=51498(WGS72)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectedCSTypeGeoKey=32737(PCS_WGS84_UTM_zone_37S)")
+
+          
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+
+gtgen out=xxxlab1 +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogGeodeticDatumGeoKey=39990(NIMA:NAS-E)")
+gtgen out=xxxlab2 +
+   geotiff=("ProjectionGeoKey=8(CT_LambertConfConic_2sp)", +
+          "PROJCENTERLATGEOKEY=40", +
+          "PROJCENTERLONGGEOKEY=40.0", +
+          "PROJSTDPARALLEL1GEOKEY=33.0", +
+          "PROJSTDPARALLEL2GEOKEY=45", +
+          "PROJFALSENORTHINGGEOKEY=0", +
+          "PROJFALSEEASTINGGEOKEY=0", +
+          "GeogGeodeticDatumGeoKey=39992(NIMA:WGS84)")
+
+ibis-gen xx1 NC=6 NR=1 deffmt=DOUB
+
+mf3 xx1 f="c1=40.10704600000123$c2=40.10704600000123$c3=333.33"
+
+gtproj (xx1,xxxlab1,xxxlab2) incol=(1,2,3) outcol=(4,5,6) 'eposc
+
+ibis-list xx1 csiz=(22,22,22,22,22,22) +
+       cfor="%22.15f %22.15f %22.15f %22.15f %22.15f %22.15f"
+skip_ep>
+
+theend>
+END-PROC

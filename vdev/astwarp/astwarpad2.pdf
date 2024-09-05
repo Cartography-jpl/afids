@@ -1,0 +1,326 @@
+procedure help=*
+parm key type=string
+parm fnamein type=(string,99)
+parm rawaster type=(string,99) default=""
+parm btype type=string valid=("","VNIR","SWIR","TIR","L2-5","L2-8","L2-9")
+parm band type=string default=""
+parm outimg type=(string,99)
+parm map0save type=(string,99) default=""
+
+local fname type=(string,99)
+local rawroot type=(string,99)
+local logimg type=(string,99)
+
+local inloc type=(string,99)
+local imgfile type=(string,99)
+local txtfile type=(string,99)
+local tempfile1 type=(string,99)
+local tempfile2 type=(string,99)
+local tempfile3 type=(string,99)
+local gridfinal1 type=(string,99)
+local gridfinal2 type=(string,99)
+local gridfinal3 type=(string,99)
+local gridinfo type=(string,99)
+local raw2file type=(string,99)
+local dtype type=(string,99)
+local gridalt type=(string,99)
+local gridalt2 type=(string,99)
+local gridalt3 type=(string,99)
+local corfail type=(string,99)
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local csl real
+local css real
+local cnl real
+local cns real
+local icsl int
+local icss int
+local icnl int
+local icns int
+local sl int
+local ss int
+local nl int
+local ns int
+
+local btypecf int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local il1 int
+local is2 int
+local is3 int
+local il4 int
+
+local tnl int
+local tns int
+local texist int
+
+local rastypstr string
+local interp type=(string,10)
+local rastype type=(string,10)
+local rms type=real
+local file2 type=(string,99)
+
+refgbl $echo
+body
+let $echo="yes"
+
+write "astwarpad2 04/18/13"
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=interp +
+    keyword=interp vtype=0
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=rastype +
+    keyword=rastype vtype=0
+if (interp="-999") let interp = "bilin"
+if (rastype="-999") let rastype = "point"
+
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+! other filenames
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=fname +
+    keyword=bobdate vtype=0
+idgen prefix=bab outvar=logimg
+let rawroot = "raw&key" // "/&logimg"
+
+if (btype="L2-5")
+   let imgfile = "&rawroot" // "_SE-05" // "_&band" // ".img"
+else-if (btype="L2-8")
+   let imgfile = "&rawroot" // "_SKT-08" // ".img"
+else-if (btype="L2-9")
+   let imgfile = "&rawroot" // "_SRTIR-09T" // "_&band" // ".img"
+else
+   let imgfile = "&rawroot" // "_&band" // ".img"
+end-if
+
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+if (map0save<>"") let tempfile2 = "&map0save"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+let gridfinal1 = "final&key" // "/&fname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&fname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&fname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&fname"  // "gridinfo"
+let txtfile = "raw&key" // "/&fname" // "VNIR_VNIR.txt"
+let gridalt = "scratch/" // "xxx&key" // "temp4" // ".grid"
+let gridalt2 = "scratch/" // "xxx&key" // "temp4" // ".grid2"
+let gridalt3 = "scratch/" // "xxx&key" // "temp4" // ".grid3"
+let raw2file = "raw&key" // "/&fname" // "VNIR_2.img"
+
+! call of logger
+
+let inloc = "raw" // "&key" // "/"
+
+if (btype="L2-5" or btype="L2-8" or btype="L2-9")
+   write "first call"
+   asterlog inp=&rawaster out=&rawroot lookback=0
+   label-add inp=&imgfile items="bobdate=&logimg" +
+         property="COREG_META_DATA"
+else
+   write "second call"
+   asterlog inp=&rawaster out=&rawroot sensor=&btype lookback=0
+   label-add inp=&imgfile items="bobdate=&logimg" +
+         property="COREG_META_DATA"
+end-if
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns v5=t3e v6=t3n +
+   vartype=(0,0,0,0,-1,-1) ibisloc=(1,7,1,8,1,9,1,10,3,3,3,4)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+ibis2tcl &gridinfo v1=csl v2=css v3=cnl v4=cns +
+   vartype=(0,0,0,0) ibisloc=(1,11,1,12,1,13,1,14)
+let icsl = $fix(csl)
+let icss = $fix(css)
+let icnl = $fix(cnl)
+let icns = $fix(cns)
+
+! the sl,ss,nl,ns for geom is different
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from hywarp.pdf
+
+! for compression testing
+compresschk &imgfile
+
+file2tcl &txtfile val=texist
+if (texist=1)
+   asc2tcl &txtfile keyword="ASTER_PRODUCT_TYPE=" val=dtype +
+     btrim=1 etrim=1 vtype=0
+else
+   let dtype = ""
+end-if
+
+if (btype="SWIR")
+   let btypecf = 2000
+else-if (btype="TIR")
+   let btypecf = 6000
+end-if
+
+if (btype="L2-5" or btype="L2-8" or btype="L2-9")
+   gtsize &imgfile &tempfile2 'ignoregt azoom=6.0
+else-if (btype="VNIR" or btype="")
+   copy &imgfile &tempfile2
+else-if (dtype="1A")
+   imcorner &imgfile line1=l1 samp1=s1 line2=l2 samp2=s2 +
+      line3=l3 samp3=s3 line4=l4 samp4=s4 inside=130
+   gengrid2 out=&gridalt ncol=18 nah=9 nav=9 +
+      l1=&l1 s1=&s1 l2=&l2 s2=&s2 l3=&l3 s3=&s3 l4=&l4 s4=&s4
+   
+   mf3 &gridalt f="c11=@rand"
+   sort &gridalt sortcol=11
+   picmtch5 (&imgfile,&raw2file,&gridalt) SEARCH=256  fftsize=256 +
+      minsrch=256 zrej=256 pred=linear autofit=12 redo=12 +
+      zerolim=12 ffthalf=0 +
+      itie=(1,1,1,1000,1000,1) otie=(1,1,1,&btypecf,&btypecf,1)
+   
+   rowop2     &gridalt &gridalt2 keycol=9 range=(-10000.0,0.0) 'delete 
+   mf3        &gridalt2 func="c12=1.0$c16=c1*c1$c17=c1*c2$c18=c2*c2"
+
+   ibislsq2 &gridalt2 indcol=(1,2,12,16,17,18)  depcol=6 rescol=13
+   ibislsq2 &gridalt2 indcol=(1,2,12,16,17,18)  depcol=7 rescol=14
+   mf3       &gridalt2 func="c15=@sqrt(c13*c13+c14*c14)"
+   rowop2    &gridalt2 &gridalt keycol=15 range=(0.0,15.0) 'select
+   
+   ibislsq2 &gridalt indcol=(1,2,12,16,17,18)  depcol=6 rescol=13
+   ibislsq2 &gridalt indcol=(1,2,12,16,17,18)  depcol=7 rescol=14
+   mf3        &gridalt func="c15=@sqrt(c13*c13+c14*c14)"
+   rowop2     &gridalt &gridalt2 keycol=15 range=(0.0,6.0) 'select
+   
+   ibislsq2 &gridalt2 indcol=(1,2,12,16,17,18)  depcol=6 rescol=13
+   ibislsq2 &gridalt2 indcol=(1,2,12,16,17,18)  depcol=7 rescol=14
+   mf3        &gridalt2 func="c15=@sqrt(c13*c13+c14*c14)"
+   rowop2     &gridalt2 &gridalt keycol=15 range=(0.0,3.0) 'select
+   
+   
+   lab2tcl &raw2file v1=tnl v2=tns keyword=(nl,ns) 'system
+   tieconv &gridalt &gridalt2 cols=(6,7,1,2) +
+      nah=100 nav=100 poly="QUAD" 'geomv +
+      minl=0 mins=0 maxl=&tnl maxs=&tns
+   geomv inp=(&imgfile,&gridalt2) out=&tempfile2 nl=&tnl ns=&tns
+   ! try to achieve single resample later for this case,
+   ! use gridcomp or gtwarpxd
+else-if (btype="SWIR")
+   gtsize &imgfile &tempfile2 'ignoregt azoom=2.0
+else-if (btype="TIR")
+   gtsize &imgfile &tempfile2 'ignoregt azoom=6.0
+end-if
+
+copy &tempfile2 &tempfile1 size=(&icsl,&icss,&icnl,&icns)
+
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv) +
+      interp=&interp
+gtsize (&tempfile3,&fnamein) &outimg 'coverref
+
+plab2tcl &fnamein property=COREG_META_DATA val=rms +
+   keyword=ACCURACY vtype=7
+plab2tcl &fnamein property=COREG_META_DATA val=file2 +
+   keyword=ACCREF vtype=0
+label-add inp=&outimg items="accuracy=&rms" +
+     property="COREG_META_DATA"
+label-add inp=&outimg items="accuracy_unit=pixels" +
+     property="COREG_META_DATA"
+label-add inp=&outimg items="accref=&file2" +
+     property="COREG_META_DATA"
+
+write "MSG: PROCESSING COMPLETED"
+theend>
+end-proc
+.TITLE
+astwarpad - warp one additional band of aster
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 19 Nov, 2004
+Line 171 changed: T. L. Logan, 18 Apr, 2013
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.vari band
+the band number; for 3 use 3N
+.END

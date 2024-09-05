@@ -1,0 +1,101 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xim0 nl=100 ns=200
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen xim0 xim 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)",  +
+          "ModelTiePointTag=(102,83,0,351807.4,5316081.3,0.0)",  +
+          "ModelTiePointTag=(2,83,0,350807.4,5316081.3,0.0)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtlist xim
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(2,3,0,350807.4,5317081.3,0.0)
+MODELPIXELSCALETAG=(10.0,12.5,0.0)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  350792.4000000  5317112.550000
+       1.0    200.0        199.5      0.5  352782.4000000  5317112.550000
+     100.0      1.0          0.5     99.5  350792.4000000  5315875.050000
+     100.0    200.0        199.5     99.5  352782.4000000  5315875.050000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  350787.4000000  5317118.800000
+       0.5    200.5        200.0      0.0  352787.4000000  5317118.800000
+     100.5      0.5          0.0    100.0  350787.4000000  5315868.800000
+     100.5    200.5        200.0    100.0  352787.4000000  5315868.800000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 10.000000000000 map units east
+1 line   = 12.500000000000 map units north
+
+
+The scale fraction is 1 /   7800.0
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+ibis-gen a version=ibis-2 org=column  datacol=(1,2,3,4)  +
+    nc=4 nr=2 deff="DOUB"
+Beginning VICAR task ibis
+mf a func=("c1=index*99-98","c2=index*199-198")
+Beginning VICAR task mf
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstpixmap', line 23
+RETURN

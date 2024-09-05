@@ -1,0 +1,179 @@
+procedure
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+refgbl $echo
+refgbl $autousage
+body
+let $autousage = "none"
+let _onfail="stop"
+let $echo="yes"
+
+! Jun 30, 2016 - RJB
+! TEST SCRIPT FOR INSERT
+! tests BYTE, HALF, FULL, REAL images
+!
+! Vicar Programs:
+!       gen list label-list 
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!check to see if mipl or cartlab for test images
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+
+write "afidsroot = &afidsroot"
+write "aftestdata = &aftestdata"
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s /raid1/vicar_test_images/testdata/carto ct
+    else 
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+
+
+! allocate extra line for insertion below!
+! BYTE DATA
+gen OUT=BYTE.DAT NL=10 NS=10
+list INP=BYTE.DAT
+label-list INP=BYTE.DAT
+
+!COPY FILE ONLY
+insert INP=BYTE.DAT SIZE=(3,3,5,5) OUT=INSBYTE.DAT
+list INP=INSBYTE.DAT
+label-list INP=INSBYTE.DAT
+
+!INSERT A LINE BY AVERAGING TWO LINES
+insert INP=BYTE.DAT OUT=INSBYTE.DAT LINE=5
+list INP=INSBYTE.DAT
+
+! SUPPRESS AVERAGING
+insert INP=BYTE.DAT OUT=INSBYTE.DAT 'NOAVG LINE=5
+list INP=INSBYTE.DAT
+label-list INP=INSBYTE.DAT
+
+!INSERT A LINE AT 128 DN; MAINTAIN SAME SIZE
+insert INP=BYTE.DAT OUT=INSBYTE.DAT DN=128 LINE=5 'TRUNC
+list INP=INSBYTE.DAT
+label-list INP=INSBYTE.DAT
+
+! INSERT MULTIPLE LINES, RANDOM ORDER
+insert INP=BYTE.DAT OUT=INSBYTE.DAT LINE=(13,3,8,4)
+list INP=INSBYTE.DAT
+let $echo="no"
+write " "
+write "-------- HALF DATA ------"
+write " "
+let $echo="yes"
+!
+!NOW FOR HALFWORD DATA
+gen OUT=HALF.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=HALF
+list INP=HALF.DAT
+label-list INP=HALF.DAT
+
+!COPY FILE ONLY
+insert INP=HALF.DAT SIZE=(3,3,5,6) OUT=INSHALF.DAT
+list INP=INSHALF.DAT
+label-list INP=INSHALF.DAT
+
+!INSERT A LINE BY AVERAGING TWO LINES
+insert INP=HALF.DAT OUT=INSHALF.DAT LINE=5
+list INP=INSHALF.DAT
+label-list INP=INSHALF.DAT
+
+!INSERT A LINE AT 1234 DN; MAINTAIN SAME SIZE FIELD
+insert INP=HALF.DAT OUT=INSHALF.DAT DN=1234 LINE=5 'TRUNC
+list INP=INSHALF.DAT
+label-list INP=INSHALF.DAT
+let $echo="no"
+write " "
+write "-------- FULL DATA ------"
+write " "
+let $echo="yes"
+
+!
+! FOR FULL DATA
+gen OUT=FULL.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=FULL
+list INP=FULL.DAT
+label-list INP=FULL.DAT
+
+!COPY FILE ONLY
+insert INP=FULL.DAT SIZE=(3,3,5,6) OUT=INSFULL.DAT
+list INP=INSFULL.DAT
+label-list INP=INSFULL.DAT
+
+!INSERT A LINE BY AVERAGING TWO LINES
+insert INP=FULL.DAT OUT=INSFULL.DAT LINE=5
+list INP=INSFULL.DAT
+label-list INP=INSFULL.DAT
+
+!INSERT A LINE AT 1234 DN; MAINTAIN SAME SIZE FIELD
+insert INP=FULL.DAT OUT=INSFULL.DAT DN=1234 LINE=5 'TRUNC
+list INP=INSFULL.DAT
+label-list INP=INSFULL.DAT
+let $echo="no"
+write " "
+write "-------- REAL DATA ------"
+write " "
+let $echo="yes"
+
+!
+! FOR REAL DATA
+gen OUT=REAL.DAT NL=10 NS=10 LINC=100 SINC=100 FORMAT=REAL
+list INP=REAL.DAT
+label-list INP=REAL.DAT
+
+!COPY FILE ONLY
+insert INP=REAL.DAT SIZE=(3,3,5,6) OUT=INSREAL.DAT
+list INP=INSREAL.DAT
+label-list INP=INSREAL.DAT
+
+!INSERT A LINE BY AVERAGING TWO LINES
+insert INP=REAL.DAT OUT=INSREAL.DAT LINE=5
+list INP=INSREAL.DAT
+label-list INP=INSREAL.DAT
+
+!INSERT A LINE AT 1234 DN; MAINTAIN SAME SIZE FIELD
+insert INP=REAL.DAT OUT=INSREAL.DAT DN=1234 LINE=5 'TRUNC
+list INP=INSREAL.DAT
+label-list INP=INSREAL.DAT
+
+let $echo="no"
+write " "
+write " New test of image > 2 GB"
+write " "
+write " test in insert of line 5005 in large image"
+write " "
+let $echo="yes"
+insert ct/pre_reg.hlf bigins.img DN=9234 LINE=5005
+list bigins.img  size=(5000,5000,10,10)
+!
+! clean up
+!
+rm>
+let $echo="no"
+ush rm ct
+end-proc

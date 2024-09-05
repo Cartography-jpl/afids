@@ -1,0 +1,226 @@
+process help=*
+local dum1 real
+local dum2 real
+local dum3 real
+local dum4 real
+local dum5 real
+local dum6 real
+local dum7 real
+local dum8 real
+local dum9 real
+local dum10 real
+local dum11 real
+local dum12 real
+local dum13 real
+local dum14 real
+local dum15 real
+local dum16 real
+local dum17 real
+
+parm inp type=string
+parm pan type=name default="dum1"
+parm coa type=name default="dum2"
+parm blu type=name default="dum3"
+parm grn type=name default="dum4"
+parm yel type=name default="dum5"
+parm red type=name default="dum6"
+parm rde type=name default="dum7"
+parm nr1 type=name default="dum8"
+parm nr2 type=name default="dum9"
+parm sw1 type=name default="dum10"
+parm sw2 type=name default="dum11"
+parm sw3 type=name default="dum12"
+parm sw4 type=name default="dum13"
+parm sw5 type=name default="dum14"
+parm sw6 type=name default="dum15"
+parm sw7 type=name default="dum16"
+parm sw8 type=name default="dum17"
+
+end-proc
+
+.title
+dig2refl - calculates reflectance factors for Digital Globe sensors
+
+.help
+PURPOSE
+
+  dig2refl - calculates reflectance factors for Digital Globe sensors
+  WV01, WV02, WV03, WV04, and GE01. It is expected that the
+  reflectance factor for a particular sensor/band will be multiplied
+  (using f2) against an unprocessed image of the same sensor/band to
+  yield a reflectance image from the original DN image.
+
+  dig2refl uses the digitalglobe IMD file as input to calculate each
+  image band's reflectance factor. If the IMD file is not available,
+  the NITF image file can be input instead, but the generated
+  reflectance factors will be generated from static albedo coefficients.
+   
+.page
+TAE Command Line Format
+
+  dig2refl inp=imdfile PARMS
+     
+  where
+
+  imdfile is an input Digital Globe IMD metadata file (or NTF file)
+
+  PARMS	
+       
+    The reflectance factors available depend on the particular sensor
+    and IMD file. Not all sensors have all bands. Not all IMD files
+    have all possible bands for a particular sensor. The possible bands
+    by sensor are:
+
+    WV01: pan
+    WV02: pan
+          coa (coastal)
+          blu
+          grn
+          yel (yellow)
+          red
+          rde (red edge)
+          nr1 (nir 1)
+          nr2 (nir 2)
+    WV03: all WV02 bands plus 8 swir bands
+          sw1
+          sw2
+          sw3
+          sw4
+          sw5
+          sw6
+          sw7
+          sw8
+    WV04: pan
+          blu
+          grn
+          red
+          nir
+    GE01: pan
+          blu
+          grn
+          red
+          nir
+
+EXAMPLES
+  
+  local RFAC real
+  dig2refl inp=WV01PAN.IMD pan=rfac
+  f2 inp=WV01PAN.vic out=WV01PAN_REFL.vic func=(in1*rfac)
+
+  dig2refl inp=WV02MS8.IMD +
+    coa=coa +
+    blu=blu +
+    grn=grn +
+    yel=yel +
+    red=red +
+    rde=rde +
+    nr1=nr1 +
+    nr2=nr2
+
+  dig2refl inp=WV02MS4.IMD +
+    blu=blu +
+    grn=grn +
+    red=red +
+    nr1=nr1
+
+  dig2refl inp=WV03SWR.IMD +
+    sw1=sw1 +
+    sw2=sw2 +
+    sw3=sw3 +
+    sw4=sw4 +
+    sw5=sw5 +
+    sw6=sw6 +
+    sw7=sw7 +
+    sw8=sw8
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+  Adapted from P. Kim's world_view2_reflectance.py
+
+COGNIZANT PROGRAMMER:  W. L. Bunch
+
+REVISIONS: 
+  2017-04-20 WLB - Initial version
+
+.level1
+.var inp
+Input IMD file (or NITF file if no IMD)
+.var pan
+Output pan reflectance factor.
+.var coa
+Output coa reflectance factor.
+.var blu
+Output blu reflectance factor.
+.var grn
+Output grn reflectance factor.
+.var yel
+Output yel reflectance factor.
+.var red
+Output red reflectance factor.
+.var rde
+Output rde reflectance factor.
+.var nr1
+Output NIR1 reflectance factor.
+.var nr2
+Output NIR2 reflectance factor.
+.var sw1
+Output SWIR1 reflectance factor.
+.var sw2
+Output SWIR2 reflectance factor.
+.var sw3
+Output SWIR3 reflectance factor.
+.var sw4
+Output SWIR4 reflectance factor.
+.var sw5
+Output SWIR5 reflectance factor.
+.var sw6
+Output SWIR6 reflectance factor.
+.var sw7
+Output SWIR7 reflectance factor.
+.var sw8
+Output SWIR8 reflectance factor.
+.level2
+.var inp
+Input DigitalGlobe IMD file for one of:
+World View 1
+World View 2
+World View 3
+World View 4
+GeoEye 1
+Or input DigitalGlobe NITF file, although
+reflectance quality may be reduced
+.var pan
+Output panchromatic band reflectance factor.
+.var coa
+Output coastal band reflectance factor.
+.var blu
+Output blue band reflectance factor.
+.var grn
+Output green band reflectance factor.
+.var yel
+Output yellow band reflectance factor.
+.var red
+Output red band reflectance factor.
+.var rde
+Output red edge band reflectance factor.
+.var nr1
+Output near infrared1 band reflectance factor.
+.var nr2
+Output near infrared2 reflectance factor.
+.var sw1
+Output shortwave infrared1 reflectance factor.
+.var sw2
+Output shortwave infrared2 reflectance factor.
+.var sw3
+Output shortwave infrared3 reflectance factor.
+.var sw4
+Output shortwave infrared4 reflectance factor.
+.var sw5
+Output shortwave infrared5 reflectance factor.
+.var sw6
+Output shortwave infrared6 reflectance factor.
+.var sw7
+Output shortwave infrared7 reflectance factor.
+.var sw8
+Output shortwave infrared8 reflectance factor.
+.end

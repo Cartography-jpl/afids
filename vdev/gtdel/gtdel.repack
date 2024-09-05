@@ -1,0 +1,6 @@
+$ vpack gtdel.com -mixed -
+	-s gtdel.c -
+	-i gtdel.imake -
+	-p gtdel.pdf -
+	-t tstgtdel.pdf
+$ Exit

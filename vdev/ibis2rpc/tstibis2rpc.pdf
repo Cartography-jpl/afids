@@ -1,0 +1,17 @@
+procedure
+body
+
+!   TEST ibis2rpc HANDYPROC
+
+
+ibis-gen xxxa nr=80 nc=2 format=("DOUB","DOUB")
+
+label-list ../test_data/xxchip2.img
+rpc2ibis (../test_data/xxchip2.img,xxxa)
+ibis-l xxxa  csiz=(18,18) cfor="%16.14 f%16.9f"
+
+ibis2rpc xxxa xxxb
+label-list xxxb
+ush /bin/rm xxxb
+
+end-proc

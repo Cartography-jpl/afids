@@ -1,0 +1,386 @@
+!subset_combo.pdf (APR2009, by Thomas L. Logan, JPL)
+!Modification of subset_landsat that combines lsat band 3 and 4.
+!Generate a landsat combo map background mosaic according to user
+!dimensions, by extracting subsets from 5x5 input landsat tiles.
+!I.E., Mosaic landsat subsets into an AOI image.
+!Output is one 8bit vicar gt image.
+!Note: Uses Landsat2000 mosaic data which is 28.5m/pxl. That's
+!3790 pixels/degree or 0.0002638522427 degrees per pixel.
+!Landsat2000 files are 18951x18951 pixels.
+!Input Parameter info:
+!Input is lat/lon/lat/lon AOI lower left (start lat, start lon, end lat, end lon).
+!Works in all Hempispheres, including databases that cross the Equator
+!and Prime Meridian, but NOT Longitude -180/+180 (Int Dateline) or Poles.
+!
+procedure	! subset_landsat
+
+parm       slat    integer            !bottom lat (start) of AOI
+parm       slon    integer            !left lon (start) of AOI
+parm       elat    integer            !top (ending) lat of AOI
+parm       elon    integer            !right (ending) lon of AOI
+parm       dir1    string   def="/raid22/lsat_band3/" !Input band3 Tiles
+parm       dir2    string   def="/raid4/tll/combo/"   !Output vicar images
+parm       dir3    string   def="/raid22/lsat_band4/" !Input band 4 Tiles
+parm       outn    string   def="xxx" !Output name, e.g, landsat.img
+
+local      tllat   integer            !bot left tile, bot lat
+local      tllon   integer            !bot left tile, left lon
+local      trlat   integer            !top right tile, bot lat
+local      trlon   integer            !top right tile, left lon
+local      leng    integer            !width of database in degrees
+local      heig    integer            !height of database in degrees
+local      tleng   integer            !Num of 5x5 tiles horizontal
+local      theig   integer            !Num of 5x5 tiles vertical
+local      tnum    integer            !Total Num of 5x5 tiles
+local      lpxl    integer            !leng * pxl/deg (3790)
+local      hpxl    integer            !heig * pxl/deg (3790)
+local      lns     string   init="n"  !north or south in lowercase
+local      lew     string   init="e"  !east or west in lowercase
+local      xxa     real               !variable
+local      xxb     integer            !variable
+local      xxc     integer            !variable
+local      I       integer            !Inc count of tiles in lat direction
+local      J       integer            !Inc count of tiles in lon direction
+local      K       integer            !Current 5x5 bottom lat
+local      L       integer            !Current 5x5 left lon
+local      M       integer            !Inc count of the number of tiles
+local      N       integer            !Current 5x5 top lat
+local      P       integer            !Current 5x5 right lon
+local      subsl   integer            !Sub area Starting Line
+local      subss   integer            !Sub area Starting Sample
+local      subnl   integer            !Sub area Number of lines
+local      subns   integer            !Sub area Number of samples
+local      K2      integer            !This is K without the - sign
+local      L2      integer            !This is L without the - sign
+local      inl     integer            !Output adrg mosaic NL
+local      ins     integer            !Output adrg mosaic NS
+local      slatb   integer            !slat on 5deg bdy? 0=yes
+local      slonb   integer            !slon on 5deg bdy? 0=yes
+local      var1r   real               !real variable
+local      var2r   real               !real variable
+local      var3r   real               !real variable
+local      var3    integer            !integer variable
+body
+
+!Set n/s/e/w codes
+if             (slat >= 0) let lns = "n"
+if             (slat <  0) let lns = "s"
+if             (slon >= 0) let lew = "e"
+if             (slon <  0) let lew = "w"
+
+!Calculate AOI Database size in degrees (integer)
+if             (slat >= 0)
+   let          heig = elat - slat
+else
+   let          heig = (slat - elat) * (-1)
+end-if
+if             (slon >= 0)
+   let          leng = elon - slon
+else
+   let          leng = (slon - elon) * (-1)
+end-if
+
+!Check if slat, slon, elat, or elon are on a 5 degree boundary
+let             var1r = $float(slat)
+let             var2r = var1r/5
+let             var3  = $fix(var2r)
+let             var3r = var2r - $float(var3)  !Calulate remainder
+if             (var3r <> 0.000) 
+   let          slatb = 1                     !1 = Not a 5degree boundary 
+ else
+   let          slatb = 0                     !0 = 5degree boundary
+end-if
+write  "slatb = &slatb "
+
+let             var1r = $float(slon)  
+let             var2r = var1r/5 
+let             var3  = $fix(var2r)
+let             var3r = var2r - $float(var3)  !Calulate remainder 
+if             (var3r <> 0.000) 
+   let          slonb = 1                     !1 = Not a 5degree boundary
+else
+   let          slonb = 0                     !0 = 5degree boundary
+end-if
+write  "slonb = &slonb "
+
+!calculate the lower left corner of the LOWER LEFT 5x5 degree landsat tile
+!that encompases the AOI area.
+!latitude
+if             (slat >= 0)
+   let          xxa  = $float(slat)
+   let          tllat= $fix(xxa/5) * 5 
+else-if        (slatb= 1)
+   let          xxa  = $float(slat)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 5) - 1
+   let          tllat= $fix(xxa) * 5
+else
+   let          tllat= slat
+end-if
+!longitude
+if             (slon >= 0) 
+   let          xxa   = $float(slon)
+   let          tllon= $fix(xxa/5) * 5
+else-if        (slonb= 1)
+   let          xxa  = $float(slon)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 5) - 1
+   let          tllon= $fix(xxa) * 5
+else
+   let          tllon= slon
+end-if
+
+!calcualte the lower left corner of the UPPER RIGHT 5x5 degree landsat tile
+!that encompases the AOI area.
+!latitude
+if             (elat > 0)
+   let          xxa  = $float(elat)
+   let          xxa  = xxa - 0.1
+   let          trlat= $fix(xxa/5) * 5
+else
+   let          xxa  = $float(elat)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 5) - 1
+   let          trlat= $fix(xxa) * 5
+end-if
+!longitude
+if             (elon > 0)
+   let          xxa   = $float(elon)
+   let          xxa   = xxa - 0.1
+   let          trlon= $fix(xxa/5) * 5
+else
+   let          xxa  = $float(elon)
+   let          xxa  = xxa - 0.1
+   let          xxa  = (xxa / 5) - 1
+   let          trlon= $fix(xxa) * 5
+end-if
+
+!Calculate the number of lengthXwidth 5x5 tiles
+if             (slat >= 0)
+   let          theig = ((trlat - tllat) + 5) / 5
+else
+   let          theig = (((tllat - trlat) * (-1)) + 5) / 5
+end-if
+if             (slon >= 0)
+   let          tleng = ((trlon - tllon) + 5) / 5
+else
+   let          tleng = (((tllon - trlon) * (-1)) + 5) / 5
+end-if
+   let          tnum  = theig * tleng
+
+!Verify Parameters
+write  "slat= &slat"
+write  "elat= &elat"
+write  "slon= &slon"
+write  "elon= &elon"
+write  "lns= &lns"
+write  "lew= &lew"
+write  "heig= &heig"
+write  "leng= &leng"
+write  "tllat= &tllat"
+write  "tllon= &tllon"
+write  "trlat= &trlat"
+write  "trlon= &trlon"
+write  "theig= &theig"
+write  "tleng= &tleng"
+write  "tnum= &tnum"
+
+!Calculate and extract subarea from 5x5 degree tiles
+   let          I = 0             !Inc count of 5x5 tiles in lat direction
+   let          J = 0             !Inc count of 5x5 tiles in lon direction
+   let          K = tllat - 5     !Current 5x5 tile bottom lat
+   let          L = tllon - 5     !Current 5x5 tile left lon
+   let          M = 0             !Inc count of the number of 5x5 tiles
+   let          N = 0             !Current 5x5 tile top lat
+   let          P = 0             !Current 5x5 tile right lon
+loop
+   let          I = I + 1 
+   if          (I > theig) break
+   let          K = K + 5
+   loop
+      let       J = J + 1
+      if       (J > tleng) break  !---N---!
+      let       M = M + 1         !       !
+      let       L = L + 5      !  L  5x5  P
+   !subsl                         ! tile  !
+      let       N = K + 5         !---K---!
+      let       P = L + 5
+      if       (N >= elat)
+        let     subsl = ((N - elat) * 3790) + 1
+        else
+        let     subsl = 1
+      end-if
+   !subss
+      if       (L <= slon)
+        let     subss = ((slon - L) * 3790) + 1
+        else
+        let     subss = 1
+      end-if
+   !subnl
+      if       (K < slat)
+        let     subnl = (N - slat) * 3790
+        else
+        let     subnl = (18951 - subsl)
+      end-if
+      if       (theig = 1) let subnl = (heig * 3790)
+   !subns
+      if       (P > elon)
+        let     subns = (elon - L) * 3790
+        else
+        let     subns = (18951 - subss) 
+      end-if
+      if       (tleng = 1) let subns = (leng * 3790)
+   !Extract the subarea
+      write     "subsl= &subsl"
+      write     "subss= &subss"
+      write     "subnl= &subnl"
+      write     "subns= &subns"
+   !Remove negative signs from K and L for use in filenames
+      if       (K < 0)
+        let     K2 = K * (-1)
+        else
+         let    K2 = K
+      end-if
+      if       (L < 0)
+        let     L2 = L * (-1)
+        else
+         let    L2 = L
+      end-if
+   !Reset n/s/e/w codes for crossing the Equator/Prime Meridian
+       if      (K >= 0) let lns = "n"
+       if      (K <  0) let lns = "s"
+       if      (L >= 0) let lew = "e"
+       if      (L <  0) let lew = "w"
+
+      gtcopy    inp=&"dir1"&"lns"&"K2"&"lew"&"L2"_band3 out=xr&"M" +
+                size=(&subsl,&subss,&subnl,&subns)
+
+      gtcopy    inp=&"dir3"&"lns"&"K2"&"lew"&"L2"_band4 out=xi&"M" +
+                size=(&subsl,&subss,&subnl,&subns)
+   end-loop
+   let          J = 0
+   let          L = tllon - 5
+end-loop
+
+!mosaic xr (band3 red) subareas into one landsat mosaic
+if            (tnum = 1)
+   fthmos xxfth xr1 out=xred
+else-if       (tnum = 2)
+   fthmos xxfth xr1 xr2 out=xred toler=.4
+else-if       (tnum = 3)
+   fthmos xxfth xr1 xr2 xr3 out=xred toler=.4
+else-if       (tnum = 4)            
+   fthmos xxfth xr1 xr2 xr3 xr4 out=xred toler=.4
+else-if       (tnum = 5)                   
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 out=xred toler=.4
+else-if       (tnum = 6)                          
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 out=xred toler=.4
+else-if       (tnum = 7)                                 
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 out=xred toler=.4
+else-if       (tnum = 8)                                        
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 out=xred toler=.4
+else-if       (tnum = 9)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 out=xred toler=.4
+else-if       (tnum = 10)                                                 
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 out=xred +
+          toler=.4
+else-if       (tnum = 11)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 +
+          out=xred toler=.4
+else-if       (tnum = 12)                                                
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          out=xred toler=.4
+else-if       (tnum = 13)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 out=xred toler=.4
+else-if       (tnum = 14)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 out=xred toler=.4
+else-if       (tnum = 15)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 xr15 out=xred toler=.4
+else-if       (tnum = 16)         
+   fthmos xxfth xr1 xr2 xr3 xr4 xr5 xr6 xr7 xr8 xr9 xr10 xr11 xr12 +
+          xr13 xr14 xr15 xr16 out=xred toler=.4
+end-if
+
+!mosaic xi (band4 nir) subareas into one landsat mosaic
+if            (tnum = 1)
+   fthmos xxfth xi1 out=xnir
+else-if       (tnum = 2)
+   fthmos xxfth xi1 xi2 out=xnir toler=.4
+else-if       (tnum = 3)
+   fthmos xxfth xi1 xi2 xi3 out=xnir toler=.4
+else-if       (tnum = 4)            
+   fthmos xxfth xi1 xi2 xi3 xi4 out=xnir toler=.4
+else-if       (tnum = 5)                   
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 out=xnir toler=.4
+else-if       (tnum = 6)                          
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 out=xnir toler=.4
+else-if       (tnum = 7)                                 
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 out=xnir toler=.4    
+else-if       (tnum = 8)                                             
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 out=xnir toler=.4    
+else-if       (tnum = 9)                                             
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 out=xnir toler=.4
+else-if       (tnum = 10)                                          
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 out=xnir +
+          toler=.4
+else-if       (tnum = 11)                                      
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 +     
+          out=xnir toler=.4                                         
+else-if       (tnum = 12)                                           
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          out=xnir toler=.4       
+else-if       (tnum = 13)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 out=xnir toler=.4  
+else-if       (tnum = 14)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 out=xnir toler=.4
+else-if       (tnum = 15)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 xi15 out=xnir toler=.4
+else-if       (tnum = 16)         
+   fthmos xxfth xi1 xi2 xi3 xi4 xi5 xi6 xi7 xi8 xi9 xi10 xi11 xi12 +
+          xi13 xi14 xi15 xi16 out=xnir toler=.4
+end-if
+
+!The Output size MUST be a multiple of 3790, if not change it.
+form      xred nl=inl ns=ins
+let       xxb = heig * 3790
+let       xxc = leng * 3790
+if       (xxb <> inl OR xxc <> ins)
+  write  "NL = &inl should be &xxb"
+  write  "NS = &ins should be &xxc"
+  let     inl = xxb
+  let     ins = xxc 
+  gtcopy  xred xred2 size=(1,1,&inl,&ins)
+else
+ush       cp  xred xred2
+end-if
+
+form      xnir nl=inl ns=ins
+let       xxb = heig * 3790 
+let       xxc = leng * 3790 
+if       (xxb <> inl OR xxc <> ins)
+  write  "NL = &inl should be &xxb"
+  write  "NS = &ins should be &xxc"
+  let     inl = xxb
+  let     ins = xxc
+  gtcopy  xnir xnir2 size=(1,1,&inl,&ins)
+else
+ush       cp  xnir xnir2
+end-if
+
+!Combine landsat red and nir bands
+f2       (xred2,xnir2) &"dir2"/&"outn" +
+          func="(in1*.75)+(in2*.25)"
+
+ush       rm xr*
+ush       rm xi*
+ush       rm xni*
+
+write "MSG: LANDSAT COMBO PROCESSING COMPLETED"
+
+end-proc

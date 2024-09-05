@@ -1,0 +1,6 @@
+$ vpack classifier.com -mixed -
+	-s classifier.c -
+	-i classifier.imake -
+	-p classifier.pdf -
+	-t tstclassifier.pdf
+$ Exit

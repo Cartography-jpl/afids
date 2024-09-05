@@ -1,0 +1,4 @@
+$ vpack gengrid2.com -mixed -
+	-p gengrid2.pdf -
+	-t tstgengrid2.pdf
+$ Exit

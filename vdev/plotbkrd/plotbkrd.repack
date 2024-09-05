@@ -1,0 +1,6 @@
+$ vpack plotbkrd.com -mixed -
+	-s plotbkrd.c -
+	-i plotbkrd.imake -
+	-p plotbkrd.pdf -
+	-t tstplotbkrd.pdf
+$ Exit

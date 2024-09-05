@@ -1,0 +1,57 @@
+#! /bin/sh
+# This script should be run if we move a afids installation.
+
+scriptdirrel=$(dirname $0)
+scriptdir=`cd $scriptdirrel; pwd`
+
+echo "export AFIDSTOP=${scriptdir}" > ${scriptdir}/setup_afids_moved.sh
+echo "export AFIDSXVDTOP=${scriptdir}" >> ${scriptdir}/setup_afids_moved.sh
+echo "export AFIDSPYTHONTOP=${scriptdir}" >> ${scriptdir}/setup_afids_moved.sh
+echo "export AFIDSDATATOP=${scriptdir}/data" >> ${scriptdir}/setup_afids_moved.sh
+echo "export VICARTOP=${scriptdir}" >> ${scriptdir}/setup_afids_moved.sh
+echo "export VICARGDALPLUGIN=${scriptdir}/lib/gdalplugins" >> ${scriptdir}/setup_afids_moved.sh
+echo "export GNUPLOT=${scriptdir}" >> ${scriptdir}/setup_afids_moved.sh
+echo "BASEDIR=${scriptdir}" > ${scriptdir}/setup_afids_env.sh.new
+tail -n +2 ${scriptdir}/setup_afids_env.sh >> ${scriptdir}/setup_afids_env.sh.new
+mv -f ${scriptdir}/setup_afids_env.sh.new ${scriptdir}/setup_afids_env.sh
+cp -f ${scriptdir}/setup_afids_env.sh ${scriptdir}/etc/afids/setup_afids_env.sh
+
+echo "setenv AFIDSTOP ${scriptdir}" > ${scriptdir}/setup_afids_moved.csh
+echo "setenv AFIDSXVDTOP ${scriptdir}" >> ${scriptdir}/setup_afids_moved.csh
+echo "setenv AFIDSPYTHONTOP ${scriptdir}" >> ${scriptdir}/setup_afids_moved.csh
+echo "setenv AFIDSDATATOP ${scriptdir}/data" >> ${scriptdir}/setup_afids_moved.csh
+echo "setenv VICARTOP ${scriptdir}" >> ${scriptdir}/setup_afids_moved.csh
+echo "setenv VICARGDALPLUGIN ${scriptdir}/lib/gdalplugins" >> ${scriptdir}/setup_afids_moved.csh
+echo "setenv GNUPLOT ${scriptdir}" >> ${scriptdir}/setup_afids_moved.csh
+echo "set BASEDIR=${scriptdir}" > ${scriptdir}/setup_afids_env.csh.new
+tail -n +2 ${scriptdir}/setup_afids_env.csh >> ${scriptdir}/setup_afids_env.csh.new
+mv -f ${scriptdir}/setup_afids_env.csh.new ${scriptdir}/setup_afids_env.csh
+cp -f ${scriptdir}/setup_afids_env.csh ${scriptdir}/etc/afids/setup_afids_env.csh
+
+if [ "@build_python@" = "yes" ]; then
+# Update shebangs for hardcoded python paths
+    flist=`grep --binary-files=without-match '#!' -R $scriptdir/bin | grep -v "/usr/bin/env" | grep python | sed s/:.*//g`
+    for i in $flist
+    do
+	mv -f $i $i.old
+	echo "#!${scriptdir}/bin/python" > $i
+	chmod --reference=$i.old $i
+	tail -n +2 $i.old >> $i
+	rm -f $i.old
+    done
+fi
+
+# Check that directory is something TAE can support
+echo "${scriptdir}" | grep '[^a-zA-Z0-9_/]'
+res=$?
+if test $res -eq 0 ; then
+    echo "TAE only supports an install directory name made up of letters,"
+    echo "numbers, and '_'. You can change the install directory by passing"
+    echo "a 'prefix <dir>' on the configure line"
+    exit 1;
+fi
+
+echo "${scriptdir}/setup_afids_moved.sh and ${scriptdir}/setup_afids_moved.csh created."
+echo "Check symbolic links in ${scriptdir}/data and update pointers to where"
+echo "data is on your system"
+

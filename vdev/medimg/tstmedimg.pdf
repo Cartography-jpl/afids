@@ -1,0 +1,52 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+gen x1
+gen x2 linc=2 sinc=2
+gen x3 linc=3 sinc=3
+
+list x1
+list x2
+list x3
+
+medimg (x1, x2, x3) out1
+medimg (x1, x2) out2 'upper
+medimg (x1, x2) out3 'lower
+medimg (x1, x3) out4
+
+difpic (out1, x2)
+difpic (out2, x2)
+difpic (out3, x1)
+difpic (out4, x2)
+
+medimg (x1, x3) out 'mean
+difpic (x2, out)
+medimg (x1, x3) out 'sig
+list out
+ush sleep 1
+medimg (x1, x3) out1 'var
+list out1
+medimg (x1, x3) out 'min
+difpic (x1, out)
+medimg (x1, x3) out 'max
+difpic (x3, out)
+
+ush rm x1 x2 x3 out1 out2 out3 out4 out
+END-PROC
+
+
+
+
+
+
+
+
+
+
+
+
+

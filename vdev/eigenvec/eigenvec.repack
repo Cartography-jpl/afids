@@ -1,0 +1,6 @@
+$ vpack eigenvec.com -
+	-s eigenvec.f -
+	-i eigenvec.imake -
+	-p eigenvec.pdf -
+	-t tsteigen.pdf
+$ Exit

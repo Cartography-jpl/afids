@@ -1,0 +1,150 @@
+process help=*
+PARM INP (STRING,80) COUNT=(2:3)
+PARM OUT (STRING,80)
+PARM SN REAL DEFAULT=20.
+PARM SNRIMG TYPE=KEYWORD COUNT=(0:1) VALID=(SNRIMG) DEFAULT=--
+END-PROC
+.TITLE
+VICAR1 Program WNRM2005  --  Image restoration using Wiener filter.
+
+.HELP
+This program modifies a fourier transform using the Wiener noise additive
+model for restoration.  The Wiener algorithm is similar to that 
+provided in WIENER and WNR2005, but has been modified to match a
+MATLAB script.
+
+The inputs can now have a real matrix that gives a per-pixel signal to
+noise ratio (SN) in place of the constant snr given by the parameter.
+.page
+EXECUTION:
+  WNRM2005  INP=(in,otf,snr)  OUT
+
+ where:  in is the fft of the input degraded image.
+
+         otf is the optical transfer function. This represents the image
+             degradation. It is also an fft the same size as in.
+
+         snr  is the signal/noise ratio image (real format) to be applied..
+                It is optional.
+
+         out is the fft of the output image.
+
+Note that WNRM2005 has no SIZE parameter.  The output must be the same
+size as the primary input, and the other input files must also be of
+the same size.
+
+.page
+METHOD
+
+WNRM2005 applies the Wiener noise additive restoration model on a point
+by point basis:
+
+        OUT(i,j) = IN(i,j) * W(i,j)
+
+                        OTF"(i,j)
+	W(i,j) = -----------------------
+                 |OTF(i,j)|**2 + 1/SN**2
+
+        OTF should be pre-normalized by using FFT2005 'norm option.
+
+where IN and OUT are the fourier transforms before and after restoration
+respectively, W is the Wiener filter, OTF is the optical transfer function
+(the fourier transform of the point spread function), OTF" is the complex
+conjugate of OTF, and SN is the signal-to-noise ratio.
+
+.page
+EXAMPLE
+
+Generate OTF from PSF
+fft2005      amt_psf_pan.rel amt_OTF.cmp mode=forward format=comp +
+             insect=(3375,3648) 'quadswap 'norm 'preqswap
+Convert snr psf to zero-filled fft, then convert to real*4 image
+fft2005      amt_snr_pan_high.rel xxtmp3 mode=forward format=comp +
+             insect=(3375,3648) 'quadswap 'preqswap
+f2comp       xxtmp3 xxtmp4 size=(1,1,3375,3648) op=cabs
+Convert Image to FFT
+fft2005      amt_snap_pan.rel xxtmp1 'forward 'comp
+Apply weiner filter
+wnrm2005    (xxtmp1,amt_OTF.cmp,xxtmp4) xxtmp2 'snrimg
+Convert back to image dimensions
+fft2005      xxtmp2 newimage.hlf mode=inverse format=half
+
+
+.page
+SIMULATION
+
+The operation of WNRM2005 could be replaced with the following
+vicar steps, but wnrm2005 is faster, and has less rounding errors.
+(Reference preceeding example)
+
+wnrm2005    (xxtmp1,amt_OTF.cmp,xxtmp4) xxtmp2 'snrimg
+
+  equals:   (except for rounding errors)
+
+f2comp       amt_OTF.cmp xxtmp6 'conj
+f2comp       amt_OTF.cmp xxtmp7 'cabs
+f2          (xxtmp7,xxtmp4) xxtmp8 func="((in1**2)+(1/in2/in2))"
+f2comp      (xxtmp6,xxtmp8) xxtmp9 'div 'scalar
+qswp2005     xxtmp9 xxtmp7 'reverse
+f2comp      (xxtmp1,xxtmp7) xxtmp2 'mult
+
+.page
+HISTORY
+
+  
+  Sep 2007 A Zobrist  NSR input image inverted to SNR input
+
+  Nov 2007 P Kim wnrm2005 program is a spinoff from wnrm2005 to
+                 simulate matlab results for Joe Green  
+
+ Current Cognizant Programmer:  P Kim, A Zobrist
+ Revisions:
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+
+
+.LEVEL1
+
+.vari INP
+2 or 3 input filenames
+
+.vari OUT
+Output filename
+
+.vari SN
+Signal-to-noise ratio
+
+.vari SNRIMG
+last input is noise-to-
+signal ratio array
+
+.LEVEL2
+
+.vari INP
+The input files to WNRM2005 are:
+
+1. The fourier transform of the image to be restored, in the format
+  produced by programs FFT22 or FT2 or FFT2005.
+
+2. The optical transfer function (OTF) of the degraded image, i.e.,
+  the fourier transform of the point spread function (PSF).
+
+3. Optionally, a real input image of S/N can be given as the last input.
+  It is then used in place of the S/N constant input on a per pixel basis.
+  The number of inputs can be from two to four.  If this input is given,
+  then the keyword 'SNRIMG must be used.
+  
+All input files must be of COMPLEX (except NSR real) format and of the
+same size.
+
+.VARIABLE OUT
+The output file is the restored fourier transform.  The corresponding
+image may be produced using program FFT2 or FFT2005 in inverse mode.
+
+The output file will be of the same size as the input.
+
+.vari SN
+This parameter specified the signal-to-noise ratio to be used in the
+restoration. Noisy images should have values like 5. Clean images
+should have values like 30.
+
+.END

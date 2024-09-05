@@ -1,0 +1,48 @@
+procedure
+parm inp type=(string,99)
+parm out type=(string,99)
+parm ref type=(string,99)
+parm xvd string valid=("n","y") default="n"
+
+local master type=(string,99)
+local temp type=(string,99)
+local temp1 type=(string,99)
+local fmt1 string
+local fmt2 string
+body
+
+! utility to process VICAR to existing GeoTIFF reference
+
+let master = "&out" // "vref"
+let temp = "&out" // "temp"
+let temp1 = "&out" // "temp1"
+
+vtiff3-tovic &ref &master
+
+!  should do an offset check here with gtoffset/mf3
+
+gtwarp &inp &temp ref=&master 'coverref
+
+if (xvd="y")
+   lab2tcl &temp v1=fmt1 keyword=format 'system
+   lab2tcl &master v1=fmt2 keyword=format 'system
+   if (fmt1=fmt2)
+      xvd (&temp,&master,&master)
+   else-if (fmt1="BYTE")
+      f2 &master +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp,&temp1,&temp1)
+   else-if (fmt2="BYTE")
+      f2 &temp +
+         &temp1 +
+         fun="in1*0.022" format=byte
+      xvd (&temp1,&master,&master)
+   end-if
+end-if
+
+vtiff3-fromvic &temp &out
+
+!ush /bin/rm -f &master &temp    cannot, xvd asynch
+theend>
+end-proc

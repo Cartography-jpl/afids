@@ -1,0 +1,208 @@
+! VICAR Proc: chipper.pdf version-4 02MAR05
+! Purpose:    Extract sub-images of constant nl/ns size
+!             out of a single larger image, with an overlap between tiles. 
+!             The default is to chip the entire input image. Optionally,
+!             individual chips covering a single target sample/line (x/y) 
+!             can be output IF target coordinates are supplied.
+!
+! NOTE:       Tile size can be varied in the lines (Y) and samples (X)
+!             directions, but the overlap 'number of pixels' is the same
+!             for both.
+!
+procedure
+parm     inname  string   !dir and full filename of input vicar gt image 
+parm     outname string   !Output filename; "_&K_&M.tif" will be appended
+parm     elev    string   !Input elevation DEM file covering input image
+parm     sl      integer  def=1   !start line of "single input" for subsetting
+parm     ss      integer  def=1   !start sample of "single input" for subsetting
+parm     nl      integer  def=0   !num of lines in input picture
+parm     ns      integer  def=0   !num of samps in input picture
+parm     outl    integer  def=1024  !num of output lines
+parm     outs    integer  def=1024  !num of output samps
+parm     olap    integer  def=128   !amount of overlap for both lines and samples
+parm     tsamp   integer  def=0     !target sample (target mode); X
+parm     tline   integer  def=0     !target line (target mode); Y
+local    num     integer  !Counter
+local    I       integer  !Line increment index
+local    J       integer  !Samp increment index
+local    K       integer  !Starting line with overlap offset
+local    M       integer  !Starting samp with overlap offset
+local    K2      integer  !Reset k
+local    M2      integer  !Reset m
+local    offl    integer  !Offset, outl - olap
+local    offs    integer  !Offset, outs - olap
+local    pol     integer  !parent offset line
+local    pos     integer  !parent offset samp
+local    format  string   !parent pixel format
+
+body
+
+write "sl= &sl"
+write "ss= &ss"
+write "nl= &nl"
+write "ns= &ns"
+
+!Calculate image nl ns dimensions
+!Note, user actually specifies el, es (not nl, ns)
+!But Walt's gui converts it to nl, ns
+!Special case, user leaves out nl, ns
+!Special case, nl or ns>=900000, make only 1 chip
+!  (User types in el or es of 999999)
+if (nl >= 900000 or ns >= 900000) goto next6
+if ((sl > 1 or ss > 1) and (nl < 1 or ns < 1))
+    form &"inname" format nl ns
+    let nl = (nl - sl) + 1
+    let ns = (ns - ss) + 1
+else
+    if (nl < 1 or ns < 1)  form &"inname" format nl ns
+end-if
+if  (nl < outl) let nl = outl
+if  (ns < outs) let ns = outs
+write "sl= &sl"
+write "ss= &ss"
+write "nl= &nl"
+write "ns= &ns"
+
+!Copy out Area of Interest and generate the Parent rpc grid
+if (sl <> 1 or ss <> 1) 
+         gtcopy &"inname" xxxa size=(&sl,&ss,&nl,&ns)
+         rpc2grid (xxxa,&elev) out=xxchip2grid nah=500 nav=500 ncol=8
+else
+         rpc2grid (&"inname",&elev) out=xxchip2grid nah=500 nav=500 ncol=8
+end-if
+
+!TARGET MODE
+!If a target samp/line is given, extract all covering chips.
+if      (tline = 0) goto next1      !SKIP to NEXT1
+let      offl = outl - olap
+let      offs = outs - olap
+let      K    = ((tline/offl)*offl)+1
+let      M    = ((tsamp/offs)*offs)+1
+let      K2   = K
+let      M2   = M
+
+if (sl <> 1 or ss <> 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+if (sl = 1 and ss = 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+let      pol = K - 1
+let      pos = M - 1 
+label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+rpccorn  (xxxb,&elev) grid=xxchip2grid
+vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!gtcopy    xxxb &"outname"_&"K"_&"M".hlf
+write "Output Chip  sl= &K  ss= &M"
+
+if      (tline < (K+olap))
+   let      K = K - offl
+   if      (K < 1) goto next3
+   if (sl <> 1 or ss <> 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+   if (sl = 1 and ss = 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+   let      pol = K - 1
+   let      pos = M - 1 
+   label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+   label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+   rpccorn  (xxxb,&elev) grid=xxchip2grid
+   vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!   gtcopy    xxxb &"outname"_&"K"_&"M".hlf 
+   write "Output Chip  sl= &K  ss= &M"
+   next3>
+   let      K = K2
+else
+end-if
+
+if      (tsamp < (M+olap))
+   let      M = M - offs
+   if      (M < 1) goto next4
+   if (sl <> 1 or ss <> 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+   if (sl = 1 and ss = 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+   let      pol = K - 1
+   let      pos = M - 1
+   label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+   label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+   rpccorn  (xxxb,&elev) grid=xxchip2grid
+   vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!   gtcopy    xxxb &"outname"_&"K"_&"M".hlf 
+   write "Output Chip  sl= &K  ss= &M"
+   next4> 
+   let      M = M2
+else
+end-if
+
+if     ((tsamp < (M+olap)) and (tline < (K+olap))) 
+    let     M = M - offs
+    let     K = K - offl
+    if    ((K < 1) or (M < 1)) goto next5
+    if (sl <> 1 or ss <> 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+    if (sl = 1 and ss = 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+    let     pol = K - 1
+    let     pos = M - 1 
+    label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+    label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF" 
+    rpccorn  (xxxb,&elev) grid=xxchip2grid
+    vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+!    gtcopy    xxxb &"outname"_&"K"_&"M".hlf
+    write  "Output Chip  sl= &K  ss= &M"
+    next5> 
+else
+end-if
+gen xxxb !dummy file for ush rm command
+goto next2
+
+!ALL TILES MODE
+!Extract all possible tiles. (tsamp and tline NOT supplied.)
+next1>
+!Setup indexes
+let             K = (outl - 1) * -1
+let             num = 1
+
+!Begin Main Loop
+!Begin Line Loop
+loop
+let             M = (outs - 1) * -1
+   let          I = K + outl
+      if       (I = 1)
+        let     K = 1
+      else      
+        let     K = I - olap
+      end-if
+   if         (K >= nl) break   !maximum coverage
+!Begin Sample (embedded) Loop
+   loop
+      let       J = M + outs
+         if    (J = 1) 
+           let  M = 1
+         else  
+           let  M = J - olap
+         end-if
+      if      (M >= ns) break    !maximum coverage
+!vicar or Geotiff? Geotiff
+      if (sl <> 1 or ss <> 1) gtcopy xxxa xxxb size=(&K,&M,&outl,&outs)
+      if (sl = 1 and ss = 1) gtcopy &"inname" xxxb size=(&K,&M,&outl,&outs)
+      let      pol = K - 1
+      let      pos = M - 1
+      label-add inp=xxxb items="chip_parent_offs_line=&pol" property="GEOTIFF"
+      label-add inp=xxxb items="chip_parent_offs_samp=&pos" property="GEOTIFF"
+      rpccorn  (xxxb,&elev) grid=xxchip2grid
+      vtiff3-fr xxxb &"outname"_&"K"_&"M".tif
+     !gtcopy    xxxb &"outname"_&"K"_&"M".hlf 
+      write "image num=&num   offset SL=&K   offset SS=&M ************"
+      let      num = num + 1
+   end-loop
+end-loop
+goto next2
+
+next6>
+!Special Processing, User wants only one chip
+gtcopy &"inname" xxxa size=(&sl,&ss,&outl,&outs)
+rpc2grid (xxxa,&elev) out=xxchip2grid nah=100 nav=100 ncol=8
+label-add inp=xxxa items="chip_parent_offs_line=0" property="GEOTIFF"
+label-add inp=xxxa items="chip_parent_offs_samp=0" property="GEOTIFF"
+rpccorn  (xxxa,&elev) grid=xxchip2grid
+vtiff3-fr xxxa &"outname"_1_1.tif
+
+next2>
+write "MSG: PROCESSING COMPLETED"
+
+ush  rm   xxx*
+
+end-proc

@@ -1,0 +1,23 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR NITFLOG
+
+! CIB1
+!nitflog inp=/cdrom/cdrom0/rpf/NK517K1/092NZ51A.I42 out=/home/wlb/092NZ51A.I42 'noImg
+
+! Quickbird
+nitflog inp=../test_data/002yy14a.i22 out=002yy14a.i22 'noImg
+
+! Ikonos
+! nitflog inp=po_91275_pan_0000000.ntf
+!nitflog inp=po_120903_pan_0000000.ntf
+
+end-proc

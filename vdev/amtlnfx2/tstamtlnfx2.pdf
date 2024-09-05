@@ -1,0 +1,70 @@
+procedure
+refgbl $echo
+refgbl $autousage
+refgbl $syschar
+body
+let $autousage = "none"
+let _onfail="continue"
+let $echo="yes"
+
+! TEST SCRIPT FOR amtlnfx2
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*100"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add
+list xxb
+
+amtlnfx2 xxa xxb blemln=(99,4) blemwid=2 'add
+list xxb
+
+! edge cases and two blems
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line<2)*100+(line>7)*50"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(0,8) blemwid=2 'add
+list xxb
+
+! multiple statistics in sample direction
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*(100+(samp>2)*40)"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add sampcut=(2,4)
+list xxb
+
+! multiple statistics in sample direction, use of sampwid
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa func="im1+(line>3)*(line<6)*(100+(samp>2)*40)"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(4,99) blemwid=2 'add sampwid=2
+list xxb
+
+! two corr case
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa +
+ fun="im1-(line>4)*(line<7)*50+(line>1)*(line<4)*50"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(2,5) blemwid=2 'add
+list xxb
+
+! tom overlap case, light 1 below dark, produced black over light
+
+gen xx0 nl=8 ns=4 ival=3 linc=20 sinc=3 'byte
+f2 inp=xx0 out=xxa +
+ fun="im1+(line>4)*(line<7)*50-(line>3)*(line<6)*50"
+list xxa
+
+amtlnfx2 xxa xxb blemln=(4,5) blemwid=2 'add
+list xxb
+
+theend>
+end-proc

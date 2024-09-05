@@ -1,0 +1,6 @@
+$ vpack quickbirdlog.com -mixed -
+	-s quickbirdlog.c -
+	-i quickbirdlog.imake -
+	-p quickbirdlog.pdf -
+	-t tstquickbirdlog.pdf devquickbirdlog.pdf
+$ Exit

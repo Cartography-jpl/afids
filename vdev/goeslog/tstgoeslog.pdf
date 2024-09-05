@@ -1,0 +1,512 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR GOESLOG
+
+goeslog inp=(/raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.001, +
+             /raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.LON, +
+             /raid8/jxc/goes/uwiscSample/goes10_45_2000_049_2300.LAT) +
+        out=(band4.img,band4.int) +
+        sl=1000 ss=1000 nl=500 ns=500 lines=2048 samples=2048
+
+goto done
+
+goeslog inp=(89_285_0031.001,89_285_0031.LON,89_285_0031.LAT) +
+        out=(89_285_0031.img,89_285_0031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0101.001,89_285_0101.LON,89_285_0101.LAT) +
+        out=(89_285_0101.img,89_285_0101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0131.001,89_285_0131.LON,89_285_0131.LAT) +
+        out=(89_285_0131.img,89_285_0131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0201.001,89_285_0201.LON,89_285_0201.LAT) +
+        out=(89_285_0201.img,89_285_0201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0231.001,89_285_0231.LON,89_285_0231.LAT) +
+        out=(89_285_0231.img,89_285_0231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0301.001,89_285_0301.LON,89_285_0301.LAT) +
+        out=(89_285_0301.img,89_285_0301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0331.001,89_285_0331.LON,89_285_0331.LAT) +
+        out=(89_285_0331.img,89_285_0331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0401.001,89_285_0401.LON,89_285_0401.LAT) +
+        out=(89_285_0401.img,89_285_0401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0431.001,89_285_0431.LON,89_285_0431.LAT) +
+        out=(89_285_0431.img,89_285_0431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0501.001,89_285_0501.LON,89_285_0501.LAT) +
+        out=(89_285_0501.img,89_285_0501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0531.001,89_285_0531.LON,89_285_0531.LAT) +
+        out=(89_285_0531.img,89_285_0531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0701.001,89_285_0701.LON,89_285_0701.LAT) +
+        out=(89_285_0701.img,89_285_0701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0731.001,89_285_0731.LON,89_285_0731.LAT) +
+        out=(89_285_0731.img,89_285_0731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0801.001,89_285_0801.LON,89_285_0801.LAT) +
+        out=(89_285_0801.img,89_285_0801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0831.001,89_285_0831.LON,89_285_0831.LAT) +
+        out=(89_285_0831.img,89_285_0831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0901.001,89_285_0901.LON,89_285_0901.LAT) +
+        out=(89_285_0901.img,89_285_0901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_0931.001,89_285_0931.LON,89_285_0931.LAT) +
+        out=(89_285_0931.img,89_285_0931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1001.001,89_285_1001.LON,89_285_1001.LAT) +
+        out=(89_285_1001.img,89_285_1001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1031.001,89_285_1031.LON,89_285_1031.LAT) +
+        out=(89_285_1031.img,89_285_1031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1101.001,89_285_1101.LON,89_285_1101.LAT) +
+        out=(89_285_1101.img,89_285_1101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1131.001,89_285_1131.LON,89_285_1131.LAT) +
+        out=(89_285_1131.img,89_285_1131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1201.001,89_285_1201.LON,89_285_1201.LAT) +
+        out=(89_285_1201.img,89_285_1201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1231.001,89_285_1231.LON,89_285_1231.LAT) +
+        out=(89_285_1231.img,89_285_1231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1301.001,89_285_1301.LON,89_285_1301.LAT) +
+        out=(89_285_1301.img,89_285_1301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1331.001,89_285_1331.LON,89_285_1331.LAT) +
+        out=(89_285_1331.img,89_285_1331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1401.001,89_285_1401.LON,89_285_1401.LAT) +
+        out=(89_285_1401.img,89_285_1401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1431.001,89_285_1431.LON,89_285_1431.LAT) +
+        out=(89_285_1431.img,89_285_1431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1501.001,89_285_1501.LON,89_285_1501.LAT) +
+        out=(89_285_1501.img,89_285_1501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1531.001,89_285_1531.LON,89_285_1531.LAT) +
+        out=(89_285_1531.img,89_285_1531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1601.001,89_285_1601.LON,89_285_1601.LAT) +
+        out=(89_285_1601.img,89_285_1601.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1631.001,89_285_1631.LON,89_285_1631.LAT) +
+        out=(89_285_1631.img,89_285_1631.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1701.001,89_285_1701.LON,89_285_1701.LAT) +
+        out=(89_285_1701.img,89_285_1701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1731.001,89_285_1731.LON,89_285_1731.LAT) +
+        out=(89_285_1731.img,89_285_1731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1801.001,89_285_1801.LON,89_285_1801.LAT) +
+        out=(89_285_1801.img,89_285_1801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1831.001,89_285_1831.LON,89_285_1831.LAT) +
+        out=(89_285_1831.img,89_285_1831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1901.001,89_285_1901.LON,89_285_1901.LAT) +
+        out=(89_285_1901.img,89_285_1901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_1931.001,89_285_1931.LON,89_285_1931.LAT) +
+        out=(89_285_1931.img,89_285_1931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2001.001,89_285_2001.LON,89_285_2001.LAT) +
+        out=(89_285_2001.img,89_285_2001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2031.001,89_285_2031.LON,89_285_2031.LAT) +
+        out=(89_285_2031.img,89_285_2031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2101.001,89_285_2101.LON,89_285_2101.LAT) +
+        out=(89_285_2101.img,89_285_2101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2131.001,89_285_2131.LON,89_285_2131.LAT) +
+        out=(89_285_2131.img,89_285_2131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2201.001,89_285_2201.LON,89_285_2201.LAT) +
+        out=(89_285_2201.img,89_285_2201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2231.001,89_285_2231.LON,89_285_2231.LAT) +
+        out=(89_285_2231.img,89_285_2231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2301.001,89_285_2301.LON,89_285_2301.LAT) +
+        out=(89_285_2301.img,89_285_2301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_285_2331.001,89_285_2331.LON,89_285_2331.LAT) +
+        out=(89_285_2331.img,89_285_2331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0001.001,89_286_0001.LON,89_286_0001.LAT) +
+        out=(89_286_0001.img,89_286_0001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0031.001,89_286_0031.LON,89_286_0031.LAT) +
+        out=(89_286_0031.img,89_286_0031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0101.001,89_286_0101.LON,89_286_0101.LAT) +
+        out=(89_286_0101.img,89_286_0101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0131.001,89_286_0131.LON,89_286_0131.LAT) +
+        out=(89_286_0131.img,89_286_0131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0201.001,89_286_0201.LON,89_286_0201.LAT) +
+        out=(89_286_0201.img,89_286_0201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_0231.001,89_286_0231.LON,89_286_0231.LAT) +
+        out=(89_286_0231.img,89_286_0231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1301.001,89_286_1301.LON,89_286_1301.LAT) +
+        out=(89_286_1301.img,89_286_1301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1331.001,89_286_1331.LON,89_286_1331.LAT) +
+        out=(89_286_1331.img,89_286_1331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1401.001,89_286_1401.LON,89_286_1401.LAT) +
+        out=(89_286_1401.img,89_286_1401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1431.001,89_286_1431.LON,89_286_1431.LAT) +
+        out=(89_286_1431.img,89_286_1431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1501.001,89_286_1501.LON,89_286_1501.LAT) +
+        out=(89_286_1501.img,89_286_1501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1531.001,89_286_1531.LON,89_286_1531.LAT) +
+        out=(89_286_1531.img,89_286_1531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1601.001,89_286_1601.LON,89_286_1601.LAT) +
+        out=(89_286_1601.img,89_286_1601.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1631.001,89_286_1631.LON,89_286_1631.LAT) +
+        out=(89_286_1631.img,89_286_1631.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1701.001,89_286_1701.LON,89_286_1701.LAT) +
+        out=(89_286_1701.img,89_286_1701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1731.001,89_286_1731.LON,89_286_1731.LAT) +
+        out=(89_286_1731.img,89_286_1731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1801.001,89_286_1801.LON,89_286_1801.LAT) +
+        out=(89_286_1801.img,89_286_1801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1831.001,89_286_1831.LON,89_286_1831.LAT) +
+        out=(89_286_1831.img,89_286_1831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1901.001,89_286_1901.LON,89_286_1901.LAT) +
+        out=(89_286_1901.img,89_286_1901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_1931.001,89_286_1931.LON,89_286_1931.LAT) +
+        out=(89_286_1931.img,89_286_1931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2001.001,89_286_2001.LON,89_286_2001.LAT) +
+        out=(89_286_2001.img,89_286_2001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2031.001,89_286_2031.LON,89_286_2031.LAT) +
+        out=(89_286_2031.img,89_286_2031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2101.001,89_286_2101.LON,89_286_2101.LAT) +
+        out=(89_286_2101.img,89_286_2101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2131.001,89_286_2131.LON,89_286_2131.LAT) +
+        out=(89_286_2131.img,89_286_2131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2201.001,89_286_2201.LON,89_286_2201.LAT) +
+        out=(89_286_2201.img,89_286_2201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2231.001,89_286_2231.LON,89_286_2231.LAT) +
+        out=(89_286_2231.img,89_286_2231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2301.001,89_286_2301.LON,89_286_2301.LAT) +
+        out=(89_286_2301.img,89_286_2301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_286_2331.001,89_286_2331.LON,89_286_2331.LAT) +
+        out=(89_286_2331.img,89_286_2331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0031.001,89_287_0031.LON,89_287_0031.LAT) +
+        out=(89_287_0031.img,89_287_0031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0101.001,89_287_0101.LON,89_287_0101.LAT) +
+        out=(89_287_0101.img,89_287_0101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0131.001,89_287_0131.LON,89_287_0131.LAT) +
+        out=(89_287_0131.img,89_287_0131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0201.001,89_287_0201.LON,89_287_0201.LAT) +
+        out=(89_287_0201.img,89_287_0201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0231.001,89_287_0231.LON,89_287_0231.LAT) +
+        out=(89_287_0231.img,89_287_0231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0301.001,89_287_0301.LON,89_287_0301.LAT) +
+        out=(89_287_0301.img,89_287_0301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0331.001,89_287_0331.LON,89_287_0331.LAT) +
+        out=(89_287_0331.img,89_287_0331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0401.001,89_287_0401.LON,89_287_0401.LAT) +
+        out=(89_287_0401.img,89_287_0401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0431.001,89_287_0431.LON,89_287_0431.LAT) +
+        out=(89_287_0431.img,89_287_0431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0501.001,89_287_0501.LON,89_287_0501.LAT) +
+        out=(89_287_0501.img,89_287_0501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0531.001,89_287_0531.LON,89_287_0531.LAT) +
+        out=(89_287_0531.img,89_287_0531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0701.001,89_287_0701.LON,89_287_0701.LAT) +
+        out=(89_287_0701.img,89_287_0701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0731.001,89_287_0731.LON,89_287_0731.LAT) +
+        out=(89_287_0731.img,89_287_0731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0801.001,89_287_0801.LON,89_287_0801.LAT) +
+        out=(89_287_0801.img,89_287_0801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0831.001,89_287_0831.LON,89_287_0831.LAT) +
+        out=(89_287_0831.img,89_287_0831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0901.001,89_287_0901.LON,89_287_0901.LAT) +
+        out=(89_287_0901.img,89_287_0901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_0931.001,89_287_0931.LON,89_287_0931.LAT) +
+        out=(89_287_0931.img,89_287_0931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1001.001,89_287_1001.LON,89_287_1001.LAT) +
+        out=(89_287_1001.img,89_287_1001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1031.001,89_287_1031.LON,89_287_1031.LAT) +
+        out=(89_287_1031.img,89_287_1031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1101.001,89_287_1101.LON,89_287_1101.LAT) +
+        out=(89_287_1101.img,89_287_1101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1131.001,89_287_1131.LON,89_287_1131.LAT) +
+        out=(89_287_1131.img,89_287_1131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1201.001,89_287_1201.LON,89_287_1201.LAT) +
+        out=(89_287_1201.img,89_287_1201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1231.001,89_287_1231.LON,89_287_1231.LAT) +
+        out=(89_287_1231.img,89_287_1231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1301.001,89_287_1301.LON,89_287_1301.LAT) +
+        out=(89_287_1301.img,89_287_1301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1331.001,89_287_1331.LON,89_287_1331.LAT) +
+        out=(89_287_1331.img,89_287_1331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1401.001,89_287_1401.LON,89_287_1401.LAT) +
+        out=(89_287_1401.img,89_287_1401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1431.001,89_287_1431.LON,89_287_1431.LAT) +
+        out=(89_287_1431.img,89_287_1431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1531.001,89_287_1531.LON,89_287_1531.LAT) +
+        out=(89_287_1531.img,89_287_1531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1601.001,89_287_1601.LON,89_287_1601.LAT) +
+        out=(89_287_1601.img,89_287_1601.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1631.001,89_287_1631.LON,89_287_1631.LAT) +
+        out=(89_287_1631.img,89_287_1631.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1701.001,89_287_1701.LON,89_287_1701.LAT) +
+        out=(89_287_1701.img,89_287_1701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1731.001,89_287_1731.LON,89_287_1731.LAT) +
+        out=(89_287_1731.img,89_287_1731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1801.001,89_287_1801.LON,89_287_1801.LAT) +
+        out=(89_287_1801.img,89_287_1801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1831.001,89_287_1831.LON,89_287_1831.LAT) +
+        out=(89_287_1831.img,89_287_1831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1901.001,89_287_1901.LON,89_287_1901.LAT) +
+        out=(89_287_1901.img,89_287_1901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_1931.001,89_287_1931.LON,89_287_1931.LAT) +
+        out=(89_287_1931.img,89_287_1931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2001.001,89_287_2001.LON,89_287_2001.LAT) +
+        out=(89_287_2001.img,89_287_2001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2031.001,89_287_2031.LON,89_287_2031.LAT) +
+        out=(89_287_2031.img,89_287_2031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2101.001,89_287_2101.LON,89_287_2101.LAT) +
+        out=(89_287_2101.img,89_287_2101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2131.001,89_287_2131.LON,89_287_2131.LAT) +
+        out=(89_287_2131.img,89_287_2131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2201.001,89_287_2201.LON,89_287_2201.LAT) +
+        out=(89_287_2201.img,89_287_2201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2231.001,89_287_2231.LON,89_287_2231.LAT) +
+        out=(89_287_2231.img,89_287_2231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2301.001,89_287_2301.LON,89_287_2301.LAT) +
+        out=(89_287_2301.img,89_287_2301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_287_2331.001,89_287_2331.LON,89_287_2331.LAT) +
+        out=(89_287_2331.img,89_287_2331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0001.001,89_288_0001.LON,89_288_0001.LAT) +
+        out=(89_288_0001.img,89_288_0001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0031.001,89_288_0031.LON,89_288_0031.LAT) +
+        out=(89_288_0031.img,89_288_0031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0101.001,89_288_0101.LON,89_288_0101.LAT) +
+        out=(89_288_0101.img,89_288_0101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0131.001,89_288_0131.LON,89_288_0131.LAT) +
+        out=(89_288_0131.img,89_288_0131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0201.001,89_288_0201.LON,89_288_0201.LAT) +
+        out=(89_288_0201.img,89_288_0201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0231.001,89_288_0231.LON,89_288_0231.LAT) +
+        out=(89_288_0231.img,89_288_0231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0302.001,89_288_0302.LON,89_288_0302.LAT) +
+        out=(89_288_0302.img,89_288_0302.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0331.001,89_288_0331.LON,89_288_0331.LAT) +
+        out=(89_288_0331.img,89_288_0331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0401.001,89_288_0401.LON,89_288_0401.LAT) +
+        out=(89_288_0401.img,89_288_0401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0431.001,89_288_0431.LON,89_288_0431.LAT) +
+        out=(89_288_0431.img,89_288_0431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0501.001,89_288_0501.LON,89_288_0501.LAT) +
+        out=(89_288_0501.img,89_288_0501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0531.001,89_288_0531.LON,89_288_0531.LAT) +
+        out=(89_288_0531.img,89_288_0531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0701.001,89_288_0701.LON,89_288_0701.LAT) +
+        out=(89_288_0701.img,89_288_0701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0731.001,89_288_0731.LON,89_288_0731.LAT) +
+        out=(89_288_0731.img,89_288_0731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0801.001,89_288_0801.LON,89_288_0801.LAT) +
+        out=(89_288_0801.img,89_288_0801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0831.001,89_288_0831.LON,89_288_0831.LAT) +
+        out=(89_288_0831.img,89_288_0831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0901.001,89_288_0901.LON,89_288_0901.LAT) +
+        out=(89_288_0901.img,89_288_0901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_0931.001,89_288_0931.LON,89_288_0931.LAT) +
+        out=(89_288_0931.img,89_288_0931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1001.001,89_288_1001.LON,89_288_1001.LAT) +
+        out=(89_288_1001.img,89_288_1001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1031.001,89_288_1031.LON,89_288_1031.LAT) +
+        out=(89_288_1031.img,89_288_1031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1101.001,89_288_1101.LON,89_288_1101.LAT) +
+        out=(89_288_1101.img,89_288_1101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1131.001,89_288_1131.LON,89_288_1131.LAT) +
+        out=(89_288_1131.img,89_288_1131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1201.001,89_288_1201.LON,89_288_1201.LAT) +
+        out=(89_288_1201.img,89_288_1201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1231.001,89_288_1231.LON,89_288_1231.LAT) +
+        out=(89_288_1231.img,89_288_1231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1301.001,89_288_1301.LON,89_288_1301.LAT) +
+        out=(89_288_1301.img,89_288_1301.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1331.001,89_288_1331.LON,89_288_1331.LAT) +
+        out=(89_288_1331.img,89_288_1331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1401.001,89_288_1401.LON,89_288_1401.LAT) +
+        out=(89_288_1401.img,89_288_1401.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1431.001,89_288_1431.LON,89_288_1431.LAT) +
+        out=(89_288_1431.img,89_288_1431.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1501.001,89_288_1501.LON,89_288_1501.LAT) +
+        out=(89_288_1501.img,89_288_1501.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1531.001,89_288_1531.LON,89_288_1531.LAT) +
+        out=(89_288_1531.img,89_288_1531.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1601.001,89_288_1601.LON,89_288_1601.LAT) +
+        out=(89_288_1601.img,89_288_1601.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1631.001,89_288_1631.LON,89_288_1631.LAT) +
+        out=(89_288_1631.img,89_288_1631.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1701.001,89_288_1701.LON,89_288_1701.LAT) +
+        out=(89_288_1701.img,89_288_1701.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1731.001,89_288_1731.LON,89_288_1731.LAT) +
+        out=(89_288_1731.img,89_288_1731.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1801.001,89_288_1801.LON,89_288_1801.LAT) +
+        out=(89_288_1801.img,89_288_1801.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1831.001,89_288_1831.LON,89_288_1831.LAT) +
+        out=(89_288_1831.img,89_288_1831.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1901.001,89_288_1901.LON,89_288_1901.LAT) +
+        out=(89_288_1901.img,89_288_1901.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_1931.001,89_288_1931.LON,89_288_1931.LAT) +
+        out=(89_288_1931.img,89_288_1931.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2001.001,89_288_2001.LON,89_288_2001.LAT) +
+        out=(89_288_2001.img,89_288_2001.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2031.001,89_288_2031.LON,89_288_2031.LAT) +
+        out=(89_288_2031.img,89_288_2031.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2101.001,89_288_2101.LON,89_288_2101.LAT) +
+        out=(89_288_2101.img,89_288_2101.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2131.001,89_288_2131.LON,89_288_2131.LAT) +
+        out=(89_288_2131.img,89_288_2131.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2201.001,89_288_2201.LON,89_288_2201.LAT) +
+        out=(89_288_2201.img,89_288_2201.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2231.001,89_288_2231.LON,89_288_2231.LAT) +
+        out=(89_288_2231.img,89_288_2231.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+goeslog inp=(89_288_2331.001,89_288_2331.LON,89_288_2331.LAT) +
+        out=(89_288_2331.img,89_288_2331.int) +
+        sl=200 ss=400 nl=600 ns=600 lines=1000 samples=1000
+
+done>
+
+!ibis-list xxxGoesVisIBIS nr=10 nc=4
+
+end-proc

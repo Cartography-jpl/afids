@@ -1,0 +1,18 @@
+The sample application given here is a very simple demonstration on how to use the
+FN_Sender and FN_Receiver objects.
+
+Possible Usages:
+./Notify_App sender <port number>
+./Notify_App receiver <ip address> <port>
+
+The sample Notify_App may be used as either a sender or receiver.  To perform
+a test using the app, start a sender giving it the port number you wish to 
+listen on as an arguement.  Then start one or more receivers giving them the
+ip address and the port of the machine you started the server on.
+
+Once the receivers have connected to the server begin typing in fake file
+paths into the console the sender was started on.  The file paths will
+be displayed by all of the receivers that connected to the sender. When you
+are finished typing in files paths type 'quit' to shutdown the server and
+the clients.
+

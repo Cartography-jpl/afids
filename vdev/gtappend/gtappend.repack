@@ -1,0 +1,6 @@
+$ vpack gtappend.com -mixed -
+	-s gtappend.c -
+	-i gtappend.imake -
+	-p gtappend.pdf -
+	-t tstgtappend.pdf devgtappend.pdf
+$ Exit

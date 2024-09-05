@@ -1,0 +1,6 @@
+$ vpack hyperionlog.com -mixed -
+	-s hyperionlog.c -
+	-i hyperionlog.imake -
+	-p hyperionlog.pdf -
+	-t tsthyperionlog.pdf devhyperionlog.pdf
+$ Exit

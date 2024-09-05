@@ -1,0 +1,17 @@
+#! /usr/bin/env ruby
+# -*-Ruby-*-
+#
+# This converts a SPOT DIMAP file into a VICAR file. This includes creating
+# a RPC for the SPOT data based on the navigation and camera information
+# in the DIMAP file.
+
+require "rubygems"
+require "afids"
+include Afids
+va = VicarArgument.new
+
+d = SpotDimap.new(va[:inp])
+d.write_vicar(va[:out], va[:band].to_i + 1, va[:sl].to_i - 1, va[:ss].to_i - 1,
+              va[:nl].to_i, va[:ns].to_i, (va[:rpc] == "y"))
+
+

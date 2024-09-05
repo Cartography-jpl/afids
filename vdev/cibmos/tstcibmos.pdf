@@ -1,0 +1,25 @@
+procedure
+
+body
+
+! regular case, needs disk in cdrom
+
+cibmos key=cbt qlon=(42.0,42.3) qlat=(34.6,34.8) +
+    localdir=/raid19/home/alz/ikapp +
+    vdevdir="/raid19/home/alz/vdev" out="cbtmos"
+
+! tiny case, needs disk in cdrom
+
+cibmos key=cbtiny qlon=(42.01,42.02) qlat=(34.61,34.62) +
+    localdir=/raid19/home/alz/ikapp +
+    vdevdir="/raid19/home/alz/vdev" out=cbtinymos +
+    diskimg="/cdrom/cdrom0"
+
+! case using disk image
+
+cibmos qlon=(-118.3,-118.2) qlat=(33.7,33.8) +
+    localdir=/raid19/home/alz/ikapp +
+    vdevdir="/raid19/home/alz/vdev" out="latestcib5" +
+    diskimg="/export/data4/rkf/CB05NI11023"
+    
+end-proc

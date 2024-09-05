@@ -1,0 +1,49 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+!   TEST THE ELVCOR HANDYPROC
+
+gen xxxim0 nl=300 ns=310
+f2 inp=xxxim0 out=xxxdted func="(line-samp)%256"
+
+gtgen in=xxxdted 'tiecnvrt 'rectfit +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,-110,35,0.0)", +
+          "ModelTiePointTag=(0,300,0,-110,33,0.0)", +
+          "ModelTiePointTag=(310,0,0,-108,35,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+
+
+gen xxxim0 nl=300 ns=310
+f2 inp=xxxim0 out=xxx18.B3 +
+  func="(line+samp)%256"
+
+gtgen in=xxx18.B3 'tiecnvrt 'rectfit +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)", +
+          "ModelTiePointTag=(0,0,0,-110.01,35.01,0.0)", +
+          "ModelTiePointTag=(0,300,0,-110.02,33.03,0.0)", +
+          "ModelTiePointTag=(310,0,0,-108.01,35.02,0.0)", +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+
+gengrid xxx.int ncol=4 nah=20 nav=20 hbase =0.5 hsize=309.0 +
+   vbase=0.5 vsize=299.0
+mf3 xxx.int func="c3=c1/150.0+33+@rand*.01" seed=1
+mf3 xxx.int func="c4=c2/150.0-110+@rand*.01" seed=2
+ibis-list xxx.int nr=10
+
+elvcor xxx18.B3 xxxdted xxibisfile +
+   sensE1=-108.611 sensN1=35.0   senselv1=850000 +
+   sensE2=-109.000 sensN2=33.0   senselv2=850000 +
+   nah=40 nav=40
+       
+ibis-list xxibisfile nr=100
+     
+end-proc

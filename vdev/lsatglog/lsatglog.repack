@@ -1,0 +1,3 @@
+$ vpack lsatglog.com -mixed -
+	-p lsatglog.pdf lsatgmos.pdf lsatgxmos.pdf
+$ Exit

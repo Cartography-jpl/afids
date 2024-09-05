@@ -1,0 +1,252 @@
+!ras_traf: Build Traf CBS Traf file then rasterize it.
+!Operates on a 1x1 dem cell basis; Cells are trimmed to 1200x1200.
+!Output vectors for all cells are concatenated into one output file. 
+!Standard deviation applied to DEM data, with water, lava, and swamp
+!polygons from vmap1 (if present) are superimposed.
+!Works in all hemispheres, including databases that cross the
+!Equator, Prime Meridian, but NOT Longitude -180/+180 (Int Dateline).
+!
+procedure
+parm       slat    integer            !bottom lat of playbox
+parm       slon    integer            !left lon of playbox
+parm       elat    integer            !top lat of playbox
+parm       elon    integer            !right lon of playbox
+parm       dir1    string    def="/net/tahat/data/raw_srtmL1_jpl/"  !Input dem
+parm       dir2    string    def="/net/tahat/data/tdps_traf/"    !Input water
+parm       dir3    string    def="/net/tahat/data/tdps_traf/"    !Input lava
+parm       dir4    string    def="/net/tahat/data/tdps_traf/"    !Input swamp
+parm       dir5    string    def="/net/tahat/data/tdps_traf/"    !Output vec
+parm       key     string    def=""   !database name (used for debugging)
+local      lns     string    init="n" !north or south in lowercase
+local      lew     string    init="e" !east or west in lowercase
+local      leng    integer            !length of database in degrees
+local      heig    integer            !height of database in degrees
+local      cnum    integer            !max number of dem cells (heigXleng)
+local      found   integer            !0=no file; 1=file found (file2tcl)
+local      rlat    real               !Upper left lat for gtgen
+local      rlon    real               !Left lon in real format for gtgen
+local      I       integer            !Inc count of 1x1 cells in lat direction
+local      J       integer            !Inc count of lat 1deg increments
+local      K       integer            !Inc count of lat 1deg increments
+local      L       integer            !Inc count of lon 1deg increments
+local      M       integer            !Inc count of all 1x1 cells
+local      K2      integer            !This is K without the - sign
+local      L2      integer            !This is L without the - sign
+
+body
+
+!Set n/s/e/w codes
+if             (slat >= 0) let lns = "n"
+if             (slat <  0) let lns = "s"
+if             (slon >= 0) let lew = "e"
+if             (slon <  0) let lew = "w"
+
+!Calculate PlayBox Database size in degrees (integer)
+if             (slat >= 0)
+   let          heig = elat - slat
+else
+   let          heig = (slat - elat) * (-1)
+end-if
+if             (slon >= 0)
+   let          leng = elon - slon
+else
+   let          leng = (slon - elon) * (-1)
+end-if
+let             cnum = heig * leng
+
+!Verify Parameters
+write  "slat=  &slat"
+write  "elat=  &elat"
+write  "slon=  &slon"
+write  "elon=  &elon"
+write  "lns=   &lns"
+write  "lew=   &lew"
+write  "cnum=  &cnum"
+
+!Master Loop
+
+   let         I = 0            !Inc count for lat cells
+   let         J = 0            !Inc count for lon cells
+   let         K = slat - 1     !Inc count of lat (1 deg increments) 
+   let         L = slon - 1     !Inc count of lon (1 deg increments)
+   let         M = 0            !Inc count of tot num of cells
+
+loop
+   let         I = I + 1        !lat/heig loop count
+   if         (I > heig) break
+   let         K = K + 1        !lat degree inc
+
+   loop
+      let      J = J + 1        !lon/leng loop count
+      if      (J > leng) break 
+      let      M = M + 1        !tot count of cells inc
+      let      L = L + 1        !lon degree inc
+  !Remove negative signs from K and L for use in filenames
+      if       (K < 0)
+        let     K2 = K * (-1)
+        else
+         let    K2 = K
+      end-if
+      if       (L < 0)
+        let     L2 = L * (-1)
+        else
+         let    L2 = L
+      end-if
+   !Reset n/s/e/w codes for crossing the Equator/Prime Meridian
+       if      (K >= 0) let lns = "n"
+       if      (K <  0) let lns = "s"
+       if      (L >= 0) let lew = "e"
+       if      (L <  0) let lew = "w"
+      write    "  "
+      write    "Working on cell &M of &cnum cells ************************"
+      write    "lat = &K deg; lon = &L deg   ************************"        
+      write    "  " 
+    !Standard Deviation Calculation
+     !2=impassable, 3=smooth 4=gently rolling, 5=mountainous
+     !"impassable" class is not allowed; user enters that data manually
+     !simplify complexity (reduce numb of polygons using size/concomp1)
+      file2tcl &"dir1"&"lns"&"K2"&"lew"&"L2"_L1.hlf val=found
+      if       (found = 0) goto next1
+      let       rlon =  $float(L)
+      let       rlat = ($float(K) + 1.0)  !upper left lat corner for gtgen
+!      gtcopy    &"dir1"&"lns"&"K2"&"lew"&"L2"_L1.hlf xxt     !xxt gt ref needed by pixmap
+      copy      &"dir1"&"lns"&"K2"&"lew"&"L2"_L1.hlf xxt   !xxt gt ref needed by pixmap
+      gtgen     inp=xxt +
+      geotiff=("ModelTiePointTag=(0,0,0,&rlon,&rlat,0)", +
+               "ModelPixelScaleTag=(0.0008333333333,0.0008333333333,0.0)", +
+               "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+               "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+               "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+     !xxt gt ref needed by pixmap
+!      gtcopy    &"dir1"&"lns"&"K2"&"lew"&"L2"_L1.hlf xxt size=(1,1,1200,1200)
+!      copy      xxt xxa size=(1,1,1200,1200)                     !100m
+      size      xxt xxa size=(1,1,400,400) area=(1,1,1200,1200)  !300m
+!      size      xxt xxa size=(1,1,200,200) area=(1,1,1200,1200)  !600m
+!      size      xxt xxa size=(1,1,100,100) area=(1,1,1200,1200)  !1200m 
+      gtstat    xxa xxb 'sdev
+!      stretch   xxb xxa table=(0,3.,6,3.,7,4.,12,4.,13,5.,24,5.,10000,5.) !100m
+      stretch   xxb xxa table=(0,3.,15,3.,16,4.,33,4.,34,5.,69,5.,10000,5.) !300m
+!      stretch   xxb xxa table=(0,3.,35,3.,36,4.,70,4.,71,5.,100,5.,10000,5.)!600m
+!      stretch   xxb xxa table=(0,3.,35,3.,36,4.,70,4.,71,5.,130,5.,10000,5.) !1200m
+      cform     xxa xxb iran=(0,255) oran=(0,255) 'byte
+      concomp1  xxb xxa thresh=4 'mode
+      copy      xxa xxb
+!      concomp1  xxa xxb thresh=4 'mode
+      size      xxb xxa size=(1,1,1200,1200) 'noin
+      hist      xxa
+      goto next2
+      next1>
+      gen       xxt  nl=1200 ns=1200 ival=0 linc=0 sinc=0  !Traf code=1 water
+      let       rlon =  $float(L)
+      let       rlat = ($float(K) + 1.0)  !upper left lat corner for gtgen
+      gtgen     inp=xxt +
+                geotiff=("ModelTiePointTag=(0,0,0,&rlon,&rlat,0)", +
+               "ModelPixelScaleTag=(0.0008333333333,0.0008333333333,0.0)", +
+               "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+               "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+               "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+!      gtcopy    xxt xxa                   !xxt gtref needed by pixmap
+      copy      xxt xxa
+      next2>
+
+    !Water
+    !Add-in the Vmap1/0 Water binary raster files
+    !binary mask: 0=water; 1=not water
+     file2tcl &"dir2"&"lns"&"K2"&"lew"&"L2"_water&"key".img val=found
+     if        (found = 0) goto next3    
+     f2        (xxa,&"dir2"&"lns"&"K2"&"lew"&"L2"_water&"key".img) xxb +
+               func="(in1*in2)+((in2.eq.0)*1)"     !1=water (new)
+     write "Water Data Processed..." 
+     goto next4
+     next3>
+     write "No Water Data..." 
+!     gtcopy    xxa xxb
+     copy      xxa xxb
+     next4>
+
+    !Lava/Mountainous
+    !Add-in the Vmap1/0 Lava/Karst/Distorted Surface binary raster files
+    !binary mask: 0=lava,etc; 1=not lava,etc
+     file2tcl &"dir3"&"lns"&"K2"&"lew"&"L2"_lava&"key".img val=found
+     if        (found = 0) goto next6
+     f2        (xxb,&"dir3"&"lns"&"K2"&"lew"&"L2"_lava&"key".img) xxc +
+               func="(in1*in2)+((in2.eq.0)*5)"     !5=mountainous update
+     write "Lava Data Processed..."
+     goto next5 
+     next6>
+     write "No Lava Data..."
+!     gtcopy   xxb xxc
+     copy     xxb xxc
+     next5>
+
+    !Marsh/Swamp
+    !Add-in the Vmap1/0 Swamp binary raster files
+    !binary mask: 0=swamp; 1=not swamp
+     file2tcl &"dir4"&"lns"&"K2"&"lew"&"L2"_swamp&"key".img val=found
+     if        (found = 0) goto next8
+     f2        (xxc,&"dir4"&"lns"&"K2"&"lew"&"L2"_swamp&"key".img) xxd +
+               func="(in1*in2)+((in2.eq.0)*6)"     !6=Swamp
+     write "Swamp Data Processed..."
+     goto next7    
+     next8>
+     write "No Swamp Data..."
+!     gtcopy    xxc xxd
+     copy      xxc xxd
+     next7>
+
+    !RASTER-TO-VECTOR CONVERSION (Note: only the vectors & fcodes are needed) 
+    !xxvect_ll.int contains two columns: lat and lon (with 0,0 at end)
+    !xxfcode.int contains two columns: polygon code (1-6) and num of vertices
+     rastovec xxd (xxx,xxfcode_pre.int,xxy,xxvect.gr1,xxz) !Don't use Zinger
+     ibis-l     xxfcode_pre.int nr=30 'format
+    !INSERT GRUTIL HERE TO SMOOTH THE CONTOURS A BIT?
+     ibis-co    xxvect.gr1 xxvect.int gr1dim=2 outc=(1,2) nc=4    !gr1->int
+    !rastovec changed the origin from upperleft to lowerleft. Change it BACK!
+    !add 0.5 offset to match vectors to pixel boundaries
+     mf3        xxvect.int func=("c3=(c1==0.0)&&(c2==0.0)") !end-of-poygon = true1
+     mf3        xxvect.int func=("c1=1200-c1+0.5$c2=c2+0.5")
+     mf3        xxvect.int func=("c1=(c3!=1)*c1$c2=(c3!=1)*c2") !restore (0,0)
+     ibis-l     xxvect.int nr=30 'format
+    !CONVERT Pixels to LAT/LONG
+     gtlist    xxt                         !xxt has gtref for 1x1 deg cell
+     pixmap    (xxvect.int,xxt) +
+               pixcols=(1,2) mapcols=(3,4) 'pixtomap +
+                ignore=(0.00000,0.00000) !col3=long; col4=lat
+     ibis-l     xxvect.int nr=30 'format 
+     ibis-co    xxvect.int xxvect_pre.int INCOL=(4,3) OUTCOL=(1,2) NC=2 !lat/long out
+    !concatenate files cumulatively
+        if     (M = 1)       
+	        ibis-co xxvect_pre.int xxvect_ll.int
+                ibis-co xxfcode_pre.int xxfcode.int
+        else 
+                icat      (xxvect_pre.int,xxvect_ll.int) xxe 'v
+                ibis-co    xxe xxvect_ll.int
+                icat      (xxfcode_pre.int,xxfcode.int) xxf 'v
+                ibis-co    xxf xxfcode.int
+                write     "Finishing work on cell &M of &cnum cells"
+                write     "lat = &K deg; lon = &L deg"
+        end-if
+   end-loop
+   let          J = 0
+   let          L = slon - 1
+end-loop
+
+!CONVERT VECTOR FILES TO SHAPE FORMAT
+!Traf codes (traf_codes.asc) are:
+!0 500
+!1 501 water
+!2 502 impassable
+!3 503 smooth
+!4 504 gently rolling
+!5 505 mountainous
+!6 506 marsh/swamp
+!SHAPE output files are binary, and include: .shp .shx .dbf 
+
+local afidsdata type=(string,128)
+translog AFIDS_DATA afidsdata
+
+write "using codes &afidsdata/tdps/traf_codes.asc"
+
+vic2shp    inp=(xxvect_ll.int,xxfcode.int,&afidsdata/tdps/traf_codes.asc) +
+           out=&"dir5"/cbs_traf&"key" 'swap  !Restore upperleft origin
+end-proc

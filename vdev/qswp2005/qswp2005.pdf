@@ -1,0 +1,83 @@
+process help=*
+PARM INP TYPE=STRING COUNT=1
+PARM OUT TYPE=STRING COUNT=1
+PARM OP TYPE=KEYWORD VALID=(FORWARD, REVERSE) COUNT=1
+END-PROC
+.TITLE
+Vicar Program "qswp2005"
+.HELP
+PURPOSE:
+"qswp2005" accepts an input dataset that has been fourier transformed
+and requires the quadrants to be swapped.  It also has the option to
+reverse the swap with "REVERSE" keyword.
+
+EXECUTION:
+
+	qswp2005 INP OUT OP
+
+where:  INP  is the input FFT or matrix of FFTs.
+	OUT  is the output file.
+        OP   is a keyword that tells whether the dataset has
+             already been swapped or not.
+.page
+OPERATION:
+"qswp2005" performs the operation shown in the following diagrams.
+The letters A,B,C,D refer to fft quadrants.
++-------+-------+     +-------+-------+
+|DC     |       |     |       |       |
+|       |       |     |       |       |
+|   A   |   B   |     |   D   |   C   |
+|       |       |     |       |       |
++-------+-------+ --> +-------+-------+
+|       |       |     |       |DC     |
+|       |       |     |       |       |
+|   C   |   D   |     |   B   |   A   |
+|       |       |     |       |       |
++-------+-------+     +-------+-------+
+  INPUT FFT           DEFAULT OPERATION
+
+WARNING:  Program "qswp2005" perfroms its operation by reading each
+FFT entirely into memory.  If its size is large, then it may run very
+slowly!
+
+.PAGE
+EXAMPLES
+
+	qswp2005 INP=A OUT=B OP=FORWARD
+
+        This command will cause the program to take in the input
+        dataset A swap the quadrants and output the result into
+        B.  The FORWARD tells the program that the quadrants in
+        the input dataset has not been swapped yet.
+
+	qswp2005 INP=A OUT=B OP=REVERSE
+
+        This command will cause the program to take in the input
+        dataset A swap the quadrants and output the result into
+        B.  The REVERSE tells the program that the quadrants in
+        the input dataset has been swapped previously.
+
+.page
+Original Programmer    :  P. Kim,  13 Nov 2007
+Delivered into vdev    :  P. Kim,  29 Nov 2007
+Revisions:
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+
+.LEVEL1
+.VARIABLE INP
+STRING - Input dataset
+.VARIABLE OUT
+STRING - Output dataset
+.VARIABLE OP
+STRING - Specifies forward or reverse swapping
+.LEVEL2
+.VARIABLE INP
+STRING - Input fft file - maybe any type of file
+.VARIABLE OUT
+STRING - Output file - has the same format as the input file
+.VARIABLE OP
+STRING - Specifies forward or reverse swapping.  If "FORWARD",
+         this tells the program that the quadrants in the input
+         dataset HAS NOT been swapped.  If "REVERSE", this
+         tells the program that the quadrants in the input
+         dataset HAS been swapped.

@@ -1,0 +1,27 @@
+/***********************************************************************
+
+                     IMAKE FILE FOR PROGRAM dtedvlog
+
+   To Create the build file give the command:
+
+		$ vimake dtedvlog			(VMS)
+   or
+		% vimake dtedvlog			(Unix)
+
+
+************************************************************************/
+
+
+#define PROGRAM	dtedvlog
+
+#define MODULE_LIST dtedvlog.c
+
+#define MAIN_LANG_C
+#define R2LIB
+#define USES_ANSI_C
+
+#define LIB_CARTO
+#define LIB_RTL
+#define LIB_TAE
+#define LIB_P2SUB
+/************************* End of Imake file ***************************/

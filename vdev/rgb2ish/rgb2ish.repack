@@ -1,0 +1,6 @@
+$ vpack rgb2ish.com -mixed -
+	-s rgb2ish.c -
+	-i rgb2ish.imake -
+	-p rgb2ish.pdf -
+	-t tstrgb2ish.pdf devrgb2ish.pdf
+$ Exit

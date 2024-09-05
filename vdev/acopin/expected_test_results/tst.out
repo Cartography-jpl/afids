@@ -1,0 +1,126 @@
+tstacopin
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+else
+    if (aftestdata = "")
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/carto ct
+    end-if
+end-if
+let _onfail="goto rm"
+ibis-gen xxa version=ibis-2 org=column nc=2 nr=1  +
+         format=("FULL","DOUB","A5")
+Beginning VICAR task ibis
+acopin (ct/acopin.dat,xxa) cols=(2,1,3) lead_rm=2
+Beginning VICAR task acopin
+*** acopin 19 Jun-2011 (64-bit) - rjb
+Number of input cols = 3
+    Col 3 is ASCII width = 6
+Output length is 3 records
+
+
+ibis-list xxa 'format
+Beginning VICAR task ibis
+ 
+Number of Rows:3  Number of Columns: 3       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:3
++-----------+-----------+-----------
+         C:1         C:2         C:3
+        FULL        DOUB          A5
++-----------+-----------+-----------
+           2        1.10       a    
+           4        3.30       bcdef
+           6        5.50       wxyz 
+ibis-gen xxa version=ibis-2 org=column nc=2 nr=1  +
+         format=("FULL","DOUB","A5")
+Beginning VICAR task ibis
+acopin (ct/acopin.dat,xxa) cols=(2,1,3) lead_rm=2 'rtjust
+Beginning VICAR task acopin
+*** acopin 19 Jun-2011 (64-bit) - rjb
+Number of input cols = 3
+    Col 3 is ASCII width = 6
+Output length is 3 records
+
+
+ibis-list xxa 'format
+Beginning VICAR task ibis
+ 
+Number of Rows:3  Number of Columns: 3       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:3
++-----------+-----------+-----------
+         C:1         C:2         C:3
+        FULL        DOUB          A5
++-----------+-----------+-----------
+           2        1.10           a
+           4        3.30       bcdef
+           6        5.50        wxyz
+ibis-gen xxa version=ibis-2 org=column nc=2 nr=1  +
+         format=("FULL","DOUB","A5")
+Beginning VICAR task ibis
+acopin (ct/acopin.dat3,xxa) cols=(2,1,3) lead_rm=2
+Beginning VICAR task acopin
+*** acopin 19 Jun-2011 (64-bit) - rjb
+Number of input cols = 3
+    Col 3 is ASCII width = 6
+Output length is 3 records
+
+
+ibis-list xxa 'format
+Beginning VICAR task ibis
+ 
+Number of Rows:3  Number of Columns: 3       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:3
++-----------+-----------+-----------
+         C:1         C:2         C:3
+        FULL        DOUB          A5
++-----------+-----------+-----------
+           2        1.10       a    
+           4        3.30       bcdef
+           6        5.50       wxyz 
+ibis-gen xxa version=ibis-2 org=column nc=2 nr=1  +
+         format=("FULL","DOUB","A5")
+Beginning VICAR task ibis
+acopin (ct/acopin.dat2,xxa) cols=(2,3,1) lead_rm=2
+Beginning VICAR task acopin
+*** acopin 19 Jun-2011 (64-bit) - rjb
+Number of input cols = 3
+    Col 2 is ASCII width = 6
+Output length is 3 records
+
+
+ibis-list xxa 'format
+Beginning VICAR task ibis
+ 
+Number of Rows:3  Number of Columns: 3       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:3
++-----------+-----------+-----------
+         C:1         C:2         C:3
+        FULL        DOUB          A5
++-----------+-----------+-----------
+           5        1.10       a    
+           7        3.30       bcdef
+           9        5.50       wxyz 
+let $echo="no"
+*******************************************
+-----> SHOULD REPORT acopin.dat4 is missing
+*******************************************
+acopin (ct/acopin.dat4,xxa) cols=(2,3,1) lead_rm=2
+Beginning VICAR task acopin
+*** acopin 19 Jun-2011 (64-bit) - rjb
+??E - Cannot find file = ct/acopin.dat4
+
+ ** ABEND called **
+goto rm
+ush rm ct
+let $echo="no"
+exit
+slogoff

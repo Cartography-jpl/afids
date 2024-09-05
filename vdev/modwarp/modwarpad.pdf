@@ -1,0 +1,51 @@
+procedure help=*
+parm key type=string
+parm fname type=string
+parm fname2 type=string count=(0:1) default=""
+parm rdtype type=string valid=("day","night")
+parm band type=string
+
+local outfile1 string
+local outfile2 string
+local outfile string
+body
+
+if (fname2="")
+   modwpadb key=&key fname=&fname band=&band rdtype=&rdtype modiscase=0
+else
+   modwpadb key=&key fname=&fname band=&band rdtype=&rdtype modiscase=1
+   modwpadb key=&key fname=&fname2 band=&band rdtype=&rdtype modiscase=2
+   
+   let outfile1 = "final&key" // "/&fname" // "_map4.&band" // "x1"
+   let outfile2 = "final&key" // "/&fname2" // "_map4.&band" // "x2"
+   let outfile = "final&key" // "/&fname" // "_map4.&band"
+   
+   fthmos inp1=&outfile1 +
+       inp2=&outfile2 +
+       out=&outfile
+end-if
+
+theend>
+end-proc
+.TITLE
+modwarpad - log additional band of modis
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 20 Mar, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+.END

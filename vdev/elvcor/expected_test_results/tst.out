@@ -1,0 +1,122 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xxxim0 nl=300 ns=310
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xxxim0 out=xxxdted func="(line-samp)%256"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 93000 TIMES
+gtgen in=xxxdted 'tiecnvrt 'rectfit  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)",  +
+          "ModelTiePointTag=(0,0,0,-110,35,0.0)",  +
+          "ModelTiePointTag=(0,300,0,-110,33,0.0)",  +
+          "ModelTiePointTag=(310,0,0,-108,35,0.0)",  +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gen xxxim0 nl=300 ns=310
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 inp=xxxim0 out=xxx18.B3  +
+  func="(line+samp)%256"
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 93000 TIMES
+gtgen in=xxx18.B3 'tiecnvrt 'rectfit  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)",  +
+          "ModelTiePointTag=(0,0,0,-110.01,35.01,0.0)",  +
+          "ModelTiePointTag=(0,300,0,-110.02,33.03,0.0)",  +
+          "ModelTiePointTag=(310,0,0,-108.01,35.02,0.0)",  +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gengrid xxx.int ncol=4 nah=20 nav=20 hbase =0.5 hsize=309.0  +
+   vbase=0.5 vsize=299.0
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxx.int version="ibis-2" org="column" nc=4   +
+    nr=441 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxx.int func=("c1=(@int((@index-1)/21)/20)*2.990000000000e+02+(5.0+
+00000000000e-01)$",      "c2=(@mod(@index+20,21)/20)*3.090000000000e+02+(5.000000000000e-01)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/21)/20)*2.990000000000e+02+(5.000000000000e-01)$c2=(@mod(@index+20,21)/20)*3.090000000000e+02+(5.000000000000e-01)
+441 records in
+end-proc
+mf3 xxx.int func="c3=c1/150.0+33+@rand*.01" seed=1
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c3=c1/150.0+33+@rand*.01
+441 records in
+mf3 xxx.int func="c4=c2/150.0-110+@rand*.01" seed=2
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c4=c2/150.0-110+@rand*.01
+441 records in
+ibis-list xxx.int nr=10
+Beginning VICAR task ibis
+ 
+Number of Rows:441  Number of Columns: 4       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:10
++-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4
++-----------+-----------+-----------+-----------
+        0.50        0.50       33.00     -109.99
+        0.50       15.95       33.01     -109.89
+        0.50       31.40       33.01     -109.78
+        0.50       46.85       33.01     -109.68
+        0.50       62.30       33.01     -109.58
+        0.50       77.75       33.00     -109.48
+        0.50       93.20       33.01     -109.37
+        0.50      108.65       33.01     -109.27
+        0.50      124.10       33.01     -109.17
+        0.50      139.55       33.01     -109.06
+elvcor xxx18.B3 xxxdted xxibisfile  +
+   sensE1=-108.611 sensN1=35.0   senselv1=850000  +
+   sensE2=-109.000 sensN2=33.0   senselv2=850000  +
+   nah=40 nav=40
+[TAE-MISPAR] Missing parameter:  regelv.;
+ proc 'tstelvcor', line 42
+RETURN

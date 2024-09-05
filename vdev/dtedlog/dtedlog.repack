@@ -1,0 +1,4 @@
+$ vpack dtedlog.com -mixed -
+	-p dtedlog.pdf -
+	-t tstdtedlog.pdf
+$ Exit

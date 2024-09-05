@@ -1,0 +1,1645 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xxim1 nl=10 ns=10
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxim1 out=xxperth 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,.3,.3,0.0)",  +
+          "ModelTiePointTag=(10,0,0,.5,.3,0.0)",  +
+          "ModelTiePointTag=(0,10,0,.3,.5,0.0)",  +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)",  +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gen xxim1 nl=20 ns=20
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xxim1 out=xxaustralia 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,.2,.7,0.0)",  +
+          "ModelTiePointTag=(20,0,0,.7,.7,0.0)",  +
+          "ModelTiePointTag=(0,20,0,.2,.2,0.0)",  +
+          "ProjectionGeoKey=1(CT_TransverseMercator)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtlist xxperth
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is a 'point' or 'post' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.0      0.0  0.300000000000  0.300000000000
+       1.0     10.0          9.0      0.0  0.480000000000  0.300000000000
+      10.0      1.0          0.0      9.0  0.300000000000  0.480000000000
+      10.0     10.0          9.0      9.0  0.480000000000  0.480000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5         -0.5     -0.5  0.290000000000  0.290000000000
+       0.5     10.5          9.5     -0.5  0.490000000000  0.290000000000
+      10.5      0.5         -0.5      9.5  0.290000000000  0.490000000000
+      10.5     10.5          9.5      9.5  0.490000000000  0.490000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 5
+789
+456
+123
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units east
+1 line   = 0.0200000000000 map units north
+
+
+The scale fraction is 1 /      0.8
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xxaustralia
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.212500000000  0.687500000000
+       1.0     20.0         19.5      0.5  0.687500000000  0.687500000000
+      20.0      1.0          0.5     19.5  0.212500000000  0.212500000000
+      20.0     20.0         19.5     19.5  0.687500000000  0.212500000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.200000000000  0.700000000000
+       0.5     20.5         20.0      0.0  0.700000000000  0.700000000000
+      20.5      0.5          0.0     20.0  0.200000000000  0.200000000000
+      20.5     20.5         20.0     20.0  0.700000000000  0.200000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0250000000000 map units east
+1 line   = 0.0250000000000 map units north
+
+
+The scale fraction is 1 /      2.0
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+ibis-gen xxdist version=ibis-2 org=column nc=4 nr=3 deffmt=DOUB
+Beginning VICAR task ibis
+acopin (gtwarpxd.dat,xxdist) cols=(1,2,3,4) lead_rm=1
+Beginning VICAR task acopin
+acopin version Thu Jan  3 2008
+table length is 3 records
+
+gtwarp inp=xxperth out=xxnewperth1 ref=xxaustralia 'coverinp  +
+    nah=3 nav=4 gorewid=1
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+write "gtwarp version 10-oct-07"
+gtwarp version 10-oct-07
+let xxqqgrid1 = "xxqqgrid1qq"
+let xxqqgrid2 = "xxqqgrid2qq"
+lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+if ("coverinp"="coverinp")
+   lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+   ibis-gen xxqqgrid1qq version=ibis-2 org=column  nc=12 nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+   mf3 xxqqgrid1qq func=("c1=(@int((@index-1)/31)/30)*10+0.5$",   +
+           "c2=(@mod(@index+30,31)/30)*10+0.5")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/31)/30)*10+0.5$c2=(@mod(@index+30,31)/30)*10+0.5
+961 records in
+   pixmap (xxqqgrid1qq,xxperth) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+   gtproj (xxqqgrid1qq,xxperth,xxaustralia) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+   pixmap (xxqqgrid1qq,xxaustralia) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+   mf3 xxqqgrid1qq func=("c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$", +
+             "c11=c8$@vmin(c11)$c12=c8$@vmax(c12)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$c11=c8$@vmin(c11)$c12=c8$@vmax(c12)
+961 records in
+   ibis2tcl xxqqgrid1qq v1=rminl v2=rmaxl v3=rmins v4=rmaxs vartype=(-1,-1,-1,-1) +
+     ibisloc=(1,9,1,10,1,11,1,12)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let rminl=rminl+0.5
+   let rmaxl=rmaxl+0.5
+   let rmins=rmins+0.5
+   let rmaxs=rmaxs+0.5
+   let minl=$fix(rminl)-gorewid-2
+   let maxl=$fix(rmaxl)+gorewid+2
+   let mins=$fix(rmins)-gorewid-2
+   let maxs=$fix(rmaxs)+gorewid+2
+   write "input covers (6,1,20,15) in reference pixel space"
+input covers (6,1,20,15) in reference pixel space
+   let sl=minl
+   let ss=mins
+   let nl=maxl-minl+1
+   let ns=maxs-mins+1
+else
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (6,1,15,15)"
+geomv parameter (sl,ss,nl,ns) = (6,1,15,15)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqgrid2qq version=ibis-2 org=column  nc=8 nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqgrid2qq func=("c1=(@int((@index-1)/4)/4)*15+(6-0.5)$",            +
+  "c2=(@mod(@index+3,4)/3)*15+(1-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/4)/4)*15+(6-0.5)$c2=(@mod(@index+3,4)/3)*15+(1-0.5)
+20 records in
+pixmap (xxqqgrid2qq,xxaustralia) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqgrid2qq,xxaustralia,xxperth) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+pixmap (xxqqgrid2qq,xxperth) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+geomv INP=(xxperth,xxqqgrid2qq,xxaustralia) OUT=xxnewperth1 size=(+
+6,1,15,15)         cols=(1,2,7,8) interp="bilin" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 3 nav = 4
+requested memory 256
+end-proc
+gtwarpxd inp=xxperth out=xxnewperth2 ref=xxaustralia 'coverinp  +
+    nah=3 nav=4 gorewid=1 distort=(xxdist,,,,) dcols=(1,2,3,4)  +
+    gridout=xxxperthgrid
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+let xxg1 = "xx" // "qq" // "g1"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg7 = "xx" // "qq" // "g7.par"
+lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+let dcol1 = dcols(1)
+if (dcol1=0) goto gridinloc
+write "gtwarpxd version 10-oct-07"
+gtwarpxd version 10-oct-07
+if ("coverinp"="coverinp")
+   ibis-gen xxqqg1 version=ibis-2 org=column  nc=12 nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+   mf3 xxqqg1 func=("c1=(@int((@index-1)/31)/30)*10+0.5$",   +
+           "c2=(@mod(@index+30,31)/30)*10+0.5")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/31)/30)*10+0.5$c2=(@mod(@index+30,31)/30)*10+0.5
+961 records in
+   pixmap (xxqqg1,xxperth) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+   gtproj (xxqqg1,xxperth,xxaustralia) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+   pixmap (xxqqg1,xxaustralia) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+   mf3 xxqqg1 func=("c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$", +
+             "c11=c8$@vmin(c11)$c12=c8$@vmax(c12)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$c11=c8$@vmin(c11)$c12=c8$@vmax(c12)
+961 records in
+   ibis2tcl xxqqg1 v1=rminl v2=rmaxl v3=rmins v4=rmaxs vartype=(-1,-1,-1,-1) +
+     ibisloc=(1,9,1,10,1,11,1,12)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let rminl=rminl+0.5
+   let rmaxl=rmaxl+0.5
+   let rmins=rmins+0.5
+   let rmaxs=rmaxs+0.5
+   let minl=$fix(rminl)-gorewid
+   let maxl=$fix(rmaxl)+gorewid
+   let mins=$fix(rmins)-gorewid
+   let maxs=$fix(rmaxs)+gorewid
+   write "input covers (8,3,18,13) in reference pixel space"
+input covers (8,3,18,13) in reference pixel space
+   let sl=minl
+   let ss=mins
+   let nl=maxl-minl+1
+   let ns=maxs-mins+1
+else
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (8,3,11,11)"
+geomv parameter (sl,ss,nl,ns) = (8,3,11,11)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqg2 version=ibis-2 org=column  nc=8 nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqg2 func=("c1=(@int((@index-1)/4)/4)*11+(8-0.5)$",            +
+  "c2=(@mod(@index+3,4)/3)*11+(3-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/4)/4)*11+(8-0.5)$c2=(@mod(@index+3,4)/3)*11+(3-0.5)
+20 records in
+pixmap (xxqqg2,xxaustralia) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqg2,xxaustralia,xxperth) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+pixmap (xxqqg2,xxperth) mapcols=(5,6) pixcols=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (3,4)
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "initial save sl,ss,nl,ns 8,3,11,11"
+initial save sl,ss,nl,ns 8,3,11,11
+let dfile = distort(1)
+let poly = polyfit(1)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=xxdist   +
+    dcols=(1,2,3,4) dcolsix=1 nah=3 nav=4 poly=""
+ gtwrpsub seq=qq typref=coverinp dfile=xxdist       dcols=(1,2+
+,3,4) dcolsix=1 nah=3 nav=4 poly=""
+let version="ibis-2"
+let org="column"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg3 = "xx" // "qq" // "g3"
+let xxg4 = "xx" // "qq" // "g4"
+let xxg7 = "xx" // "qq" // "g7.par"
+restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "gtwrpsub version 13-jan-02"
+gtwrpsub version 13-jan-02
+let dmaxl = 8+11
+let dmaxs = 3+11
+let dcol1 = dcols(dcolsix)
+let dcol2 = dcols(dcolsix+1)
+let dcol3 = dcols(dcolsix+2)
+let dcol4 = dcols(dcolsix+3)
+if ("coverinp"="coverinp")
+   tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3          NAH=40,NAV=+
+40,MINL=8,MINS=3,MAXL=19,MAXS=14          'GEOMV poly="" gridtol=+
+15.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+   gtgore (xxqqg2,xxqqg3) slvar=goresl ssvar=goress nlvar=gorenl nsvar=gorens
+Beginning VICAR task gtgore
+gtgore version Sun Dec 30 2007
+adjustments: 10 20 0 0
+   write "gtgore: 10,20,0,0"
+gtgore: 10,20,0,0
+   let sl = sl-goresl
+   let ss = ss-goress
+   let nl = nl-gorenl
+   let ns = ns-gorens
+   write "new:sl,ss,nl,ns -2,-17,11,11"
+new:sl,ss,nl,ns -2,-17,11,11
+   let dmaxl = -2+11
+   let dmaxs = -17+11
+end-if
+tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3       NAH=3,NAV=4,MI+
+NL=-2,MINS=-17,MAXL=9,MAXS=-6       'GEOMV poly="" gridtol=15.0 'a+
+bendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+gridcomp inp=(xxqqg2,xxqqg3) out=xxqqg4
+Beginning VICAR task gridcomp
+gridcomp version Sat Dec 29 2007
+First input grid grid OK: nah = 3 nav = 4
+ibis-copy xxqqg4 xxqqg2
+Beginning VICAR task ibis
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+end-proc
+   goto skipgridin
+let dfile = distort(2)
+let poly = polyfit(2)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+let dfile = distort(3)
+let poly = polyfit(3)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=9 nah=3 nav=4 poly=""
+let dfile = distort(4)
+let poly = polyfit(4)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=13 nah=3 nav=4 poly=""
+let dfile = distort(5)
+let poly = polyfit(5)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=17 nah=3 nav=4 poly=""
+if ("coverinp"="coverinp")
+   restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+else
+end-if
+geomv INP=(xxperth,xxqqg2,xxaustralia) OUT=xxnewperth2 size=(+
+-2,-17,11,11)         interp=bilin znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 3 nav = 4
+requested memory 256
+if (gridout<>"")
+   let gridout1 = "xxxperthgrid" // "1"
+   let gridout2 = "xxxperthgrid" // "2"
+   let gridout3 = "xxxperthgrid" // "3"
+   ibis-copy xxqqg2 xxxperthgrid1
+Beginning VICAR task ibis
+   ibis-gen xxxperthgrid2 nc=4 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+   mf3 xxxperthgrid2 f="c1=(-2)$c2=(-17)$c3=(11)$c4=(11)"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(-2)$c2=(-17)$c3=(11)$c4=(11)
+1 records in
+   gtcopy xxaustralia xxxperthgrid3 nl=1 ns=1
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+end-if
+let loopcnt = 0
+loop
+   let loopcnt = loopcnt+1
+   if (loopcnt>15) goto loopdone
+   let dfile = auxin(loopcnt)
+   let ofile = auxout(loopcnt)
+   if (dfile="") goto loopdone
+ goto loopdone
+end-loop
+end-proc
+gtwarpxd inp=xxperth out=xxnewperth3 ref=xxaustralia 'coverinp  +
+    nah=3 nav=4 gorewid=1 distort=(xxdist,,,,) dcols=(1,2,3,4)  +
+    polyfit=(linear,,,,)
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+let xxg1 = "xx" // "qq" // "g1"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg7 = "xx" // "qq" // "g7.par"
+lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+let dcol1 = dcols(1)
+if (dcol1=0) goto gridinloc
+write "gtwarpxd version 10-oct-07"
+gtwarpxd version 10-oct-07
+if ("coverinp"="coverinp")
+   ibis-gen xxqqg1 version=ibis-2 org=column  nc=12 nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+   mf3 xxqqg1 func=("c1=(@int((@index-1)/31)/30)*10+0.5$",   +
+           "c2=(@mod(@index+30,31)/30)*10+0.5")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/31)/30)*10+0.5$c2=(@mod(@index+30,31)/30)*10+0.5
+961 records in
+   pixmap (xxqqg1,xxperth) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+   gtproj (xxqqg1,xxperth,xxaustralia) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+   pixmap (xxqqg1,xxaustralia) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+   mf3 xxqqg1 func=("c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$", +
+             "c11=c8$@vmin(c11)$c12=c8$@vmax(c12)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$c11=c8$@vmin(c11)$c12=c8$@vmax(c12)
+961 records in
+   ibis2tcl xxqqg1 v1=rminl v2=rmaxl v3=rmins v4=rmaxs vartype=(-1,-1,-1,-1) +
+     ibisloc=(1,9,1,10,1,11,1,12)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let rminl=rminl+0.5
+   let rmaxl=rmaxl+0.5
+   let rmins=rmins+0.5
+   let rmaxs=rmaxs+0.5
+   let minl=$fix(rminl)-gorewid
+   let maxl=$fix(rmaxl)+gorewid
+   let mins=$fix(rmins)-gorewid
+   let maxs=$fix(rmaxs)+gorewid
+   write "input covers (8,3,18,13) in reference pixel space"
+input covers (8,3,18,13) in reference pixel space
+   let sl=minl
+   let ss=mins
+   let nl=maxl-minl+1
+   let ns=maxs-mins+1
+else
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (8,3,11,11)"
+geomv parameter (sl,ss,nl,ns) = (8,3,11,11)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqg2 version=ibis-2 org=column  nc=8 nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqg2 func=("c1=(@int((@index-1)/4)/4)*11+(8-0.5)$",            +
+  "c2=(@mod(@index+3,4)/3)*11+(3-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/4)/4)*11+(8-0.5)$c2=(@mod(@index+3,4)/3)*11+(3-0.5)
+20 records in
+pixmap (xxqqg2,xxaustralia) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqg2,xxaustralia,xxperth) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+pixmap (xxqqg2,xxperth) mapcols=(5,6) pixcols=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (3,4)
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "initial save sl,ss,nl,ns 8,3,11,11"
+initial save sl,ss,nl,ns 8,3,11,11
+let dfile = distort(1)
+let poly = polyfit(1)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=xxdist   +
+    dcols=(1,2,3,4) dcolsix=1 nah=3 nav=4 poly="linear"
+ gtwrpsub seq=qq typref=coverinp dfile=xxdist       dcols=(1,2+
+,3,4) dcolsix=1 nah=3 nav=4 poly="linear"
+let version="ibis-2"
+let org="column"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg3 = "xx" // "qq" // "g3"
+let xxg4 = "xx" // "qq" // "g4"
+let xxg7 = "xx" // "qq" // "g7.par"
+restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "gtwrpsub version 13-jan-02"
+gtwrpsub version 13-jan-02
+let dmaxl = 8+11
+let dmaxs = 3+11
+let dcol1 = dcols(dcolsix)
+let dcol2 = dcols(dcolsix+1)
+let dcol3 = dcols(dcolsix+2)
+let dcol4 = dcols(dcolsix+3)
+if ("coverinp"="coverinp")
+   tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3          NAH=40,NAV=+
+40,MINL=8,MINS=3,MAXL=19,MAXS=14          'GEOMV poly="linear" gr+
+idtol=15.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+   gtgore (xxqqg2,xxqqg3) slvar=goresl ssvar=goress nlvar=gorenl nsvar=gorens
+Beginning VICAR task gtgore
+gtgore version Sun Dec 30 2007
+adjustments: 10 20 0 0
+   write "gtgore: 10,20,0,0"
+gtgore: 10,20,0,0
+   let sl = sl-goresl
+   let ss = ss-goress
+   let nl = nl-gorenl
+   let ns = ns-gorens
+   write "new:sl,ss,nl,ns -2,-17,11,11"
+new:sl,ss,nl,ns -2,-17,11,11
+   let dmaxl = -2+11
+   let dmaxs = -17+11
+end-if
+tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3       NAH=3,NAV=4,MI+
+NL=-2,MINS=-17,MAXL=9,MAXS=-6       'GEOMV poly="linear" gridtol=1+
+5.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+gridcomp inp=(xxqqg2,xxqqg3) out=xxqqg4
+Beginning VICAR task gridcomp
+gridcomp version Sat Dec 29 2007
+First input grid grid OK: nah = 3 nav = 4
+ibis-copy xxqqg4 xxqqg2
+Beginning VICAR task ibis
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+end-proc
+   goto skipgridin
+let dfile = distort(2)
+let poly = polyfit(2)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+let dfile = distort(3)
+let poly = polyfit(3)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=9 nah=3 nav=4 poly=""
+let dfile = distort(4)
+let poly = polyfit(4)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=13 nah=3 nav=4 poly=""
+let dfile = distort(5)
+let poly = polyfit(5)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4) dcolsix=17 nah=3 nav=4 poly=""
+if ("coverinp"="coverinp")
+   restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+else
+end-if
+geomv INP=(xxperth,xxqqg2,xxaustralia) OUT=xxnewperth3 size=(+
+-2,-17,11,11)         interp=bilin znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 3 nav = 4
+requested memory 256
+if (gridout<>"")
+end-if
+let loopcnt = 0
+loop
+   let loopcnt = loopcnt+1
+   if (loopcnt>15) goto loopdone
+   let dfile = auxin(loopcnt)
+   let ofile = auxout(loopcnt)
+   if (dfile="") goto loopdone
+ goto loopdone
+end-loop
+end-proc
+ibis-gen xxdist2 version=ibis-2 org=column nc=4 nr=3 deffmt=DOUB
+Beginning VICAR task ibis
+acopin (gtwarpxd2.dat,xxdist2) cols=(1,2,3,4) lead_rm=1
+Beginning VICAR task acopin
+acopin version Thu Jan  3 2008
+table length is 3 records
+
+let gridout1 = "xxxperthgrid" // "1"
+let gridout2 = "xxxperthgrid" // "2"
+let gridout3 = "xxxperthgrid" // "3"
+gtwarpxd inp=xxperth out=xxnewperth4 ref=xxaustralia 'coverinp  +
+    nah=3 nav=4 gorewid=1 distort=(xxdist,xxdist2,,,)  +
+    dcols=(1,2,3,4,1,2,3,4)
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+let xxg1 = "xx" // "qq" // "g1"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg7 = "xx" // "qq" // "g7.par"
+lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+let dcol1 = dcols(1)
+if (dcol1=0) goto gridinloc
+write "gtwarpxd version 10-oct-07"
+gtwarpxd version 10-oct-07
+if ("coverinp"="coverinp")
+   ibis-gen xxqqg1 version=ibis-2 org=column  nc=12 nr=961 deffmt=DOUB
+Beginning VICAR task ibis
+   mf3 xxqqg1 func=("c1=(@int((@index-1)/31)/30)*10+0.5$",   +
+           "c2=(@mod(@index+30,31)/30)*10+0.5")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/31)/30)*10+0.5$c2=(@mod(@index+30,31)/30)*10+0.5
+961 records in
+   pixmap (xxqqg1,xxperth) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+   gtproj (xxqqg1,xxperth,xxaustralia) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+   pixmap (xxqqg1,xxaustralia) mapcols=(5,6) pixcols=(7,8) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (7,8)
+   mf3 xxqqg1 func=("c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$", +
+             "c11=c8$@vmin(c11)$c12=c8$@vmax(c12)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c9=c7$@vmin(c9)$c10=c7$@vmax(c10)$c11=c8$@vmin(c11)$c12=c8$@vmax(c12)
+961 records in
+   ibis2tcl xxqqg1 v1=rminl v2=rmaxl v3=rmins v4=rmaxs vartype=(-1,-1,-1,-1) +
+     ibisloc=(1,9,1,10,1,11,1,12)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let rminl=rminl+0.5
+   let rmaxl=rmaxl+0.5
+   let rmins=rmins+0.5
+   let rmaxs=rmaxs+0.5
+   let minl=$fix(rminl)-gorewid
+   let maxl=$fix(rmaxl)+gorewid
+   let mins=$fix(rmins)-gorewid
+   let maxs=$fix(rmaxs)+gorewid
+   write "input covers (8,3,18,13) in reference pixel space"
+input covers (8,3,18,13) in reference pixel space
+   let sl=minl
+   let ss=mins
+   let nl=maxl-minl+1
+   let ns=maxs-mins+1
+else
+end-if
+write "geomv parameter (sl,ss,nl,ns) = (8,3,11,11)"
+geomv parameter (sl,ss,nl,ns) = (8,3,11,11)
+let nahp1=nah+1
+let navp1=nav+1
+let nahxnav=nahp1*navp1
+ibis-gen xxqqg2 version=ibis-2 org=column  nc=8 nr=20 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqg2 func=("c1=(@int((@index-1)/4)/4)*11+(8-0.5)$",            +
+  "c2=(@mod(@index+3,4)/3)*11+(3-0.5)")
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=(@int((@index-1)/4)/4)*11+(8-0.5)$c2=(@mod(@index+3,4)/3)*11+(3-0.5)
+20 records in
+pixmap (xxqqg2,xxaustralia) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+gtproj (xxqqg2,xxaustralia,xxperth) incol=(3,4) outcol=(5,6)
+Beginning VICAR task gtproj
+gtproj version Fri Jan 11 2008
+
+Input GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TransverseMercator)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+Output GeoTIFF label:
+MODELTIEPOINTTAG=(0,0,0,.3,.3,0.0)
+MODELPIXELSCALETAG=(0.02,-0.02,0.0)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+inverse applied
+eposc arg  1: inv
+eposc arg  2: +proj=tmerc
+eposc arg  3: +ellps=WGS84
+
+forward applied
+eposc arg  1: fwd
+eposc arg  2: +proj=mill
+eposc arg  3: +ellps=WGS84
+
+datum shift not applied
+pixmap (xxqqg2,xxperth) mapcols=(5,6) pixcols=(3,4) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (5,6) to columns (3,4)
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "initial save sl,ss,nl,ns 8,3,11,11"
+initial save sl,ss,nl,ns 8,3,11,11
+let dfile = distort(1)
+let poly = polyfit(1)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=xxdist   +
+    dcols=(1,2,3,4,1,2,3,4) dcolsix=1 nah=3 nav=4 poly=""
+ gtwrpsub seq=qq typref=coverinp dfile=xxdist       dcols=(1,2+
+,3,4,1,2,3,4) dcolsix=1 nah=3 nav=4 poly=""
+let version="ibis-2"
+let org="column"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg3 = "xx" // "qq" // "g3"
+let xxg4 = "xx" // "qq" // "g4"
+let xxg7 = "xx" // "qq" // "g7.par"
+restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "gtwrpsub version 13-jan-02"
+gtwrpsub version 13-jan-02
+let dmaxl = 8+11
+let dmaxs = 3+11
+let dcol1 = dcols(dcolsix)
+let dcol2 = dcols(dcolsix+1)
+let dcol3 = dcols(dcolsix+2)
+let dcol4 = dcols(dcolsix+3)
+if ("coverinp"="coverinp")
+   tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3          NAH=40,NAV=+
+40,MINL=8,MINS=3,MAXL=19,MAXS=14          'GEOMV poly="" gridtol=+
+15.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+   gtgore (xxqqg2,xxqqg3) slvar=goresl ssvar=goress nlvar=gorenl nsvar=gorens
+Beginning VICAR task gtgore
+gtgore version Sun Dec 30 2007
+adjustments: 10 20 0 0
+   write "gtgore: 10,20,0,0"
+gtgore: 10,20,0,0
+   let sl = sl-goresl
+   let ss = ss-goress
+   let nl = nl-gorenl
+   let ns = ns-gorens
+   write "new:sl,ss,nl,ns -2,-17,11,11"
+new:sl,ss,nl,ns -2,-17,11,11
+   let dmaxl = -2+11
+   let dmaxs = -17+11
+end-if
+tieconv INP=xxdist COLS=(1,2,3,4)  OUT=xxqqg3       NAH=3,NAV=4,MI+
+NL=-2,MINS=-17,MAXL=9,MAXS=-6       'GEOMV poly="" gridtol=15.0 'a+
+bendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+gridcomp inp=(xxqqg2,xxqqg3) out=xxqqg4
+Beginning VICAR task gridcomp
+gridcomp version Sat Dec 29 2007
+First input grid grid OK: nah = 3 nav = 4
+ibis-copy xxqqg4 xxqqg2
+Beginning VICAR task ibis
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+end-proc
+   goto skipgridin
+let dfile = distort(2)
+let poly = polyfit(2)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=xxdist2  +
+     dcols=(1,2,3,4,1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+ gtwrpsub seq=qq typref=coverinp dfile=xxdist2       dcols=(1,+
+2,3,4,1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+let version="ibis-2"
+let org="column"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg3 = "xx" // "qq" // "g3"
+let xxg4 = "xx" // "qq" // "g4"
+let xxg7 = "xx" // "qq" // "g7.par"
+restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "gtwrpsub version 13-jan-02"
+gtwrpsub version 13-jan-02
+let dmaxl = -2+11
+let dmaxs = -17+11
+let dcol1 = dcols(dcolsix)
+let dcol2 = dcols(dcolsix+1)
+let dcol3 = dcols(dcolsix+2)
+let dcol4 = dcols(dcolsix+3)
+if ("coverinp"="coverinp")
+   tieconv INP=xxdist2 COLS=(1,2,3,4)  OUT=xxqqg3          NAH=40,NAV+
+=40,MINL=-2,MINS=-17,MAXL=9,MAXS=-6          'GEOMV poly="" gridt+
+ol=15.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+   gtgore (xxqqg2,xxqqg3) slvar=goresl ssvar=goress nlvar=gorenl nsvar=gorens
+Beginning VICAR task gtgore
+gtgore version Sun Dec 30 2007
+adjustments: 4 7 0 0
+   write "gtgore: 4,7,0,0"
+gtgore: 4,7,0,0
+   let sl = sl-goresl
+   let ss = ss-goress
+   let nl = nl-gorenl
+   let ns = ns-gorens
+   write "new:sl,ss,nl,ns -6,-24,11,11"
+new:sl,ss,nl,ns -6,-24,11,11
+   let dmaxl = -6+11
+   let dmaxs = -24+11
+end-if
+tieconv INP=xxdist2 COLS=(1,2,3,4)  OUT=xxqqg3       NAH=3,NAV=4,M+
+INL=-6,MINS=-24,MAXL=5,MAXS=-13       'GEOMV poly="" gridtol=15.0 +
+'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+gridcomp inp=(xxqqg2,xxqqg3) out=xxqqg4
+Beginning VICAR task gridcomp
+gridcomp version Sat Dec 29 2007
+First input grid grid OK: nah = 3 nav = 4
+ibis-copy xxqqg4 xxqqg2
+Beginning VICAR task ibis
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+end-proc
+let dfile = distort(3)
+let poly = polyfit(3)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4,1,2,3,4) dcolsix=9 nah=3 nav=4 poly=""
+let dfile = distort(4)
+let poly = polyfit(4)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4,1,2,3,4) dcolsix=13 nah=3 nav=4 poly=""
+let dfile = distort(5)
+let poly = polyfit(5)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(1,2,3,4,1,2,3,4) dcolsix=17 nah=3 nav=4 poly=""
+if ("coverinp"="coverinp")
+   restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+else
+end-if
+geomv INP=(xxperth,xxqqg2,xxaustralia) OUT=xxnewperth4 size=(+
+-6,-24,11,11)         interp=bilin znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 3 nav = 4
+requested memory 256
+if (gridout<>"")
+end-if
+let loopcnt = 0
+loop
+   let loopcnt = loopcnt+1
+   if (loopcnt>15) goto loopdone
+   let dfile = auxin(loopcnt)
+   let ofile = auxout(loopcnt)
+   if (dfile="") goto loopdone
+ goto loopdone
+end-loop
+end-proc
+gtwarpxd inp=xxperth out=xxnewperth5 ref=xxaustralia 'coverinp  +
+    nah=3 nav=4 gorewid=1 distort=(xxxperthgrid,xxdist2,,,)  +
+    dcols=(0,0,0,0,1,2,3,4)
+let version="ibis-2"
+let org="column"
+let $echo="yes"
+let xxg1 = "xx" // "qq" // "g1"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg7 = "xx" // "qq" // "g7.par"
+lab2tcl xxperth v1=tnl v2=tns keyword=(nl,ns) 'system
+Beginning VICAR task lab2tcl
+LAB2TCL version 31 OCT 1994
+let inpsize = tnl*tns
+let dcol1 = dcols(1)
+if (dcol1=0) goto gridinloc
+ goto gridinloc
+if ("coverinp"="coverinp")
+end-if
+if (dfile<>"") gtwrpsub seq=&seq typref=&typref dfile=&dfile  +
+     dcols=&dcols dcolsix=1 nah=&nah nav=&nav poly="&poly"
+   let gridin = distort(1)
+   let gridin1 = "xxxperthgrid" // "1"
+   let gridin2 = "xxxperthgrid" // "2"
+   ibis2tcl xxxperthgrid2 v1=fsl v2=fss v3=fnl v4=fns vartype=(-1,-1,-1,+
+-1)         ibisloc=(1,1,1,2,1,3,1,4)
+Beginning VICAR task ibis2tcl
+IBIS2TCL version 2-FEB-00
+   let sl = $fix(fsl)
+   let ss = $fix(fss)
+   let nl = $fix(fnl)
+   let ns = $fix(fns)
+   save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+   write "initial save sl,ss,nl,ns -2,-17,11,11"
+initial save sl,ss,nl,ns -2,-17,11,11
+   ibis-copy xxxperthgrid1 xxqqg2
+Beginning VICAR task ibis
+let dfile = distort(2)
+let poly = polyfit(2)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=xxdist2  +
+     dcols=(0,0,0,0,1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+ gtwrpsub seq=qq typref=coverinp dfile=xxdist2       dcols=(0,+
+0,0,0,1,2,3,4) dcolsix=5 nah=3 nav=4 poly=""
+let version="ibis-2"
+let org="column"
+let xxg2 = "xx" // "qq" // "g2"
+let xxg3 = "xx" // "qq" // "g3"
+let xxg4 = "xx" // "qq" // "g4"
+let xxg7 = "xx" // "qq" // "g7.par"
+restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+write "gtwrpsub version 13-jan-02"
+gtwrpsub version 13-jan-02
+let dmaxl = -2+11
+let dmaxs = -17+11
+let dcol1 = dcols(dcolsix)
+let dcol2 = dcols(dcolsix+1)
+let dcol3 = dcols(dcolsix+2)
+let dcol4 = dcols(dcolsix+3)
+if ("coverinp"="coverinp")
+   tieconv INP=xxdist2 COLS=(1,2,3,4)  OUT=xxqqg3          NAH=40,NAV+
+=40,MINL=-2,MINS=-17,MAXL=9,MAXS=-6          'GEOMV poly="" gridt+
+ol=15.0 'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+   gtgore (xxqqg2,xxqqg3) slvar=goresl ssvar=goress nlvar=gorenl nsvar=gorens
+Beginning VICAR task gtgore
+gtgore version Sun Dec 30 2007
+adjustments: 4 7 0 0
+   write "gtgore: 4,7,0,0"
+gtgore: 4,7,0,0
+   let sl = sl-goresl
+   let ss = ss-goress
+   let nl = nl-gorenl
+   let ns = ns-gorens
+   write "new:sl,ss,nl,ns -6,-24,11,11"
+new:sl,ss,nl,ns -6,-24,11,11
+   let dmaxl = -6+11
+   let dmaxs = -24+11
+end-if
+tieconv INP=xxdist2 COLS=(1,2,3,4)  OUT=xxqqg3       NAH=3,NAV=4,M+
+INL=-6,MINS=-24,MAXL=5,MAXS=-13       'GEOMV poly="" gridtol=15.0 +
+'abendg
+Beginning VICAR task tieconv
+tieconv version Fri Jan 11 2008
+no grid detected
+7 points 14 lines 8 triangles
+gridcomp inp=(xxqqg2,xxqqg3) out=xxqqg4
+Beginning VICAR task gridcomp
+gridcomp version Sat Dec 29 2007
+First input grid grid OK: nah = 3 nav = 4
+ibis-copy xxqqg4 xxqqg2
+Beginning VICAR task ibis
+save-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+end-proc
+let dfile = distort(3)
+let poly = polyfit(3)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(0,0,0,0,1,2,3,4) dcolsix=9 nah=3 nav=4 poly=""
+let dfile = distort(4)
+let poly = polyfit(4)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(0,0,0,0,1,2,3,4) dcolsix=13 nah=3 nav=4 poly=""
+let dfile = distort(5)
+let poly = polyfit(5)
+if (dfile<>"") gtwrpsub seq=qq typref=coverinp dfile=       dc+
+ols=(0,0,0,0,1,2,3,4) dcolsix=17 nah=3 nav=4 poly=""
+if ("coverinp"="coverinp")
+   restore-variable file=xxqqg7.par variable=(sl,ss,nl,ns)
+else
+end-if
+geomv INP=(xxperth,xxqqg2,xxaustralia) OUT=xxnewperth5 size=(+
+-6,-24,11,11)         interp=bilin znoin="" vmemsize=300000000
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 3 nav = 4
+requested memory 256
+if (gridout<>"")
+end-if
+let loopcnt = 0
+loop
+   let loopcnt = loopcnt+1
+   if (loopcnt>15) goto loopdone
+   let dfile = auxin(loopcnt)
+   let ofile = auxout(loopcnt)
+   if (dfile="") goto loopdone
+ goto loopdone
+end-loop
+end-proc
+gtoffset xxperth xxnewperth1
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=0$c2=0
+1 records in
+pixmap (xxqqmap1,xxnewperth1) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+pixmap (xxqqmap1,xxperth) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (3,4) to columns (5,6)
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c5+1$c8=c6+1
+1 records in
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       15.375000       -4.625000       16.375000       -3.625000
+end-proc
+gtoffset xxperth xxnewperth2
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=0$c2=0
+1 records in
+pixmap (xxqqmap1,xxnewperth2) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+pixmap (xxqqmap1,xxperth) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (3,4) to columns (5,6)
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c5+1$c8=c6+1
+1 records in
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       25.375000      -27.125000       26.375000      -26.125000
+end-proc
+gtoffset xxperth xxnewperth3
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=0$c2=0
+1 records in
+pixmap (xxqqmap1,xxnewperth3) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+pixmap (xxqqmap1,xxperth) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (3,4) to columns (5,6)
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c5+1$c8=c6+1
+1 records in
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       25.375000      -27.125000       26.375000      -26.125000
+end-proc
+gtoffset xxperth xxnewperth4
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=0$c2=0
+1 records in
+pixmap (xxqqmap1,xxnewperth4) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+pixmap (xxqqmap1,xxperth) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (3,4) to columns (5,6)
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c5+1$c8=c6+1
+1 records in
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       30.375000      -35.875000       31.375000      -34.875000
+end-proc
+gtoffset xxperth xxnewperth5
+ibis-gen xxqqmap1 nc=8 nr=1 deffmt=DOUB
+Beginning VICAR task ibis
+mf3 xxqqmap1 func="c1=0$c2=0"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c1=0$c2=0
+1 records in
+pixmap (xxqqmap1,xxnewperth5) mapcols=(3,4) pixcols=(1,2) 'pixtomap
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (1,2) to columns (3,4)
+pixmap (xxqqmap1,xxperth) mapcols=(3,4) pixcols=(5,6) 'maptopix
+Beginning VICAR task pixmap
+pixmap version Thu Jan  3 2008
+converting columns (3,4) to columns (5,6)
+mf3 xxqqmap1 func="c7=c5+1$c8=c6+1"
+Beginning VICAR task mf3
+mf3 version Fri Dec 28 2007
+function string = c7=c5+1$c8=c6+1
+1 records in
+ibis-list xxqqmap1 cols=(5,6,7,8) csiz=(16,16,16,16)  +
+     cfor="%16.6f%16.6f%16.6f%16.6f"
+Beginning VICAR task ibis
+ 
+Number of Rows:1  Number of Columns: 8       
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:1
++---------------+---------------+---------------+---------------
+             C:5             C:6             C:7             C:8
++---------------+---------------+---------------+---------------
+       30.375000      -35.875000       31.375000      -34.875000
+end-proc
+difpic (xxnewperth4,xxnewperth5)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+gtlist xxnewperth1
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(0.0,-5.0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TRANSVERSEMERCATOR)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.212500000000  0.562500000000
+       1.0     15.0         14.5      0.5  0.562500000000  0.562500000000
+      15.0      1.0          0.5     14.5  0.212500000000  0.212500000000
+      15.0     15.0         14.5     14.5  0.562500000000  0.212500000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.200000000000  0.575000000000
+       0.5     15.5         15.0      0.0  0.575000000000  0.575000000000
+      15.5      0.5          0.0     15.0  0.200000000000  0.200000000000
+      15.5     15.5         15.0     15.0  0.575000000000  0.200000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0250000000000 map units east
+1 line   = 0.0250000000000 map units north
+
+
+The scale fraction is 1 /      1.5
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xxnewperth2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(18.0,3.0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TRANSVERSEMERCATOR)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5 -0.237500000000  0.762500000000
+       1.0     11.0         10.5      0.5  0.012500000000  0.762500000000
+      11.0      1.0          0.5     10.5 -0.237500000000  0.512500000000
+      11.0     11.0         10.5     10.5  0.012500000000  0.512500000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0 -0.250000000000  0.775000000000
+       0.5     11.5         11.0      0.0  0.025000000000  0.775000000000
+      11.5      0.5          0.0     11.0 -0.250000000000  0.500000000000
+      11.5     11.5         11.0     11.0  0.025000000000  0.500000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0250000000000 map units east
+1 line   = 0.0250000000000 map units north
+
+
+The scale fraction is 1 /      1.1
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xxnewperth3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTIEPOINTTAG=(18.0,3.0,0,.2,.7,0.0)
+MODELPIXELSCALETAG=(0.025,0.025,0.0)
+PROJECTIONGEOKEY=1(CT_TRANSVERSEMERCATOR)
+GTRASTERTYPEGEOKEY=1(RASTERPIXELISAREA)
+GEOGELLIPSOIDGEOKEY=7030(ELLIPSE_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5 -0.237500000000  0.762500000000
+       1.0     11.0         10.5      0.5  0.012500000000  0.762500000000
+      11.0      1.0          0.5     10.5 -0.237500000000  0.512500000000
+      11.0     11.0         10.5     10.5  0.012500000000  0.512500000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0 -0.250000000000  0.775000000000
+       0.5     11.5         11.0      0.0  0.025000000000  0.775000000000
+      11.5      0.5          0.0     11.0 -0.250000000000  0.500000000000
+      11.5     11.5         11.0     11.0  0.025000000000  0.500000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0250000000000 map units east
+1 line   = 0.0250000000000 map units north
+
+
+The scale fraction is 1 /      1.1
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+list xxnewperth1 'zero
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+ Task:GEOMV     User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+     Samp     1       3       5       7       9      11      13      15
+   Line
+      1       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      3       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      4       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+      5       0   0   0   0   9  10  11  13  14  15  16   0   0   0   0
+      6       0   0   0   0   8   9  10  11  13  14  15   0   0   0   0
+      7       0   0   0   0   6   8   9  10  11  13  14   0   0   0   0
+      8       0   0   0   0   5   6   8   9  10  11  13   0   0   0   0
+      9       0   0   0   0   4   5   6   8   9  10  11   0   0   0   0
+     10       0   0   0   0   3   4   5   6   8   9  10   0   0   0   0
+     11       0   0   0   0   1   3   4   5   6   8   9   0   0   0   0
+     12       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+     13       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+     14       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+     15       0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+list xxnewperth2 'zero
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+ Task:GEOMV     User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+     Samp     1       3       5       7       9      11
+   Line
+      1       0   0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   0   0   0   0   0
+      3       0   0   9  10  11  13  14  15  16   0   0
+      4       0   0   8   9  10  11  13  14  15   0   0
+      5       0   0   6   8   9  10  11  13  14   0   0
+      6       0   0   5   6   8   9  10  11  13   0   0
+      7       0   0   4   5   6   8   9  10  11   0   0
+      8       0   0   3   4   5   6   8   9  10   0   0
+      9       0   0   2   3   4   5   6   8   9   0   0
+     10       0   0   0   0   0   0   0   0   0   0   0
+     11       0   0   0   0   0   0   0   0   0   0   0
+list xxnewperth3 'zero
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+ Task:GEOMV     User:pkim      Date_Time:Tue Apr  8 14:05:03 2008
+     Samp     1       3       5       7       9      11
+   Line
+      1       0   0   0   0   0   0   0   0   0   0   0
+      2       0   0   0   0   0   0   0   0   0   0   0
+      3       0   0   9  10  11  13  14  15  16   0   0
+      4       0   0   8   9  10  11  13  14  15   0   0
+      5       0   0   6   8   9  10  11  13  14   0   0
+      6       0   0   5   6   8   9  10  11  13   0   0
+      7       0   0   4   5   6   8   9  10  11   0   0
+      8       0   0   3   4   5   6   8   9  10   0   0
+      9       0   0   2   3   4   5   6   8   9   0   0
+     10       0   0   0   0   0   0   0   0   0   0   0
+     11       0   0   0   0   0   0   0   0   0   0   0
+end-proc

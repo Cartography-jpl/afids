@@ -1,0 +1,70 @@
+procedure
+refgbl $echo
+refgbl $autousage
+
+parm inp     type=string count=5
+parm out     type=string count=5
+
+local b1      type=string
+local b2      type=string
+local b3      type=string
+local b4      type=string
+local b5      type=string
+
+local out1    type=string
+local out2    type=string
+local out3    type=string
+local out4    type=string
+local out5    type=string
+
+parm meta    type=string
+
+local temp  type=string
+
+body
+let $autousage="none"
+let $echo="yes"
+
+let b1 = inp(1)
+let b2 = inp(2)
+let b3 = inp(3)
+let b4 = inp(4)
+let b5 = inp(5)
+
+let out1 = out(1)
+let out2 = out(2)
+let out3 = out(3)
+let out4 = out(4)
+let out5 = out(5)
+
+let temp = "temp"
+
+if ("&b1"<>"")
+   rpdeyeref &b1 &temp &meta band=1
+   rpdeyestrtch (&temp, &b1) &out1
+end-if
+
+if ("&b2"<>"")
+   rpdeyeref &b2 &temp &meta band=2
+   rpdeyestrtch (&temp, &b2) &out2
+end-if
+
+if ("&b3"<>"")
+   rpdeyeref &b3 &temp &meta band=3
+   rpdeyestrtch (&temp, &b3) &out3
+end-if
+
+if ("&b4"<>"")
+   rpdeyeref &b4 &temp &meta band=4
+   rpdeyestrtch (&temp, &b4) &out4
+end-if
+
+if ("&b5"<>"")
+   rpdeyeref &b5 &temp &meta band=5
+   rpdeyestrtch (&temp, &b5) &out5
+end-if
+
+theend>
+
+end-proc
+

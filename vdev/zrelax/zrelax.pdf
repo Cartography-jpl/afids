@@ -1,0 +1,48 @@
+PROCESS       HELP=*
+PARM INP TYPE=(STRING)
+PARM COLS TYPE=INTEGER COUNT=10 
+END-PROC
+.TITLE
+VICAR/IBIS Program "zrelax"
+.HELP
+PURPOSE
+
+   "zrelax" adjusts the brightness of images in a path-row arrangement
+so that brightness differences with neighbors are minimized.
+
+
+EXECUTION
+
+     zrelax ibisfile cols=(c1,c2,c3,c4,c5,c6,c7,c8,c9,c10)
+
+   the ibisfile must contain ten columns with the following data:
+
+c1.  frame index (usually path*100+row)
+c2.  average z value for the c1 frame vs a neighbor frame
+c3.  path of neighbor
+c4.  row of neighbor
+c5.  average z value of neighbor vs the c1 frame
+c6.  delta z from the c1 frame to the neighbor frame
+c7.  weighted average z value of the c1 frame to all neighbors
+c8.  (output) the c7 value after the relaxation adjustment
+c9.  (output) the c2 value after the relaxation adjustment
+c10  (output) the c5 value after the relaxation adjustment
+
+
+RESTRICTIONS
+
+The file must be sorted on column 1.  There are several entries in column 1
+for each neighbor of a frame.
+
+Original Programmer: A. L. Zobrist, 05 Aug, 2003
+Current Cognizant Programmer: A. L. Zobrist
+Revisions:
+  Fri Dec 28 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.LEVEL1
+.VARIABLE INP
+Input/output IBIS interface file
+.VARIABLE COLS
+Ten columns in the ibis file;
+see document for contents
+.END

@@ -1,0 +1,71 @@
+procedure
+local img type=(string,99)
+local dted type=(string,99)
+refgbl $echo
+body
+!let _onfail="continue"
+let $echo="yes"
+
+! stand-alone test case for regression testing
+
+genpc xxximg1 lon=-118 lat=36 mpix=1
+gen xxximg2 nl=1000 ns=1000 ival=1 linc=1 sinc=1
+gtgenup (xxximg2,xxximg1)
+gtlist xxximg2
+
+gtcopy xxximg2 xxximg2a size=(-400,-400,1800,1800)
+f2 xxximg2a out=xxximg3 func="0.05*abs(10*line-8*samp+855)" format=HALF
+list xxximg2 linc=100 sinc=100
+list xxximg3 linc=300 sinc=300
+gtlist xxximg3
+
+rpccorn inp=(xxximg2,xxximg3) cornonly=y
+label-list xxximg2
+
+rpcslant "abc" xxximg2  xxximg3 +
+   out1=xxximg11 out2=xxximg12  ang_n=0.0 ang_e=10.0 rot=8.0 +
+   shift_n=0.0008 shift_e=0.0003 +
+   ref=""
+
+list xxximg11 linc=100 sinc=100
+list xxximg12 linc=100 sinc=100
+
+rpcwarp (xxximg11,xxximg3) out=xxximg13 ref=xxximg12 'coverref
+f2 (xxximg12,xxximg13) out=xxximg14 func="abs(in1-in2)"
+
+list xxximg14 linc=100 sinc=100 zeroes=zeroes
+
+goto theend
+
+
+
+!This is a test case with real images and xvd display
+
+
+let img = "/raid23/tll_ab/alzpan.hlf"
+let dted = "/raid23/tll_ab/Phoenix_10m_dem_wgs.hlf"
+
+label-list &img
+
+!   TEST rpcslant HANDYPROC
+
+
+! set up an enhanced dted so 3-d can be seen
+
+!f2 &dted demimg fun="in1*10-7000"
+!let dted = "demimg"
+
+
+rpcslant "abc" &img  &dted +
+   out1=outimg1 out2=outimg2  ang_n=0.0 ang_e=40.0 rot=10.0 +
+   ref=""
+
+xvd (outimg2,outimg1,outimg1)
+
+!  verify that rpcwarp restores the original image
+
+rpcwarp (outimg1,&dted) out=xxxrestore ref=outimg2 'coverref
+xvd (outimg2,xxxrestore,xxxrestore)
+
+theend>
+end-proc

@@ -1,0 +1,13 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+
+
+!   TEST LLUTM HANDYPROC
+
+llutm2 -118.25 35.25
+
+llutm -118 -15 0   35 15 0
+
+end-proc

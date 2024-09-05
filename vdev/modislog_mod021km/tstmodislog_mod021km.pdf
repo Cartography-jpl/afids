@@ -1,0 +1,27 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR MODISLOG_MOD021KM
+
+!modislog_mod021km inp=MOD021KM.A2002236.0820.003.2002242091534.hdf geo=MOD03.A2002236.0820.003.2002242062812.hdf band=20
+
+!modislog_mod021km inp=MYD021KM.A2002235.2250.003.2002237164045.hdf geo=MYD03.A2002235.2250.003.2002237141012.hdf band=32
+!modislog_mod021km inp=MYD021KM.A2002235.2255.003.2002237230813.hdf geo=MYD03.A2002235.2255.003.2002237225605.hdf band=32
+!modislog_mod021km inp=MYD021KM.A2002236.2335.003.2002238221749.hdf geo=MYD03.A2002236.2335.003.2002238214116.hdf band=32
+
+!modislog_mod021km inp=MOD021KM.A2002236.1920.003.2002237185515.hdf geo=MOD03.A2002236.1920.003.2002237151545.hdf band=32
+!modislog_mod021km inp=MOD021KM.A2002236.1925.003.2002237201819.hdf geo=MOD03.A2002236.1925.003.2002237151606.hdf band=32
+
+modislog_mod021km inp=MOD021KM.A2002245.0605.004.2003122095614.hdf geo=MOD03.A2002245.0605.004.2003122094554.hdf band=20 out=Band20 +
+  minLat=38 maxLat=40 minLon=-121 maxLon=-119
+modislog_mod021km inp=MOD021KM.A2002245.0605.004.2003122095614.hdf geo=MOD03.A2002245.0605.004.2003122094554.hdf band=21 out=Band21 +
+  minLat=38 maxLat=40 minLon=-121 maxLon=-119
+
+end-proc

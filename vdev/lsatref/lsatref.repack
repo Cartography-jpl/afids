@@ -1,0 +1,6 @@
+$ vpack lsatref.com -mixed -
+	-s lsatref.c lsatstrtch.c ImageUtils.c ImageUtils.h LandsatManager.c LandsatManager.h -
+	-i lsatref.imake lsatstrtch.imake -
+	-p lsatref.pdf lsatstrtch.pdf multilsatref.pdf -
+	-t tstlsatref.pdf tstlsatstrtch.pdf
+$ Exit

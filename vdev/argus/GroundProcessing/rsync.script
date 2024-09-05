@@ -1,0 +1,4 @@
+#! /bin/sh -f
+
+rsync -rv "$1/" "$2/"
+read -s -p "---- Done. Press <Return> to continue --"

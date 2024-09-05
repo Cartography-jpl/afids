@@ -1,0 +1,6 @@
+$ vpack tclpad.com -mixed -
+	-s tclpad.c -
+	-i tclpad.imake -
+	-p tclpad.pdf -
+	-t tsttclpad.pdf
+$ Exit

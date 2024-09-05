@@ -1,0 +1,61 @@
+procedure help=*
+parm key type=string
+parm fnamein type=(string,99)
+parm rawimg1 type=(string,99)
+parm rawgeo1 type=(string,99)
+parm rawimg2 type=(string,99) count=(0:1) default=""
+parm rawgeo2 type=(string,99) count=(0:1) default=""
+parm rdtype type=string valid=("day","night")
+parm band type=string
+parm outimg type=(string,99)
+
+local outfile1 type=(string,99)
+local outfile2 type=(string,99)
+body
+
+if (rawimg2="")
+   modwpadb2 key=&key rawimg=&rawimg1 +
+      rawgeo=&rawgeo1 +
+      fnamein=&fnamein band=&band +
+      rdtype=&rdtype outimg=&outimg modiscase=0
+else
+   let outfile1 = "final&key" // "/&fname" // "_map4.&band" // "x1"
+   let outfile2 = "final&key" // "/&fname2" // "_map4.&band" // "x2"
+   modwpadb2 key=&key rawimg=&rawimg1 +
+      rawgeo=&rawgeo1 +
+      fnamein=&fnamein band=&band +
+      rdtype=&rdtype outimg=&outfile1 modiscase=1
+   modwpadb2 key=&key rawimg=&rawimg2 +
+      rawgeo=&rawgeo2 +
+      fnamein=&fnamein band=&band +
+      rdtype=&rdtype outimg=&outfile2 modiscase=2
+   
+   fthmos inp1=&outfile1 +
+       inp2=&outfile2 +
+       out=&outimg
+end-if
+
+theend>
+end-proc
+.TITLE
+modwarpad - log additional band of modis
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 20 Mar, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+.END

@@ -1,0 +1,45 @@
+#=============================================
+# Scripts for processing argus data.
+
+argusdir = $(afidsdir)/argus
+arguslibdir = $(afidsdir)/argus/lib
+argusgrounddir = $(afidsdir)/argus/GroundProcessing
+argus_DATA  = $(srcdir)/$(srcafids)/argus/README
+argus_DATA += $(srcdir)/$(srcafids)/argus/Makefile.template
+argus_DATA += $(srcdir)/$(srcafids)/argus/argus.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/camera_calibration.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/cib_image.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/create_csv.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/create_footprint.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/create_image_time.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/determine_highres_list.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/determine_tile_list.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/generate_tile.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/generate_one_deg.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/high_resolution_image.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/ortho_rectify.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/take_inventory.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/rpc_generate.rb
+argus_SCRIPTS = $(srcdir)/$(srcafids)/argus/quick_copy_list
+argus_DATA += $(srcdir)/$(srcafids)/argus/quick_copy_list.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/quick_product_list.rb
+argus_DATA += $(srcdir)/$(srcafids)/argus/quick_process.rb
+
+
+arguslib_DATA = $(srcdir)/$(srcafids)/argus/lib/bsearch.rb
+arguslib_DATA += $(srcdir)/$(srcafids)/argus/lib/CamCalibration.rb
+arguslib_DATA += $(srcdir)/$(srcafids)/argus/lib/ImageTime.rb
+arguslib_DATA += $(srcdir)/$(srcafids)/argus/lib/MosaicFile.rb
+arguslib_DATA += $(srcdir)/$(srcafids)/argus/lib/ReadFlight.rb
+
+argusground_DATA = $(srcdir)/$(srcafids)/argus/GroundProcessing/README
+argusground_DATA += $(srcdir)/$(srcafids)/argus/GroundProcessing/DirectoryTemplate.tar.gz
+argusground_DATA += $(srcdir)/$(srcafids)/argus/GroundProcessing/ground_processing.glade
+argusground_DATA += $(srcdir)/$(srcafids)/argus/GroundProcessing/GroundProcessingGlade.rb
+argusground_DATA += $(srcdir)/$(srcafids)/argus/GroundProcessing/GroundProcessingGui.rb
+argusground_SCRIPTS = $(srcdir)/$(srcafids)/argus/GroundProcessing/quick_copy_list.script
+argusground_SCRIPTS += $(srcdir)/$(srcafids)/argus/GroundProcessing/quick_rsync.script
+argusground_SCRIPTS += $(srcdir)/$(srcafids)/argus/GroundProcessing/rsync.script
+argusground_SCRIPTS += $(srcdir)/$(srcafids)/argus/GroundProcessing/generate_image.script
+bin_SCRIPTS+= $(srcdir)/$(srcafids)/argus/GroundProcessing/argus_ground_processing
+EXTRA_DIST += $(srcdir)/$(srcafids)/argus/GroundProcessing/Makefile

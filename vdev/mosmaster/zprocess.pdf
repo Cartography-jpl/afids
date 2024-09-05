@@ -1,0 +1,163 @@
+procedure
+parm key type=string
+parm band type=string
+
+local zfile type=string
+local cfile type=string
+local nfile type=string
+local c2file type=string
+local c3file type=string
+local c4file type=string
+local xfile type=string
+local joinfile type=string
+local parfile type=string
+local qfile type=string
+local topo string
+
+local iloop int
+local dire int
+local dirn int
+local zclen int
+local cclen int
+local minnumzval int
+local qexist int
+
+local deltaz real
+local deltaz3 real
+local deltaz6 real
+local deltaz9 real
+local deltaz12 real
+
+local testnl int
+
+body
+
+!  get the filenames
+
+let zfile = "&key" // "_&band" // "_zfile"
+let cfile = "&key" // "_&band" // "_cfile"
+let nfile = "&key" // "_&band" // "_nfile"
+let c2file = "scratch/&key" // "_&band" // "_c2file"
+let c3file = "scratch/&key" // "_&band" // "_c3file"
+let c4file = "scratch/&key" // "_&band" // "_c4file"
+let xfile = "scratch/&key" // "_&band" // "_xfile"
+let joinfile = "scratch/&key" // "_&band" // "_joinfile"
+let qfile = "&key" // "_&band" // "_qfile"
+let parfile = "&key" // "_params"
+
+ibis2tcl &zfile vclen=zclen vartype=1
+asc2tcl &parfile keyword="deltazthresh=" val=deltaz vtype=8
+asc2tcl &parfile keyword="minnumzval=" val=minnumzval vtype=4
+asc2tcl &parfile keyword="topo=" val=topo vtype=0
+let deltaz3 = 3.0*deltaz
+let deltaz6 = 6.0*deltaz
+let deltaz9 = 9.0*deltaz
+let deltaz12 = 12.0*deltaz
+   
+!  copy and zip the neighbor, loop for the four neighbors
+
+let iloop = 0
+loop
+   let iloop = iloop+1
+   if (iloop>4) goto loopdone
+   if (iloop=1)
+      let dire = 1
+      let dirn = 0
+   else-if (iloop=2)
+      let dire = -1
+      let dirn = 0
+   else-if (iloop=3)
+      let dire = 0
+      let dirn = 1
+   else-if (iloop=4)
+      let dire = 0
+      let dirn = -1
+   end-if
+   
+   ibis-copy &zfile &xfile
+   write "zclen &zclen"
+   ibis-gen &joinfile nc=6 nr=1 +
+      format=("FULL","FULL","FULL","FULL","REAL","REAL")
+   icat (&zfile,&joinfile) &c2file 'h
+   write "done"
+   mf3 &c2file f="c14=c3+(&dire)$c15=c4+(&dirn)$c16=c6$c17=c7"
+   sort &c2file sortcol=(14,15,16,17)
+   sort &xfile sortcol=(3,4,6,7)
+   zipcol2 inp=(&c2file,&xfile) incol=(14,15,16,17) outcol=(18,19) +
+          file=(3,4,6,7,12,13) null=(-999,-999) 
+   rowop2 &c2file &c3file keycol=(12,18) range=(-9999,-1,-9999,-1) 'delete
+   
+   ibis2tcl &c3file vclen=cclen vartype=1
+   ibis-gen &joinfile nc=6 nr=1 +
+      format=("REAL","REAL","REAL","REAL","REAL","REAL")
+   icat (&c3file,&joinfile) &c2file 'h
+   
+   write "water mask"
+   ibis-l &c2file nr=1
+   
+   ! there are two topo data sets -180to180 or 0to360
+   lab2tcl &topo v1=testnl keyword=nl 'system
+   if (testnl<5000) mf3 &c2file f="c8=@mod(c8+360.0,360.0)"
+   
+   pixmap (&c2file,&topo) mapcols=(8,9) pixcols=(23,24) 'maptopix
+   getzval (&topo,&c2file) cols=(23,24,25) win=2
+   rowop2 &c2file &c3file keycol=25 range=(0.5,30000.0) 'select
+   ibis-l &c3file nr=1
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.0*c21/c22")
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz12,&deltaz12) 'select
+    
+   mf3 &c2file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.25*c21/c22")
+   rowop2 &c2file &c3file keycol=21 range=(-&deltaz9,&deltaz9) 'select
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.50*c21/c22")
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz6,&deltaz6) 'select
+    
+   mf3 &c2file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-0.75*c21/c22")
+   rowop2 &c2file &c3file keycol=21 range=(-&deltaz3,&deltaz3) 'select
+   
+   mf3 &c3file f=("c20=c18-c12$c21=c20$c22=1.0$@csum(c21,c5)$", +
+          "@csum(c22,c5)$c21=c20-c21/c22")
+   rowop2 &c3file &c2file keycol=21 range=(-&deltaz,&deltaz) 'select
+ 
+   mf3 &c2file f=("c22=1.0$@csum(c12,c5)$@csum(c18,c5)$", +
+          "@csum(c22,c5)$c12=c12/c22$c18=c18/c22")
+   rowop2 &c2file &c3file keycol=22 range=(&minnumzval,999999) 'select
+   
+   aggrg2 &c3file &c2file agcol=5 
+   ibis-l &c2file
+   
+   if (iloop=1)
+      ibis-copy &c2file &c4file
+   else
+      icat (&c4file,&c2file) &c3file
+      ibis-copy &c3file &c4file
+   end-if
+
+continloop>
+end-loop
+loopdone>
+
+ibis2tcl &c4file vclen=cclen vartype=1
+ibis-gen &joinfile nc=4 nr=1 format=("REAL","REAL","REAL","REAL")
+icat (&c4file,&joinfile) &cfile 'h
+
+sort &cfile sortcol=5
+mf3 &cfile f="c23=c12*c22$c24=c22$c21=c14*100+c15"
+mf3 &cfile f="@csum(c23,c5)$@csum(c24,c5)$c23=c23/c24"
+
+zrelax &cfile cols=(5,12,14,15,18,20,23,24,25,26)
+
+ibis-copy &zfile &joinfile
+sort &joinfile sortcol=2
+aggrg2 &joinfile &nfile agcol=2
+sort &nfile sortcol=3
+
+file2tcl &qfile val=qexist
+if (qexist=1) ush /bin/rm &qfile
+
+end-proc

@@ -1,0 +1,4 @@
+$ vpack detwvpan.com -mixed -
+	-p detwvpan.pdf -
+	-t tstdetwvpan.pdf
+$ Exit

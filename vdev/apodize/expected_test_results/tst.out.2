@@ -1,0 +1,287 @@
+plotxxx = /opt/afids_support/bin/gnuplot
+translog INP=AFIDS_ROOT TRANS=afidsroot
+gen mask87.real nl=700 ns=700 format=real sinc=1.0 linc=0 modulo=8
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 mask87.real out=F87.real format=real function="sin(in1)"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 490000 TIMES
+cform F87.real F87H  irange=(-1.0,1.0) orange=(0,255) oform=half
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *   127.500+   127.500
+INPUT FORMAT = REAL
+OUTPUT FORMAT = HALF
+CONVERSION COMPLETE
+rotate F87H F87N angle=25 center=(350,350) 'nointerp
+rotate2	inp=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task rotate2
+ROTATE2 - 20-Apr-2011 (64-bit) - RJB
+REGION (   1,    1,  700,  700) OF THE INPUT PICTURE IS ROTATED    25.0 DEGREES ABOUT 350.5 , 350.5
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL      350.0,   350.0
+IF ($COUNT(OUT) = 0) RETURN
+lgeom INP=F87H OUT=F87N SIZE=@SIZE NL=@NL NS=@NS  +
+        IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR PMEM=2046.0
+Beginning VICAR task lgeom
+LGEOM - 26-JUL-2016 (64-bit) - rjb
+END-PROC
+rotate F87H F87I angle=25 center=(350,350)
+rotate2	inp=@INP PDS=ZZPAR SIZE=@SIZE	SL=@SL	SS=@SS	NL=@NL	NS=@NS	 +
+	ANGLE=@ANGLE	NOINTERP=@NOINTERP	 +
+	LINE=@LINE	SAMPLE=@SAMPLE	CENTER=@CENTER
+Beginning VICAR task rotate2
+ROTATE2 - 20-Apr-2011 (64-bit) - RJB
+REGION (   1,    1,  700,  700) OF THE INPUT PICTURE IS ROTATED    25.0 DEGREES ABOUT 350.5 , 350.5
+THE CENTER OF ROTATION IN THE OUTPUT PICTURE IS LOCATED AT PIXEL      350.0,   350.0
+IF ($COUNT(OUT) = 0) RETURN
+lgeom INP=F87H OUT=F87I SIZE=@SIZE NL=@NL NS=@NS  +
+        IDSNAM=@IDSNAM IDSNS=@IDSNS PARMS=ZZPAR PMEM=2046.0
+Beginning VICAR task lgeom
+LGEOM - 26-JUL-2016 (64-bit) - rjb
+END-PROC
+copy F87N F87N.rot size=(1,1,400,400)
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+if (afidsroot = "")
+else
+    fft2005 F87N.rot F87N_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87N_fft (F87N_fft.amp,F87N_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87N_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 9.388096E+00   at  (   109,   283)
+Max. value: 1.948606E+07   at  (   201,   201)
+
+let $echo="no"
+************************************
+NO APODIZATION on NO-INTERPOLATION
+F87N_fft.amp range = 9 to 19486064
+***********************************
+cform F87N_fft.amp F87N_fft.full irange=(1.948606400000e+07,9.388095855713e+00) orange+
+=(19486064,9)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+    -2.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87N_fft.full F87N_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+copy F87I F87I.rot size=(1,1,400,400)
+Beginning VICAR task copy
+ COPY VERSION 12-JUL-1993
+if (afidsroot = "")
+else
+    fft2005 F87I.rot F87I_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87I_fft (F87I_fft.amp,F87I_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87I_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 1.704772E+00   at  (     8,   169)
+Max. value: 1.946857E+07   at  (   201,   201)
+
+let $echo="no"
+*********************************
+NO APODIZATION on INTERPOLATION
+F87I_fft.amp range = 1 to 19468572
+*********************************
+cform F87I_fft.amp F87I_fft.full irange=(1.946857200000e+07,1.704772472382e+00) orange+
+=(19468572,1)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+    -2.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87I_fft.full F87I_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+apodize F87N.rot F87N33.rot edge=3
+Beginning VICAR task apodize
+APODIZE - 28-Jun-2012 - (64bit) - RJB
+if (afidsroot = "")
+else
+    fft2005 F87N33.rot F87N33_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87N33_fft (F87N33_fft.amp,F87N33_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87N33_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 5.190046E+00   at  (    32,   385)
+Max. value: 1.945994E+07   at  (   201,   201)
+
+let $echo="no"
+*******************************************
+3x3 APODIZATION on NON-INTERPOLATION
+F87N33_fft.amp range = 5 to 19459940
+*******************************************
+cform F87N33_fft.amp F87N33_fft.full irange=(1.945994000000e+07,5.190045833588e+00) orange+
+=(19459940,5)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+    -2.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87N33_fft.full F87N33_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+apodize F87N.rot F87N55.rot edge=5
+Beginning VICAR task apodize
+APODIZE - 28-Jun-2012 - (64bit) - RJB
+if (afidsroot = "")
+else
+    fft2005 F87N55.rot F87N55_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87N55_fft (F87N55_fft.amp,F87N55_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87N55_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 1.215774E+01   at  (     5,   399)
+Max. value: 1.946463E+07   at  (   201,   201)
+
+let $echo="no"
+*******************************************
+5x5 APODIZATION on NON-INTERPOLATION
+F87N55_fft.amp range = 12 to 19464626
+*******************************************
+cform F87N55_fft.amp F87N55_fft.full irange=(1.946462600000e+07,1.215774345398e+01) orange+
+=(19464626,12)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+     0.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87N55_fft.full F87N55_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+apodize F87I.rot F87I33.rot edge=3
+Beginning VICAR task apodize
+APODIZE - 28-Jun-2012 - (64bit) - RJB
+if (afidsroot = "")
+else
+    fft2005 F87I33.rot F87I33_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87I33_fft (F87I33_fft.amp,F87I33_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87I33_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 1.287399E+00   at  (    19,    50)
+Max. value: 1.944295E+07   at  (   201,   201)
+
+let $echo="no"
+*******************************************
+3x3 APODIZATION on INTERPOLATION
+F87I33_fft.amp range = 1 to 19442952
+*******************************************
+cform F87I33_fft.amp F87I33_fft.full irange=(1.944295200000e+07,1.287399291992e+00) orange+
+=(19442952,1)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+    -2.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87I33_fft.full F87I33_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+apodize F87I.rot F87I55.rot edge=5
+Beginning VICAR task apodize
+APODIZE - 28-Jun-2012 - (64bit) - RJB
+if (afidsroot = "")
+else
+    fft2005 F87I55.rot F87I55_fft mode=forward format=comp 'quadswap
+Beginning VICAR task fft2005
+fft2005 version Dec 18, 2012 (64-bit) - rjb
+end-if
+ccomp F87I55_fft (F87I55_fft.amp,F87I55_fft.pha) trans=polar
+Beginning VICAR task ccomp
+CCOMP version 18 Dec 2012 (64-bit) - rjb
+maxmin F87I55_fft.amp minival=minval maxival=maxval
+Beginning VICAR task maxmin
+*** maxmin - 07/06/2012 - rjb (64-bit)
+
+Min. value: 1.438627E+00   at  (    88,   149)
+Max. value: 1.944707E+07   at  (   201,   201)
+
+let $echo="no"
+********************************************
+5x5 APODIZATION on INTERPOLATION
+F87I55_fft.amp range = 1 to 19447068
+********************************************
+cform F87I55_fft.amp F87I55_fft.full irange=(1.944706800000e+07,1.438627123833e+00) orange+
+=(19447068,1)     oform=full
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     1.000+    -2.000
+INPUT FORMAT = REAL
+OUTPUT FORMAT = FULL
+CONVERSION COMPLETE
+cform F87I55_fft.full F87I55_fft.norm irange=(0,35000) orange=(0,255)
+Beginning VICAR task cform
+CFORM VERSION 06-JUN-1998
+OUT = IN *     0.007+     0.000
+INPUT FORMAT = FULL
+OUTPUT FORMAT = BYTE
+CONVERSION COMPLETE
+qplot2 (F87I_fft.full,F87I33_fft.full,F87I55_fft.full)  +
+   proc=(1, 201,1,201,400, 2,201,1,201,400, 3, 201,1,201,400 )  +
+   title=("Central peak power reduced from line1 to line2 to line3")  +
+    nolabel=nolabel yscale=(1,100000) plotout=fftcmp
+Beginning VICAR task qplot2
+qplot2 - 24-Feb-2017 (64-bit gnuplot) - rjb
+let $echo="no"

@@ -1,0 +1,69 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+ikonoslog imgin=po_77829_pan_0010000.tif hdrin=po_77829_pan_0010000.hdr txtin=po_77829_metadata.txt txtout=po_77829_pan_0010000.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "po_77829_metadata.txt"
+ ** ABEND called **
+continue
+ikonoslog imgin=po_77829_pan_0010000.tif hdrin=alhdrin.hdr txtin=altxtin.met txtout=altxtout.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "altxtin.met"
+ ** ABEND called **
+continue
+ikonoslog imgin=po_77829_blu_0000000.tif hdrin=po_77829_blu_0000000.hdr txtin=po_77829_metadata.txt txtout=po_77829_blu_0000000.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "po_77829_metadata.txt"
+ ** ABEND called **
+continue
+ikonoslog imgin=po_120894_pan_0000000.ntf hdrin=po_120894_pan_0000000.hdr txtin=po_120894_metadata.txt txtout=po_120894_pan_0000000+
+.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "po_120894_metadata.txt"
+ ** ABEND called **
+continue
+ikonoslog imgin=po_120898_blu_0000000.ntf hdrin=po_120898_blu_0000000.hdr txtin=po_120898_metadata.txt txtout=po_120898_blu_0000000+
+.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "po_120898_metadata.txt"
+ ** ABEND called **
+continue
+ikonoslog imgin=po_120908_pan_0010000000.ntf hdrin=po_120908_pan_0010000000.hdr txtin=po_120908_metadata.txt txtout=po_120908_pan_0+
+010000000.txt
+Beginning VICAR task ikonoslog
+ikonoslog version Thu Jan  3 2008
+error stating "po_120908_metadata.txt"
+ ** ABEND called **
+continue
+end-proc

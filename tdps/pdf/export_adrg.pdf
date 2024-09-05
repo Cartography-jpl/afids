@@ -1,0 +1,22 @@
+!Export/convert the adrg RGB map background to geoTiff.
+!
+!Input Parameters:
+!DIRin  - Directory path for input rgb adrg files
+!DIRout - Output directory path: Example: /data/tdps/
+!out    - Output geotiff (RGB composite: 24-bit)
+!
+!Example call:
+!export_adrg ,,adrg_rgb.tif
+!export adrg /home/tdps/tabriz /home/tdps adrg_rgb.tif
+
+procedure
+parm       REDin   string    def="/home/tll/tdps/tabriz/adrg.red" !Input red adrg file
+parm       GRNin   string    def="/home/tll/tdps/tabriz/adrg.grn" !Input grn adrg file
+parm       BLUin   string    def="/home/tll/tdps/tabriz/adrg.blu" !Input blu adrg file
+parm       DIRout  string    def="/home/tll/work/"                !Ouput data dir
+parm       out     string    def="adrg_b24.tif"                   !Output file name
+
+body
+vtiff3-fr  inp=(&"REDin",&"GRNin",&"BLUin") +
+           out=&"DIRout"&out 'bit24
+end-proc

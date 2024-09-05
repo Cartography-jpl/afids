@@ -1,0 +1,160 @@
+procedure
+parm    mode    type=keyword count=(0:1) valid=(batch,nobatch,inter) default=batch
+local dir string
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+
+local  plotxxx type=string count=1
+! Feb 24, 2017 - RJB
+! TEST SCRIPT FOR MOMGEN2 
+! tests BYTE and HALF images
+!
+! Vicar Programs:
+!   translog f2 label-replace copy createfile typetext
+!   addtofile reset ltgen ccdslope  
+!
+! External programs
+!       gnuplot 5.0.x 
+!
+! Parameters:
+!   mode - method for processing: 
+!       1) batch provides no xvd display
+!       2) interactive or nobatch is used for display requiring
+!       user interaction. 
+!           
+!   In batch mode it produces files testx.eps by calling gnuplot
+!       to create the encapsulated postscript file which can be
+!       later viewed with ghostscript or gimp
+!   In interactive or nobatch mode gnuplot is called with a window
+!       manager for X11. The gnuplot display is killed by
+!       a mouse click anywhere on the plot panel
+!            
+!   In 2017 a test was added to ensure gnuplot is available for
+!       the interactive parameter.
+!
+! Requires external test data: 
+!   cartlab or mipl dependent pointers
+!            
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid1/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+
+!!
+refgbl $echo
+refgbl $syschar
+refgbl $autousage
+
+body
+let $echo="no"
+let $autousage="none"
+let _onfail="stop"
+translog inp=GNUPLOT trans=plotxxx
+
+!used strictly for detection of gnuplot 
+write "plotxxx = &plotxxx"
+if (mode = "nobatch" or mode = "inter")
+    if (plotxxx = "")
+        write "GNUPLOT environment variable not defined"
+        stop
+    end-if
+end-if
+ 
+!CASSINI TEST:
+
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL        
+    ush ln -s /project/test_work/testdata/cassini/iss cas 
+else         
+!CARTLAB
+    if (aftestdata = "")     
+        ush ln -s ../test_data/vicar_test_images/testdata/cassini/iss cas
+    else
+        ush ln -s $AFIDS_TESTDATA/vicar_test_images/testdata/cassini/iss cas
+    end-if
+end-if
+
+let _onfail="goto rm"       
+let $echo="yes"            
+
+!---------------------------
+! Make a test light transfer file which has exposure levels of
+! 0,10,20,40 and each input frame was 10,110,210,410 dn respectively.
+! Each level has three frames associated with it.
+ 
+!Set dns to 10 and replicate - set exposure to 0
+f2 inp=cas/sum2.1 out=l1.a func=10
+label-rep l1.a 'PROP property="CASSINI-ISS" item="EXPOSURE_DURATION=0"
+copy l1.a l1.b
+copy l1.a l1.c
+ 
+!Set dns to 110 and replicate - set exposure to 10
+f2 inp=cas/sum2.1 out=l2.a func=110
+label-rep l2.a 'PROP property="CASSINI-ISS" item="EXPOSURE_DURATION=10."
+copy l2.a l2.b
+copy l2.a l2.c
+ 
+!Set dns to 210 and replicate - set exposure to 20
+f2 inp=cas/sum2.1 out=l3.a func=210
+label-rep l3.a 'PROP property="CASSINI-ISS" item="EXPOSURE_DURATION=20."
+copy l3.a l3.b
+copy l3.a l3.c
+ 
+!Set dns to 410 and replicate - set exposure to 40
+f2 inp=cas/sum2.1 out=l4.a func=410
+label-rep l4.a 'PROP property="CASSINI-ISS" item="EXPOSURE_DURATION=40."
+copy l4.a l4.b
+copy l4.a l4.c
+ 
+!Create list of the files created
+createfile m2.list
+addtofile m2.list "NEXT FILE=0001"
+addtofile m2.list "l1.a"
+addtofile m2.list "l1.b"
+addtofile m2.list "l1.c"
+addtofile m2.list "l2.a"
+addtofile m2.list "l2.b"
+addtofile m2.list "l2.c"
+addtofile m2.list "l3.a"
+addtofile m2.list "l3.b"
+addtofile m2.list "l3.c"
+addtofile m2.list "l4.a"
+addtofile m2.list "l4.b"
+addtofile m2.list "l4.c"
+reset m2.list 
+typetext m2.list
+ 
+!Initialize Light Transfer File
+ltgen l1.a out=testltf.out list=m2.list 'GRID
+!Make a copy
+copy testltf.out testltf2.out
+ 
+!Fill Light Transfer File with stats
+momgen2 list=m2.list ltfrcp=testltf.out
+ 
+!See if CCDSLOPE is happy with it.
+ccdslope testltf.out mofset=0.0 light=10. rej=0 'SUBDC +
+    plot=test1
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT test1.gpi
+end-if
+ 
+!Try it with the LTFILE option
+!(but all the radiances are the same except the first one)
+momgen2 list=m2.list ltfrcp=testltf2.out ltfile=lum.tmp
+typetext lum.tmp
+
+let $echo="no"
+rm>
+   ush rm cas
+END-PROC

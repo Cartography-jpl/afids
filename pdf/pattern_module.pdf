@@ -1,0 +1,113 @@
+procedure help=*
+parm inp_prefix type=(string,99)
+parm out_prefix type=(string,99)
+parm case type=(string,15) +
+   valid=("pre_light","pre_dark","post_light","post_dark")
+parm func1 type=(string,99)
+parm func2 type=(string,99) default=""
+parm func3 type=(string,99) default=""
+parm func4 type=(string,99) default=""
+parm func5 type=(string,99) default=""
+parm format type=(string,5) default="HALF" valid=("HALF","FULL")
+
+local inp_img type=(string,99)
+local inp_tab type=(string,99)
+local out_img type=(string,99)
+local out_tab type=(string,99)
+local xtemp1 type=(string,99)
+
+body
+
+write "pattern_module 11/21/2013"
+
+let inp_img = "&inp_prefix" // "_&case" // "_targets"
+let inp_tab = "&inp_prefix" // "_&case" // "_table"
+let out_img = "&inp_prefix" // "&out_prefix" // "_&case" // "_targets"
+let out_tab = "&inp_prefix" // "&out_prefix" // "_&case" // "_table"
+let xtemp1 = "&inp_prefix" // "&out_prefix" // "_&case" // "_temp1"
+
+ibis-copy &inp_tab &xtemp1
+mf3 &xtemp1 func="&func1"
+
+if (func2<>"") mf3 &xtemp1 func="&func2"
+if (func3<>"") mf3 &xtemp1 func="&func3"
+if (func4<>"") mf3 &xtemp1 func="&func4"
+if (func5<>"") mf3 &xtemp1 func="&func5"
+
+rowop2 &xtemp1 &out_tab keyc=(40) range=(0.5,1.5) 'select
+mf3 &out_tab func="c39=c1"
+compject (&inp_img,&out_tab) &out_img cols=(1,39) format=&format
+!!!xvd (&out_img,&inp_img,&inp_img)
+ibis-l &out_tab nr=20
+
+theend>
+end-proc
+.TITLE
+PATTERN_MODULE - Applies a mf3 function to an output from CONCOMP_MODULE
+.HELP
+PURPOSE
+     
+     The user can select one of the four output cases from CONCOMP_MODULE and
+     apply an mf3 function to the table to ROWOP2 a subset of connected components
+     to display.
+     
+CALL
+
+  pattern_module inp_prefix=mali out_prefix="p1" case="pre_light" +
+      func="c40=c12>(-70)"
+      
+OPERATION
+
+     The prefixes work as follows.  The inp_prefix selects which full case to use.
+     case selects which of the four (pre_light, etc.) is used.  The out_prefix is
+     used to name and identify the output files produced.
+
+     The routine applies an mf3 function to the connected component table for the
+     selected case.  It must produce a value 1.0 in column 40 of the table.  A
+     ROWOP2 selects all records having a 1.0 in column 40 discarding the other 
+     records.  COMPJECT then produces a matching image which only retains the
+     connected components that were selected by the ROWOP2.
+
+     See document for CONCOMP_MODULE for contents of the columns.
+
+PERFORMANCE
+
+Slowest program is COMPJECT.
+
+.PAGE
+RESTRICTIONS
+------------
+
+
+REFERENCES
+
+.PAGE
+Original Programmer: A. L. Zobrist, 30 Oct. 2013
+
+.LEVEL1
+.VARI INP_PREFIX
+The prefix set by the run
+of CONCOMP_MODULE
+.VARI OUT_PREFIX
+An additional prefix for the
+outputs of this module
+.VARI CASE
+Selects one of the four cases
+pre_light, pre_dark,
+post_light, post_dark
+.VARI FUNC1
+mf3 formula to apply to the
+input tabular file, must set
+one in col 40 for selection
+.VARI FUNC2
+Additional space for formulas
+.VARI FUNC3
+Additional space for formulas
+.VARI FUNC4
+Additional space for formulas
+.VARI FUNC5
+Additional space for formulas
+.VARI FORMAT
+HALF - up to 65000 final objects
+FULL - larger cases
+.END

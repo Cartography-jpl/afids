@@ -1,0 +1,386 @@
+procedure help=*
+parm inp_cvdn type=(string,99)
+parm out_prefix type=(string,99)
+parm pre type=(string,99)
+parm post type=(string,99)
+parm br1 type=(string,99) count=(0:1) default=""
+parm br2 type=(string,99) count=(0:1) default=""
+parm br3 type=(string,99) count=(0:1) default=""
+parm br4 type=(string,99) count=(0:1) default=""
+parm br5 type=(string,99) count=(0:1) default=""
+parm br6 type=(string,99) count=(0:1) default=""
+parm br7 type=(string,99) count=(0:1) default=""
+parm br8 type=(string,99) count=(0:1) default=""
+parm lowthresh int
+parm highthresh int
+parm min_size int default=3
+parm max_size int default=20
+parm max_comp int default=1000
+parm thresh_incr int default=50
+parm format type=(string,5) default="HALF" valid=("HALF","FULL")
+
+local post_dark_targ type=(string,99)
+local pre_light_targ type=(string,99)
+local post_light_targ type=(string,99)
+local pre_dark_targ type=(string,99)
+local post_dark_tab  type=(string,99)
+local pre_light_tab  type=(string,99)
+local post_light_tab  type=(string,99)
+local pre_dark_tab  type=(string,99)
+local lc type=(string,99)
+local hc type=(string,99)
+local lastcmp type=int
+local clen type=int
+body
+
+write "concomp_module 12/06/2013"
+
+let post_dark_targ = "&out_prefix" // "_post_dark_targets"
+let pre_light_targ = "&out_prefix" // "_pre_light_targets"
+let post_light_targ = "&out_prefix" // "_post_light_targets"
+let pre_dark_targ = "&out_prefix" // "_pre_dark_targets"
+
+let post_dark_tab = "&out_prefix" // "_post_dark_table "
+let pre_light_tab = "&out_prefix" // "_pre_light_table "
+let post_light_tab = "&out_prefix" // "_post_light_table "
+let pre_dark_tab = "&out_prefix" // "_pre_dark_table "
+
+let lc = "&out_prefix" // "lc"
+let hc = "&out_prefix" // "hc"
+
+! post_dark_targets
+
+loop
+loop
+if (lowthresh<-10000)
+   write "lowthresh &lowthresh too low"
+   let _onfail="stop"
+   stop
+end-if
+
+let _onfail="goto lower_low_thresh"
+
+!write "trying lowthresh: &lowthresh"
+f2 &inp_cvdn low_thresh func="in1<(&lowthresh)"
+!xvd low_threshf
+concomp low_thresh (&lc,work) thresh=&min_size lastcmp=lastcmp
+if (lastcmp>200000)
+   goto lower_low_thresh
+end-if
+goto done_with_lowthresh
+
+lower_low_thresh>
+let lowthresh = lowthresh - thresh_incr
+write "LOWERED LOWTHRESH to &lowthresh ********************"
+end-loop
+done_with_lowthresh>
+
+write "lastcmp: &lastcmp"
+
+!xvd &lc
+
+if (br1 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post) out=low.int1
+else-if (br2 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1) out=low.int1
+else-if (br3 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2) out=low.int1
+else-if (br4 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3) out=low.int1
+else-if (br5 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4) out=low.int1
+else-if (br6 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5) +
+            out=low.int1
+else-if (br7 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6) +
+            out=low.int1
+else-if (br8 = "")
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6,&br7) +
+            out=low.int1
+else
+   comptab2 (&lc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6,&br7,&br8) +
+            out=low.int1
+end-if
+
+pixmap (low.int1,&inp_cvdn) mapcol=(8,9) pixcol=(6,7) 'pixtomap
+
+ibis-gen xxxtmp1 nr=1 nc=13 deffmt=DOUB
+icat (low.int1,xxxtmp1) low.int 'h
+!ibis-l low.int nr=3
+
+mf3 low.int func="c40=@abs(c15-c14)/(@abs(c15)+@abs(c14))"
+mf3 low.int func="c38=@abs(c17-c16)/(@abs(c17)+@abs(c16))$c37=(c38>c40)"
+!ibis-l low.int nr=30
+!ibis-l low.int nr=30 cols=(16,17,40,38,37)
+rowop2 low.int &post_dark_tab keyc=(2,37) range=(&min_size,&max_size,0.5,1.5) 'select
+ibis2tcl &post_dark_tab vclen=clen
+write "&post_dark_tab clen &clen ********************"
+if (clen>max_comp)
+   goto reduce_low_thresh
+end-if
+
+!ibis-l &post_dark_tab nr=20
+mf3 &post_dark_tab func="c39=c1"
+compject (&lc,&post_dark_tab) &post_dark_targ cols=(1,39) format=&format
+
+! pre_light_targets
+
+rowop2 low.int &pre_light_tab keyc=(2,37) range=(&min_size,&max_size,-0.5,0.5) 'select
+ibis2tcl &pre_light_tab vclen=clen
+write "&pre_light_tab clen &clen ********************"
+if (clen>max_comp)
+   goto reduce_low_thresh
+end-if
+
+goto done_with_lowint
+
+reduce_low_thresh>
+let lowthresh = lowthresh - thresh_incr
+write "REDUCED LOWTHRESH to &lowthresh ********************"
+end-loop
+done_with_lowint>
+
+!ibis-l &pre_light_tab nr=20
+mf3 &pre_light_tab func="c39=c1"
+compject (&lc,&pre_light_tab) &pre_light_targ cols=(1,39) format=&format
+!!!xvd (&pre_light_targ,&post_dark_targ,&post_dark_targ)
+
+! post_light_targets
+
+loop
+loop
+if (highthresh>10000)
+   write "highthresh &highthresh too high"
+   let _onfail="stop"
+   stop
+end-if
+
+let _onfail="goto raise_high_thresh"
+
+!write "trying highthresh: &highthresh"
+f2 &inp_cvdn high_thresh func="in1>(&highthresh)"
+!xvd high_thresh
+concomp high_thresh (&hc,work) thresh=&min_size lastcmp=lastcmp
+if (lastcmp>200000)
+   goto raise_high_thresh
+end-if
+goto done_with_highthresh
+
+raise_high_thresh>
+write "RAISED HIGHTHRESH to &highthresh ********************"
+let highthresh = highthresh + thresh_incr
+end-loop
+done_with_highthresh>
+
+write "lastcmp: &lastcmp"
+
+!xvd &hc
+
+if (br1 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post) out=high.int1
+else-if (br2 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1) out=high.int1
+else-if (br3 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2) out=high.int1
+else-if (br4 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3) out=high.int1
+else-if (br5 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4) out=high.int1
+else-if (br6 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5) +
+            out=high.int1
+else-if (br7 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6) +
+            out=high.int1
+else-if (br8 = "")
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6,&br7) +
+            out=high.int1
+else
+   comptab2 (&hc,&inp_cvdn,&pre,&post,&br1,&br2,&br3,&br4,&br5,&br6,&br7,&br8) +
+            out=high.int1
+end-if
+
+pixmap (high.int1,&inp_cvdn) mapcol=(8,9) pixcol=(6,7) 'pixtomap
+
+ibis-gen xxxtmp1 nr=1 nc=13 deffmt=DOUB
+icat (high.int1,xxxtmp1) high.int 'h
+!ibis-l high.int nr=3
+
+mf3 high.int func="c40=@abs(c15-c14)/(@abs(c15)+@abs(c14))"
+mf3 high.int func="c38=@abs(c17-c16)/(@abs(c17)+@abs(c16))$c37=(c38>c40)"
+!ibis-l high.int nr=30
+!ibis-l high.int nr=30 cols=(16,17,40,38,37)
+rowop2 high.int &post_light_tab keyc=(2,37) range=(&min_size,&max_size,0.5,1.5) 'select
+ibis2tcl &post_light_tab vclen=clen
+write "&post_light_tab clen &clen ********************"
+if (clen>max_comp)
+   goto increase_high_thresh
+end-if
+
+!ibis-l &post_light_tab nr=20
+mf3 &post_light_tab func="c39=c1"
+compject (&hc,&post_light_tab) &post_light_targ cols=(1,39) format=&format
+
+! pre_dark_targets
+
+rowop2 high.int &pre_dark_tab keyc=(2,37) range=(&min_size,&max_size,-0.5,0.5) 'select
+ibis2tcl &pre_dark_tab vclen=clen
+write "&pre_dark_tab clen &clen ********************"
+if (clen>max_comp)
+   goto increase_high_thresh
+end-if
+
+goto done_with_highint
+
+increase_high_thresh>
+let highthresh = highthresh + thresh_incr
+write "RAISED HIGHTHRESH to &highthresh ********************"
+end-loop
+done_with_highint>
+
+!ibis-l &pre_dark_tab nr=20
+mf3 &pre_dark_tab func="c39=c1"
+compject (&hc,&pre_dark_tab) &pre_dark_targ cols=(1,39) format=&format
+!!!xvd (&post_light_targ,&pre_dark_targ,&pre_dark_targ)
+
+theend>
+end-proc
+.TITLE
+CONCOMP_MODULE - Uses CVDNORM input to produce 4 image/tabular sets of components
+.HELP
+PURPOSE
+     
+     Performs the connected component set of programs on the output from CVDNORM.  Also
+     uses the pre and post images to determine whether the detected object is in the pre
+     or the post image.  The registered brightness images or ban ratios can also be input
+     to ibis data tables for each output image.
+     
+CALL
+
+  concomp_module inp_cvdn=norm_diff.hlf pre=pre_reg.hlf +
+    post=post_reg.hlf   lowthresh=-60   highthresh=100 +
+    out_prefix=mali  min_size=4 max_size=20
+      
+OPERATION
+
+     The CVDNORM input is thresholded for the two tails (light/dark).  Each tail is
+     turned into its connected components with user specified min and max size of
+     component in pixels.
+   
+     The components are split into pre/post change categories depending on whether
+     the footprint of the component is closer to the "pre" neighboring background
+     or the "post".  The pre and post images (which gave the cvdnorm image) need
+     to be input to this proc.
+
+     The two tails and the pre/post differentiation give four output connected
+     component images:
+           dark object in pre, gone in post
+           light object in pre, gone in post
+           dark object in post, wasn't there in pre
+           light object in post, wasn't there in pre
+     The component in these images is identified by an integer index.  The 
+     associated table uses the index in a record to link the record to the
+     component.  The rest of the record has the usual descriptive stuff
+     about the component, such as size, location, diameter, and spectral info
+     from the cvdnorm, pre, post, and up to four (will be increased to eight)
+     additional color bands or color ratios, or any other related images.
+
+     At present the additional images must be registered (GeoTIFF) to the 
+     primary inputs.
+
+     The contents of the columns mostly derive from program comptab but are
+     repeated here:
+
+     1.  The component number
+     2.  The count of pixels in the component, can be converted to area
+     3.  The line number of the first pixel scanned (in l,s order)
+     4.  The sample number of the first pixel scanned
+     5.  The diameter in pixels of the component
+     6.  The line centroid of component
+     7.  The sample centroid of component
+     8.  The longitude of centroid of component
+     9.  The latitude of centroid of component
+     10.  Extra column for future stats
+     11.  Extra column for future stats
+     12.  The average brightness or pixel value of component in the diff img 
+     13.  The average brightness or pixel value of the neighborhood of the component
+          in the diff image
+     14.  The average brightness or pixel value of the component in the pre imag
+     15.  The average brightness or pixel value of the neighborhood of the component
+          in the pre image
+     16.  The average brightness or pixel value of the component in the post imag
+     17.  The average brightness or pixel value of the neighborhood of the component
+          in the post image
+     THEN FOR EACH OF THE ADDED BANDS...
+     18.  The average brightness or pixel value of the component in the BAND1 imag
+     19.  The average brightness or pixel value of the neighborhood of the component
+          in the BAND1 image
+
+     20.  The average brightness or pixel value of the component in the BAND2 imag
+     21.  The average brightness or pixel value of the neighborhood of the component
+          in the BAND2 image
+
+     22.  The average brightness or pixel value of the component in the BAND3 imag
+     23.  The average brightness or pixel value of the neighborhood of the component
+          in the BAND3 image
+
+     24.  The average brightness or pixel value of the component in the BAND4 imag
+     25.  The average brightness or pixel value of the neighborhood of the component
+          in the BAND4 image
+
+     ETC, UP TO EIGHT BANDS
+
+     The remaining columns are for calculation by program PATTERN_MODULE, except note
+     that column 40 has a special use.
+
+PERFORMANCE
+
+Slowest program is CONCOMP which is run twice.
+
+.PAGE
+RESTRICTIONS
+------------
+
+All input images must be registered pixelwise.
+
+REFERENCES
+
+.PAGE
+Original Programmer: A. L. Zobrist, 23 Oct. 2013
+
+.LEVEL1
+.VARI INP_CVDN
+Input image created by CVDNORM
+.VARI OUT_PREFIX
+a short letter string to
+identify output
+.VARI PRE
+The pre image used by CVDNORM
+.VARI POST
+The post image used by CVDNORM
+.VARI BR1
+First band or band ratio image
+.VARI BR2
+Second band or band ratio image
+.VARI BR3
+Third band or band ratio image
+.VARI BR4
+Fourth band or band ratio image
+.VARI LOWTHRESH
+Lower cutoff for left tail of
+CVDNORM image brightness distrib
+.VARI HIGHTHRESH
+Upper cutoff for right tail of
+CVDNORM image brightness distrib
+.VARI MIN_SIZE
+smallest connected component
+allowed
+.VARI MAX_SIZE
+largest connected component
+allowed
+.VARI FORMAT
+HALF - up to 65000 final objects
+FULL - larger cases
+.END
+

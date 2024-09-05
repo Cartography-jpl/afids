@@ -1,0 +1,262 @@
+procedure
+parm infile   type=string  !input file (dir&file)
+parm id       type=string  !time stamp for variable names
+parm rpctype  type=(string,2) valid=("A","B") default="A"
+parm crnronly type=(string,2) valid=("y","n") default="n"
+parm rdir     type=string default=""
+parm pw       type=real
+parm px       type=real
+parm py       type=real
+parm pz       type=real
+parm pt       type=real
+parm qw       type=real
+parm qx       type=real
+parm qy       type=real
+parm qz       type=real
+parm qt       type=real
+parm sw       type=real
+parm sx       type=real
+parm sy       type=real
+parm sz       type=real
+parm st       type=real
+parm tw       type=real
+parm tx       type=real
+parm ty       type=real
+parm tz       type=real
+parm tt       type=real 
+parm it       type=real
+local nlc int
+local nsc int
+local nhc int
+local nrcalc int
+local found  int
+local w1  real
+local w2  real
+local w3  real
+local o1  real
+local o2  real
+local o3  real
+local ur0 real
+local ur1 real
+local ur2 real
+local vr0 real
+local vr1 real
+local vr2 real
+local hr0 real
+local hr1 real
+local hr2 real
+
+local avelv real
+local geoid96 type=(string,99)
+local wgs84elv type=(string,99)
+local afidsroot type=(string,99)
+
+refgbl $echo
+body
+let $echo="yes"
+datetime
+
+goto skip1
+!write out input parameters
+write   "pw= &pw"
+write   "px= &px"
+write   "py= &py"
+write   "pz= &pz"
+write   "pt= &pt"
+write   "qw= &qw"
+write   "qx= &qx"
+write   "qy= &qy"
+write   "qz= &qz"
+write   "qt= &qt"
+write   "sw= &sw"
+write   "sx= &sx"
+write   "sy= &sy"
+write   "sz= &sz"
+write   "st= &st"
+write   "tw= &tw"
+write   "tx= &tx"
+write   "ty= &ty"
+write   "tz= &tz"
+write   "tt= &tt" 
+write   "it= &it"
+write   "rpctype= &rpctype"
+skip1>
+write   "crnronly= &crnronly"
+
+scinterp peph=(&pw,&px,&py,&pz,&pt) patt=(&qw,&qx,&qy,&qz,&qt) +
+         seph=(&sw,&sx,&sy,&sz,&st) satt=(&tw,&tx,&ty,&tz,&tt) +
+         w_t1=w1 w_t2=w2 w_t3=w3 +
+         w_omega1=o1 w_omega2=o2 w_omega3=o3 imtime=&it
+
+! get satellite position and pointing quaternions/rodrigues vector
+!write "w1,w2,w3 &w1,&w2,&w3"
+!write "o1,o2,o3 &o1,&o2,&o3"
+
+! cube dimensions
+
+let ur0 = 0.0
+let ur1 = 192.0
+let ur2 = 3648.0
+let vr0 = 0.0
+let vr1 = 225.0
+let vr2 = 3375.01
+let hr0 = 0.0
+let hr1 = 50.0
+let hr2 = 200.0
+
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+!write "nrcalc &nrcalc"
+ibis-gen &"rdir"xx4tmp&"id" nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,&"rdir"xx4tmp&"id") +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  hrange=(&hr0,&hr1,&hr2) +
+  w_t_c=(&w1,&w2,&w3) +
+  w_omega_c=(&o1,&o2,&o3)  +
+  fu=761311.4 +
+  fv=768688.5 +
+  q=-0.04059281626547 +
+  u0=-162.5 +
+  v0=1254.0 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+translog AFIDS_ROOT afidsroot
+let wgs84elv = "&afidsroot/data/vdev/etop02nobath.hlf"
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!remove next line when walt fixes
+!let wgs84elv = "/home/alz/vdev/watermask/etop02nobath.hlf"
+
+pixmap (&"rdir"xx4tmp&"id",&wgs84elv) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&wgs84elv,&"rdir"xx4tmp&"id") cols=(6,7,8) win=2
+mf3 &"rdir"xx4tmp&"id" f="@avg(c8)"
+ibis2tcl &"rdir"xx4tmp&"id" v1=avelv vartype=(-1) ibisloc=(1,8)
+!write "avelv &avelv"
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(6,7,8) csiz=(12,12,12) +
+!   cfor="%14.7f %14.7f %14.7f"
+
+let ur0 = 0.0
+let ur1 = 192.0
+let ur2 = 3648.0
+let vr0 = 0.0
+let vr1 = 225.0
+let vr2 = 3375.01
+let hr0 = 0.0+avelv
+let hr1 = 50.0
+let hr2 = 200.0+avelv
+
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+let nlc = $fix(1.0+(vr2-vr0+0.01)/vr1)
+let nsc = $fix(1.0+(ur2-ur0+0.01)/ur1)
+let nhc = $fix(1.0+(hr2-hr0+0.01)/hr1)
+let nrcalc = nlc*nsc*nhc
+!write "nrcalc &nrcalc"
+ibis-gen &"rdir"xx4tmp&"id" nc=8 nr=&nrcalc deffmt=DOUB
+sc2rpc (&infile,&"rdir"xx4tmp&"id") +
+  urange=(&ur0,&ur1,&ur2) +
+  vrange=(&vr0,&vr1,&vr2) +
+  hrange=(&hr0,&hr1,&hr2) +
+  w_t_c=(&w1,&w2,&w3) +
+  w_omega_c=(&o1,&o2,&o3)  +
+  fu=761311.4 +
+  fv=768688.5 +
+  q=-0.04059281626547 +
+  u0=-162.5 +
+  v0=1254.0 +
+  kappa=(0.0,0.0,0.0,0.0,0.0)
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+!write "correcting wgs84 to geoid96; higher is -"
+
+let geoid96 = "&afidsroot/data/vdev/EGM96_20_x100.HLF"
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!remove next line
+!let geoid96 = "/home/alz/vdev/watermask/EGM96_20_x100.HLF"
+
+pixmap (&"rdir"xx4tmp&"id",&geoid96) mapcol=(1,2) pixcol=(6,7) 'maptopix
+getzval (&geoid96,&"rdir"xx4tmp&"id") cols=(6,7,8) win=2
+mf3 &"rdir"xx4tmp&"id" f="c3=c3-c8*0.01"
+
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!   cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+!ibis-l &"rdir"xx4tmp&"id" nr=10 cols=(6,7,8) csiz=(12,12,12) +
+!   cfor="%14.7f %14.7f %14.7f"
+
+! need the rpc scale in an ibis file, first fifteen records of col 6
+
+ibis-copy &"rdir"xx4tmp&"id" &"rdir"xx5tmp&"id"
+rpcsccub &"rdir"xx5tmp&"id" dcols=(1,2,3,4,5) scol=6 rpctype=&rpctype
+
+!  crnronly = corners only
+!  crnronly = n means: 4 corners plus RPCs
+if (crnronly="n") 
+!   ibis-l &"rdir"xx5tmp&"id" nr=15 cols=(1,2,3,4,10) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+
+   rpcscale (&"rdir"xx5tmp&"id",&"rdir"xx4tmp&"id") rpccol=6 cols=(1,2,3,4,5) 'scale
+!   ibis-l &"rdir"xx4tmp&"id" nr=20 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f" sr=1
+
+! generate ibis formatted rpc file, with scales col 2, guess vector col 1
+
+   ibis-copy &"rdir"xx5tmp&"id" &"rdir"xxrpc nr=80
+   mf3 &"rdir"xxrpc f= +
+    "c2=c6$c1=(@index>20.5)*(@index<21.5)*1.0+(@index>60.5)*(@index<61.5)*1.0"
+!   ibis-l &"rdir"xxrpc
+
+! solving sequence
+
+   ibislsqf (&"rdir"xx4tmp&"id",&"rdir"xxrpc) func=rpcn20 datacol=(1,2,3) depcol=4 +
+       rescol=7 solcol=(1,3) rpctype=&rpctype rpcls=L
+
+   ibisnlsq (&"rdir"xx4tmp&"id",&"rdir"xxrpc) func=rpcd19 datacol=(1,2,3) depcol=4 +
+       rescol=8 solcol=(3,4) rpctype=&rpctype rpcls=L
+
+   ibislsqf (&"rdir"xx4tmp&"id",&"rdir"xxrpc) func=rpcn20 datacol=(1,2,3) depcol=5 +
+       rescol=7 solcol=(4,5) rpctype=&rpctype rpcls=S
+
+   ibisnlsq (&"rdir"xx4tmp&"id",&"rdir"xxrpc) func=rpcd19 datacol=(1,2,3) depcol=5 +
+       rescol=8 solcol=(5,6) rpctype=&rpctype rpcls=S
+
+!   ibis-l &"rdir"xxrpc nr=15 cols=(1,2,4,5,6) csiz=(12,12,12,12,12) +
+!       cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+   ibis2rpc &"rdir"xxrpc &"rdir"xxrpc2 ccol=6 scol=2
+!   label-list &"rdir"xxrpc2
+   gtgenup (&infile,&"rdir"xxrpc2)
+!   ibis-l &"rdir"xx5tmp&"id" nr=15 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!       cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+datetime
+ush rm &"rdir"xxrpc
+ush rm &"rdir"xxrpc2
+else
+end-if
+
+!  put rpc into ntf image, rpccctr puts corners in
+
+sort &"rdir"xx5tmp&"id" sortcol=(4,5)  indexcol=6
+mf3 &"rdir"xx5tmp&"id" f="c3=-c3"
+aggrg2 &"rdir"xx5tmp&"id" &"rdir"xx6tmp&"id" AGCOL=6 AREA=3 BYAR=(1,2,4,5)
+!ibis-l &"rdir"xx6tmp&"id" nr=15 cols=(1,2,3,4,5) csiz=(12,12,12,12,12) +
+!      cfor="%12.7f %12.7f %12.7f %12.7f %12.7f"
+rpccctr &"rdir"xx6tmp&"id" &infile &vr0 &vr2 &ur0 &ur2
+
+gtlabfix &infile GEOTIFF
+!label-list &infile
+!vicar2ntf &infile xxxntf
+datetime
+
+theend>
+end-proc
+

@@ -1,0 +1,195 @@
+!cutil9_diff.pdf version 1.0
+!L1 AMT Image Processing Subsystem, Build 4.8
+!Latest Change Date: 06MAR2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 9 - Difference Images
+
+!This VICAR procedure requires two directories filled with images
+!with the same filename, then differences the images to determine
+!if there are any changes (due to some modification in the software
+!that created the images). An output text file is created that
+!summarizes the Image Differences.
+
+!This code should be executed from the "run9_diff.pdf" program.
+!**********************************************************************
+
+!Notes on this VICAR procedure:
+
+!None
+!**********************************************************************
+
+!VICAR Parameter Defintions  
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name     Format   Description
+parm  inpdir1  string   def="/raid14/linux/cutil/old/"
+parm  inpdir2  string   def="/raid14/linux/cutil/new/"
+parm  search   string   def="AL1" !part of filename to search for.
+parm  8bit     string   def="N"   !"Y" = Yes, input is 8bit L1M.
+parm  rdir     string   def="/dev/shm/" !Use "" for local harddisk.
+!Parameters used within this program
+local strname  string   !path/filename of input AL1 image.
+local strnam2  string   !filename of input AL1 image (path removed).
+local strnam3  string   !path/filename of second directory input AL1 image.
+local numf     integer  !LASTFILE found (1) or not found (0)
+local I        integer  !Index Counter
+local found    integer  !File found (1) or not found (1)
+local sec      integer  !Clock Seconds for temporary variable names
+local lmean     real     !Mean of image difference
+local lsigma    real     !Sigma of image difference
+!**********************************************************************
+
+body
+
+let _onfail="continue"   !Try to keep working after an error occurs
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl        script="clock seconds" intvar=sec
+write         "***Initial Time = &sec Seconds"
+
+!Validate and/or Make Directories
+file2tcl      &inpdir1 val=found
+if            (found=0) goto error1
+file2tcl      &"inpdir1"/link/ val=found    
+if            (found=0) ush mkdir -m 777 &"inpdir1"/link/
+if            (found=0) write "***&"inpdir1"/link/ NOT FOUND, WAS CREATED***"
+
+file2tcl      &inpdir2 val=found
+if            (found=0) goto error1
+file2tcl      &"inpdir2"/link/ val=found   
+if            (found=0) ush mkdir -m 777 &"inpdir2"/link/
+if            (found=0) write "***&"inpdir2"/link/ NOT FOUND, WAS CREATED***"
+if            ("&inpdir1" = "&inpdir2") goto error1
+
+!Create links to the input data
+ush ln -s -f  &"inpdir1"/AL1* &"inpdir1"/link/
+file2tcl      &"inpdir1"/link/AL1Z_ZZZ_LASTFILE.img val=found
+if            (found=0) gen out=&"inpdir1"/link/AL1Z_ZZZ_LASTFILE.img 
+
+ush ln -s -f  &"inpdir2"/AL1* &"inpdir2"/link/
+file2tcl      &"inpdir2"/link/AL1Z_ZZZ_LASTFILE.img val=found
+if            (found=0) gen out=&"inpdir2"/link/AL1Z_ZZZ_LASTFILE.img
+
+!Create ibisfile for storing Image Quality
+ibis-gen      &"rdir"xx5tmp&sec nr=1 nc=3 datacols=(1,2,3) data=(0,0,0)
+!**********************************************************************
+
+!Begin Loop
+
+let            I = 0            !Loop Counter
+loop
+let            I = I + 1
+write         "I = &I"
+!Fail-safe Stop Loop
+if            (I = 901) break
+
+!Get the first/top filename in a directory containing the provided
+!'search' string, and return the complete path and filename
+!as the string variable 'strname'. Also remove the name's suffix.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "getFMFRS &"inpdir1"link/&"search"*") strvar=strname
+
+!Check if this filename is 'LASTFILE'. If it is, stop and break.
+!"numf" is actually the number of files found; Should be 0 or 1.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind LASTFILE &strname") intvar=numf
+!write         "numf = &numf"
+!If numf is 1, then IT IS the LASTFILE. Stop looping and exit.
+if            (numf = 1) write "*****LASTFILE Found 1*****"
+if            (numf = 1) break
+
+!Check the Second Directory filename for the LASTFILE.
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "getFMFRS &"inpdir2"link/&"search"*") strvar=strnam3
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind LASTFILE &strnam3") intvar=numf
+!If numf is 1, then IT IS the LASTFILE. Stop looping and exit.
+if            (numf = 1) write "*****LASTFILE Found 2*****"
+if            (numf = 1) break
+
+!Remove directory/path from name
+tcl2tcl        script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "removePath &strname") strvar=strnam2
+write         "Input = &strnam2"
+!**********************************************************************
+
+!Convert NITF formatted files to Vicar format and difference them.
+if            ("&8bit" = "Y") goto next1
+!16bit mode
+vextract2     &"inpdir1"&"strnam2".ntf out=&"rdir"xx1tmp&sec
+vextract2     &"inpdir2"&"strnam2".ntf out=&"rdir"xx2tmp&sec
+f2             inp=(&"rdir"xx1tmp&"sec",&"rdir"xx2tmp&"sec") +
+               out=&"rdir"xx3tmp&sec func="in1-in2"
+goto           next2
+next1>
+!8bit mode
+vextract      &"inpdir1"&"strnam2".ntf out=&"rdir"xx1tmp&"sec"_ 'force8
+vextract      &"inpdir2"&"strnam2".ntf out=&"rdir"xx2tmp&"sec"_ 'force8
+f2             inp=(&"rdir"xx1tmp&"sec"_.img,&"rdir"xx2tmp&"sec"_.img) +
+               out=&"rdir"xx3tmp&sec func="in1-in2"
+ush            rm &"rdir"xx1tmp&"sec"_*
+ush            rm &"rdir"xx2tmp&"sec"_*
+next2>
+hist           &"rdir"xx3tmp&sec mean=lmean sigma=lsigma 'nohi
+
+!Put statistics into an ibis file
+ibis-gen       &"rdir"xx4tmp&sec nr=1 nc=3 datacols=(1,2,3) +
+               data=(&"I",&"lmean",&"lsigma")
+icat          (&"rdir"xx5tmp&sec,&"rdir"xx4tmp&sec) &"rdir"xx3tmp&sec mode="V"
+ibis-copy      &"rdir"xx3tmp&sec &"rdir"xx5tmp&sec
+!ibis-l         &"rdir"xx5tmp&sec
+!**********************************************************************
+
+!Remove the AL1 NITF image from the link directories (so the next file
+!can be processed).
+ush            rm -f &"inpdir1"/link/&"strnam2".ntf
+ush            rm -f &"inpdir2"/link/&"strnam2".ntf
+end-loop
+!**********************************************************************
+
+!List File Summary of Image Quality Measures
+rowop2         &"rdir"xx5tmp&sec  &"rdir"xx4tmp&sec keycol=1 range=(0,0)
+write          " "
+ibis-l         &"rdir"xx4tmp&sec  'nohead 'nocol +
+               cform="%7.0f %12.4f %12.4f " +
+               pream=("    IMAGE DIFFERENCE SUMMARY",+
+               "  Look For Any Non-Zero Values", +  
+               "=================================",+
+               "IMAGE ID       MEAN         SIGMA") 
+write          " "
+ibis-l         &"rdir"xx4tmp&sec  out=ImageDiff_&"sec".txt  'nohead 'nocol +
+               cform="%7.0f %12.4f %12.4f" +
+               pream=("    IMAGE DIFFERENCE SUMMARY",+
+               "  Look For Any Non-Zero Values", +  
+               "=================================",+
+               "IMAGE ID       MEAN         SIGMA") 
+!**********************************************************************
+
+!Delete Temporary Files and Closing Messages
+file2tcl      &"rdir"xx1tmp&sec val=found
+if            (found = 1) ush rm -f &"rdir"xx1tmp&sec
+file2tcl      &"rdir"xx2tmp&sec val=found
+if            (found = 1) ush rm -f &"rdir"xx2tmp&sec
+file2tcl      &"rdir"xx3tmp&sec val=found
+if            (found = 1) ush rm -f &"rdir"xx3tmp&sec
+file2tcl      &"rdir"xx4tmp&sec val=found
+if            (found = 1) ush rm -f &"rdir"xx4tmp&sec
+file2tcl      &"rdir"xx5tmp&sec val=found
+if            (found = 1) ush rm -f &"rdir"xx5tmp&sec
+goto          theend1
+
+error1>
+!Missing or Duplicate Directory Specification
+write        " "
+write        "*** ERROR: Missing or Duplicate Directory Specification ***"
+write        "*** Calibration Utility-1 Log Stopped Due to Errors ***"
+goto          theend2
+
+theend1>
+write        " "
+write        "*** Calibration Utility-1 Log Processing Successfully Completed ***"
+write        " "
+theend2>
+end-proc

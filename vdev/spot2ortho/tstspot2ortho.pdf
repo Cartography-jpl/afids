@@ -1,0 +1,8 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+spot2ortho ../test_data/METADATA.DIM test gorewid=5
+spot2ortho ../test_data/METADATA.DIM out=("tb1.img", "tb2.img" +
+   "tb3.img", "tb4.img") ref="test_b1.img" 'coverref
+end-proc

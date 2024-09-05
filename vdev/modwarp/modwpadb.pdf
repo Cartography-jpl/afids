@@ -1,0 +1,216 @@
+procedure help=*
+parm key type=string
+parm fname type=string
+parm band type=string
+parm rdtype type=string
+parm modiscase type=int
+
+local inroot type=string
+local rawimg string
+local rawgeo string
+
+local logimg type=string
+local logtxt type=string
+local logint type=string
+local logintcopy type=string
+local tempfile1 type=string
+local tempfile2 type=string
+local tempfile3 type=string
+local xxxvinp type=string
+local xxxwinp type=string
+local gridfinal1 type=string
+local gridfinal2 type=string
+local gridfinal3 type=string
+local gridinfo type=string
+local masterfile type=string
+local outfile type=string
+local ufile type=string
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local sl int
+local ss int
+local nl int
+local ns int
+local mnl int
+local mns int
+
+local ffound int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+
+local lnl int
+local lns int
+
+local ascend int
+local nscan int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+refgbl $echo
+
+body
+let $echo="yes"
+
+!  log the modis band
+
+let inroot = "raw" // "&key" // "/&fname"
+let logimg = "&inroot" // "_&band" // ".img"
+let logtxt = "&inroot" // ".txt"
+let logint = "&inroot" // ".int"
+let logintcopy = "&inroot" // ".intcopy"
+let rawimg = "&inroot" // ".MY02"
+let rawgeo = "&inroot" // ".MY03"
+
+write "logging &rawimg"
+if (band="1" or band="2")
+   modislog_mod02qkm inp=&rawimg geo=&rawgeo out=&inroot +
+      band=&band lineSkip=1 sampSkip=10
+   let nscan = 40
+else-if (band="lst")
+   modislog_mod11_l2 inp=&rawimg geo=&rawgeo out=&inroot +
+      band=&band lineSkip=1 sampSkip=10
+   let nscan = 10
+else
+   modislog_mod021km inp=&rawimg geo=&rawgeo out=&inroot +
+      band=&band lineSkip=1 sampSkip=10
+   let nscan = 10
+end-if
+
+! other filenames
+
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+let xxxvinp = "scratch/" // "xxx&key" // "temp3" // ".vimg"
+let xxxwinp = "scratch/" // "xxx&key" // "temp3" // ".wimg"
+let gridfinal1 = "final&key" // "/&fname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&fname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&fname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&fname"  // "gridinfo"
+if (rdtype="day")
+   let masterfile = "final&key" // "/&key" // "master.img"
+else
+   let masterfile = "final&key" // "/&key" // "nightmaster.img"
+end-if
+let outfile = "final&key" // "/&fname" // "_map4.&band"
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s v11=t3e v12=t3n +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2,3,3,3,4)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns +
+   vartype=(0,0,0,0) ibisloc=(1,7,1,8,1,9,1,10)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+! the sl,ss,nl,ns for geom is different
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from modwarp.pdf
+
+ibis-copy &logint &logintcopy
+asc2tcl &logtxt keyword="LOG_ASCENDING=" val=ascend vtype=4
+if (ascend=0)
+   copy &logimg &tempfile2
+else
+   flot &logimg &tempfile2 mode=ROT180
+   lab2tcl &tempfile2 v1=lnl v2=lns keyword=(nl,ns) 'system
+   mf3 &logintcopy f="c1=(&lnl)+1-c1$c2=(&lns)+1-c2"
+   sort &logintcopy sortcol=(1,2)
+   ibis-copy &logintcopy scratch/xxxxlogintbak
+end-if
+
+! do the bowtie correction, need original nav file
+
+bowtie (&tempfile2,&logintcopy) &tempfile1 cols=(1,2,3,4) nscan=&nscan
+
+if (modiscase>0)
+   ! to match the data treatment in modwarp.pdf
+   lab2tcl &tempfile1 v1=mnl v2=mns keyword=(nl,ns) 'system
+   copy &tempfile1 &xxxvinp sl=&mnl nl=1
+   f2 inp=&xxxvinp out=&xxxwinp func="im1*0.0"
+   append inp=(&tempfile1,&xxxvinp,&xxxwinp) out=&tempfile2
+   copy &tempfile2 &xxxvinp sl=1 nl=1
+   append inp=(&xxxwinp,&xxxvinp,&tempfile2) out=&tempfile1
+end-if
+
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GTRasterTypeGeoKey=2(RasterPixelIsPoint)", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv) znoin=znoin
+gtsize (&tempfile3,&masterfile) &outfile 'coverref
+
+if (modiscase>0)
+   let ufile = "&outfile" // "x&modiscase"
+   gtcopy &outfile &ufile
+end-if
+
+
+theend>
+end-proc
+.TITLE
+modwp2ad - warp one additional band of modis
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.END

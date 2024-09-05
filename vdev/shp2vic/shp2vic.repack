@@ -1,0 +1,6 @@
+$ vpack shp2vic.com -mixed -
+	-s shp2vic.c -
+	-i shp2vic.imake -
+	-p shp2vic.pdf -
+	-t tstshp2vic.pdf
+$ Exit

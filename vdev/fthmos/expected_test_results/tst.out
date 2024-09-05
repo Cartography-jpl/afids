@@ -1,0 +1,299 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+gen xim1 nl=1 ns=1
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen inp=xim1 out=ximmaster 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(0,0,0,.3,.3,0.0)",  +
+          "ModelTiePointTag=(0,10,0,.5,.3,0.0)",  +
+          "ModelTiePointTag=(10,0,0,.3,.5,0.0)",  +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gen xim1 12 10 SINC=0 LINC=0 ival=10
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+geomv xim1 xim4  +
+   TIEPOINT=(1.,1.,1.,1.,   1.,5.5,1.,5.5,        1.,10.,1.,10., +
+            12.,1.,11.9,1.,  12.,5.5,12.04,5.5,   12.,10.,11.6,10.)
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 2 nav = 1
+requested memory 288
+gen xim1 10 12 SINC=0 LINC=0 ival=110
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+geomv xim1 xim5  +
+   TIEPOINT=(1.,1.,0.,0.,   1.,12.,0.,13., +
+            10.,1.,11.,0., 10.,12.,11.,13.)
+Beginning VICAR task geomv
+geomv version Fri Jan 11 2008
+Warp grid OK: nah = 1 nav = 1
+requested memory 288
+gtgen inp=xim4 out=xim2 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(-2,-9,0,.3,.3,0.0)",  +
+          "ModelTiePointTag=(-2,1,0,.5,.3,0.0)",  +
+          "ModelTiePointTag=(8,-9,0,.3,.5,0.0)",  +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtgen inp=xim5 out=xim3 'tiecnvrt  +
+   geotiff=("ModelTiePointTag=(-7,-11,0,.3,.3,0.0)",  +
+          "ModelTiePointTag=(-7,-1,0,.5,.3,0.0)",  +
+          "ModelTiePointTag=(3,-11,0,.3,.5,0.0)",  +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)",  +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+list xim2 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Mar 25 17:48:06 2008
+ Task:GTGEN     User:pkim      Date_Time:Tue Mar 25 17:48:06 2008
+     Samp     1       3       5       7       9
+   Line
+      1      10  10  10  10  10  10  10  10  10  10
+      2      10  10  10  10  10  10  10  10  10  10
+      3      10  10  10  10  10  10  10  10  10  10
+      4      10  10  10  10  10  10  10  10  10  10
+      5      10  10  10  10  10  10  10  10  10  10
+      6      10  10  10  10  10  10  10  10  10  10
+      7      10  10  10  10  10  10  10  10  10  10
+      8      10  10  10  10  10  10  10  10  10  10
+      9      10  10  10  10  10  10  10  10  10  10
+     10      10  10  10  10  10  10  10  10  10  10
+     11      10  10  10  10  10  10  10  10  10  10
+     12      10  10  10  10   0  10  10  10  10  10
+list xim3 'zeroes
+Beginning VICAR task list
+
+   BYTE     samples are interpreted as   BYTE   data
+ Task:GEN       User:pkim      Date_Time:Tue Mar 25 17:48:06 2008
+ Task:GTGEN     User:pkim      Date_Time:Tue Mar 25 17:48:06 2008
+     Samp     1       3       5       7       9      11
+   Line
+      1       0   0   0   0   0   0   0   0   0   0   0   0
+      2       0 110 110 110 110 110 110 110 110 110 110   0
+      3       0 110 110 110 110 110 110 110 110 110 110   0
+      4       0 110 110 110 110 110 110 110 110 110 110   0
+      5       0 110 110 110 110 110 110 110 110 110 110   0
+      6       0 110 110 110 110 110 110 110 110 110 110   0
+      7       0 110 110 110 110 110 110 110 110 110 110   0
+      8       0 110 110 110 110 110 110 110 110 110 110   0
+      9       0 110 110 110 110 110 110 110 110 110 110   0
+     10       0   0   0   0   0   0   0   0   0   0   0   0
+gtlist ximmaster
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The file is a standalone VICAR GeoTIFF label
+A hypothetical 1000 x 2000 VICAR image will
+be used to illustrate the mapping of corner points
+
+The VICAR GeoTIFF label is:
+MODELTRANSFORMATIONTAG=(0.0,0.02,0,0.3,0.02,0.0,0,0.3,0,0,0,0,0,0,0,1)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.310000000000  0.310000000000
+       1.0   2000.0       1999.5      0.5  0.310000000000  40.29000000000
+    1000.0      1.0          0.5    999.5  20.29000000000  0.310000000000
+    1000.0   2000.0       1999.5    999.5  20.29000000000  40.29000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.300000000000  0.300000000000
+       0.5   2000.5       2000.0      0.0  0.300000000000  40.30000000000
+    1000.5      0.5          0.0   1000.0  20.30000000000  0.300000000000
+    1000.5   2000.5       2000.0   1000.0  20.30000000000  40.30000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 0
+369
+258
+147
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units north
+1 line   = 0.0200000000000 map units east
+
+
+The scale fraction is 1 /     78.0
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xim2
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTRANSFORMATIONTAG=(0.0,0.02,0,0.48,0.02,-0.0,0,0.34,0,0,0,0,0,0,0,1)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.490000000000  0.350000000000
+       1.0     10.0          9.5      0.5  0.490000000000  0.530000000000
+      12.0      1.0          0.5     11.5  0.710000000000  0.350000000000
+      12.0     10.0          9.5     11.5  0.710000000000  0.530000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.480000000000  0.340000000000
+       0.5     10.5         10.0      0.0  0.480000000000  0.540000000000
+      12.5      0.5          0.0     12.0  0.720000000000  0.340000000000
+      12.5     10.5         10.0     12.0  0.720000000000  0.540000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 0
+369
+258
+147
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units north
+1 line   = 0.0200000000000 map units east
+
+
+The scale fraction is 1 /      0.9
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+gtlist xim3
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+MODELTRANSFORMATIONTAG=(0.0,0.02,0,0.52,0.02,0.0,0,0.44,0,0,0,0,0,0,0,1)
+PROJECTIONGEOKEY=20(CT_MillerCylindrical)
+GTRASTERTYPEGEOKEY=1(RasterPixelIsArea)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+
+
+The image raster is an 'area' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.5      0.5  0.530000000000  0.450000000000
+       1.0     12.0         11.5      0.5  0.530000000000  0.670000000000
+      10.0      1.0          0.5      9.5  0.710000000000  0.450000000000
+      10.0     12.0         11.5      9.5  0.710000000000  0.670000000000
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5          0.0      0.0  0.520000000000  0.440000000000
+       0.5     12.5         12.0      0.0  0.520000000000  0.680000000000
+      10.5      0.5          0.0     10.0  0.720000000000  0.440000000000
+      10.5     12.5         12.0     10.0  0.720000000000  0.680000000000
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 0
+369
+258
+147
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.0200000000000 map units north
+1 line   = 0.0200000000000 map units east
+
+
+The scale fraction is 1 /      0.8
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+ibis-gen xxa nr=1 nc=6 format=("A10","FULL","FULL","FULL","FULL","DOUB")  +
+      data=(0,0,0,0,0.77) datacols=(2,3,4,5,6)  +
+      string=(".\xim3") strcols=(1)
+Beginning VICAR task ibis
+ibis-gen xxb nr=1 nc=6 format=("A10","FULL","FULL","FULL","FULL","DOUB")  +
+      data=(0,0,0,0,1.6) datacols=(2,3,4,5,6)  +
+      string=("./xim2") strcols=(1)
+Beginning VICAR task ibis
+ibis-cat (xxa,xxb) xxc
+Beginning VICAR task ibis
+[TAE-PRCSTRM] Abnormal process termination; process status code = 11.;
+ proc 'tstfthmos', line 66
+RETURN

@@ -1,0 +1,246 @@
+#! /usr/bin/env python3
+
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import division
+from builtins import range
+from past.utils import old_div
+import math
+import re
+import sys
+import os
+from geocal import *
+
+class DigitalGlobeReflectance(InstrumentReflectance):
+   '''This class does DN to TOA Reflectance conversion for WorldView 1-4 and GeoEye 1'''
+   def __init__(self, inpPath, configPath):
+      '''Initialization of class. The file must be an IMD file.'''
+      InstrumentReflectance.__init__(self);
+
+      configFile = open(configPath,'r')
+      self.config = eval(configFile.read())
+      configFile.close()
+
+      self.satId = 'Unk'
+
+      if(re.search('.IMD', inpPath)):
+         self.readIMDMetaData(inpPath)
+      else:
+         self.readNTFMetaData(inpPath)
+
+      self.calculateSolarDistance()
+
+   def checkInstrumentPreconditions(self, band):
+      '''Ensure that everything is ready to do a dn2TOARadiance conversion'''
+      if band >= 17 or band < 0:
+         raise ValueError('Band should be [0, 16].')
+      if self.absCalFactors[band] == -999 or self.effectiveBandwidths[band] == -999:
+         raise ValueError('Absolute calibration factor and/or effective band width not set for band ' + str(band) + '.')
+
+   def dn2TOARadiance_factor(self, band):
+      '''Scale factor to convert DN to TOA radiance factor'''
+      self.checkInstrumentPreconditions(band)
+
+      return old_div(self.absCalFactors[band],self.effectiveBandwidths[band])
+
+   def setupMetaData(self):
+      self.nbands = self.config['nbands'][self.satId]
+      self.absCalFactors = self.config['absCalFactors'][self.satId]
+      self.effectiveBandwidths = self.config['effectiveBandwidths'][self.satId]
+      self.esun = self.config['esuns'][self.satId]
+
+   def readIMDMetaData(self, filename):
+      '''Read IMD metadata needed to set up the instrument'''
+      print('reading ' + filename)
+      infile = open(filename, 'r')
+      metafile = infile.read().split('\n')
+      infile.close()
+
+      # find satId (should be one of WV01, WV02, WV03, WV04, or GE01)
+      for line in metafile:
+         tokens = line.split('=')
+         if len(tokens) < 2:
+            continue
+         if tokens[0].strip() == 'satId':
+            self.satId = tokens[1].strip(' \n;"')
+            break
+      print('satId: ' + self.satId)
+
+      self.setupMetaData()
+
+      index = -1
+      for line in metafile:
+         tokens = line.split('=')
+         if len(tokens) < 2:
+            continue
+         if tokens[0].strip() == 'END_GROUP':
+            index = -1
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_C':
+            print('found BAND_C (coastal)')
+            index = 0
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_B':
+            print('found BAND_B (blue)')
+            if self.satId == 'WV02' or self.satId == 'WV03':
+               index = 1
+            elif self.satId == 'GE01' or self.satId == 'WV04':
+               index = 0
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_G':
+            print('found BAND_G (green)')
+            if self.satId == 'WV02' or self.satId == 'WV03':
+               index = 2
+            elif self.satId == 'GE01' or self.satId == 'WV04':
+               index = 1
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_Y':
+            print('found BAND_Y (yellow)')
+            index = 3
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_R':
+            print('found BAND_R (red)')
+            if self.satId == 'WV02' or self.satId == 'WV03':
+               index = 4
+            elif self.satId == 'GE01' or self.satId == 'WV04':
+               index = 2
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_RE':
+            print('found BAND_RE (red edge)')
+            index = 5
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_N':
+            print('found BAND_N (NIR 1)')
+            if self.satId == 'WV02' or self.satId == 'WV03':
+               index = 6
+            elif self.satId == 'GE01' or self.satId == 'WV04':
+               index = 3
+            continue
+         # NIR 2 band only in WV02 and WV03
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_N2':
+            print('found BAND_N2 (NIR 2)')
+            index = 7
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_P':
+            print('found BAND_P (pan)')
+            index = self.config['panIndex'][self.satId]
+            continue
+         # SWIR bands only in WV03
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S1':
+            print('found BAND_S1 (SWIR 1)')
+            index = 9
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S2':
+            print('found BAND_S1 (SWIR 2)')
+            index = 10
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S3':
+            print('found BAND_S1 (SWIR 3)')
+            index = 11
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S4':
+            print('found BAND_S1 (SWIR 4)')
+            index = 12
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S5':
+            print('found BAND_S1 (SWIR 5)')
+            index = 13
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S6':
+            print('found BAND_S1 (SWIR 6)')
+            index = 14
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S7':
+            print('found BAND_S1 (SWIR 7)')
+            index = 15
+            continue
+         if tokens[0].strip() == 'BEGIN_GROUP' and tokens[1].strip() == 'BAND_S8':
+            print('found BAND_S1 (SWIR 8)')
+            index = 16
+            continue
+         if tokens[0].strip() == 'absCalFactor' and index != -1:
+            datatoken = tokens[1].split(';')[0]
+            self.absCalFactors[index] = float(datatoken.strip())
+            continue
+         if tokens[0].strip() == 'effectiveBandwidth' and index != -1:
+            datatoken = tokens[1].split(';')[0]
+            self.effectiveBandwidths[index] = float(datatoken.strip())
+            continue
+         if tokens[0].strip() == 'firstLineTime':
+            subtokens = tokens[1].split('T')
+            datetokens = subtokens[0].split('-')
+            timetokens = subtokens[1].split(':')
+            self.year = float(datetokens[0])
+            self.month = float(datetokens[1])
+            self.day = float(datetokens[2])
+            self.hh = float(timetokens[0])
+            self.mm = float(timetokens[1])
+            datatoken = timetokens[2].split('Z;')[0]
+            self.ssdd = float(datatoken.strip())
+            continue
+         if tokens[0].strip() == 'meanSunEl':
+            datatoken = tokens[1].split(';')[0]
+            self.solarElevation = float(datatoken.strip())
+            self.solarZenithAngle = 90. - self.solarElevation
+            self.solarZenithAngleInRadians = self.solarZenithAngle*(old_div(math.pi,180.))
+            continue
+
+   def readNTFMetaData(self, fname):
+      '''Read NTF metadata needed to set up the instrument'''
+      f = GdalRasterImage(fname)
+      self.satId = f['NITF_STDIDC_MISSION']
+
+      print('NTF sensor: ' + f['NITF_CSEXRA_SENSOR'])
+      
+      self.setupMetaData()
+
+      self.year = float(f["NITF_CSDIDA_TIME"][0:4])
+      self.month = float(f["NITF_CSDIDA_TIME"][4:6])
+      self.day = float(f["NITF_CSDIDA_TIME"][6:8])
+      self.hh = float(f["NITF_CSDIDA_TIME"][8:10])
+      self.mm = float(f["NITF_CSDIDA_TIME"][10:12])
+      self.ssdd = float(f["NITF_CSDIDA_TIME"][12:])
+      t = float(f["NITF_CSEXRA_TIME_FIRST_LINE_IMAGE"])
+      self.ssdd += t - math.floor(t)
+      self.solarElevation = float(f["NITF_CSEXRA_SUN_ELEVATION"])
+      self.solarZenithAngle = 90. - self.solarElevation
+      self.solarZenithAngleInRadians = self.solarZenithAngle*(old_div(math.pi,180.))         
+
+   def dn2TOAReflectance_factor(self, band):
+      '''Scale factor to convert DN to TOA reflectance. As a convention, 
+      we treat band 8 as the pan band.'''
+      return super(DigitalGlobeReflectance, self).dn2TOAReflectance_factor(band)
+
+   def printMetadata(self):
+      print('Metadata:')
+      print('=========')
+      print('satId: ', self.satId)
+      print('sensor nbands: ', self.nbands)
+
+      print('datetime: ', self.year, self.month, self.day, self.hh, self.mm, self.ssdd)
+      print('solar elevation/zenith: ', self.solarElevation, self.solarZenithAngle)
+      print('solar distance: ', self.solarDist)
+
+      for i in range(self.nbands):
+         if self.absCalFactors[i] > -999.0:
+            print('-------')
+            print('Band: ', i+1)
+            print('abscalfactor: ', self.absCalFactors[i])
+            print('effectiveBandwidth: ', self.effectiveBandwidths[i])
+            print('esun: ', self.esun[i])
+
+def main():
+   print('dig2refl version 2017-04-27')
+
+   t = VicarArgument(sys.argv)
+   inpfile = t['inp']
+   config_file = os.path.dirname(__file__) + "/dig2refl_config.py"
+   sensor = DigitalGlobeReflectance(inpfile, config_file)
+   sensor.printMetadata()
+
+   for band in range(sensor.nbands):
+      factor = sensor.dn2TOAReflectance_factor(band)
+      t[sensor.config['bandNames'][sensor.satId][band]] = factor
+
+if __name__ == '__main__':
+    main()

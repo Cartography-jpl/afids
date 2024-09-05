@@ -1,0 +1,85 @@
+procedure
+! Jul 25, 2016- RJB
+! TEST SCRIPT FOR RATIO & RATIO0
+! tests BYTE images
+!
+! Vicar Programs:
+!       gen genthis size list label-list
+!
+! External Programs;
+!   <none>
+!           
+! parameters:
+!   <none>
+!
+! Requires no external test data: 
+!
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="yes"
+! RATIO TEST SCRIPT
+! SET TERMINAL WIDTH=132 BEFORE RUNNING THIS SCRIPT
+!
+! CREATE 4 TEST IMAGES
+gen one 20 20
+gen two 20 20 IVAL=1
+genthis tmp1 5 5 dn=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,+
+                     18,19,20,21,22,23,24,25)
+size tmp1 three zoom=4 'noin
+genthis tmp2 10 10 dn=(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,+
+                       18,19,20,21,22,23,24,25,26,27,28,29,30,31,+
+                       32,33,34,35,36,37,38,39,40,41,42,43,44,45,+
+                       46,47,48,49,50,51,52,53,54,55,56,57,58,59,+
+                       60,61,62,63,64,65,66,67,68,69,70,71,72,73,+
+                       74,75,76,77,78,79,80,81,82,83,84,85,86,87,+
+                       88,89,90,91,92,93,94,95,96,97,98,99,100)
+size tmp2 four zoom=2 'noin
+!
+write "RATIO OF 1 AND 2 WITH HISTOGRAM DISPLAY"
+ratio (one,two) C 
+list C
+!
+write "LOG RATIO OF 1 AND 2 WITH HISTOGRAM"
+ratio (one,two) C 'LOG
+list C
+!
+write "DIFFERENCE OF 2 AND 3 WITH HISTOGRAM"
+ratio (two,three) C 'DIFF
+list C
+!
+write "LOG DIFFERENCE OF 1 AND 4 WITH HISTOGRAM"
+ratio (one,four) C 'LOG 'DIFF
+list C
+!
+write "COMPUTATION ONLY (NO OUTPUT SET OR HISTOGRAM)"
+ratio (three,four) 'NODISP
+! 
+write "COMPUTATION ONLY AND NO FILTERING"
+ratio (three,four) 'NODISP 'NOFILTER
+!
+write "SAMPLING AREA SPECIFIED, ALONG WITH ATM CORRECTIONS"
+ratio (three,four) C AREA=(1,1,4,4) SAMPLE=100.0 ATM1=0.5 ATM2=0.5 'NODISP
+label-list C 
+!
+write "ABOVE, WITH ALL LINES SAMPLES"
+ratio (three,four) C LINC=1 ATM1=0.5 ATM2=0.5 'NODISP 
+label-list C
+!
+write "RATIO BETWEEN 1 AND 2 WITH BOTTOM 10 PERCENT EXCLUDED"
+ratio (one,two) C THRESH=10.0
+list C
+!
+write "AS ABOVE, BUT INCLUDING ONLY THOSE RATIO'S ABOVE .90"
+ratio (one,two) C INCLUDE=(.90,5.0)
+list C
+!
+write "AS ABOVE, BUT WITH 10 PERCENT SATURATION"
+ratio (one,two) C INCLUDE=(.90,5.0) PERCENT=10.0
+list C
+! 
+! END-SCRIPT
+let $echo="no"
+end-proc

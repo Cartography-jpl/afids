@@ -1,0 +1,6 @@
+$ vpack grid3pt.com -mixed -
+	-s grid3pt.c -
+	-i grid3pt.imake -
+	-p grid3pt.pdf -
+	-t tstgrid3pt.pdf
+$ Exit

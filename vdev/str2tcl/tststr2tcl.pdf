@@ -1,0 +1,110 @@
+procedure
+local ival int
+local rval real
+
+! Oct 1, 2013 - RJB
+! TEST SCRIPT FOR STR2TCL
+!
+! Vicar Programs:
+!     <none>   
+! 
+! External programs
+!     <none>
+!
+! Parameters:
+!   <none>
+!
+! Requires NO external test data: 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+refgbl $echo
+body
+let _onfail="stop"
+
+let $echo="yes"
+str2tcl inval="27" val=ival vtype=2
+let $echo="no"
+write "     Type 2: Integer input 27 = Integer output &ival"
+write "Should be            input 27 = Integer output 27"
+write ""
+let $echo="yes"
+
+str2tcl inval="27" val=ival vtype=4
+let $echo="no"
+write "     Type 4: Integer input 27 = Integer output &ival"
+write "Should be            input 27 = Integer output 27"
+write ""
+let $echo="yes"
+
+str2tcl inval="-27" val=ival vtype=4
+let $echo="no"
+write "     Type 4: Integer input -27 = Integer output &ival"
+write "Should be            input -27 = Integer output -27"
+write ""
+let $echo="yes"
+
+
+str2tcl inval="27.01" val=ival vtype=4
+let $echo="no"
+write "     Type 4: Float input 27.01 = Integer output &ival"
+write "Should be          input 27.01 = Integer output 27"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.01" val=rval vtype=7
+let $echo="no"
+write "     Type 7: Float input 27.01 = Float output &rval"
+write "Should be          input 27.01 = Float output 2.701000000000e+01"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.01" val=rval vtype=8
+let $echo="no"
+write "     Type 8: Float input 27.01 = Float output &rval"
+write "Should be          input 27.01 = Float output 2.701000000000e+01"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.81e03" val=rval vtype=7
+let $echo="no"
+write "     Type 7: Float (exponential) input 27.81e03 = Float output &rval"
+write "Should be                        input 27.81e03 = Float output 2.781000000000e+04"
+write ""
+let $echo="yes"
+
+str2tcl inval="-27.01" val=rval vtype=8
+let $echo="no"
+write "     Type 8: Float input -27.01 = Float output &rval"
+write "Should be          input -27.01 = Float output -2.701000000000e+01"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.xx" val=rval vtype=7
+let $echo="no"
+write "     Type 7: Illegal float input 27.xx = Float output &rval"
+write "Should be                  input 27.xx = Float output -9.990000000000e+02"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.81e03" val=ival vtype=4
+let $echo="no"
+write "     Type 4: Float (exponential) input 27.81e03 = Integer output &ival"
+write "Should be                        input 27.81e03 = Integer output 27810"
+write ""
+let $echo="yes"
+
+str2tcl inval="27.xx" val=ival vtype=4
+let $echo="no"
+write "     Type 7: Illegal integer input 27.xx = Integer output &ival"
+write "Should be                    input 27.xx = Integer output -999"
+write ""
+let $echo="yes"
+
+str2tcl inval="aaxx" val=ival vtype=4
+let $echo="no"
+write "     Type 7: Illegal integer input aaxx = Integer output &ival"
+write "Should be                    input aaxx = Integer output -999"
+write ""
+
+
+end-proc

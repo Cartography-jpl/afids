@@ -1,0 +1,76 @@
+process help=*
+PARM INP TYPE=STRING count=1
+PARM OUT TYPE=STRING count=1
+PARM COLS TYPE=INT COUNT=2 DEFAULT=(0,0)
+PARM lonrange type=real count=2
+PARM latrange type=real count=2
+PARM hrange type=real count=2
+PARM u0 type=real count=1
+PARM v0 type=real count=1
+PARM altitude type=real count=1 default=0.0
+
+
+END-PROC
+.TITLE
+rpc2sc - compute spacecraft ephemeris from rpc
+.HELP
+PURPOSE:
+
+The spacecraft ephemeris is put into 8 columns of an ibis file 
+(position quaternion followed by attatude quaternion).
+
+The second record contains the variables:
+m,q,tau,theta,phi,psi,bu,bv in that order.
+
+EXECUTION:
+
+Example
+
+
+
+OPERATION:
+
+TIMING: 
+
+about a second
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          01 NOV 2006
+ COGNIZANT PROGRAMMER:   A. Zobrist          01 NOV 2006
+  
+ Spacecraft and camera code from M. BURL (rpc_to_wpp)
+ 
+REVISION HISTORY
+  06-11-01    AZ   Initial version
+Thu Jan  3 2008 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup  
+  
+.LEVEL1
+.VARIABLE INP
+File containing RPC, can
+be GeoTIFF image or IBIS
+file formatted
+.VARIABLE OUT
+8 column IBIS file with the
+spacecraft quaternions in WPP
+and a second record containing
+calculated variables (see main
+document).
+.VARIABLE COLS
+Columns if IBIS file format
+.VARIABLE LONRANGE
+Longitude limits of volume
+of interest
+.VARIABLE LATRANGE
+Latitude limits of volume
+of interest
+.VARIABLE HRANGE
+Elevation limits of volume
+of interest
+.VARIABLE U0
+Sample coord of principal
+point
+.VARIABLE V0
+Line coord of principal
+point
+.VARIABLE ALTITUDE
+altitude of spacecraft
+.END

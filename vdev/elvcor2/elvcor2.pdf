@@ -1,0 +1,59 @@
+procedure help=*
+parm gridfile type=string
+parm gridout type=string
+parm dted type=string
+
+local degrad real
+body
+
+let degrad=3.1415926536/180.0
+
+ibis-copy &gridfile &gridout nc=17
+pixmap (&gridout,&dted) mapcols=(4,3) pixcols=(8,9) 'maptopix
+getzval (&dted,&gridout) cols=(8,9,7) win=2 'dted
+
+! for now, ignore the last element of each line, also ignore bathymetry
+
+mf3 &gridout f="c5=c5*(1.0-2.0*(c6<0.0))$c7=(c7>0.0)*c7"
+mf3 &gridout f="c8=c7*@tan(c5*&degrad)$c9=c3$c10=c4$@rotate(c9,-1)"
+mf3 &gridout f="@rotate(c10,-1)$@dist(c4,c3,c10,c9,c11)$c12=c8/c11"
+mf3 &gridout f="c13=c12*(c9-c3)$c14=c12*(c10-c4)"
+mf3 &gridout f=("c15=c11$@avg(c15)$c16=c13$c17=c14$@rotate(c16,1)$", +
+    "@rotate(c17,1)$c15=10*c15$c13=(c11<c15)*c13+(c11>=c15)*c16$", +
+    "c14=(c11<c15)*c14+(c11>=c15)*c17$c3=c3+c13$c4=c4+c14")
+
+end-proc
+.TITLE
+elvcor2 - correct for elevation offset, modis case
+.HELP
+PURPOSE
+     Calculate elevation offsets for a satellite image using a
+DTED elevation image and modis type input
+	   
+CALL
+     The gridfile must contain the columns (line,samp,lat,lon,lookangle,
+     azimuth).  The (lat,lon) columns are corrected for elevation offset.
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+The dted must cover the area and have geographic coordinates.  It must have
+a GeoTIFF label.
+
+Original Programmer: A. L. Zobrist, 3 Apr, 2003
+Current Cognizant Programmer: A. L. Zobrist
+
+.LEVEL1
+.VARI GRIDFILE
+modis type geo-file, 6 columns
+.VARI GRIDOUT
+elevation corrected geo-file,
+first four columns have corr.
+.VARI DTED
+elevation file with GeoTIFF
+label covering area, in m.
+.END

@@ -1,0 +1,46 @@
+procedure
+parm r1 type=int
+parm r2 type=int
+parm r3 type=int
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-1"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR GENERAL USE, GEOTIFF LABELS
+
+gen xim0 nl=100 ns=200 linc=1 sinc=3
+gtgen xim0 xim 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(2,3,0,350807.4,5317081.3,0.0)", +
+          "ModelTiePointTag=(102,83,0,351807.4,5316081.3,0.0)", +
+          "ModelTiePointTag=(2,83,0,350807.4,5316081.3,0.0)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)")
+ibis-gen xxa version=&version org=&org  datacol=(1,2,3,4) +
+    nc=9 nr=10 deff="DOUB"
+mf xxa func=("c1=sqrt(index*17+2763)","c2=sqrt(index*7+3431)")
+mf xxa func=("c1=mod(c1,0.0001)*1000000","c2=mod(c2,0.0001)*1000000")
+getzval (xim,xxa) cols=(1,2,3) win=4
+mf xxa func=("c6=c1","c7=c2","c8=c3")
+pixmap (xxa,xim) mapcol=(4,5) pixcol=(6,7) 'pixtomap
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! put test operation here, end with xim2
+
+gtrot xim ximy rot=&r1
+gtrot ximy ximx rot=&r2
+gtrot ximx xim2 rot=&r3
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!! put test operation before here
+
+
+pixmap (xxa,xim2) mapcol=(4,5) pixcol=(1,2) 'maptopix
+getzval (xim2,xxa) cols=(1,2,3)
+mf xxa func=("c9=c8-c3")
+ibis-list xxa 'format
+
+end-proc

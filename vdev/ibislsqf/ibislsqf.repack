@@ -1,0 +1,7 @@
+$ vpack ibislsqf.com -mixed -
+	-s ibislsqf.c -
+	-i ibislsqf.imake -
+	-p ibislsqf.pdf -
+	-t tstibislsqf.pdf devibislsqf1.pdf devibislsqf2.pdf devibislsqf3.pdf -
+	   devibislsqf4.pdf devibislsqf5.pdf devibislsqf6.pdf
+$ Exit

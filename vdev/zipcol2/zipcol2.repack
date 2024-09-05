@@ -1,0 +1,6 @@
+$ vpack zipcol2.com -mixed -
+	-s zipcol2.c -
+	-p zipcol2.pdf -
+	-i zipcol2.imake -
+	-t tstzipcol2.pdf devzipcol2.pdf
+$ Exit

@@ -1,0 +1,11 @@
+procedure
+body
+
+ibis-gen xxxa nc=2 nr=80 deffmt=DOUB
+mf3 xxxa f="c2=1+@index*.02"
+
+rpcfix21 xxxa col=2
+
+ibis-l xxxa 'format nr=45 sr=18
+
+end-proc

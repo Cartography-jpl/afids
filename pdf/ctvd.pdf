@@ -1,0 +1,406 @@
+!ctvd.pdf version 1.8 13SEP2016  T.L.Logan
+!ctvd.pdf version 1.7 22AUG2016  T.L.Logan
+!ctvd.pdf version 1.6 17JUN2009  T.L.Logan
+!         Add auto support for specific binary format image sizes.
+!ctvd.pdf version 1.5 28AUG2008  T.L.Logan
+!Purpose:
+!Display a single grayscale geotiff, nitf, fits, jpg, jp2, png, pgm, or vicar image.
+!Display three individual grayscale tiff, nitf, fits, or vicar images as rgb.
+!Display a selected nitf "band" or "image" of a complex NITF file (with parm).
+!Display composite rgb vicar, tiff, and nitf files.
+!Display a nitf "rgb" image if the "rgb" parm is specified as "y".
+!Display a tiff "rgb" image if the "rgb" parm is specified as "y".
+!Display a vicar "rgb" image (automatically detected).
+!Display a binary unlabeled image that is 3375L by 3648S.
+!Example calls:
+! ctvd image.img                  !vicar image
+! crvd img1.img img2.img img3.img !Three input vicar files displayed as rgb
+! ctvd image.ntf                  !nitf grayscale
+! ctvd image.ntf ntfimg=2         !nitf mulit-image file, second img selected
+! ctvd image.ntf rgb=y            !nitf multi-band rgb file
+! ctvd image.tif                  !tiff image
+! ctvd image.fits                 !fits image
+!Notes:
+!Temporary xx files are placed in /dev/shm/ by default. The location can
+!be changed using the "dir" parameter.
+!CTV2 calls ctvd, and creates a vicarb procedure. The procedure is  by
+!default named /tmp/ctv2tmp.pdf. It is passed to ctvd through the "ftd"
+!parameter.
+!**********************************************************************
+
+procedure help=*
+parm      inp      string              !dir/filename of nitf, tiff, or vicar image
+parm      inp2     string      def=""  !green image for rgb
+parm      inp3     string      def=""  !blue image for rgb
+parm      rgb      (string,1)  def="n" !y = nitf/tiff RGB file; otherwise gray
+parm      ntfimg   integer     def=1   !specify image parameter for nitf image
+parm      ntfbnd   integer     def=1   !specify band parameter for nitf image
+parm      dir      string      def="/tmp/" !or /tmp or "" Temporary file dir
+parm      ftd      string      def="/tmp/ctv2tmp.pdf" !Script from ctv2
+local     found    integer             !file2tcl file found code
+local     filtyp   integer             !file2tcl filetype code
+local     id       string              !Unique identifier for temp files
+local     numf     integer             !Number of string matches
+local     nbands   integer             !Number of image bands in a vicar image
+!**********************************************************************
+
+body
+write "ctvd Test Version 1.8"
+let          _onfail="return"
+!let          _onfail="continue"
+
+!Get GMT Clock Time for Temporary Variable Names
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+             "gmtDateTime") strvar=id
+!write       "gmtDateTime = &id "
+!**********************************************************************
+
+!Determine File Characteristics
+file2tcl      inp=&inp val=found ftype=filtyp
+!write       "val=&found ftype=&filtyp "
+if           (found = 0)  goto error1      !File Not Found
+if           (filtyp = -3) goto error2     !File Permission Prevents Reading
+if           (filtyp = -4) goto error3     !File Access Error
+if           (filtyp = 1)  goto vic1       !VICAR file type
+if           (filtyp = 2)  goto tif1       !TIFF file type
+!Unknown File Format; Check Suffix for Type
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .ntf &inp") intvar=numf
+if           (numf = 1) goto ntf1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .nitf &inp") intvar=numf
+if           (numf = 1) goto ntf1 
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .NTF &inp") intvar=numf
+if           (numf = 1) goto ntf1 
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .NITF &inp") intvar=numf
+if           (numf = 1) goto ntf1 
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .ntm &inp") intvar=numf
+if           (numf = 1) goto ntf1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .NTM &inp") intvar=numf
+if           (numf = 1) goto ntf1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .fit &inp") intvar=numf
+if           (numf = 1) goto fit1 
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .fits &inp") intvar=numf
+if           (numf = 1) goto fit1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .FIT &inp") intvar=numf
+if           (numf = 1) goto fit1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .FITS &inp") intvar=numf
+if           (numf = 1) goto fit1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .JPG &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .jpg &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .JPEG &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .jpeg &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .JP2 &inp") intvar=numf
+if           (numf = 1) goto jpg2
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .jp2 &inp") intvar=numf
+if           (numf = 1) goto jpg2
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .PNG &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .png &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .PGM &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .pgm &inp") intvar=numf
+if           (numf = 1) goto jpg1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .GIF &inp") intvar=numf
+if           (numf = 1) goto gif1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .gif &inp") intvar=numf
+if           (numf = 1) goto gif1
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .bin &inp") intvar=numf
+if           (numf = 1) goto bin
+tcl2tcl       script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+              "stringFind .BIN &inp") intvar=numf 
+if           (numf = 1) goto bin
+goto          error4
+!**********************************************************************
+
+!VICAR File Display
+vic1>
+lab2tcl      &inp v1=nbands keyword=nb 'system      !Checking for RGB
+if           (inp2 <> "")
+  xvd        (&inp,&inp2,&inp3)                     !Three Inputs RGB
+else-if      (nbands = 3)
+  xvd        &inp                                   !VICAR RGB
+else
+  xvd        (&inp,&inp,&inp)                       !Single Input
+end-if
+goto          theend
+!**********************************************************************
+
+!TIFF/GeoTIFF File Display
+tif1>
+if           (inp2 <> "")
+  vtiff3-to  &inp  out=&"dir"xx1tmp&"id"
+  vtiff3-to  &inp2 out=&"dir"xx2tmp&"id"
+  vtiff3-to  &inp3 out=&"dir"xx3tmp&"id"
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !Three Inputs RGB
+else-if      (rgb = "y")
+  vtiff3-to  &inp out=(&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id") 
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !TIFF RGB
+else
+  ush         gdal_translate -of VICAR &inp &"dir"xxa&id
+  file2tcl    inp=&"dir"xxa&id nb=nbands ftype=filtyp
+  write       "bands= &nbands "
+  if         (nbands=3)
+    copy      &"dir"xxa&id &"dir"xx1tmp&id bands=(1,1)
+    copy      &"dir"xxa&id &"dir"xx2tmp&id bands=(2,1)
+    copy      &"dir"xxa&id &"dir"xx3tmp&id bands=(3,1)
+    xvd      (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")
+  else
+    xvd      (&"dir"xxa&"id",&"dir"xxa&"id",&"dir"xxa&"id")
+  end-if
+end-if
+goto          theend  
+!**********************************************************************
+
+!NITF File Display
+ntf1>
+if           (inp2 <> "")
+  vextract2  &inp  out=&"dir"xx1tmp&"id"
+  vextract2  &inp2 out=&"dir"xx2tmp&"id"
+  vextract2  &inp3 out=&"dir"xx3tmp&"id"
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !Three Inputs RGB
+else-if      (ntfimg <> 1)
+  let         ntfimg = ntfimg - 1          !nitf image option is 0-based
+  vextract2   inp=&inp out=&"dir"xx1tmp&"id" image=&ntfimg
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")  !Single Image
+else-if      (ntfbnd <> 1)
+  let         ntfbnd = ntfbnd - 1          !nitf band option is 0-based
+  vextract2   inp=&inp out=&"dir"xx1tmp&"id" band=&ntfbnd
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")  !Single band
+else-if      (rgb = "y")                   !nitf RGB image
+  vextract2   inp=&inp out=&"dir"xx1tmp&"id" band=0
+  vextract2   inp=&inp out=&"dir"xx2tmp&"id" band=1
+  vextract2   inp=&inp out=&"dir"xx3tmp&"id" band=2
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !NITF RGB
+else
+  vextract2   inp=&inp out=&"dir"xx1tmp&"id"              !Single Input - 1st image/band
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")
+end-if
+goto          theend
+!**********************************************************************
+
+!FITS File Display
+fit1>
+!The tailor command fixes bad input file size fields.
+!Tailor doesn't seem to work in this proc, only when run manually.
+!tush          cp &inp &"dir"xx2tmp&"id"
+!ush           chmod 777 &"dir"xx2tmp&"id"
+!ush tailor    inp=&"dir"xx2tmp&"id" 
+!fitsin        inp=&"dir"xx2tmp&"id" out=&"dir"xx1tmp&"id"
+
+if           (inp2 <> "")
+  fitsin     &inp  out=&"dir"xx1tmp&"id"
+  fitsin     &inp2 out=&"dir"xx2tmp&"id"
+  fitsin     &inp3 out=&"dir"xx3tmp&"id"
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !Three Inputs RGB
+else
+  fitsin      inp=&inp out=&"dir"xx1tmp&"id"
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")  !Single Input
+end-if
+goto          theend
+!**********************************************************************
+
+!JPG, PNG, and PGM File Display
+jpg1>
+if           (inp2 <> "")
+  ush         gdal_translate -of VICAR &inp &"dir"xx1tmp&id
+  ush         gdal_translate -of VICAR &inp2 &"dir"xx2tmp&id
+  ush         gdal_translate -of VICAR &inp3 &"dir"xx3tmp&id
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")
+else
+  ush         gdal_translate -of VICAR &inp &"dir"xxa&id
+  file2tcl    inp=&"dir"xxa&id nb=nbands ftype=filtyp
+  write       "bands= &nbands "
+  if         (nbands=3)
+    copy      &"dir"xxa&id &"dir"xx1tmp&id bands=(1,1)
+    copy      &"dir"xxa&id &"dir"xx2tmp&id bands=(2,1)
+    copy      &"dir"xxa&id &"dir"xx3tmp&id bands=(3,1)
+    xvd      (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")
+  else
+    xvd      (&"dir"xxa&"id",&"dir"xxa&"id",&"dir"xxa&"id")
+  end-if
+end-if
+goto          theend
+!**********************************************************************
+
+!GIF File Display (Loses graphics colors)
+gif1>
+if           (inp2 <> "")
+  ush         gdal_translate -of GTIFF &inp &"dir"xxa&id
+  vtiff3-to   &"dir"xxa&id &"dir"xx1tmp&id
+  ush         gdal_translate -of GTIFF &inp2 &"dir"xxa&id
+  vtiff3-to   &"dir"xxa&id &"dir"xx2tmp&id
+  ush         gdal_translate -of GTIFF &inp3 &"dir"xxa&id
+  vtiff3-to   &"dir"xxa&id &"dir"xx3tmp&id
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")
+else
+  ush         gdal_translate -of GTIFF &inp &"dir"xxa&id
+  vtiff3-to   &"dir"xxa&id &"dir"xxb&id
+  file2tcl    inp=&"dir"xxb&id nb=nbands ftype=filtyp
+  write       "bands= &nbands "
+  if         (nbands=3)
+    copy      &"dir"xxb&id &"dir"xx1tmp&id bands=(1,1)
+    copy      &"dir"xxb&id &"dir"xx2tmp&id bands=(2,1)
+    copy      &"dir"xxb&id &"dir"xx3tmp&id bands=(3,1)
+    xvd      (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")
+  else
+    xvd      (&"dir"xxb&"id",&"dir"xxb&"id",&"dir"xxb&"id")
+  end-if
+end-if
+goto          theend
+!**********************************************************************
+
+!JP2 File Display
+jpg2>
+if           (inp2 <> "")
+  write "Input JP2 Must be specified as a Single Image" 
+else
+  ush gdal_translate -ot Int16 -of GTiff &inp &"dir"xxa&id
+  vtiff3-to  &"dir"xxa&id &"dir"xx1tmp&id
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")
+end-if
+goto          theend
+!**********************************************************************
+
+!BIN File Display (One size only)
+bin>
+
+if           (inp2 <> "")
+  label-cre  &inp  out=&"dir"xx1tmp&"id" nl=3375 ns=3648 form=half
+  label-cre  &inp2 out=&"dir"xx2tmp&"id" nl=3375 ns=3648 form=half
+  label-cre  &inp3 out=&"dir"xx3tmp&"id" nl=3375 ns=3648 form=half
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx2tmp&"id",&"dir"xx3tmp&"id")  !Three Inputs RGB
+else
+  label-cre  inp=&inp out=&"dir"xx1tmp&"id" nl=3375 ns=3648 form=half
+  xvd        (&"dir"xx1tmp&"id",&"dir"xx1tmp&"id",&"dir"xx1tmp&"id")  !Single Input
+end-if
+goto          theend
+!**********************************************************************
+
+!Error Messages
+error1>
+write        " "
+write        "*****Input File NOT FOUND*****"
+write        " "
+goto         finalend
+error2>
+write        " "
+write        "*****Input File is READ-PROTECTED*****"
+write        " "
+goto         finalend
+error3>
+write        " "
+write        "*****Error Accessing Input File*****"
+write        " "
+goto         finalend
+error4>
+write        " "
+write        "*****UnSupported Input File Format*****"
+write        " "
+goto         finalend
+!**********************************************************************
+
+!Delete Temporary Files (after 4 second delay)
+theend>
+tush          sleep 4.0 
+file2tcl      inp=&"dir"xx1tmp&id val=found
+if           (found = 1) tush rm &"dir"xx1tmp&id
+file2tcl      inp=&"dir"xx2tmp&id val=found
+if           (found = 1) tush rm &"dir"xx2tmp&id
+file2tcl      inp=&"dir"xx3tmp&id val=found
+if           (found = 1) tush rm &"dir"xx3tmp&id
+file2tcl      inp=&"dir"xxa&id val=found
+if           (found = 1) tush rm &"dir"xxa&"id"*
+file2tcl      inp=&"dir"xxb&id val=found
+if           (found = 1) tush rm &"dir"xxb&"id"*
+file2tcl      inp=&ftd val=found
+if           (found = 1) tush rm &ftd
+finalend>
+end-proc
+!**********************************************************************
+
+!Help for ctvd
+.TITLE
+CTVD - Displays vicar, tiff, geotiff, nitf, jpg, jpg2, png, pgm and fits images using xvd.
+.HELP
+PURPOSE
+     CTVD is a procedure which converts selected image formats to VICAR
+     format and displays them using vicar's XVD program. The input can be a
+     single grey scale image or three separate images for display as RGB.
+     Composite vicar, tiff, and nitf RGB images can be displayed, although the
+     tiff and nitf files require the "rgb=y" parameter. A single image within a
+     nitf multi-image or multi-band file can be selected for display using
+     optional parameters. 
+
+     The program is designed to automatically determine the input file format,
+     so only the program name and one or three input files need to be
+     specified on the command line. For Linux console users, grey scale images
+     are displayed as rgb so the xvd stretch options are functional. Refer to
+     the XVD documentation for a description of XVD's many display functions and
+     capabilities. Temporary x files are put in /dev/shm/ plus /tmp/ctv2tmp.pdf. 
+
+
+CALL
+    Example calls:
+       ctvd vicar.img
+       ctvd vic1.hlf vic2.hlf vic3.hlf
+       ctvd geotiff.tif
+       ctvd tif1.tif tif2.tif tif3.tif
+       ctvd nitfrgb.ntf rgb=y
+       ctvd nitf1.ntf
+       ctvd nitf2.ntf ntfimg=5
+       ctvd fit1.fits
+       ctvd fit1.fits fit2.fits fit3.fits
+
+.LEVEL1
+.VARI INP
+Input vicar, tiff, nitf, jpg, png or fits
+file name (red), or single rgb
+file name
+.VAR INP2
+Second input file name (green)
+.VAR INP3
+Third input file name (blue)
+.VAR RGB
+Specify "y" when the Input tiff
+or nitf file is rgb.
+Example: rgb=y
+.VAR NTFIMG
+The sequence number of the image
+inside of a multi-image nitf
+file to be displayed. The first
+image is 1. Example: ntfimg=4
+.VAR NTFBND
+The sequence number of the image
+inside of a multi-band (usually
+rgb) nitf file to be displayed.
+The first image is 1.
+Example: ntfbnd=3
+.END
+!**********************************************************************

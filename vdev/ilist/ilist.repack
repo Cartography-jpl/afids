@@ -1,0 +1,6 @@
+$ vpack ilist.com -mixed -
+	-s ilist.c -
+	-p ilist.pdf -
+	-i ilist.imake -
+	-t tstilist.pdf
+$ Exit

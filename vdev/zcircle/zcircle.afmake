@@ -1,0 +1,30 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = zcircle
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+#-Wno-globals - removes reports of 
+#Argument #2 of `xvp' is one type at (2) but is some other type at (1) [info -f g77 M GLOBALS]
+#Argument #2 of `xvwrit' is one precision at (2) but is some other precision at (1) [info -f g77 M GLOBALS]
+
+FFLAGS += -Wunused -Wuninitialized -Wsurprising
+
+
+#rangenx was used for debugging rangen 
+#get_secondsx was used for debugging get_seconds
+CPPFLAGS += -I../sub -I.
+#CFLAGS = -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+CFLAGS += -Wmissing-declarations
+CFLAGS += -Wundef -Wconversion -Wsign-compare
+
+
+# Extra Files insert depends on
+
+zcircle:  ../sub/stacka_big.o 

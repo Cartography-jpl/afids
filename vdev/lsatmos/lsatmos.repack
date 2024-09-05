@@ -1,0 +1,4 @@
+$ vpack lsatmos.com -mixed -
+	-p lsatmos.pdf -
+	-t tstlsatmos.pdf
+$ Exit

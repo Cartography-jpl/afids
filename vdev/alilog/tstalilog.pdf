@@ -1,0 +1,18 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR ALILOG
+
+!alilog inpre=EO1A0390322004135110PY acs=2004_135_acs.hdf nbnd=9
+!alilog inpre=EO1A0390322004135110PY acs=2004_135_acs.hdf 'pan
+alilog inpre=EO1A0390322004135110PY acs=EO1A0390322004135110PY.MET nbnd=9
+alilog inpre=EO1A0390322004135110PY acs=EO1A0390322004135110PY.MET 'pan
+
+end-proc

@@ -1,0 +1,26 @@
+!run_ntm.pdf - Convert nitf images to 16-bit geotiff
+!              Uses Vextract and utilf_tll pdfs.
+!
+!NOTE: an"output" directory is made for you
+!by this procedure, and put in your local directory.
+!If it already exists, it will be overwritten.
+!The "output" directory will have the same name as your input image.
+!
+!NOTE: To run two of these jobs simultaneously, they must be in entirely
+!separate directories.
+
+procedure
+parm        inp       string     !input quickbird or nitf image
+parm        outn      string     !output prefix for tiles
+parm        tiff      string     def=b !b=both; s=small; f=full-size; n=none
+parm        xvd       string     valid=("n","y") default="n"
+local       found     integer
+body
+
+!file2tcl    &outn val=found
+!if         (found=0) ush mkdir &outn
+utilf_tll   inp=&inp out=&"outn" tiff=&tiff xvd=&xvd
+
+write "MSG: PROCESSING COMPLETED"
+
+end-proc

@@ -1,0 +1,110 @@
+process help=*
+  PARM INP  TYPE=(STRING,100)
+  PARM OUT  TYPE=(STRING,100)
+  PARM SIZE TYPE=INTEGER COUNT=0:4 DEFAULT=--
+!  PARM BANDS TYPE=INTEGER COUNT=0:2 DEFAULT=--
+  PARM SL INTEGER DEFAULT=1
+  PARM SS INTEGER DEFAULT=1 
+!  PARM SB INTEGER DEFAULT=1
+  PARM NL INTEGER DEFAULT=0
+  PARM NS INTEGER DEFAULT=0
+!  PARM NB INTEGER DEFAULT=0
+!  PARM FORMAT KEYWORD VALID=(BYTE,HALF,FULL,REAL,DOUB,COMP) DEFAULT=BYTE
+!  PARM INSIZE INTEGER COUNT=0:3 DEFAULT=--
+!  PARM ORG KEYWORD VALID=(BSQ,BIL,BIP) DEFAULT=BSQ
+!  PARM BLOCK TYPE=KEYWORD VALID=(BLOCK,NOBLOCK) DEFAULT=BLOCK
+  PARM PIXOFF INTEGER DEFAULT=0
+  PARM DIRCTION KEYWORD VALID=(LEFT,RIGHT) DEFAULT=LEFT
+!  PARM INTERP KEYWORD VALID=(INTERP,NOINTERP) DEFAULT=INTERP
+END-PROC
+
+.title  
+vicar program interlv - shift odd and even lines of an image
+.help
+PURPOSE
+
+Interlv is a simple program which can be used to correct interleave problems 
+due to the video capture of an image.  Alternating lines of all or part 
+of an image can be shifted left or right by any of number of pixels.  Shifting
+by zero pixels results in a simple image copy.  
+
+
+EXECUTION:
+
+   The following is the execution statement format for "interlv":
+
+             INTERLV INP=PIX OUT=OPIX PARAMS
+
+   where INP, OUT, and PARAMS are parameters discussed in their res-
+pective parameter sections. 
+
+PARAMETERS
+
+    PIXOFF  - The number of pixels to be offset (shifted), referring
+referring to the even numbered lines.  Shifting by zero pixels
+ will result in a simple  image copy operation. Only positive 
+numbers allowed. Direction of shifting, right or left is controlled
+by DIRCTION parameter
+
+    DIRCTION - The direction of pixels to be offset (shifted), either 
+to the left or or right and referring only to the even numbered lines.
+The default is to shift to the left.
+
+
+RESTRICTIONS
+
+As this is intended for video capture using interlaced cameras
+The internals are limited to arrays of 1024x1024.
+
+FORMATS byte, half, full and real are supported.
+
+.PAGE
+HISTORY
+
+COGNIZANT PROGRAMMER:  R. J. Bambery
+
+REVISIONS:  
+        
+        18 Dec 1988   ...RJB... INITIAL RELEASE ON VAX/VMS
+        02 Dec 2012   ...RJB... Converted to Linux 64-bit using
+                                gfortran 4.6.3
+                                Removed a number of parameters
+                                associated with unlabeled images
+                                and tape access. Use label-create instead. 
+        15 Sep 2013   ...RJB... Remove interpolate option
+                                Increased filename sizes to 100 characters
+.level1
+.variable inp
+Input filename
+.variable out
+Output filename
+.variable size
+Window into input
+.variable pixoff 
+Number of pixels 
+to be offset
+.variable dirction
+Either left or right
+.level2
+.variable inp
+Name of a single input file.
+.variable out
+Name of a single output file.
+.variable size
+The size parameter determines the boundaries in the input
+file form which the interleave is to take place.  It is specified
+as (SL,SS,NL,NS), where
+	SL is the starting line
+	SS is the starting sample
+	NL is the number of lines to be interleaved
+	NS is the number of samples(pixels) to be interleaved in each line
+.variable pixoff 
+The number of pixels to be offset (shifted), referring to the even 
+numbered lines.  Shifting by zero pixels will result in a simple 
+image copy operation.
+.variable dirction
+The direction of pixels to be offset (shifted), either to the left or 
+or right and referring only to the even numbered lines.  The default 
+is to shift to the left.
+.end
+

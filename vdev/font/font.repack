@@ -1,0 +1,6 @@
+$ vpack font.com -mixed -
+	-s font.f -
+	-i font.imake -
+	-p font.pdf -
+	-t tstfont.pdf tstfont4c.pdf
+$ Exit

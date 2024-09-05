@@ -1,0 +1,41 @@
+procedure
+
+local tstimg string
+local afidsvdevdata type=(string,99)
+local locdted string
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR gt2rpc
+
+let tstimg = "utm2.img"
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+let locdted = "&afidsvdevdata/etop02nobath.hlf"
+
+gtcopy &tstimg xxx1
+gt2rpc xxx1 rpctype="A"
+
+label-list &tstimg
+label-list xxx1
+
+rpccorn (xxx1,&locdted) cornonly=y
+gtlabfix xxx1
+label-list xxx1
+
+ibis-l xxxgtrpc433 cols=(3,4,25)
+rpcfwd (xxxgtrpc433,xxx1) cols=(3,4,25,34,35)
+ibis-l xxxgtrpc433 cols=(1,2,34,35)
+
+rpcwarp inp=(xxx1,&locdted) +
+   out=xxx2 nah=30 nav=30 'coverref +
+   ref=&tstimg
+
+difpic (xxx1,xxx2)
+!!!xvd (xxx1,xxx2,xxx2)
+
+theend>
+end-proc

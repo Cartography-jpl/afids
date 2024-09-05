@@ -1,0 +1,68 @@
+procedure       ! adrg_pts
+
+parm fibis string
+parm fimg string
+parm outpre string
+parm delta real def=20.0
+
+local uu string init="_"
+local img string init=".img"
+local red string init="_adrg.red"
+local grn string init="_adrg.grn"
+local blu string init="_adrg.blu"
+local tif string init=".tif"
+local min integer
+local max integer
+local found integer
+local nl integer
+local ns integer
+local lower integer init=128
+local afidsvdevdata type=(string,128)
+
+refgbl $echo
+body
+let $echo="no"
+let $switch=512
+
+translog AFIDS_VDEV_DATA afidsvdevdata
+
+!       Read in the lat / long list of points
+ibis-copy &fibis pts incol=(1,9,10) outcol=(1,2,3) nc=6
+
+gtwarp &afidsvdevdata/adrg/red.img red ref=&fimg 'coverref
+gtwarp &afidsvdevdata/adrg/grn.img grn ref=&fimg 'coverref
+gtwarp &afidsvdevdata/adrg/blu.img blu ref=&fimg 'coverref
+
+pixmap (pts,red) mapcol=(2,3) pixcol=(4,5) 'maptopix
+ibis-copy pts pts2 incol=(4,5) outcol=(1,2) nc=12
+mf3 pts2 func="c3=c1 - &delta"
+mf3 pts2 func="c4=c2 - &delta"
+mf3 pts2 func="c5=c1 + &delta"
+mf3 pts2 func="c6=c2 + &delta"
+mf3 pts2 func="c7=c1 + &delta"
+mf3 pts2 func="c8=c2 - &delta"
+mf3 pts2 func="c9=c1 - &delta"
+mf3 pts2 func="c10=c2 + &delta"
+mf3 pts2 func="c11=0"
+mf3 pts2 func="c12=0"
+ibis-copy pts2 pts3 incol=(3,4,5,6,11,12,7,8,9,10,11,12) +
+  outcol=(1,2,3,4,5,6,7,8,9,10,11,12) nc=12
+ibis-copy pts3 gra 'ibis-1 'row
+
+polyscrb gra pix nl=6900 ns=9013 'exclose dn=128 pdn=128
+qlook pix lower=128
+
+!       Create a binary mask of the target image
+stretch xxxqlook25 bm table=(0,1,127,1,128,0,129,1,255,1)
+!goto master
+
+f2 (bm,red) temp1 fun="in1*in2"
+stretch temp1 &outpre&red table=(0,255,1,1,255,255)
+f2 (bm,grn) &outpre&grn fun="in1*in2"
+f2 (bm,blu) &outpre&blu fun="in1*in2"
+
+vtiff3-fromv (&outpre&red,+
+&outpre&grn,&outpre&blu) +
+&outpre&tif 'lzw
+
+end-proc

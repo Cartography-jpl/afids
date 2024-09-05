@@ -1,0 +1,17 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+!   TEST THE ELVCOR2 HANDYPROC
+
+
+!see the develvcor2.pdf (need to convert ibis file to a smaller ascii
+!test)
+
+develvcor2
+     
+end-proc

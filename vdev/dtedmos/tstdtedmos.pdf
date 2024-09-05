@@ -1,0 +1,9 @@
+procedure
+body
+
+!   TEST DTEDMOS HANDYPROC
+
+dtedmos hemi1=w hemi2=n lons=("w111","w110",,,,,,,,) +
+                lats=("n33","n32",,,,,,,,) out=xxmosout
+
+end-proc

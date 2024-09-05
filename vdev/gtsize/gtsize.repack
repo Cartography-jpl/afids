@@ -1,0 +1,6 @@
+$ vpack gtsize.com -mixed -
+	-s gtsize.c -
+	-i gtsize.imake -
+	-p gtsize.pdf -
+	-t tstgtsize.pdf devgtsize.pdf
+$ Exit

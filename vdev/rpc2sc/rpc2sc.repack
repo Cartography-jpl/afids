@@ -1,0 +1,6 @@
+$ vpack rpc2sc.com -mixed -
+	-s rpc2sc.c -
+	-i rpc2sc.imake -
+	-p rpc2sc.pdf -
+	-t tstrpc2sc.pdf devrpc2sc.pdf demorpc2sc.pdf
+$ Exit

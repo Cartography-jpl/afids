@@ -1,0 +1,63 @@
+process help=*
+parm inp type=string count=1
+parm outbase type=string count=1 default=""
+parm out type=string count=(0:10) default=("")
+parm ref type=(string,99) count=1 default=""
+parm dem type=(string,99) count=1 default=""
+parm typref type=keyword count=(0:1) valid=(coverref,coverinp) +
+     default=coverinp
+parm gorewid type=int count=1 default=10
+parm gridspacing type=int count=1 default=10
+end-proc
+.title
+VICAR program spot2ortho - directly orthorectifies SPOT image file to VICAR
+.help
+PURPOSE
+
+    This directly orthorectifies a SPOT dimap file to a set of 
+    orthorectified images, using the SRTM DEM or other DEM file
+
+    This generates a series out output files, one per band. You
+    can either supply a base basename to use, in which case we
+    add a "_b1.img", "_b2.img", etc to the basename, or if you
+    prefer you can supply a list of output names to use.
+
+    You can supply a DEM file to use to supply the elevation data.
+    If you don't supply a DEM, we use the SRTM.
+
+    1.  The keyword 'coverinp causes the procedure to map all of the
+    input image to an output image that will just contain it.   The
+    keyword gorewid allows the user to specify a zero-filled margin
+    to make the output a little larger.
+	
+    2.  The keyword 'coverref causes the procedure to map the input
+    image to an output image that exactly matches the "reference" image.
+    Some parts of the input can be lost, or huge areas of zero-fill
+    could be added to make the images match.  The gorewid keyword has
+    no effect in this case.
+
+    You only need to supply a reference image for 'coverref, this isn't
+    needed for 'coverinp
+
+CALL
+
+    spot2vicar inp outbase (ref) '(qualifiers) (param)
+    spot2vicar inp out=(f1,f2,f3,f4) (ref) '(qualifiers) (param)
+   WHERE:
+      inp     is the input DIMAP file
+      outbase is the basename to use for the output file    
+      out     it the explicit list of output files to use
+      ref     is the reference image, only needed for 'coverref
+      QUALIFIERS consist of any of the following keywords:
+          COVERINP smallest output that covers the input geographic area
+          COVERREF output exactly matches the reference image.
+      gorewid optional whitespace to add for 'coverinp
+      gridspacing Number of pixels between exact calculation of IPI
+
+OPERATION
+
+This directly uses the geometry and camera information supplied in
+the SPOT DIMAP file to orthorectify the data.      
+.END
+    
+

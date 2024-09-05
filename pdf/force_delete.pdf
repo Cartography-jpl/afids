@@ -1,0 +1,11 @@
+procedure	! force_delete
+
+parm file string
+
+local found integer
+
+body
+file2tcl &file val=found
+if (found=1) ush rm -f &file
+
+end-proc

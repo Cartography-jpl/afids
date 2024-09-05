@@ -1,0 +1,29 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = size
+
+# Include makefile to get rules
+# 02/04/2010
+# Note the SIZE program requires mp_for_defs.fin as an
+# include so must be located in source directory at this time
+# That include file is in AFIDS_SVN/src/core-vicar/core-d/p2/inc
+# AFIDS_SVN is directory where svn source tree for the platform
+# used to build your version of afids 
+# removed this due certain MPxx defs
+# -Wunused
+
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+CPPFLAGS += -I$(AFIDSTOP)/include -I. -I$(AFIDSTOP)/include/carto
+FFLAGS += -Wuninitialized -Wsurprising -Wno-globals -fbounds-check
+#FFLAGS += -Wunused - gives unused variables with mp_for_defs.fin
+#==============================================================
+# Extra files size depends on.
+
+SIZE_SOURCE = compress.F getsize.F magnify.F
+SIZE_SOURCE += sintrp.F snoin.F sread.F update_label.F
+
+size: $(SIZE_SOURCE:%.F=%._f.o)
+
+

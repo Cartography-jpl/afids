@@ -1,0 +1,397 @@
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /data/afids5/vdev
+Disabling interrupts ...
+
+let $autousage="none"
+write "each of the difpic calls should yield zero differences"
+each of the difpic calls should yield zero differences
+gen r 50 50
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+vtiff3 r r.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic r.tif r1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 r r.tif 'packbits
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic r.tif r1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 r r.tif 'lzw
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic r.tif r1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 r r.tif 'tiled
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic r.tif r1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 r r.tif 'tiled 'lzw
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic r.tif r1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+f2 out=lut fun="(samp %256)*(samp%4)" nl=1 ns=1024
+Beginning VICAR task f2
+F2 version 2-04-94
+F2 calculating every pixel
+FUNCTION EVALUATED 1024 TIMES
+vtiff3 (r,lut) lut.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic lut.tif (r1,lut1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (lut,lut1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+gen g 50 50 linc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gen b 50 50 sinc=0
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+vtiff3 (r,g,b) color.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic  color.tif (r1,g1,b1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+forcing nb to 3, was 3, because numout == 3
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (g,g1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (b,b1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 (r,g,b) color.tif 'planar
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+vtiff3-tovic  color.tif (r1,g1,b1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+forcing nb to 3, was 3, because numout == 3
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (g,g1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (b,b1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 (r,g,b) color.tif 'tiled
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic  color.tif (r1,g1,b1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+forcing nb to 3, was 3, because numout == 3
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (g,g1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (b,b1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 (r,g,b) color.tif 'planar 'tiled
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic  color.tif (r1,g1,b1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+forcing nb to 3, was 3, because numout == 3
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (g,g1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (b,b1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3 (r,g,b) color.tif 'planar 'tiled 'lzw
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic  color.tif (r1,g1,b1)
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+forcing nb to 3, was 3, because numout == 3
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|difpic (r,r1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (g,g1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+difpic (b,b1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+gen a nl=500 ns=500
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+vtiff3 a a.tif 'tile tline=128 tsamp=128 'packbits
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>vtiff3-tovic a.tif a1
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>difpic (a,a1)
+Beginning VICAR task difpic
+DIFPIC version 29jun04
+ NUMBER OF DIFFERENCES =   0
+vtiff3-tovic a.tif a1 'dump
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+TIFF Directory at offset 0x40008 (262152)
+  Subfile Type: (0 = 0x0)
+  Image Width: 500 Image Length: 500
+  Tile Width: 128 Tile Length: 128
+  Resolution: 72, 72 pixels/inch
+  Bits/Sample: 8
+  Compression Scheme: None
+  Photometric Interpretation: min-is-black
+  Samples/Pixel: 1
+  Planar Configuration: single image plane
+  Software: VICAR Program VTIFF
+  DateTime: 2008:04:08 14:04:42
+gen xxxim1 nl=10 ns=10
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+gtgen in=xxxim1 'tiecnvrt  +
+   geotiff=("GTModelTypeGeoKey=2(ModelTypeGeographic)",  +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)",  +
+          "GeogPrimeMeridianGeoKey=40.0",  +
+          "ModelTiePointTag=(2,3,0,-110,39,0.0)",  +
+          "ModelTiePointTag=(2,10,0,-110,35,0.0)",  +
+          "ModelTiePointTag=(10,3,0,-108,39,0.0)",  +
+          "GTRasterTypeGeoKey=2(RasterPixelIsPoint)")
+Beginning VICAR task gtgen
+gtgen version Fri Jan 11 2008
+add mode off
+tiecnvrt mode on
+gtlist xxxim1
+Beginning VICAR task gtlist
+gtlist version Wed Jan  2 2008
+
+
+      VICAR GeoTIFF LABEL LIST
+
+The VICAR GeoTIFF label is:
+GTMODELTYPEGEOKEY=2(ModelTypeGeographic)
+GEOGELLIPSOIDGEOKEY=7030(Ellipse_WGS84)
+GEOGPRIMEMERIDIANGEOKEY=40.0
+MODELTIEPOINTTAG=(2,3,0,-110,39,0.0)
+MODELPIXELSCALETAG=(0.25,0.5714285714286,0.0)
+GTRASTERTYPEGEOKEY=2(RasterPixelIsPoint)
+
+
+The image raster is a 'point' or 'post' type
+
+The centers of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       1.0      1.0          0.0      0.0 -110.5000000000  40.71428571429
+       1.0     10.0          9.0      0.0 -108.2500000000  40.71428571429
+      10.0      1.0          0.0      9.0 -110.5000000000  35.57142857143
+      10.0     10.0          9.0      9.0 -108.2500000000  35.57142857143
+
+
+The outer corners of the corner pixels are:
+
+VICAR-line    -samp GeoTIFF-samp    -line            East           North
+
+       0.5      0.5         -0.5     -0.5 -110.6250000000  41.00000000000
+       0.5     10.5          9.5     -0.5 -108.1250000000  41.00000000000
+      10.5      0.5         -0.5      9.5 -110.6250000000  35.28571428571
+      10.5     10.5          9.5      9.5 -108.1250000000  35.28571428571
+
+The rotation of the image relative to an E-N geographic frame is:
+
+rotation 1
+123
+456
+789
+
+
+The scale units of the image are (ignoring sign):
+
+1 sample = 0.2500000000000 map units east
+1 line   = 0.5714285714286 map units north
+
+
+The scale fraction is 1 /      9.8
+(assuming mapunit = 1.000000 meters and the map is 10.000000 inches)
+
+vtiff3 xxxim1 xxxim1.tif
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+USING VICAR GEOTIFF LABEL TO CREATE, PARAMETERS IGNORED
+exporting GeoTIFF
+0%  10%  20%  30%  40%  50%  60%  70%  80%  90% 100%
+|----|----|----|----|----X----|----|----|----|----|
+|>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+ush strings xxxim1.tif
+VICAR Program VTIFF
+2008:04:08 14:04:42
+vtiff3-tovic xxxim1.tif xxim2 'dump
+Beginning VICAR task vtiff3
+vtiff3 version Thu Jan  3 2008
+TIFF Directory at offset 0x6c (108)
+  Subfile Type: (0 = 0x0)
+  Image Width: 10 Image Length: 10
+  Resolution: 72, 72 pixels/inch
+  Bits/Sample: 8
+  Compression Scheme: None
+  Photometric Interpretation: min-is-black
+  Samples/Pixel: 1
+  Rows/Strip: 1
+  Planar Configuration: single image plane
+  Software: VICAR Program VTIFF
+  DateTime: 2008:04:08 14:04:42
+  GeoPixelScale: 0.250000,0.571429,0.000000
+  GeoTiePoints: 2.000000,3.000000,0.000000,-110.000000,39.000000,0.000000
+  GeoKeyDirectory: 1,1,0,4,1024,0,1,2,1025,0,1,2,2051,0,1,40,2056,0,1,7030
+end-proc

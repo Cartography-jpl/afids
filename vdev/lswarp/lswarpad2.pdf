@@ -1,0 +1,281 @@
+procedure help=*
+parm key type=string
+parm fnamein type=(string,99)
+parm rawimg type=(string,99)
+parm outimg type=(string,99)
+
+local rawkey type=(string,99)
+
+local fname type=(string,99)
+local rawfile type=(string,99)
+local logimg type=(string,99)
+local tempfile1 type=(string,99)
+local tempfile2 type=(string,99)
+local tempfile3 type=(string,99)
+
+local gridname type=(string,99)
+local gridfinal1 type=(string,99)
+local gridfinal2 type=(string,99)
+local gridfinal3 type=(string,99)
+local gridinfo type=(string,99)
+
+local rsl real
+local rss real
+local rnl real
+local rns real
+local csl real
+local css real
+local cnl real
+local cns real
+local icsl int
+local icss int
+local icnl int
+local icns int
+local sl int
+local ss int
+local nl int
+local ns int
+
+local nlcopy int
+
+local rslv real
+local rssv real
+local rnlv real
+local rnsv real
+local slv int
+local ssv int
+local nlv int
+local nsv int
+
+local lnl int
+local lns int
+local lnl2 int
+local lns2 int
+local imgsize int
+
+local t1l real
+local t1s real
+local t2l real
+local t2s real
+local t3l real
+local t3s real
+local t1e real
+local t1n real
+local t2e real
+local t2n real
+local t3e real
+local t3n real
+
+local rastypstr string
+local interp type=(string,10)
+local rastype type=(string,10)
+local rms type=real
+local file2 type=(string,99)
+local rawtif int
+local rval real
+local accfac real
+
+refgbl $echo
+body
+let $echo="yes"
+
+write "lswarpad2 1/11/10"
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=interp +
+    keyword=interp vtype=0
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=rastype +
+    keyword=rastype vtype=0
+if (interp="-999") let interp = "bilin"
+if (rastype="-999") let rastype = "point"
+
+if (rastype="area")
+   let rastypstr = "1(RasterPixelIsArea)"
+else
+   let rastypstr = "2(RasterPixelIsPoint)"
+end-if
+
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=fname +
+    keyword=bobdate vtype=0
+let gridname = fname
+idgen prefix=bab outvar=logimg
+
+let rawkey = "raw" // "&key" // "/&fname" // "tempraw"
+let rawfile = "&rawkey" // ".img"
+let tempfile1 = "scratch/" // "xxx&key" // "temp1" // ".img"
+let tempfile2 = "scratch/" // "xxx&key" // "temp2" // ".img"
+let tempfile3 = "scratch/" // "xxx&key" // "temp3" // ".img"
+
+let accfac = 1.0
+file2tcl &rawimg ftype=rawtif
+if (rawtif=2)
+   vtiff3-tovic &rawimg &tempfile1
+   lab2tcl &tempfile1 v1=nl v2=ns keyword=(nl,ns) 'system
+   let imgsize = nl*ns
+else
+   file2tcl &rawimg fsize=imgsize
+end-if
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=lnl +
+    keyword=rawnl vtype=4
+plab2tcl inp=&fnamein property="COREG_META_DATA" val=lns +
+    keyword=rawns vtype=4
+if (lnl*lns>imgsize)
+   if (lnl*lns<imgsize*3/2)
+      write "ERROR: applied master warp to secondary additional band"
+      goto theend
+   end-if
+   write "band6: lnl,lns,imgsize *&lnl,&lns,&imgsize"
+   let lnl2 = lnl/2
+   let lns2 = lns/2
+   if (rawtif<>2) label-create &rawimg &tempfile1 nl=&lnl2 ns=&lns2
+   size &tempfile1 &rawfile zoom=2
+   let accfac = 0.5
+else-if (lnl*lns<(imgsize/3))
+   write "pan: lnl,lns,imgsize *&lnl,&lns,&imgsize"
+   let lnl2 = lnl*2-1
+   let lns2 = lns*2-1
+   ! had both cases for pan lns2, lnl2 smaller harmless
+   if (lnl2*lns2<imgsize) let lns2 = lns2+1
+   if (rawtif<>2) label-create &rawimg &tempfile1 nl=&lnl2 ns=&lns2
+   size &tempfile1 &rawfile zoom=0.5
+   let accfac = 2.0
+else
+   if (rawtif<>2)
+      label-create &rawimg &rawfile nl=&lnl ns=&lns
+   else
+      copy &tempfile1 &rawfile
+   end-if
+end-if
+
+! other filenames
+
+let gridfinal1 = "final&key" // "/&fname"  // "gridfinal1"
+let gridfinal2 = "final&key" // "/&fname"  // "gridfinal2"
+let gridfinal3 = "final&key" // "/&fname"  // "gridfinal3"
+let gridinfo = "final&key" // "/&fname"  // "gridinfo"
+
+label-add inp=&rawfile items="bobdate=&logimg" +
+         property="COREG_META_DATA"
+
+! get the parameters from the gridinfo file
+
+ibis2tcl &gridinfo v1=t1l v2=t1s v3=t1e v4=t1n +
+    v5=t2l v6=t2s v7=t2e v8=t2n +
+    v9=t3l v10=t3s +
+    vartype=(-1,-1,-1,-1,-1,-1,-1,-1,-1,-1) +
+    ibisloc=(1,1,1,2,1,3,1,4, +
+             2,1,2,2,2,3,2,4, +
+             3,1,3,2)
+ibis2tcl &gridinfo v1=rsl v2=rss v3=rnl v4=rns v5=t3e v6=t3n +
+   vartype=(-1,-1,-1,-1,-1,-1) ibisloc=(1,7,1,8,1,9,1,10,3,3,3,4)
+let sl = $fix(rsl)
+let ss = $fix(rss)
+let nl = $fix(rnl)
+let ns = $fix(rns)
+write "sl ss nl ns &sl &ss &nl &ns"
+
+ibis2tcl &gridinfo v1=csl v2=css v3=cnl v4=cns +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,11,1,12,1,13,1,14)
+let icsl = $fix(csl)
+let icss = $fix(css)
+let icnl = $fix(cnl)
+let icns = $fix(cns)
+write "icsl icss icnl icns &icsl &icss &icnl &icns"
+
+! the sl,ss,nl,ns for geom is different
+
+ibis2tcl &gridfinal2 v1=rslv v2=rssv v3=rnlv v4=rnsv +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,1,1,2,1,3,1,4)
+let slv = $fix(rslv)
+let ssv = $fix(rssv)
+let nlv = $fix(rnlv)
+let nsv = $fix(rnsv)
+write "slv ssv nlv nsv &slv &ssv &nlv &nsv"
+
+! shortened processing extracted from hywarp.pdf
+
+! for compression testing
+compresschk &rawfile
+
+copy &rawfile &tempfile1 size=(&icsl,&icss,&icnl,&icns)
+
+gtgen inp=&tempfile1 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(&t1s,&t1l,0,&t1e,&t1n,0.0)", +
+  "ModelTiePointTag=(&t2s,&t2l,0,&t2e,&t2n,0.0)", +
+  "ModelTiePointTag=(&t3s,&t3l,0,&t3e,&t3n,0.0)", +
+  "GTModelTypeGeoKey=2(ModelTypeGeographic)", +
+  "GeogAngularUnitsGeoKey=9102(Angular_Degree)", +
+  "GeographicTypeGeoKey=4326(GCS_WGS_84)", +
+  "GTRasterTypeGeoKey=&rastypstr", +
+  "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+gtcopy &tempfile1 &tempfile2 size=(&sl,&ss,&nl,&ns)
+
+
+geomv inp=(&tempfile2,&gridfinal1,&gridfinal3) +
+      out=&tempfile3 size=(&slv,&ssv,&nlv,&nsv) +
+      interp=&interp 'znoin
+gtsize (&tempfile3,&fnamein) &outimg 'coverref
+
+!  there are cases of bands not matching geometrically (always a shift)
+!  have observed shifts of up to 80 pixels, 
+
+ibis-gen &tempfile2 nc=12 nr=1 deffmt=DOUB datacol=(1,2) data=(&nlv,&nsv)
+mf3 &tempfile2 f="c1=c1*0.5$c2=c2*0.5"
+picmtch5 (&outimg,&fnamein,&tempfile2) fftsize=1024 search=1024 +
+  minsrch=1024 magnify=(1.0,1.0) pred=linear redo=0
+mf3 &tempfile2 f="c12=@sqrt(c10*c10+c11*c11)"
+ibis2tcl &tempfile2 v1=rval ibisloc=(1,12) vartype=-1
+write "recheck offset = &rval"
+
+if (rval>2.0 and rval<1000.0)
+   write "MSG: SPECTRAL BANDS MISREGISTERED, PROCEEDING WITH CORRECTION"
+   gtpwarp &tempfile3 &outimg ref=&fnamein 'coverref nah=10 nav=10 +
+       polyfit=linear fftsize=512 magnif=3.0 accoff=y
+else
+   write "MSG: SPECTRAL BANDS WERE REGISTERED OK"
+end-if
+
+plab2tcl &fnamein property=COREG_META_DATA val=rms +
+   keyword=ACCURACY vtype=7
+plab2tcl &fnamein property=COREG_META_DATA val=file2 +
+   keyword=ACCREF vtype=0
+let rms = rms*accfac
+label-add inp=&outimg items="accuracy=&rms" +
+     property="COREG_META_DATA"
+label-add inp=&outimg items="accuracy_unit=pixels" +
+     property="COREG_META_DATA"
+label-add inp=&outimg items="accref=&file2" +
+     property="COREG_META_DATA"
+
+theend>
+
+write "MSG: PROCESSING COMPLETED"
+end-proc
+.TITLE
+hywarp - warp one additional band of landsat
+.HELP
+PURPOSE
+     
+	   
+CALL
+  
+  
+OPERATION
+
+
+PERFORMANCE
+
+Restrictions
+------------
+
+
+Original Programmer: A. L. Zobrist, 29 Nov, 2001
+Current Cognizant Programmer: A. L. Zobrist
+Last change by: A. L. Zobrist, 20 Dec, 2001
+
+.LEVEL1
+.vari key
+the key chosen for the 
+initial runs
+.vari fname
+the root filename
+.END

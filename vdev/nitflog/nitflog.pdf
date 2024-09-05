@@ -1,0 +1,54 @@
+process help=*
+parm inp      type=(string,99)
+parm out      type=(string,99) default=""
+parm noImg    type=keyword default=0 count=(0:1) valid=noImg default=--
+parm echoMeta type=keyword default=0 count=(0:1) valid=echoMeta default=--
+end-proc
+.title
+VICAR Program nitflog - logs NITF image file to VICAR
+.help
+PURPOSE
+
+     NITFLOG logs NITF image and navigation files to VICAR
+
+.PAGE
+TAE COMMAND LINE FORMAT
+
+     nitflog INP OUT
+     
+     where
+
+	INP is an NITF input file
+	OUT is a VICAR output file
+
+.PAGE
+OPERATION
+
+   
+.PAGE
+RESTRICTIONS
+
+
+.PAGE
+WRITTEN BY:            W. L. Bunch
+
+COGNIZANT PROGRAMMER:  W. L. Bunch, A. Zobrist
+  Fri Sep 19 2003
+    Initial version
+  Fri Mar 11 2005
+    Port to linux
+  Sat Dec 29 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+
+.level1
+
+.var inp
+
+.var out
+
+.level2
+
+.var inp
+
+.var out
+
+.end

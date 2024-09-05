@@ -1,0 +1,6 @@
+$ vpack difpica.com -mixed -
+	-s difpica.c -
+	-i difpica.imake -
+	-p difpica.pdf -
+	-t tstdifpica.pdf
+$ Exit

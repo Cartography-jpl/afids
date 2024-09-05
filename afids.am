@@ -1,0 +1,76 @@
+if BUILD_AFIDS
+#=================================================================
+# Include tdps
+if WITH_AFIDS_A
+include afids/tdps/tdps.am
+endif
+
+#=================================================================
+# Include tma
+if WITH_AFIDS_A
+include afids/tma/tma.am
+endif
+
+#=================================================================
+# AFIDS source code
+#
+include afids/pdf/pdf.am
+include afids/vdev/afids.am
+
+#=================================================================
+# Include rules for vif and filenotify
+include afids/filenotify/filenotify.am
+
+#=================================================================
+# Tailor. This is short, so just put everything here.
+bin_PROGRAMS += tailor
+tailor_SOURCES = afids/tailor.c
+
+afidstcl_LTLIBRARIES = 
+
+#=================================================================
+# Another short program
+include afids/acp/acp.am
+
+#=================================================================
+# libtiffTcl library.
+include afids/tiffTcl/tiffTcl.am
+
+#=================================================================
+# libossimTcl library.
+# Try stubbing this out for now, I think we don't actually have anything
+# that depends on this
+#include afids/ossimTcl/ossimTcl.am
+
+#=================================================================
+# tcl code
+include afids/tcl/tcl.am
+
+#=================================================================
+# Various scripts (e.g., setup_afids_env, various wrappers around
+# programs
+
+include afids/script/script.am
+
+#=================================================================
+# Geotrans program
+include afids/external/geotrans/geotrans.am
+
+#=================================================================
+# Install doc files
+
+include afids/doc/doc.am
+
+#=================================================================
+# Link in xvd if we are using an already built version.
+if HAVE_AFIDS_XVD
+if BUILD_AFIDS_XVD
+else
+INSTALL_DATA_HOOK+= link_xvd
+
+link_xvd:
+	-$(LN_S) $(AFIDS_XVD_PREFIX_ABS)/afids/vdev/xvd $(prefix)/afids/vdev/xvd
+	-$(LN_S) $(AFIDS_XVD_PREFIX_ABS)/afids/vdev/xvd.pdf $(prefix)/afids/vdev/xvd.pdf
+endif
+endif
+endif

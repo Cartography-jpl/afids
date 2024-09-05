@@ -1,0 +1,6 @@
+$ vpack fftmag.com -mixed -
+	-s fftmag.f -
+	-i fftmag.imake -
+	-p fftmag.pdf -
+	-t tstfftmag.pdf tstfftmag.log
+$ Exit

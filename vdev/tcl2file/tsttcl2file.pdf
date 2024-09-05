@@ -1,0 +1,20 @@
+procedure
+refgbl $echo
+body
+let $echo="yes"
+
+!   TEST SCRIPT FOR GNUPSET
+
+tcl2file out=xxxa +
+   tcltext=("set title 'TITLE HERE'", +
+          "plotter line 2", +
+          "plotter line 3", +
+          "example of "" in case needed", +
+          "plotter line 5", +
+          "example of [].(){} in case needed", +
+          "plotter line 7", +
+          "plotter line 8")
+   
+ush more xxxa
+
+end-proc

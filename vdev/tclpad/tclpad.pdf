@@ -1,0 +1,56 @@
+process help=*
+parm inval     type=(string,99)
+parm val       type=name
+parm len       type=int
+parm char      type=(string,2) default="0"
+parm padside   type=keyword valid=(left,right) default="left"
+END-PROC
+.TITLE
+tclpad - pad tcl inputs with zeros or characters
+.HELP
+PURPOSE:
+tclpad converts a string input to a TAE TCL value output and pads
+it with a desired character to achieve a user desired length.
+
+The user can choose padding to the left or right.
+EXECUTION:
+
+Examples
+
+tclpad inval="23" val=outval len=4
+
+       converts the string 23 to the string 0023 in
+       the TCL variable outval
+
+tclpad inval="23" val=outval len=5 char=x 'right
+
+       converts the string 23 to the string 23xxx in
+       the TCL variable outval
+
+OPERATION:
+
+TIMING: 
+
+extremely fast 
+
+ ORIGINAL PROGRAMMER:    A. Zobrist          29 Nov 2005
+ COGNIZANT PROGRAMMER:   A. Zobrist          29 Nov 2005
+ 
+ REVISION HISTORY
+  05-11-29    AZ   Initial version
+  Sat Dec 29 2007 wlb switched to USES_ANSI_C AND LIB_CARTO; misc cleanup
+  
+.LEVEL1
+.variable inval
+A string of characters
+.variable val
+TAE TCL name without &, gets
+the padded value
+.variable len
+The length to achieve after pad
+.variable char
+The character to pad with
+.variable padside
+'left - pad to left
+'right - pad to right
+.END

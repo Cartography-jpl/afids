@@ -1,0 +1,24 @@
+procedure
+refgbl $echo
+refgbl $autousage
+parm version string def="ibis-2"
+parm org string def="column"
+body
+!let _onfail="continue"
+let $autousage="none"
+let $echo="yes"
+
+! TEST SCRIPT FOR RPCSCCUB
+
+ibis-gen xxxa nc=6 nr=18 deffmt=DOUB
+mf3 xxxa +
+ f="c1=118+@rand$c2=35+@rand$c3=500*(@rand+6)$c4=500*@rand+10$c5=800*@rand$c6=0"
+
+rpcsccub xxxa rpctype=b
+ibis-l xxxa cfor="%7.2f %6.2f %7.2f %7.2f %7.2f %13.8f"
+
+ibis-copy xxxa xxxb
+rpcscale (xxxa,xxxb) rpccol=6
+ibis-l xxxb cfor="%7.2f %6.2f %7.2f %7.2f %7.2f %13.8f"
+
+end-proc

@@ -1,0 +1,21 @@
+procedure
+parm inp type=(string,99)
+
+local vicortif int
+body
+
+! utility to info GeoTIFF label or VICAR label
+
+file2tcl &inp ftype=vicortif
+if (vicortif=2)
+   vtiff3-tovic &inp xxxxxxxxxxxxx 'dump
+   write "MSG: See Label listing in process window"
+else-if (vicortif=1)
+   label-list &inp
+   write "MSG: See Label listing in process window"
+else
+   write "MSG: File Problem"
+   write "MSG: See VICAR Program file2tcl for ftype=&vicortif"
+end-if
+
+end-proc

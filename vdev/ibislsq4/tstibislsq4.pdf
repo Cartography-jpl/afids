@@ -1,0 +1,188 @@
+procedure
+parm    mode    type=keyword count=(0:1) valid=(batch,nobatch,inter) default=batch
+
+local slope1    real count=1 
+local yint1     real count=1
+local slsigma1  real count=1
+local intsigm1  real count=1
+local slope2    real count=1
+local yint2     real count=1
+local slsigma2  real count=1
+local intsigm2  real count=1
+
+local  plotxxx type=string count=1
+! Feb 22, 2017 - RJB
+! TEST SCRIPT FOR IBISLSQ4
+!   Test for ibis TABULAR files
+!
+! Vicar Programs:
+!       translog ibis-gen ibis-list ibis2tcl ibis-copy plotint  
+!
+! External Programs:
+!       gnuplot 5.0.x
+! 
+! Parameters:
+!   mode - method for processing: 
+!       1) batch provides no display but creates .eps files
+!       2) interactive or nobatch is used for display requiring
+!       user interaction. 
+!
+!   In interactive or nobatch mode gnuplot is called with a window
+!       manager for X11. The gnuplot display is killed by
+!       a mouse click anywhere on the plot panel
+!
+!   In 2017 a test was added to ensure gnuplot is available for
+!       the interactive parameter.
+!
+! Requires NO external test data: 
+!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+refgbl $echo
+refgbl $autousage
+
+body
+let $autousage="none"
+let _onfail="stop"
+let $echo="no"
+translog inp=GNUPLOT trans=plotxxx
+
+!used strictly for detection of gnuplot 
+write "plotxxx = &plotxxx"
+if (mode = "nobatch" or mode = "inter")
+    if (plotxxx = "")
+        write "GNUPLOT environment variable not defined"
+        stop
+    end-if
+end-if
+let $echo="yes"
+
+!  Jun 22, 2010 - Ray Bambery
+!  TEST 1 - simple case of linear least squares - slope and y-intercept
+!
+!  These values are from a test program in 
+!  Arnold J. Gordon and Richard A. Ford, "The Chemist's Companion", John Wiley & Sons, N.Y., 1972, pp 489-491. 
+!
+!  C:1 = X    C:2=Y       C:3=Index  C:4=Slope  C:5=Intcpt  C:6=Diff C:7=SlopeSD C:8=IntcptSD C:9=0 
+! The expected values are:
+!Number of Rows:9  Number of Columns: 9       
+!File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+! 
+!Rows: 1:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!        C:1        C:2        C:3        C:4        C:5        C:6        C:7        C:8       C:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!   1.00000    7.63000    1.00000   -0.12923    7.71557    0.04366    0.00110    0.02607    0.00000
+!   5.00000    7.11000    1.00000   -0.12923    7.71557    0.04057    0.00110    0.02607    0.00000
+!  10.00000    6.34000    1.00000   -0.12923    7.71557   -0.08330    0.00110    0.02607    0.00000
+!  15.00000    5.74000    1.00000   -0.12923    7.71557   -0.03716    0.00110    0.02607    0.00000
+!  20.00000    5.11000    1.00000   -0.12923    7.71557   -0.02103    0.00110    0.02607    0.00000
+!  25.00000    4.52000    1.00000   -0.12923    7.71557    0.03511    0.00110    0.02607    0.00000
+!  30.00000    3.86000    1.00000   -0.12923    7.71557    0.02125    0.00110    0.02607    0.00000
+!  35.00000    3.19000    1.00000   -0.12923    7.71557   -0.00262    0.00110    0.02607    0.00000
+!  40.00000    2.55000    1.00000   -0.12923    7.71557    0.00352    0.00110    0.02607    0.00000
+!
+ibis-gen xxA nc=9 nr=9 datacols=(1,2,3) +
+    data=(1.0,7.63,1.0, 5.0,7.11,1.0, 10.0,6.34,1.0, 15.0,5.74,1.0, 20.0,5.11,1.0, 25.0,4.52,1.0,+
+    30.0,3.86,1.0, 35.0,3.19,1.0, 40.0,2.55,1.0)
+
+ibis-li xxA cform="%10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f" screen=132
+ibislsq4 xxA indcol=1 depcol=2 concol=3 slopecol=4 yintcol=5 rescol=6 ssigcol=7 isigcol=8
+
+ibis-l xxA cform="%10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f" screen=132
+
+ibis2tcl   xxA v1=slope1 v2=yint1 v3=slsigma1 v4=intsigm1  +
+        vartype=(0,0,0,0) +
+        ibisloc=(1,4,1,5,1,7,1,8)
+let $echo="no"
+write "File xxA"
+write "slope          = &slope1   slope sigma = &slsigma1"
+write "Y-intercept    = &yint1    Y-int sigma = &intsigm1"
+let $echo="yes"
+
+plotint inp=xxA xcol=1 ycol=2 cont=3 symt=2 +
+    xlabel="Time,sec" ylabel="Amount" +
+    Title="IBISLSQ4 Test 1 - File xxA" xrange=(0,50) yrange=(1,10) +
+    plotout=xxA
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT xxA.gpi
+end-if
+
+! TEST 2 - With 2 data sets contained in IBIS file
+
+!Rows: 1:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!        C:1        C:2        C:3        C:4        C:5        C:6        C:7        C:8       C:9
+!+----------+----------+----------+----------+----------+----------+----------+----------+---------
+!   1.00000    7.63000    1.00000   -0.12923    7.71557    0.04366    0.00110    0.02607    0.00000
+!   5.00000    7.11000    1.00000   -0.12923    7.71557    0.04057    0.00110    0.02607    0.00000
+!  10.00000    6.34000    1.00000   -0.12923    7.71557   -0.08330    0.00110    0.02607    0.00000
+!  15.00000    5.74000    1.00000   -0.12923    7.71557   -0.03716    0.00110    0.02607    0.00000
+!  20.00000    5.11000    1.00000   -0.12923    7.71557   -0.02103    0.00110    0.02607    0.00000
+!  25.00000    4.52000    1.00000   -0.12923    7.71557    0.03511    0.00110    0.02607    0.00000
+!  30.00000    3.86000    1.00000   -0.12923    7.71557    0.02125    0.00110    0.02607    0.00000
+!  35.00000    3.19000    1.00000   -0.12923    7.71557   -0.00262    0.00110    0.02607    0.00000
+!  40.00000    2.55000    1.00000   -0.12923    7.71557    0.00352    0.00110    0.02607    0.00000
+!   1.00000    7.70000    2.00000   -0.13385    7.78525    0.04860    0.00126    0.02993    0.00000
+!   5.00000    7.11000    2.00000   -0.13385    7.78525   -0.00599    0.00126    0.02993    0.00000
+!  10.00000    6.40000    2.00000   -0.13385    7.78525   -0.04673    0.00126    0.02993    0.00000
+!  15.00000    5.73000    2.00000   -0.13385    7.78525   -0.04747    0.00126    0.02993    0.00000
+!  20.00000    5.12000    2.00000   -0.13385    7.78525    0.01179    0.00126    0.02993    0.00000
+!  25.00000    4.49000    2.00000   -0.13385    7.78525    0.05106    0.00126    0.02993    0.00000
+!  30.00000    3.80000    2.00000   -0.13385    7.78525    0.03032    0.00126    0.02993    0.00000
+!  35.00000    3.02000    2.00000   -0.13385    7.78525   -0.08042    0.00126    0.02993    0.00000
+!  40.00000    2.47000    2.00000   -0.13385    7.78525    0.03884    0.00126    0.02993    0.00000
+
+!
+ibis-gen xxB nc=9 nr=18 datacols=(1,2,3) +
+    data=(1.0,7.63,1.0, 5.0,7.11,1.0, 10.0,6.34,1.0, 15.0,5.74,1.0, 20.0,5.11,1.0, 25.0,4.52,1.0,+
+    30.0,3.86,1.0, 35.0,3.19,1.0, 40.0,2.55,1.0,   1.0,7.70,2, 5.0,7.11,2, 10.0,6.40,2, 15.0,5.73,2, +
+    20.0,5.12,2, 25.0,4.49,2, 30.0,3.80,2, 35.0,3.02,2, 40.0,2.47,2)
+
+ibis-li xxB cform="%10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f" screen=132
+ibislsq4 xxB indcol=1 depcol=2 concol=3 slopecol=4 yintcol=5 rescol=6 ssigcol=7 isigcol=8
+
+ibis-li xxB cform="%10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f" screen=132
+
+ibis2tcl   xxB v1=slope1 v2=yint1 v3=slsigma1 v4=intsigm1  +
+        vartype=(0,0,0,0) +
+        ibisloc=(1,4,1,5,1,7,1,8)
+let $echo="no"
+write "File xxB First data set"
+write "slope          = &slope1   slope sigma = &slsigma1"
+write "Y-intercept    = &yint1    Y-int sigma = &intsigm1"
+let $echo="yes"
+ibis2tcl   xxB v1=slope2 v2=yint2 v3=slsigma2 v4=intsigm2  +
+        vartype=(0,0,0,0) +
+        ibisloc=(10,4,10,5,10,7,10,8)
+let $echo="no"
+write "File xxB Second data set"
+write "slope          = &slope2   slope sigma = &slsigma2"
+write "Y-intercept    = &yint2    Y-int sigma = &intsigm2"
+let $echo="yes"
+!
+! Plotint does not work on indexed ibis columns, you must split data set
+!
+ibis-copy xxB xxB1 sr=1 sc=1 nr=9 nc=9
+ibis-copy xxB xxB2 sr=10 sc=1 nr=9 nc=9
+plotint inp=xxB1 xcol=1 ycol=2 cont=3 symt=2 +
+    xlabel="Time,sec" ylabel="Amount" +
+    Title="IBISLSQ4 Test - File xxB1 " xrange=(0,50) yrange=(1,10) +
+    comment1="slope = &slope1  sigma = &slsigma1" +
+    comment2="Y-intcpt = &yint1 sigma = &intsigm1" +
+    plotout=xxB1
+
+plotint inp=xxB2 xcol=1 ycol=2 cont=3 symt=2 +
+    xlabel="Time,sec" ylabel="Amount" +
+    Title="IBISLSQ4 Test - File xxB2" xrange=(0,50) yrange=(1,10) +
+    comment1="slope = &slope2  sigma = &slsigma2" +
+    comment2="Y-intcpt = &yint2 sigma = &intsigm2" +
+    plotout=xxB2
+
+if (mode = "nobatch" or mode = "inter")
+    ush $GNUPLOT xxB1.gpi
+    ush $GNUPLOT xxB2.gpi
+end-if
+
+let $echo="no"
+end-proc

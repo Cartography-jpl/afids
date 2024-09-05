@@ -1,0 +1,234 @@
+procedure
+refgbl $echo
+parm key string
+parm fnamein string
+parm nah int def=100
+parm nav int def=100
+parm rtype string
+parm dted string
+parm lsat string
+parm line_upper int def=0
+parm line_lower int def=0
+parm samp_left int def=0
+parm samp_right int def=0
+
+parm maptype type=string valid=("pc","utm") default="pc"
+parm modelfit type=string valid=("noelvcor","elvcor") default="elvcor"
+parm angcor type=string valid=("noangcor","angcor") default="noangcor"
+
+parm angfac type=real default=1.0
+parm ecor1 type=real default=0.11
+parm ecor2 type=real default=0.00
+parm lsoverrd type=string valid=("no","yes") default="no"
+
+local rawfile
+local rawroot
+
+local typeIR string
+local ixclosest int
+local ixnext int
+
+local qlon real
+local qloninc real
+local qlat real
+local qlatinc real
+local iblat1 real
+local iblat2 real
+local iblon1 real
+local iblon2 real
+
+local fname2 string
+local fname3 string
+local fname4 string
+local fname5 string
+
+local inroot string
+local outroot string
+local scratchroot string
+
+local inloc string
+local outloc string
+local masterloc string
+local gridinfoloc string
+local gridfinalloc string
+
+local dtype string
+local ndtype int
+
+local tlat1 real
+local tlon1 real
+local tlat2 real
+local tlon2 real
+local tlat3 real
+local tlon3 real
+local tlat4 real
+local tlon4 real
+local slat1 real
+local slon1 real
+local slat2 real
+local slon2 real
+local gamma real
+local alpha real
+local satelv real
+
+local lognl int
+local logns int
+local lognl10 int
+local logns10 int
+
+local stopat int
+local found3N int
+
+body
+let $echo="yes"
+
+let satelv = 704000.0
+
+! now the master is registered to landsat again, both are 6
+! for changes to nighttime see modcall
+
+if (rtype="master")
+   let stopat=6
+else
+   let stopat=6
+end-if
+
+let typeIR = "VNIR"
+
+let inloc = "raw" // "&key" // "/"
+let outloc = "final" // "&key" // "/"
+
+let rawfile = "&inloc" // "&fnamein" // ".raw"
+let rawroot = "&inloc" // "&fnamein" // "&typeIR"
+let fname2 = "&rawroot" // "_3N.img"
+let fname3 = "&rawroot" // ".int"
+let fname4 = "&rawroot" // "_VNIR.txt"
+let fname5 = "scratch/" // "&fnamein" // "&typeIR" // ".nav"
+
+!  log the aster VNIR band 3N matches landsat band 3
+
+file2tcl &fname2 val=found3N
+let found3N = 0     !force the logging
+if (found3N=0)
+   write "logging &rawfile"
+   asterlog inp=&rawfile out=&rawroot sensor="VNIR" lookback=0
+end-if
+
+!  the following call is after a run of logger, be sure to use
+!  a sufficiently fine grid for dted correction (nah,nav)
+
+!   calculating the satellite position from Walt's log file
+
+asc2tcl &fname4 keyword="ASTER_PRODUCT_TYPE=" val=dtype +
+     btrim=1 etrim=1 vtype=0
+write "dtype (&dtype)"
+if (dtype="1A")
+   let ndtype = 4
+else
+   let ndtype = 121
+end-if
+
+asc2tcl &fname4 keyword="ASTER_UPPERLEFT_LON=" val=tlon1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERLEFT_LAT=" val=tlat1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERRIGHT_LON=" val=tlon2 vtype=8
+asc2tcl &fname4 keyword="ASTER_UPPERRIGHT_LAT=" val=tlat2 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERLEFT_LON=" val=tlon3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERLEFT_LAT=" val=tlat3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERRIGHT_LON=" val=tlon4 vtype=8
+asc2tcl &fname4 keyword="ASTER_LOWERRIGHT_LAT=" val=tlat4 vtype=8
+
+if (tlon1<(-900.0))
+asc2tcl &fname4 keyword="ASTER_UL_LON=" val=tlon1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UL_LAT=" val=tlat1 vtype=8
+asc2tcl &fname4 keyword="ASTER_UR_LON=" val=tlon2 vtype=8
+asc2tcl &fname4 keyword="ASTER_UR_LAT=" val=tlat2 vtype=8
+asc2tcl &fname4 keyword="ASTER_LL_LON=" val=tlon3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LL_LAT=" val=tlat3 vtype=8
+asc2tcl &fname4 keyword="ASTER_LR_LON=" val=tlon4 vtype=8
+asc2tcl &fname4 keyword="ASTER_LR_LAT=" val=tlat4 vtype=8
+end-if
+
+asc2tcl &fname4 keyword="ASTER_POINTING_ANGLE=" val=gamma vtype=8
+if (gamma<(-900.0)) let gamma = 0.0
+if (gamma<(-900.0)) goto theend
+let alpha = gamma/(1.0+satelv/6367443.0)   !approximation
+write "aster pointing angle = &gamma, satellite angle approx &alpha"
+
+!to avoid the approximation need to iterate e.c.e. = 
+!h*alpha/R and alpha = atan(Rcos(ece)/(h-R(1-cos(ece))) 
+
+! testing the angfac angle correction, could be linear form (need data)
+
+let alpha = alpha*angfac
+
+
+ibis-gen xxgcalc NC=14 NR=2 deffmt=DOUB  datacols=(1,2,3,4) +
+    data=(&tlon1,&tlat1,&tlon2,&tlat2,&tlon3,&tlat3,&tlon4,&tlat4)
+ibis-l xxgcalc
+
+! remember a + angle (to west) puts satellite to east of center
+
+mf3 xxgcalc f=("c5=(c1+c3)*0.5$c6=(c2+c4)*0.5$c7=c1-c3$c8=c2-c4$", +
+    "c9=@atan2(c8,c7)$c10=-(&alpha)*(&satelv)/6367443$", +
+    "c11=c10*@cos(c9)$c12=c10*@sin(c9)$c13=c5-c11$c14=c6-c12")
+ibis-l xxgcalc
+ibis2tcl xxgcalc v1=slon1 v2=slat1 v3=slon2 v4=slat2 +
+     vartype=(-1,-1,-1,-1) ibisloc=(1,13,1,14,2,13,2,14)
+write "slon1,slat1,slon2,slat2 &slon1,&slat1,&slon2,&slat2"
+
+!   have to process the int file (1A has l,s; 1B has 11x11)
+
+ibis-copy &fname3 &fname5
+if (dtype<>"1A")
+   asc2tcl &fname4 keyword="LOG_NL=" val=lognl vtype=4
+   asc2tcl &fname4 keyword="LOG_NS=" val=logns vtype=4
+   let lognl10 = lognl/10
+   let logns10 = logns/10
+   mf3 &fname5 f="c1=0.5+(c1-1)*&lognl10"
+   mf3 &fname5 f="c2=0.5+(c2-1)*&logns10"
+end-if
+ibis-l &fname5 nr=22
+
+!   now the test, real satellite at &satelv
+
+let inroot = "&inloc" // "&fnamein" // "&typeIR" 
+let outroot = "&outloc" // "&fnamein" // "&typeIR" 
+let scratchroot = "scratch/" // "&fnamein"
+let masterloc = "&outloc" // "&key" // "master.img"
+let gridinfoloc = "&outloc" // "&fnamein" // "gridinfo"
+let gridfinalloc = "&outloc" // "&fnamein" // "gridfinal"
+
+! get the quad from the 11 x 11
+
+ibis-l &fname5 nr=1 sr=1 'format
+ibis-l &fname5 nr=1 sr=&ndtype 'format
+
+ibis2tcl &fname5 v1=iblat1 v2=iblat2 v3=iblon1 v4=iblon2 +
+   vartype=(-1,-1,-1,-1) ibisloc=(1,3,&ndtype,3,1,4,&ndtype,4)
+let qlon = iblon1
+let qloninc = iblon2-iblon1+0.1
+let qlat = iblat1+0.1
+let qlatinc = iblat1-iblat2+0.2
+
+write "iblon1,iblat1 &iblon1,&iblat1"
+write "iblon2,iblat2 &iblon2,&iblat2"
+write "qlon,qlat &qlon,&qlat"
+write "qloninc,qlatinc &qloninc,&qlatinc"
+
+astwarp inroot=&inroot outroot=&outroot +
+   scratchroot=&scratchroot +
+   dted=&dted  lsat=&lsat +
+   seq=qq  pixdeg=7200.0 angcor=&angcor +
+   quad1=&qlat quad2=&qlon quadsiz1=&qlatinc quadsiz2=&qloninc +
+   quadunit=0 master=&masterloc +
+   gridinfo=&gridinfoloc ecor1=&ecor1 ecor2=&ecor2+
+   gridfinal=&gridfinalloc loff=0 soff=0 loff2=0 soff2=0 +
+   sensE1=&slon1 sensN1=&slat1 senselv1=&satelv +
+   sensE2=&slon2 sensN2=&slat2 senselv2=&satelv sensunit=0 +
+   nah=&nah nav=&nav stopat=&stopat rtype=&rtype +
+   modelfit=&modelfit maptype=&maptype lsoverrd=&lsoverrd +
+   line_upper=&line_upper line_lower=&line_lower +
+   samp_left=&samp_left samp_right=&samp_right dtype=&dtype
+
+theend>
+end-proc

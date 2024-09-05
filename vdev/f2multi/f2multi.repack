@@ -1,0 +1,6 @@
+$ vpack f2multi.com -mixed -
+	-s f2multi.c -
+	-i f2multi.imake -
+	-p f2multi.pdf -
+	-t tstf2multi.pdf
+$ Exit

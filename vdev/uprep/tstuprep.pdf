@@ -1,0 +1,12 @@
+procedure
+refgbl $echo
+refgbl $autousage
+body
+let $autousage="none"
+let $echo="yes"
+
+!uprep inp=(b11, b22, b33, b44, b55, b66, b77, b88, 10MAY16183214.ustats) out=x
+
+uprep inp=(b1, b2, b3, b4, b5, b6, b7, b8, full_10MAY16183214.hustats) out=x
+
+END-PROC

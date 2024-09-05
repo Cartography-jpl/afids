@@ -1,0 +1,5 @@
+$ vpack ratio.com -mixed -
+	-i ratio.imake -
+	-p ratio.pdf -
+	-t tstratio.pdf tstratio.log
+$ Exit

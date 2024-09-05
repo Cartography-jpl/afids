@@ -1,0 +1,6 @@
+$ vpack file2tcl.com -mixed -
+	-s file2tcl.c -
+	-i file2tcl.imake -
+	-p file2tcl.pdf -
+	-t tstfile2tcl.pdf
+$ Exit

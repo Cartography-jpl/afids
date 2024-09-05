@@ -1,0 +1,73 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = detclst
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#==============================================================
+# Add include/carto to include line. This avoids needing to
+# change existing code by adding "carto/" to the include
+# line.
+CPPFLAGS += -I$(AFIDSTOP)/include/carto
+
+# other possible CFLAGS that are not included in -Wall are:
+# CFLAGS += -Wsurprising -Wno-globals
+CFLAGS += -Wmissing-prototypes -Wstrict-prototypes
+CFLAGS += -Wundef -Wconversion -Wmissing-declarations -Wsign-compare
+CFLAGS += -Wunreachable-code -Wextra
+
+
+#COMMENTS
+##############################################################
+#  For gcc:
+# -Wall includes:
+#          -Waddress   
+#          -Warray-bounds (only with -O2)  
+#          -Wc++11-compat  
+#          -Wchar-subscripts  
+#          -Wenum-compare (in C/ObjC; this is on by default in C++) 
+#          -Wimplicit-int (C and Objective-C only) 
+#          -Wimplicit-function-declaration (C and Objective-C only) 
+#          -Wcomment  
+#          -Wformat   
+#          -Wmain (only for C/ObjC and unless -ffreestanding)  
+#          -Wmaybe-uninitialized 
+#          -Wmissing-braces (only for C/ObjC) 
+#          -Wnonnull  
+#          -Wopenmp-simd 
+#          -Wparentheses  
+#          -Wpointer-sign  
+#          -Wreorder   
+#          -Wreturn-type  
+#          -Wsequence-point  
+#          -Wsign-compare (only in C++)  
+#          -Wstrict-aliasing  
+#          -Wstrict-overflow=1  
+#          -Wswitch  
+#          -Wtrigraphs  
+#          -Wuninitialized  
+#          -Wunknown-pragmas  
+#          -Wunused-function  
+#          -Wunused-label     
+#          -Wunused-value     
+#          -Wunused-variable  
+#          -Wvolatile-register-var 
+#
+#  -Wextra includes
+#          -Wclobbered  
+#          -Wempty-body  
+#          -Wignored-qualifiers 
+#          -Wmissing-field-initializers  
+#          -Wmissing-parameter-type (C only)  
+#          -Wold-style-declaration (C only)  
+#          -Woverride-init  
+#          -Wsign-compare  
+#          -Wtype-limits  
+#          -Wuninitialized  
+#          -Wunused-parameter (only with -Wunused or -Wall) 
+#          -Wunused-but-set-parameter (only with -Wunused or -Wall)
+##############################################################
+
+

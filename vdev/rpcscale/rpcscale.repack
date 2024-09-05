@@ -1,0 +1,6 @@
+$ vpack rpcscale.com -mixed -
+	-s rpcscale.c -
+	-i rpcscale.imake -
+	-p rpcscale.pdf -
+	-t tstrpcscale.pdf
+$ Exit

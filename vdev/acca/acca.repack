@@ -1,0 +1,6 @@
+$ vpack acca.com -mixed -
+	-s acca.c ACCA_Utils.c ACCA_Utils.h ImageUtils.c ImageUtils.h LandsatManager.c LandsatManager.h cloud_masks.c cloud_masks.h -
+	-i acca.imake -
+	-p acca.pdf -
+	-t tstacca.pdf
+$ Exit

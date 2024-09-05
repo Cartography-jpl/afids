@@ -1,0 +1,54 @@
+procedure
+parm path string
+parm tname string
+parm nname string
+
+local t1 string
+local n1 string
+local t2 string
+local n2 string
+local t3 string
+local n3 string
+local t4 string
+local n4 string
+local t5 string
+local n5 string
+local t6 string
+local n6 string
+local t7 string
+local n7 string
+
+local out string
+
+body
+
+let t1 = "&path" // "/&tname" // "_nn1.img"
+let n1 = "&path" // "/&nname" // "_nn1.img"
+
+let t2 = "&path" // "/&tname" // "_nn2.img"
+let n2 = "&path" // "/&nname" // "_nn2.img"
+
+let t3 = "&path" // "/&tname" // "_nn3.img"
+let n3 = "&path" // "/&nname" // "_nn3.img"
+
+let t4 = "&path" // "/&tname" // "_nn4.img"
+let n4 = "&path" // "/&nname" // "_nn4.img"
+
+let t5 = "&path" // "/&tname" // "_nn5.img"
+let n5 = "&path" // "/&nname" // "_nn5.img"
+
+let t6 = "&path" // "/&tname" // "_nn6.img"
+let n6 = "&path" // "/&nname" // "_nn6.img"
+
+let t7 = "&path" // "/&tname" // "_nn7.img"
+let n7 = "&path" // "/&nname" // "_nn7.img"
+
+let out = "xx&tname" // "&nname"
+
+mss (&t1,&t2,&t3,&t4,&t5,&t6,&t7) out=xxtop
+
+mss (&n1,&n2,&n3,&n4,&n5,&n6,&n7) out=xxbtm
+
+append (xxtop,xxbtm) out=&out
+
+end-proc

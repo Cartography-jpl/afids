@@ -1,0 +1,25 @@
+procedure
+parm filnam type=string
+
+local infil string
+local outfil string
+
+body
+!let _onfail="continue"
+
+let infil = "../test_data/" // "&filnam"
+let outfil = "&filnam"
+
+! developing gowarp.pdf
+
+gowarp inroot=&infil outroot=&outfil +
+   dted=nodted seq=qq  pixdeg=25.0 +
+   quad1=42.0 quad2=-121.0 quadsiz1=14.0 quadsiz2=12.0 +
+   quadunit=0 master=goesmaster.img +
+   loff=0 soff=0 +
+   loff=0 soff=00 +
+   sensE=250.5 sensN=1 senselv=850000 +
+   sensunit=1 +
+   nah=90 nav=90 stopat=3
+
+end-proc

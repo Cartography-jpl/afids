@@ -1,0 +1,49 @@
+procedure
+parm key type=string
+
+local z1file type=string
+local z2file type=string
+local z3file type=string
+local resfile type=string
+
+local zclen int
+
+body
+
+!  get the filenames
+
+let z1file = "../ausnn1/" // "&key" // "nn1" // "bandck"
+let z2file = "../ausnn2/" // "&key" // "nn2" // "bandck"
+let z3file = "../ausnn3/" // "&key" // "nn3" // "bandck"
+
+let resfile = "&key" // "allbandck"
+
+! copy one of the files and add blank columns
+
+ibis-copy &z3file xxxtempjoin nc=5
+
+ibis2tcl &z3file vclen=zclen vartype=1
+ibis-gen xxxtempjoin2 nc=16 nr=&zclen +
+  format=("REAL","REAL","REAL","REAL","REAL","REAL","REAL","FULL", +
+  "FULL","FULL","FULL","FULL","FULL","FULL","REAL","FULL")
+icat (xxxtempjoin,xxxtempjoin2) &resfile 'h
+
+! do the zipcols
+
+sort &resfile sortcol=5
+sort &z1file sortcol=5
+sort &z2file sortcol=5
+sort &z3file sortcol=5
+zipcol2 (&resfile,&z1file) incol=(5) outcol=(6,13) file=(5,27,28)
+zipcol2 (&resfile,&z2file) incol=(5) outcol=(7,14) file=(5,27,28)
+zipcol2 (&resfile,&z3file) incol=(5) outcol=(8,15) file=(5,27,28)
+
+! final result
+
+mf3 &resfile f="c20=(c6+c7+c8)/3.0$c21=c13+c14+c15"
+sort &resfile sortcol=20 'desc
+
+ibis-l &resfile nr=90
+ibis-l &resfile nr=90 cols=(5,6,7,8)
+
+end-proc

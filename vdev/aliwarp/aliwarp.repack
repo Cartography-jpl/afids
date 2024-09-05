@@ -1,0 +1,4 @@
+$ vpack aliwarp.com -mixed -
+	-p aliwarp2.pdf alicall2.pdf aliwarpad2.pdf align4.pdf align4p.pdf -
+	   aliramp.pdf
+$ Exit

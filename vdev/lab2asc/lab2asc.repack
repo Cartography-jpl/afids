@@ -1,0 +1,6 @@
+$ vpack lab2asc.com -mixed -
+	-s lab2asc.c -
+	-i lab2asc.imake -
+	-p lab2asc.pdf -
+	-t tstlab2asc.pdf
+$ Exit

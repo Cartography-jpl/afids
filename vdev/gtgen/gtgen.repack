@@ -1,0 +1,6 @@
+$ vpack gtgen.com -mixed -
+	-s gtgen.c -
+	-i gtgen.imake -
+	-p gtgen.pdf -
+	-t tstgtgen.pdf devgtgen.pdf
+$ Exit

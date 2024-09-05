@@ -1,0 +1,6 @@
+$ vpack meteolog.com -mixed -
+	-s meteolog.c f2c.h sunup.h sunup.c -
+	-i meteolog.imake -
+	-p meteolog.pdf -
+	-t devmeteolog.pdf
+$ Exit

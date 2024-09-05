@@ -1,0 +1,14 @@
+#==============================================================
+# List of things to build
+
+PROG_LIST = interlv
+
+# Include makefile to get rules
+include $(AFIDS_ROOT)/AfidsMakefile.in
+
+#CPPFLAGS += -I$(AFIDSTOP)/include -I.
+#FFLAGS += -Wunused -Wuninitialized -Wsurprising
+FFLAGS += -Wunused -Wuninitialized -Wsurprising -Wno-globals -fbounds-check
+#==============================================================
+
+

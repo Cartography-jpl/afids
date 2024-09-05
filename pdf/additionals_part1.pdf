@@ -1,0 +1,65 @@
+procedure	! additionials_part1
+
+parm fname string
+
+local master string
+local b10 string init="_B10"
+local b20 string init="_B20"
+local b30 string init="_B30"
+local b40 string init="_B40"
+local b50 string init="_B50"
+local b60 string init="_B60"
+local b61 string init="_B61"
+local b62 string init="_B62"
+local b70 string init="_B70"
+local b80 string init="_B80"
+local tif string init=".TIF"
+local img string init=".img"
+local found integer
+local found2 integer
+
+body
+let $switch=512
+let master = "&fname&B30&img"
+
+! goto start
+
+lswarpad2 key=tst +
+   rawimg = &fname&b10&tif +
+   fnamein = &master +
+   outimg = &fname&b10&img
+
+lswarpad2 key=tst +
+   rawimg = &fname&b20&tif +
+   fnamein = &master +
+   outimg = &fname&b20&img
+
+lswarpad2 key=tst +
+   rawimg = &fname&b40&tif +
+   fnamein = &master +
+   outimg = &fname&b40&img
+
+lswarpad2 key=tst +
+   rawimg = &fname&b50&tif +
+   fnamein = &master +
+   outimg = &fname&b50&img
+
+file2tcl &fname&b60&tif val=found
+if (found=1)
+  lswarpad2 key=tst +
+    rawimg = &fname&b60&tif +
+    fnamein = &master +
+    outimg = &fname&b60&img
+end-if
+
+file2tcl &fname&b61&tif val=found
+if (found=1)
+  lswarpad2 key=tst +
+    rawimg = &fname&b61&tif +
+    fnamein = &master +
+    outimg = &fname&b61&img
+end-if
+
+theend>
+end-proc
+

@@ -1,0 +1,233 @@
+!cutil6_test.pdf version 2.0
+!L1 AMT Image Processing Subsystem, Build 4.13
+!Latest Change Date: 04SEP2008 T. L. Logan
+!**********************************************************************
+
+!Calibration Utility Program 6 - Test/Calibrate Flat Field Images
+
+!This VICAR procedure tests the Calibration files created by cutil5_light
+!and cutil4_dark, and applying the generated calibration files on "raw"
+!data prepared by cutil1_log. If all the processing is successful, the 
+!output file should be calibrated, i.e., interference patterns and vertical
+!striping gone, and the image relatively uniform. SHC products will only
+!be calibrated in the light-projected areas.
+
+!The test image is automatically displayed at the end of the job using
+!xvd. It may be necessary to stretch the image to see anything:
+!  Tools-Stretch-Gaussian
+
+!This code should be executed from the "run6_test.pdf" program.
+!**********************************************************************
+
+!VICAR Parameter Defintions
+procedure               !Required VICAR Command
+!Input parameters passed to this program
+!Type Name   Format   Description
+parm  inpdir string   def="/raid12/amt/sw/vic/"  !Input Raw Data Directory
+parm  outdir string   def="/raid12/amt/sw/vic/"  !Output Directory
+parm  caldir string   def="/raid12/amt/sw/vic/"  !Dark & Light Gain/Offset Calibration
+parm  infile string   !Raw Input Image to calibrate (No dark subtraction)
+parm  vers   string   !Calibration version
+parm  zwidth integer  def=304 !Width of the 11-line correction zone.
+!Parameters used within this program
+local int    string   !Integration Time of Input Image (in ms)
+local clk    string   !Clock rate; Full format (e.g., 08.250)
+local clock  string   !Clock rate; Simplifed format (16,8,4,2,1,05)
+local filt   string   !Filter Number
+local gain   string   !gain value (1,4,6) of Input Image
+local rint   real     !Real format version of Integration Time
+local subt   string   !PRC or SHC taken from metadata
+local found  integer  !File found (1) or not found (1)
+local sec    integer  !Clock Seconds for temporary variable names
+local intr1  integer  !Starting Line for First 11-line correction
+local intr2  integer  !Starting Line for Second 11-line correction
+local rowt   integer  !Integration Rows
+local strn1  string   !Dark Rate Filename
+local strn2  string   !Dark Offset Filename
+local strn3  string   !Light Gain Filename
+local strn4  string   !Light Offset Filename
+!**********************************************************************
+
+body
+
+!**********************************************************************
+
+!Get Clock Seconds for Temporary Variable Names
+tcl2tcl      script="clock seconds" intvar=sec
+write       "***Initial Time = &sec Seconds"
+
+!Validate Directory Specifications
+file2tcl     &inpdir val=found
+if          (found=0) goto error1
+file2tcl     &outdir val=found   
+if          (found=0) goto error1
+file2tcl     &caldir val=found    
+if          (found=0) goto error1
+!**********************************************************************
+
+!Read Input File
+write        " "
+write        "Test Calibration of &"inpdir"&infile "
+write        " "
+file2tcl     &"inpdir"&infile val=found   
+if          (found=0) goto error2
+hist         &"inpdir"&infile
+
+!Get metadata from the file label
+plab2tcl     &"inpdir"&infile vtype=2 val=rowt +
+             property="GEOTIFF" keyword=AMT_INTEGRATION_ROWS
+write       "Integration Rows = &rowt"
+
+plab2tcl     &"inpdir"&infile vtype=0 val=subt +
+             property="GEOTIFF" keyword=AMT_PRODUCT_SUBTYPE
+write       "Subtype = &subt"
+
+plab2tcl     &"inpdir"&infile vtype=0 val=filt +
+             property="GEOTIFF" keyword=AMT_FILTER_WHEEL_INDEX
+write       "Filter = &filt"
+if          ("&filt" = "007") goto error4
+
+plab2tcl     &"inpdir"&infile vtype=0 val=int +
+             property="GEOTIFF" keyword=AMT_INTEGRATION_TIME
+write       "Integration Time = &int"
+
+plab2tcl     &"inpdir"&infile vtype=0 val=gain +
+             property="GEOTIFF" keyword=AMT_FPA_GAIN_REGISTER
+write       "Gain = &gain"
+
+plab2tcl     &"inpdir"&infile vtype=0 val=clk +
+             property="GEOTIFF" keyword=AMT_FPA_CLOCK_RATE
+write       "Clock = &clk"
+
+!Simplify the clock rate name.
+if          ("&clk" = "00.516") let clock = "05"
+if          ("&clk" = "01.031") let clock = "1"
+if          ("&clk" = "02.063") let clock = "2"
+if          ("&clk" = "04.125") let clock = "4"
+if          ("&clk" = "08.250") let clock = "8"
+if          ("&clk" = "16.500") let clock = "16"
+write       "Clock Rate = &clock"
+!**********************************************************************
+
+!Convert Integration Time String Variables to Real Format
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "strVal2RealVar &int") realvar=rint  
+
+!Get Dark Rate Calibration Filenames
+
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir DEC_DRATE-&"subt"-C&"clock"-G&"gain"_V&"vers" &int") +
+             strvar=strn1
+write       "DARK RATE = &strn1"
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir DEC_DOFFS-&"subt"-C&"clock"-G&"gain"_V&"vers" &int") +
+             strvar=strn2
+write       "DARK OFFS = &strn2"
+
+if          ("&strn1" = "NOMATCH") write "Cannot Match *DEC_DRATE-&"subt"-C&"clock"-G&"gain"_V&"vers"* "
+if          ("&strn2" = "NOMATCH") write "Cannot Match *DEC_DOFFS-&"subt"-C&"clock"-G&"gain"_V&"vers"* "
+if          ("&strn1" = "NOMATCH") goto error3
+if          ("&strn2" = "NOMATCH") goto error3
+
+!Get Light Gain/Offs Calibration Filename
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir FPA_LGAIN-&"subt"-C&"clock"-F&"filt"-G&"gain"_V&"vers" &int") +
+             strvar=strn3
+write       "LIGHT RATE = &strn3"
+tcl2tcl      script=("source $env(AFIDS_TCL)/taehelp.tcl; ", +
+            "matchRange &caldir FPA_LOFFS-&"subt"-C&"clock"-F&"filt"-G&"gain"_V&"vers" &int") +
+             strvar=strn4
+write       "LIGHT OFFS = &strn4"
+
+if          ("&strn3" = "NOMATCH") goto error3
+if          ("&strn4" = "NOMATCH") goto error3
+!**********************************************************************
+
+!Remove 11-line artifacts from the images.
+!Calculate Line positions of the two strips.
+if          ((&rowt < 13) OR (&rowt > 3363)) goto skip1 !Full Frame Edge
+let          intr1 = &rowt - 12
+write       "Starting Line for First 11-line Correction = &intr1"
+let          intr2 = 3377 - &rowt
+write       "Starting Line for Second 11-line Correction = &intr2"
+if          ((intr1 < 1) OR (intr1 > 3375)) goto skip1
+if          ((intr2 < 1) OR (intr2 > 3375)) goto skip1
+!For all interior 11-line cases, divide the 11-line artifact into 12 parts.
+amtlnfx2     inp=&"inpdir"&infile +
+             out=&"outdir"xx1tmp&sec blemln=(&intr1,&intr2) blemwid=11 mode=add +
+             sampwid=&zwidth
+skip1>
+!**********************************************************************
+
+!Subtract Out the Dark Rate (Dark Current)
+f2           inp=(&"outdir"xx1tmp&sec, +
+             &"caldir"&"strn1",&"caldir"&"strn2") +
+             out=&"outdir"xx2tmp&sec +
+             func="(in1-in3-in2*&"rint")"
+!            Same as: func="(in1-(in2*&"rint"+in3)"
+
+!Apply Linear Regression Model
+!The axis are actually reversed ("inverse" mode)
+!x = ay + b
+!x = (Gain * InputImage) + Offset
+!in1=input image; in2=lightgain; in3=lightoffs 
+f2           inp=(&"outdir"xx2tmp&sec, +
+             &"caldir"&"strn3",&"caldir"&"strn4") +
+             out=&"outdir"xx1tmp&sec +
+             func="(in2*in1)+in3"
+
+!Trim output to 0-4095
+f2           &"outdir"xx1tmp&sec +
+             &"outdir"cal_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf +
+             func="(((in1.GE.0).AND.(in1.LE.4095))*in1)+((in1.GT.4095)*4095)"
+
+hist         &"outdir"cal_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf
+!**********************************************************************
+
+!Delete Temporary Files, Handle Errors, and Print Closing Message
+file2tcl     &"outdir"xx1tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+file2tcl     &"outdir"xx2tmp&sec val=found        
+if          (found = 1) ush rm &"outdir"xx2tmp&sec
+goto         theend1
+!**********************************************************************
+
+error1>
+!Error Messages
+write       " "
+write       "*** ERROR: Specified Directory Not Found ***"
+goto         next1
+error2>
+write       " "
+write       "*** ERROR: The Expected Input File was NOT Found ***"
+goto         next1
+error3> 
+write       " "    
+write       "*** ERROR: Gain or Offset Calibration Files NOT Found ***"
+goto         next1
+error4>
+write       " "
+write       "*** ERROR: Filter 007 is Dark Current, Not Flat Field ***"
+next1>
+write       "*** Calibration Utility-6 Test Calibration Program: Stopped Due to Errors ***"
+write       " "
+file2tcl     &"outdir"xx1tmp&sec val=found 
+if          (found = 1) ush rm &"outdir"xx1tmp&sec 
+file2tcl     &"outdir"xx2tmp&sec val=found 
+if          (found = 1) ush rm &"outdir"xx2tmp&sec
+goto          theend2
+
+theend1>
+write       " "
+write       "*** Calibration Utility-6 Test Calibration Program: Successfully Completed ***"
+write       " "
+theend2>
+!Display Test Image. Program Quits when User Quits xvd
+xvd        (&"outdir"cal_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf,+
+            &"outdir"cal_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf,+
+            &"outdir"cal_&"subt"_c&"clock"_g&"gain"_f&"filt"_int&"int".hlf)
+!**********************************************************************
+end-proc
+
+
+

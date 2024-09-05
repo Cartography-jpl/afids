@@ -1,0 +1,110 @@
+procedure
+parm xxf string
+parm xxxlab2 string
+parm xxxlab3 string
+parm xxxB2out3 string
+parm xxxB2out4 string
+parm maptype string
+parm regfile string
+parm rtype string
+parm xxxinp string
+parm xxxtinp string
+parm polyfit1 type=(string,9) count=(5:5)
+parm polyfit2 type=(string,9) count=(5:5)
+parm nah string
+parm nav string
+parm xxb string
+parm xxg string
+parm xxg2 string
+parm xxc string
+parm gridfinal string
+parm master string
+
+local xxxfinalref string
+local xxxmaster string
+local l1 real
+local s1 real
+local l2 real
+local s2 real
+local l3 real
+local s3 real
+local l4 real
+local s4 real
+local msl type=int
+local mss type=int
+local mnl type=int
+local mns type=int
+
+body
+
+if (maptype="pc")
+   let xxxfinalref = "&xxxlab2"
+   let xxxmaster = "&master"
+else
+   let xxxfinalref = "&xxxlab3"
+   let xxxmaster = "&master" // "u"
+end-if
+
+if (maptype<>"pc")
+pixmap (&xxb,&xxxlab2) mapcol=(17,18) pixcol=(9,10) 'pixtomap
+gtproj (&xxb,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(13,14,15) 'tec
+pixmap (&xxb,&xxxfinalref) mapcol=(13,14) pixcol=(9,10) 'maptopix
+
+pixmap (&xxb,&xxxlab2) mapcol=(17,18) pixcol=(11,12) 'pixtomap
+gtproj (&xxb,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(13,14,15) 'tec
+pixmap (&xxb,&xxxfinalref) mapcol=(13,14) pixcol=(11,12) 'maptopix
+
+pixmap (&xxg,&xxxlab2) mapcol=(17,18) pixcol=(9,10) 'pixtomap
+gtproj (&xxg,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(13,14,15) 'tec
+pixmap (&xxg,&xxxfinalref) mapcol=(13,14) pixcol=(9,10) 'maptopix
+
+pixmap (&xxg,&xxxlab2) mapcol=(17,18) pixcol=(11,12) 'pixtomap
+gtproj (&xxg,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(13,14,15) 'tec
+pixmap (&xxg,&xxxfinalref) mapcol=(13,14) pixcol=(11,12) 'maptopix
+
+pixmap (&xxc,&xxxlab2) mapcol=(17,18) pixcol=(15,16) 'pixtomap
+gtproj (&xxc,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(20,21,22) 'tec
+pixmap (&xxc,&xxxfinalref) mapcol=(20,21) pixcol=(15,16) 'maptopix
+
+pixmap (&xxc,&xxxlab2) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxc,&xxxlab2,&xxxfinalref) incol=(17,18,19) outcol=(20,21,22) 'tec
+pixmap (&xxc,&xxxfinalref) mapcol=(20,21) pixcol=(1,2) 'maptopix
+end-if
+
+ibis-copy &xxf &xxg2 nc=19
+pixmap (&xxg2,&xxxB2out3) mapcol=(17,18) pixcol=(1,2) 'pixtomap
+gtproj (&xxg2,&xxxB2out3,&xxxfinalref) incol=(17,18,9) outcol=(15,16,10) 'tec
+pixmap (&xxg2,&xxxfinalref) mapcol=(15,16) pixcol=(11,12) 'maptopix
+
+pixmap (&xxg2,&regfile) mapcol=(13,14) pixcol=(6,7) 'pixtomap
+gtproj (&xxg2,&regfile,&xxxfinalref) incol=(13,14,9) outcol=(7,8,10) 'tec
+pixmap (&xxg2,&xxxfinalref) mapcol=(7,8) pixcol=(9,10) 'maptopix
+mf3 &xxg2 func="c13=c11-c9$c14=c12-c10"
+
+if (rtype="master")
+   gtwarpxd &xxxinp &xxxtinp ref=&xxxfinalref distort=(&xxb,&xxg,&xxc,&xxg2,) +
+     dcols=(9,10,11,12,9,10,11,12,15,16,1,2,9,10,11,12) gridout=&gridfinal+
+     polyfit=&polyfit1 'coverinp nah=&nah nav=&nav
+else
+   gtwarpxd &xxxinp &xxxtinp ref=&xxxfinalref distort=(&xxb,&xxg,&xxc,&xxg2,) +
+     dcols=(9,10,11,12,9,10,11,12,15,16,1,2,9,10,11,12) gridout=&gridfinal+
+     polyfit=&polyfit2 'coverinp nah=&nah nav=&nav
+end-if
+
+if (rtype="master")
+   ! this code out of date
+   imcorner &xxxtinp line1=l1 samp1=s1 line2=l2 samp2=s2 +
+   line3=l3 samp3=s3 line4=l4 samp4=s4
+   let msl = $fix(l1-25.0)
+   let mss = $fix(s3-25.0)
+   let mnl = $fix(l4-l1+50.0)
+   let mns = $fix(s2-s3+50.0)
+   gtcopy &xxxtinp &xxxmaster size=(&msl,&mss,&mnl,&mns)
+   gtcopy &xxxmaster &xxxB2out4
+   if (maptype="utm") gtwarp &xxxmaster &master ref=&xxxlab2 'coverinp
+else
+   gtoffset &xxxtinp &xxxmaster    ! has to be whole pixel, verify (0,0)
+   gtsize (&xxxtinp,&xxxmaster) &xxxB2out4 'coverref
+end-if
+
+end-proc

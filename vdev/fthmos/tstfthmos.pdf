@@ -1,0 +1,84 @@
+procedure
+refgbl $echo
+parm version string def="ibis-2" 
+parm org string def="column"
+body
+!let _onfail="continue"
+let $echo="yes"
+
+
+!   TEST FTHMOS HANDYPROC
+
+! historical method
+
+!   GeoTIFF case, no offsets in ibis file, now use area
+!   type file different rotation
+
+gen xim1 nl=1 ns=1
+gtgen inp=xim1 out=ximmaster 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(0,0,0,.3,.3,0.0)", +
+          "ModelTiePointTag=(0,10,0,.5,.3,0.0)", +
+          "ModelTiePointTag=(10,0,0,.3,.5,0.0)", +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+gen xim1 12 10 SINC=0 LINC=0 ival=10
+geomv xim1 xim4 + 
+   TIEPOINT=(1.,1.,1.,1.,   1.,5.5,1.,5.5,        1.,10.,1.,10.,+
+            12.,1.,11.9,1.,  12.,5.5,12.04,5.5,   12.,10.,11.6,10.)
+gen xim1 10 12 SINC=0 LINC=0 ival=110
+geomv xim1 xim5 + 
+   TIEPOINT=(1.,1.,0.,0.,   1.,12.,0.,13.,+
+            10.,1.,11.,0., 10.,12.,11.,13.)
+
+gtgen inp=xim4 out=xim2 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-2,-9,0,.3,.3,0.0)", +
+          "ModelTiePointTag=(-2,1,0,.5,.3,0.0)", +
+          "ModelTiePointTag=(8,-9,0,.3,.5,0.0)", +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+gtgen inp=xim5 out=xim3 'tiecnvrt +
+   geotiff=("ModelTiePointTag=(-7,-11,0,.3,.3,0.0)", +
+          "ModelTiePointTag=(-7,-1,0,.5,.3,0.0)", +
+          "ModelTiePointTag=(3,-11,0,.3,.5,0.0)", +
+          "ProjectionGeoKey=20(CT_MillerCylindrical)", +
+          "GTRasterTypeGeoKey=1(RasterPixelIsArea)", +
+          "GeogEllipsoidGeoKey=7030(Ellipse_WGS84)")
+
+list xim2 'zeroes
+list xim3 'zeroes
+
+gtlist ximmaster
+gtlist xim2
+gtlist xim3
+
+ibis-gen xxa nr=1 nc=6 format=("A10","FULL","FULL","FULL","FULL","DOUB") +
+      data=(0,0,0,0,0.77) datacols=(2,3,4,5,6) +
+      string=(".\xim3") strcols=(1)
+
+ibis-gen xxb nr=1 nc=6 format=("A10","FULL","FULL","FULL","FULL","DOUB") +
+      data=(0,0,0,0,1.6) datacols=(2,3,4,5,6) +
+      string=("./xim2") strcols=(1)
+
+ibis-cat (xxa,xxb) xxc
+!!ibis-list xxa 'format
+!!ibis-list xxb 'format
+ibis-list xxc 'format
+
+featherv (xim2,xim3,xxc,ximmaster) ximmos sl=3 ss=2 nl=18 ns=16 +
+    dfeather=4 +
+   'factor 'progress 'noramp moorefac=1 'geotiff toler=0.0000001
+
+
+!  the handyproc
+
+fthmos inp1=xim2 inp2=xim3 out=ximmos2
+
+list ximmos 'zeroes
+list ximmos2 'zeroes
+
+theend>
+end-proc

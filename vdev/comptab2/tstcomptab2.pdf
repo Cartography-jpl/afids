@@ -1,0 +1,210 @@
+procedure
+!Test Water vs Land Transforms
+! Southern CA - lakes and ocean
+!
+local   afidsroot   type=string count=1
+local   aftestdata  type=string count=1
+local   compress    type=string count=1
+!
+! Nov 04, 2017 - RJB
+! TEST SCRIPT FOR COMPTAB2
+! tests HALF files
+!
+! Vicar Programs:
+!       translog gen gtcopy f2 label-list list
+!       comprs stretch cform hist concomp
+!       ibis-list lab2tcl xvd 
+!
+! External Programs:
+!   <none>
+! 
+! Parameters:
+!   <none>
+!
+! Requires external test data: 
+! Uses cartlab or mipl dependent pointers
+!   Cartlab defines env var $AFIDS_ROOT, mipl doesn't
+!   The test data in cartlab is on /raid3/test_data 
+!   but in other facilities it might be somewhere else. 
+!   
+!   To facilitate this test you can define an
+!   environment variable $AFIDS_TESTDATA to point to
+!   that data. The cartlab system does not. In the git archive
+!   on pistol there is softlink to the test data in vdev that
+!   allows this test to pass 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+refgbl $echo
+body
+let _onfail="goto rm"
+let $echo="no"
+!check to see if mipl or cartlab for certain programs
+!cartlab defines env var $AFIDS_ROOT, mipl doesm't
+translog INP=AFIDS_ROOT TRANS=afidsroot
+translog INP=AFIDS_TESTDATA TRANS=aftestdata
+if (afidsroot = "")
+!MIPL
+    ush ln -s /project/test_work/testdata/carto ct
+else
+!CARTLAB
+    if (aftestdata = "")
+        ush ln -s ../test_data ct
+    else
+        ush ln -s $AFIDS_TESTDATA ct
+    end-if
+end-if
+
+write " Trivial Test for comptab2"
+let $echo="yes"
+
+! Trivial TEST SCRIPT FOR comptab2
+
+gen xxx1 nl=7 ns=7 'half
+f2 xxx1 out=xxx2 func="line*((samp<5)+(samp>5))"
+list xxx2
+concomp xxx2 (xxx4,xxx3)
+list xxx4
+
+comptab2 (xxx4,xxx2) ib4 
+ibis-li ib4
+
+let $echo="no"
+write "Trivial test done"
+write ""
+write "Show abort when an image is compressed"
+write ""
+let _onfail="continue"
+
+write " Notice label-li does not directly reveal compression"
+let $echo="yes"
+!
+comprs xxx4 xxx4c compress="basic"
+label-li xxx4c
+comprs xxx2 xxx2c compress="basic2"
+label-li xxx2c
+
+comptab2 (xxx4c,xxx2c) ib4c
+
+let $echo="no"
+write "ABORT is normal"
+write ""
+let _onfail="goto rm"
+!
+write "Do a REAL example "
+write "   Test Water vs Land Transforms in Southern CA"
+write "Note: These images are compressed"
+write ""
+let $echo="yes"
+!Make test images
+gtcopy ct/n30w120_band1 tb1.img size=(1,3791,3790,3790)    !blue
+gtcopy ct/n30w120_band2 tb2.img size=(1,3791,3790,3790)    !green
+gtcopy ct/n30w120_band3 tb3.img size=(1,3791,3790,3790)    !red
+gtcopy ct/n30w120_band4 tb4.img size=(1,3791,3790,3790)    !nir1
+gtcopy ct/n30w120_band5 tb5.img size=(1,3791,3790,3790)    !nir2/swir1
+gtcopy ct/n30w120_band61 tb61.img size=(1,3791,3790,3790) !thermal (low gain)
+gtcopy ct/n30w120_band62 tb62.img size=(1,3791,3790,3790) !thermal (hgh gain)
+gtcopy ct/n30w120_band7 tb7.img size=(1,3791,3790,3790)    !swir (swir2)
+
+!start>
+! outputs are byte images
+!Test1: 100*(((grn-nir1)/(grn+nir1))+1)   !Good, but picks up ocean kelp
+f2      inp=(tb2.img,tb4.img) out=test1.img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+hist    test1.img
+
+!Test2: 100*(((grn-nir2)/(grn+nir2))+1)    !Good
+f2      inp=(tb2.img,tb5.img) out=test2.img +
+        func="100*(((in1-in2)/(in1+in2))+1)"
+hist    test2.img
+!Test3: 100*(nir2/(grn+0.0001))           !Good
+f2      inp=(tb2.img,tb5.img) out=test3.img +
+        func="255-(100*(in2/(in1+0.0001)))"
+hist    test3.img
+
+!Test4: 100*((nir2-red)/(grn+0.0001))     !Bad scaling
+f2      inp=(tb2.img,tb5.img,tb3.img) out=test4.img +
+        func="50*((in2-in3)/(in1+0.0001))"
+hist    test4.img
+
+!Test5: 100*((blu+grn+red)/(nir1+nir2+swir))  !Very Good
+f2      inp=(tb1.img,tb2.img,tb3.img,tb4.img,tb5.img,tb7.img) out=test5.img +
+        func="50*((in1+in2+in3)/(in4+in5+in6))"
+hist    test5.img
+
+!Voting Rule Approach - Use 3 bands
+!stretch test1.img yy1 table=(0,0.,140,0.,141,1.,255,1.)
+! water is > 133 DN - map anything brighter to 1
+stretch test2.img yy2 table=(0,0.,133,0.,134,1.,255,1.)
+! water is > 204 DN - map anything brighter to 1
+stretch test3.img yy3 table=(0,0.,204,0.,205,1.,255,1.)
+! water is > 119 DN - map anything brighter to 1
+stretch test5.img yy5 table=(0,0.,119,0.,120,1.,255,1.)
+!combine 3 bands for voting 
+f2      (yy2,yy3,yy5) yy6 func="(in1+in2+in3)"
+!find all pixels greater than 3
+f2      yy6 yy7 func="(in1==3)"
+! now reset all pixels = 3 to = 1
+hist    yy7
+
+! convert byte to half
+cform   yy7 yy7.hlf iran=(0,1) oran=(0,1) 'half
+! insure object size is larger than 7x7 pixels - 30-meter pixels 
+concomp yy7.hlf (yy8,yy8work) thresh=50  !50=212x212m smallest water body
+! there will be 62 water bodies - set them all to be = 1
+f2      yy8 yy9 func="in1!=0" format=byte
+hist    yy9
+! ---- Completed Voting Rule
+! to see lakes and ocean
+! 
+! Use xvd to see lakes and Pacific Ocean against black bkg of land
+!
+! xvd yy8
+! show images are compressed
+lab2tcl yy8 v1=compress keyword="compress" type="SYSTEM"
+let $echo="no"
+write "Show images are compressed"
+write " Notice label-li does not directly reveal compression"
+write " But in list of tasks you will see"
+write "---- Task: COMPRS -- User: rkf -- Mon Sep  8 18:45:16 2008 ----"
+write " This is suggesstive evidence of compression"
+write ""
+write "yy8 compression = &compress"
+let $echo="yes"
+lab2tcl test2.img v1=compress keyword="compress" type="SYSTEM"
+let $echo="no"
+write "test2.img compression = &compress"
+write ""
+write " Now, uncompress images for comptab2"
+let $echo="yes"
+comprs yy8 yy8u compress="none"
+comprs test2.img test2u.img compress="none"
+comprs test3.img test3u.img compress="none"
+comprs test5.img test5u.img compress="none"
+
+comptab2 (yy8u,test2u.img,test3u.img,test5u.img) ib8u
+label-li ib8u
+ibis-li ib8u nr=5 nc=25
+let $echo ="no"
+write "Home in on Pyramid Lake along I-5 - object 26"
+write ""
+ibis-li ib8u sr=26 nr=1 nc=21
+write ""
+write "------------------------------------------------------------------------"
+write "col 1.  component number of Pyramid Lake"
+write "col 2.  count of pixels contained in Pyramid Lake = 6288"
+write "col 3.  line number of first pixel scanned        = 1207"
+write "col 4.  sample number of first pixel scanned      = 814"
+write "col 5.  diameter in pixels of Pyramid Lake        = 224.97"
+write "col 6.  average brightness (pixel value) of Pyramid Lake in test2.img "
+write "col 7.  average brightness (pixel value) in neighborhood of Pyramid Lake"
+write "col 8.  average brightness (pixel value) in Pyramid Lake in test3.img"
+write "col 9.  average brightness (pixel value) in neighborhood of Pyramid Lake"
+write "col 10. average brightness (pixel value) in Pyramid Lake in test5.img"
+write "col 11. average brightness (pixel value) in neighborhood of Pyramid Lake"
+write "------------------------------------------------------------------------"
+write ""
+
+rm>
+let $echo="no"
+ush rm ct
+end-proc

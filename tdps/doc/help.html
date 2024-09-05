@@ -1,0 +1,286 @@
+<html>
+<head>
+<meta name=Title content=Help>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<title>Help</title>
+</head>
+<body bgcolor=#FFFFFF link=blue vlink=blue class="Normal" lang=EN-US>
+  <p>TDPS Version 2c (27Sep2006)</p>
+  <p>ABOUT TDPS...</p>
+  <p>The &quot;Terrain Database Preparation System&quot; (TDPS)
+    was developed for the National Simulation Center (NSC) and Battle Command
+    Training Program (BCTP), under the auspices of the U.S. Army Program Executive
+    Office (PEO) for Simulation, Training, and Instrumentation (STRI), through
+    funding from the 7<sup>th</sup> Army Training Center (ATC) located in Grafenwoehr, Germany, in support of the
+    Corps Battle Simulation (CBS) by: </p>
+  <p>CalTech/Jet Propulsion Laboratory (A NASA-Sponsored Facility)<br>
+    Thomas L. Logan, Ph.D <br>
+    Walter L. Bunch <br>
+    4800 Oak Grove Drive <br>
+    Pasadena, California 91109 <br>
+    818-354-4032 <br>
+    <a href="mailto:tom.logan@jpl.nasa.gov">tom.logan@jpl.nasa.gov</a> </p>
+  <ul type=disc>
+    <li><a
+     href="#intro">INTRODUCTION</a></li>
+    <li><a
+     href="#step1">Step 1: OPEN OR
+        CREATE A DATABASE</a></li>
+    <li><a
+     href="#step2">Step 2: DEFINE AREA
+        OF INTEREST</a></li>
+    <li><a
+     href="#step3">Step 3: EXTRACT
+        VECTOR DATA AND MAP BACKGROUND FOR PLAYBOX</a></li>
+    <li><a
+     href="#step5">Step 4: PREPARE
+        TRAFFICABILITY DATA</a></li>
+    <li><a
+     href="#step4">Step 5: VIEW/EDIT
+        VECTOR DATA (optional)</a></li>
+    <li><a
+     href="#step6">Step 6: PREPARE
+        QUADTREE/DEM FILES</a></li>
+    <li><a
+     href="#step7">Step 7: PREPARE
+        CBS TERRAIN OUTPUT FILES</a></li>
+    <li><a
+     href="#utilities">UTILITIES:
+        CREATING PRE-STAGED TDPS DATA</a></li>
+  </ul>
+  <p><a name=intro><b>INTRODUCTION</b></a><b> - </b>The
+      TDPS (Terrain Database Preparation System) is a software system that creates
+      terrain files for use by the CBS (Corps Battle Simulation) system. The
+      terrain files represent the 'game board' upon which the CBS simulation
+      is played. The TDPS uses standardized NGA (National Geospatial-intelligence
+      Agency) terrain products such as Vmap (Vector Map), DTED (Digital Terrain
+      Elevation Data) and SRTM (Shuttle Radar Topography Mission) Digital Elevation
+      Models (DEMs), and ADRG (Arc-Digitized Raster Graphics) raster map backgrounds.
+      The Vmap data provides the road, river, urban and vegetation feature information.
+      The SRTM/DTED raster DEMs provide trafficability information. The ADRG/CADRGs
+      provide a map background display when using the TDPS interactive Vector
+      Editor. The TDPS is built on the VICAR/IBIS (Video Communication and Retrieval
+      System / Image Based Information System), a set of modularized command-driven
+      program modules using the TAE (Transportable Applications Executive). TCL/TK is used for the User Interface.
+      The underlying code is mostly C with some Fortran. The TDPS is Government-Owned
+      software with a VICAR license (refer to the Users Guide for complete information).</p>
+  <p><u1:p></u1:p><a name=step1><b>Step 1:
+        OPEN OR CREATE A DATABASE</b></a> - Create a new terrain database or open an existing one. </p>
+  <p>To Create a new database, Click the 'Create' button. Enter a unique
+    name in the 'Save As' Dialog box, and Click the 'Save' button. This creates
+    a new working directory for your database.</p>
+  <p>To open an existing database, Click the 'Select...' button, and find
+    your database using the dialog box.</p>
+  <p>For a frequently accessed database, type its unique name in the space
+    provided, and click the 'Accept' button. </p>
+  <p><a name=step2><b>Step 2: DEFINE AREA OF INTEREST
+        (AOI)</b></a> - Enter the bounding latitude and longitude coordinates of your 'Playbox.' Use
+        the negative (-) sign for west longitudes and south latitudes. Only integer
+        coordinates are permitted (fractional degrees are not supported). Databases
+        crossing the International Dateline (180 degrees East or West), or crossing
+        the Poles, are not supported. Databases should generally not exceed 120
+        square degrees (e.g., 10x12; 8x15) as the data volume will likely exceed
+        some GEEP system limits. Click the Accept button to register your playbox
+        boundaries.</p>
+  <p><a name=step3><b>Step 3: EXTRACT VECTOR DATA AND
+        MAP BACKGROUND FOR PLAYBOX</b></a><b> </b>- The default is to produce a full resolution database (High Data Quantity) with
+        all CBS Terrain classes. For large geographic Playboxes, it may be desirable
+        to reduce the terrain data volume. For these cases, toggle the 'High'
+        button to select the 'Low' option. &nbsp;Then click the 'EXTRACT' button to begin processing Vmap and ADRG data sets.
+        There is no other user interaction. Steps1 and 2 must have been completed
+        before this step. Vmap data is pulled from its pre-staged directories,
+        filtered for CBS-specific feature classes, trimmed to the AOI coordinates,
+        and corrected to remove &quot;donut holes&quot; (embedded polygons). The ADRG data is similarly extracted from its pre-staged
+        directories and assembled into a raster map background that can be viewed
+        using the Vector Editor (Step 5). A listing of the working directory
+        will show a large number of created files. Files with &quot;trm&quot; in their name have been trimmed to the AOI boundaries, and files with &quot;nh&quot; in their name have had their embedded polygons removed. &nbsp;The ADRG map background files are: adrg.blu, adrg.grn, adrg.red. This step can
+        take an hour or so to complete, depending upon the size of the database.</p>
+  <p><a name=step5><b>Step 4: PREPARE TRAFFICABILITY DATA </b></a>-
+    This step is used to create the Trafficability vector files. There is no
+    user interaction after clicking the 'PREPARE' button. Steps 1, 2, and 3 (above)
+    must have been completed beforehand. In this step, SRTM/DTED digital elevation
+    files are pulled from their pre-staged directories on a 1x1 degree basis,
+    and iteratively &quot;box-filtered&quot; using a Standard Deviation (variance) filter to create smooth, gently rolling,
+    and mountainous terrain classes. Water, Marsh/Swamp, Lava, and Karst terrains
+    (if present) are extracted from Vmap data on a similar 1x1 degree basis,
+    rasterized into a binary (feature/no feature) file, and combined with the
+    STD-filtered elevation data. The resulting raster terrain file is finally
+    converted to Vector &quot;Shape&quot; format.<u2:p></u2:p> This product can be viewed and/or edited using the Vector Editor (Step 5). The
+    output files from this step have the name &quot;cbs_traf&quot; and are located in the working directory.</p>
+  <p><a name=step4><b>Step 5: VIEW/EDIT VECTOR DATA (optional)</b></a> -
+    This optional step launches the Vector Editor, which is useful for viewing
+    the vector feature data, overlaying it on an ADRG map background, and for
+    editing the vector lines and polygons. Existing vectors can be moved, changed,
+    and deleted. New vector lines and polygons can be created, and assigned to
+    an existing feature class. Note that once opened, the Vector Editor cannot
+    be &quot;closed&quot; until the entire TDPS system is quit/exited. </p>
+  <p>Start the Vector Editor by Clicking on the Step 5 'VIEW/EDIT' button. </p>
+  <p>Refer to the Users Guide for a more complete discussion of the Vector
+    Editor's functions and capabilities.</p>
+  <p>- To display and edit a file, Click 'File/Load files...' from the
+    main menu. This brings up a dialog box showing all the files available for
+    loading. Select the files (and their display colors) you want to display/edit.
+    Click the dialog box's 'OK' button to begin the display. Note that there
+    are two components to the Rivers3 (Large Rivers) class that should be combined
+    in order to see the entire Rivers3 class, and the 'ho' (donut hole) files
+    should be ignored (not edited), as they contain embedded polygons (i.e.,
+    donut holes) that are used in later TDPS processing.</p>
+  <p>- To quickly find and display an opened vector file, Select 'Zoom/To
+    Fit All' from the main menu, or click the 'Fit' button on the Tool Bar. This
+    'fits' the vector data file to the current window.</p>
+  <p>- To toggle on the ADRG map background, select 'Overlay/Map' from
+    the main menu (or Control-M). Use the &quot;Nudge&quot; option to (slightly) shift the map North, South, East, or West relative to the
+    vector display. Click the dashed line above the Nudge parameters to make
+    a convenient&nbsp;Tear-Off menu.</p>
+  <p>- Select 'Zoom/Center On CoordĶ' to display a dialog box for jumping
+    to a user given point. This option also provides the ability to convert between
+    MGRS, UTM, and Lat/Lon coordinates.</p>
+  <p>- Type Control-E to obtain the Elevation (in meters) for the current
+    cursor location.</p>
+  <p>- Use the Select (cursor) to highlight a line or polygon for editing.
+    Click the Edit Vertex button to highlight vertices. Buttons and options are
+    available for editing, creating new objects, deleting, and un-deleting objects.</p>
+  <p>- Note that Vmap's 'Large Rivers' (CBS Rivers3) are generated by the
+    TDPS as double-banked lines that should be edited to single lines. Refer
+    to the User Guide for details.</p>
+  <p>- The general steps for creating and editing lines and polygons are
+    described below:</p>
+    <ul>
+      <li> When
+        created, new lines or polygons are automatically placed in 'Edit' mode, with all vertices active (Red). The lines are the color of the destination
+	class. For existing lines/polygons, click the 'Edit Vertices Button.'</li>
+      <li> Click
+      once on a line/polygon to deselect the active vertices. Deselected vertices
+      turn yellow.</li>
+  <li> Click
+      a second time to deselect the entire line/polygon.</li>
+  <li> With
+      no vertices showing, click the line/polygon to select it (the lines thicken).
+      The line/polygon can then be moved or deleted.</li>
+  <li> Double-click
+      an existing line or polygon to enter it into 'Edit' mode, showing vertices in yellow, and one active vertex in red.</li>
+  <li> Shift-click
+      a vertex to make it active and keep other active vertices active.</li>
+  <li> When
+      two or more vertices are active, click the 'Insert Vertex' button (or Ctl-P) to add new vertices between the two highlighted vertices.
+      Use the &lt; and &gt; keys to move from one vertex to another.</li>
+  <li> Clicking
+      on a single vertex will make it active (Red), and de-activate a previous
+      active vertex.</li>
+  <li> For
+      fast placement of vertices, make your 'Starting' vertex active, then click the Right Mouse Button to move the vertex to the cursor
+      location. The next vertex in line is automatically selected and can be
+      moved into position. This continues until the end of the line or polygon
+      is reached.</li>
+  <li> A
+      single active vertex can be moved by clicking and dragging it.</li>
+
+<li>
+ Vector Editor keyboard 'hot keys' are defined as follows:
+
+  <br>
+  <b>Up Arrow</b>:   Nudge Vector North<br>
+  <b>Down Arrow</b>:   Nudge Vector South<br>
+  <b>Left Arrow</b>:   Nudge Vector West<br>
+  <b>Right Arrow</b>:   Nudge Vector East<br>
+  <b>Control-A</b>:   Select All<br>
+  <b>Control-C</b>:   Copy<br>
+  <b>Control-E</b>:   Display Elevation at the Cursor Location<br>
+  <b>Control-F</b>:   Zoom To Fit All<br>
+  <b>Control-G</b>:   Toggle Grid Cell On/Off<br>
+  <b>Control-I</b>:     Zoom In<br>
+  <b>Control-M</b>:   Toggle Map On/Off<br>
+  <b>Control-O</b>:   Zoom Out<br>
+  <b>Control-P</b>:   Insert Vertices<br>
+  <b>Control-U</b>:   Undo<br>
+  <b>Control-V</b>:   Paste<br>
+  <b>Control-X</b>:   Cut<br>
+  <b>Delete Key</b>:   Delete (Cut without Paste)<br>
+  <b>BackSpace</b>:   Delete (Cut without Paste)<br>
+  <b>&lt;</b>: Move to Previous Vertex<br>
+  <b>&gt;</b>: Move to Next Vertex<br>
+</li>
+
+  <li>- Select 'File/Save' to save your edited vector files. Be sure to
+    run TDPS Step 7 after using the Vector Editor</li>
+  <li> Refer to the Users Guide for detailed Vector Editing and Display
+    information.</li>
+</ul>
+
+  <p><a name=step6><b>Step 6: PREPARE QUADTREE/DEM FILES </b></a>-
+    This step is used to create the Quadtree Line of Sight files. There is no
+    user interaction after clicking the 'PREPARE' button. The output &quot;quadtree.dat&quot; file can be very large.</p>
+  <p><a name=step7><b>Step 7: PREPARE CBS TERRAIN OUTPUT
+        FILES </b></a>- This step is used to create the final CBS text-formatted terrain files. It
+        can be run anytime after Step 4.</p>
+  <p>The 'Trafficability Background Code' option is a tool for reducing
+    data volume. The default is 502 (Impassable). Since there are no TDPS-generated
+    'Impassable' data, the default is to output all terrain vector/polygons (with
+    no data volume reduction). The options are: 501 (Water); 502 (Impassable);
+    503 (Smooth); 504 (Gently Rolling); 505 (Mountainous); and 506 (Marsh). If
+    changed from the default, be sure to notify the GEEP Controller. This option
+    DELETES the selected class data from the Trafficability file and declares
+    it the background Trafficability class, which means that the GEEP will treat
+    all areas <i>not</i> containing a polygon as the selected background class. Thus, a very mountainous
+    playbox could reduce its data volume by making 505 (Mountainous) the background
+    class, and deleting all the mountainous polygons. This option only applies
+    to the Trafficability terrain class (i.e., it is not available for the Vegetation
+    or Urbanization terrain classes).</p>
+  <p>There is no user interaction after clicking the 'PREPARE' button.
+    The following files are produced (if data are present for these terrain types):
+    roads1, roads2, roads3, rivers1, rivers2, rivers3, urbanization, vegetation,
+    and trafficability. These files will have a &quot;.txt&quot; suffix in the working directory, and are the files that should be submitted
+    to the CBS PreProcessors for verification and use by CBS. A database receipt
+    file is also created containing a summary of information about the created
+    terrain database.</p>
+  <p><a name=utilities><b>UTILITIES</b></a><b>:
+      CREATING PRE-STAGED TDPS DATA</b> -- The Utilities are primarily for creating and updating the Pre-Staged ADRG
+      Map Background, Vmap Data, and SRTM/DEM files used by the TDPS. These tools
+      allow the user to integrate the latest map products from NGA without dependence
+      upon JPL. The tools are independent of Terrain Preparation and the Vector
+      Editor, that is, they are used without opening a terrain database. Two
+      additional tools create DEM and ADRG mosaics (in GeoTiff format) for external
+      (non-TDPS) elevation and map background display uses.</p>
+  <p>Warning! The ultimate purpose of the Utility Tools is to allow the
+    user to overwrite/replace existing TDPS pre-staged data sets (with newer
+    versions). Be sure all your previous TDPS data files are Backed Up in case
+    of a processing error.</p>
+  <ul>
+  <li>Update CADRG -- This tool updates the 10x10 degree pre-staged ADRG map background
+    files located in the /tdsp_adrg directory. The map backgrounds are intended
+    to be JOG 1:250,000 scale maps, but where none existed, coarser scale maps
+    were substituted. This tool will update/replace the map data in a given/single
+    10x10 degree TDPS file with data from a new NGA CADRG JOG CD-ROM. Refer to
+    the Users Guide for specific operational details.</li>
+  <li>Update VMAP -- This tool updates the pre-staged Vmap1 files located in the /tdps_vmap1
+    directory, with data from a new edition NGA Vmap1 CD-ROM. Updatable TDPS
+    files use the Vmap1's 'Item_Edition' file-naming structure, e.g., 142_001.
+    This tool will NOT update a Vmap0 or Vmap2 NGA product. Refer to the Users
+    Guide for specific operational details.</li>
+  <li>Update DEM -- This tool updates the pre-staged SRTM/DTED DEM files located in the
+    /tdps_srtm directory, with new NGA Digital Elevation Model (DEM) products.
+    The pre-staged TDPS-provided SRTM/DTED elevation models are a preliminary
+    version of SRTM Level-1 (90 meter; 3 arc-second) DEMs with the 'voids' filled
+    and oceans flattened. These files should be replaced when NGA releases their
+    official SRTM-based 'void-filled' DEM product. It is ASSUMED that the future
+    NGA SRTM/DEM products will be released in 'DTED' format. If NOT, DO NOT use
+    this tool! Contact JPL for help. With the proper DTED-formatted data, this
+    tool can process multiple DEMs in one processing task, cross the Equator
+    and Prime Meridian, but not cross the International Dateline or Poles. Refer
+    to the Users Guide for specific operational details.</li>
+  <li>Mosaic DEM -- This special user tool mosaics pre-staged TDPS DEMs (from the /tdps_srtm
+      directory) into a single image. The TDPS does NOT use this output mosaic
+      product. The default output file format is 16-bit GeoTiff, which is compatible with several commercial image processing
+      software products. A VICAR-formatted file can be obtained for viewing via
+      the xvd program by appending an .img suffix in the Save As dialog box.
+      The intended purpose of this product is to provide an elevation map background
+      covering the AOI for special user purposes. Refer to the Users Guide for specific operational details.</li>
+  <li>Export CADRG -- This special user tool converts the ADRG map background created
+    by the TDPS into a RGB composite GeoTIFF (georeferenced-TIFF) file. It will
+    also convert any of the Pre-Staged TDPS 10x10 degree ADRG files (from /tdps_adrg)
+    into TIFF format. The TDPS does NOT use the ADRG data in this output file
+    format; it is for special uses as required by the user. Refer to the Users
+    Guide for specific operational details.</li>
+</ul>
+</body>
+</html>

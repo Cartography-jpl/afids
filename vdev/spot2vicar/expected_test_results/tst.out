@@ -1,0 +1,36 @@
+Warning: TAE will not work with uppercase characters in $V2TOP.
+                Version 5C/16C
+
+      ***********************************************************
+      *                                                         *
+      *                  Welcome to VICAR                       *
+      *                                                         *
+      *          VICAR Supervisor version 5C, TAE V5.3          *
+      *                 Distribution 29.0                       *
+      *                                                         *
+      *          #    #  #####   ###     ##    #####            *
+      *          #    #    #    #   #   #  #   #    #           *
+      *          #    #    #   #       #    #  #    #           *
+      *          #    #    #   #       ######  #####            *
+      *           #  #     #    #   #  #    #  #   #            *
+      *            ##    #####   ###   #    #  #    #           *
+      *                                                         *
+      *         Video Image Communication and Retrieval         *
+      *        and Image Based Information System (IBIS)        *
+      *            ** AFIDS Package Distribution **             *
+      *                                                         *
+      ***********************************************************
+
+  --- Type NUT for the New User Tutorial ---
+
+  --- Type MENU for a menu of available applications ---
+
+$R2LIB set to /raid1/smyth/AfidsWork/install/afids/vdev
+Disabling interrupts ...
+
+spot2vicar inp=../test_data/METADATA.DIM out=test.img
+Beginning VICAR task spot2vicar
+spot2vicar inp=../test_data/METADATA.DIM out=test2.img sl=10 ss=20 nl=50
+Beginning VICAR task spot2vicar
+ush ruby chktst.rb
+end-proc

@@ -1,0 +1,164 @@
+ Trivial Test for comptab2
+gen xxx1 nl=7 ns=7 'half
+Beginning VICAR task gen
+GEN Version 6
+GEN task completed
+f2 xxx1 out=xxx2 func="line*((samp<5)+(samp>5))"
+Beginning VICAR task f2
+F2 version 24-Sep-2013 (64-bit) - RJB
+F2 calculating every pixel
+FUNCTION EVALUATED 49 TIMES
+list xxx2
+Beginning VICAR task list
+
+   HALF     samples are interpreted as HALFWORD data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:F2        User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp       1     2     3     4     5     6     7
+   Line
+      1         1     1     1     1     0     1     1
+      2         2     2     2     2     0     2     2
+      3         3     3     3     3     0     3     3
+      4         4     4     4     4     0     4     4
+      5         5     5     5     5     0     5     5
+      6         6     6     6     6     0     6     6
+      7         7     7     7     7     0     7     7
+concomp xxx2 (xxx4,xxx3)
+Beginning VICAR task concomp
+concomp version Thu Jul  3 2014
+list xxx4
+Beginning VICAR task list
+
+   FULL     samples are interpreted as FULLWORD data
+ Task:GEN       User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+ Task:CONCOMP   User:afids_te  Date_Time:Sat Jan  1 00:00:00 2000
+     Samp            1          2          3          4          5          6          7
+   Line
+      1              1          1          1          1          0          2          2
+      2              1          1          1          1          0          2          2
+      3              1          1          1          1          0          2          2
+      4              1          1          1          1          0          2          2
+      5              1          1          1          1          0          2          2
+      6              1          1          1          1          0          2          2
+      7              1          1          1          1          0          2          2
+comptab2 (xxx4,xxx2) ib4
+Beginning VICAR task comptab2
+comptab2 version Thu Nov  6 2017
+ibis-li ib4
+Beginning VICAR task ibis
+ 
+Number of Rows:2  Number of Columns: 23      
+File Version:IBIS-2  Organization:COLUMN  SubType:NONE
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:1         C:2         C:3         C:4         C:5         C:6
++-----------+-----------+-----------+-----------+-----------+-----------
+           1           0           0           0        6.78        4.00
+           2           0           0           0        6.16        4.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+         C:7         C:8         C:9        C:10        C:11        C:12
++-----------+-----------+-----------+-----------+-----------+-----------
+        2.50        0.00        0.00        0.00        0.00        4.00
+        6.50        0.00        0.00        0.00        0.00        4.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------+-----------
+        C:13        C:14        C:15        C:16        C:17        C:18
++-----------+-----------+-----------+-----------+-----------+-----------
+        4.00        0.00        0.00        0.00        0.00        0.00
+        4.00        0.00        0.00        0.00        0.00        0.00
+ 
+Rows: 1:2
++-----------+-----------+-----------+-----------+-----------
+        C:19        C:20        C:21        C:22        C:23
++-----------+-----------+-----------+-----------+-----------
+        0.00        0.00        0.00        0.00        0.00
+        0.00        0.00        0.00        0.00        0.00
+let $echo="no"
+Trivial test done
+
+Show abort when an image is compressed
+
+ Notice label-li does not directly reveal compression
+comprs xxx4 xxx4c compress="basic"
+Beginning VICAR task comprs
+label-li xxx4c
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxx4c ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in FULL format from a X86-LINUX host
+                1 bands
+                7 lines per band
+                7 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: F2 -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+FUNCTION='line*((samp<5)+(samp>5))'
+---- Task: CONCOMP -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+---- Task: COMPRS -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+comprs xxx2 xxx2c compress="basic2"
+Beginning VICAR task comprs
+label-li xxx2c
+Beginning VICAR task label
+************************************************************
+ 
+        ************  File xxx2c ************
+                3 dimensional IMAGE file
+                File organization is BSQ
+                Pixels are in HALF format from a X86-LINUX host
+                1 bands
+                7 lines per band
+                7 samples per line
+                0 lines of binary header
+                0 bytes of binary prefix per line
+---- Task: GEN -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+IVAL=0.0
+SINC=1.0
+LINC=1.0
+BINC=1.0
+MODULO=0.0
+---- Task: F2 -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+FUNCTION='line*((samp<5)+(samp>5))'
+---- Task: COMPRS -- User: afids_test_user -- Sat Jan  1 00:00:00 2000 ----
+ 
+************************************************************
+comptab2 (xxx4c,xxx2c) ib4c
+Beginning VICAR task comptab2
+comptab2 version Thu Nov  6 2017
+ input image 1 - BASIC compression
+
+ input image 2 - BASIC2 compression
+
+??E - One or more of images are compressed
+??E - Compressed images are illegal for comptab2
+ ** ABEND called **
+continue
+let $echo="no"
+ABORT is normal
+
+Do a REAL example 
+   Test Water vs Land Transforms in Southern CA
+Note: These images are compressed
+
+gtcopy ct/n30w120_band1 tb1.img size=(1,3791,3790,3790)
+Beginning VICAR task gtcopy
+gtcopy version Thu Jan 10 2008
+[VIC2-GENERR] Exception in XVOPEN, processing file: ct/n30w120_band1
+[VIC2-HOSTMSG]  No such file or directory
+ ** ABEND called **
+goto rm
+let $echo="no"
