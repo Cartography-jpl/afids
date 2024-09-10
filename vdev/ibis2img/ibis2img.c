@@ -47,7 +47,7 @@ void main44(void)
    for (i = 0; i < ncol; i ++) {
      status = IBISColumnGet(ibis, "FORMAT", fmtstring, i + 1);
      if (fmtstring[0] != 'R' && fmtstring[0] != 'D') {
-       fprintf("column format %c not supported\n", fmtstring[0]);
+       printf("column format %c not supported\n", fmtstring[0]);
        exit(1);
      }
    }
