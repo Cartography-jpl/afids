@@ -6252,7 +6252,8 @@ AM_CPPFLAGS =
 # For now, use the old behavior.
 @HAVE_GCC_TRUE@AM_CFLAGS = -Wall -Wno-implicit-function-declaration \
 @HAVE_GCC_TRUE@	-Wno-implicit-int \
-@HAVE_GCC_TRUE@	-Wno-incompatible-pointer-types -fcommon
+@HAVE_GCC_TRUE@	-Wno-incompatible-pointer-types -Wno-format \
+@HAVE_GCC_TRUE@	-fcommon
 
 # Motif library uses XtOffset in ways that gcc complains about, but which
 # are actually valid. Go ahead an suppress this warning.

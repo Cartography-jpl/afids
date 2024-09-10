@@ -60,7 +60,7 @@ AM_CFLAGS = -Wall
 # errors. Turn this off, this code is really old and we just want to compile it,
 # not worry about fixing all the old problems
 AM_CFLAGS+= -Wno-implicit-function-declaration -Wno-implicit-int
-AM_CFLAGS+= -Wno-incompatible-pointer-types
+AM_CFLAGS+= -Wno-incompatible-pointer-types -Wno-format
 
 # Motif library uses XtOffset in ways that gcc complains about, but which
 # are actually valid. Go ahead an suppress this warning.
