@@ -6236,6 +6236,10 @@ AM_CPPFLAGS =
 
 #=================================================================
 # Some flags needed for GCC compilers.
+
+# The newer versions of gcc (14 or so) treat what use to be just warnings as
+# errors. Turn this off, this code is really old and we just want to compile it,
+# not worry about fixing all the old problems
 # Starting with gfortran 10.0 type mismatch changed from a warning to
 # an error. Lots of the old code has type mistmatchs in them, for now
 # just go back to having the old behavior
@@ -6246,7 +6250,9 @@ AM_CPPFLAGS =
 # This behavior changed in gcc 10. Previously the gcc has used fcommon,
 # which resolves some issues with multiple definitions of global variables.
 # For now, use the old behavior.
-@HAVE_GCC_TRUE@AM_CFLAGS = -Wall -fcommon
+@HAVE_GCC_TRUE@AM_CFLAGS = -Wall -Wno-implicit-function-declaration \
+@HAVE_GCC_TRUE@	-Wno-implicit-int \
+@HAVE_GCC_TRUE@	-Wno-incompatible-pointer-types -fcommon
 
 # Motif library uses XtOffset in ways that gcc complains about, but which
 # are actually valid. Go ahead an suppress this warning.

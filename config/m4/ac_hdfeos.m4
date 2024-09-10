@@ -49,6 +49,10 @@ if test "x$want_hdfeos" = "xyes"; then
                   HDFEOS_LIBS="-R$CONDA_PREFIX/lib -L$CONDA_PREFIX/lib -lhdfeos -lGctp"
                   HDFEOS_CFLAGS="-I$CONDA_PREFIX/include"
                   succeeded=yes
+	       elif test -e "$prefix/include/HdfEosDef.h"; then
+                  HDFEOS_LIBS="-R$prefix/lib -L$prefix/lib -lhdfeos -lGctp"
+                  HDFEOS_CFLAGS="-I$prefix/include"
+                  succeeded=yes
 	       fi
             fi
             if test "$succeeded" != "yes" ; then
