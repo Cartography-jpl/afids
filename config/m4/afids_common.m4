@@ -42,7 +42,6 @@ fi
 # so make sure it is there.
 AC_PERL_MODULE(Data::Dumper)
 
-
 # We need to have csh to run things like vicarb
 AC_CHECK_PROG(HAVE_CSH, csh, yes, no)
 if test "$HAVE_CSH" = "no"; then
@@ -63,7 +62,7 @@ ALL RIGHTS RESERVED. U.S. Government Sponsorship acknowledged.])
 # http://noisebleed.blogetery.com/2010/02/27/tar-file-name-is-too-long-max-99/#howtofixit
 AM_INIT_AUTOMAKE([1.9 tar-pax])
 AM_MAINTAINER_MODE
-AC_PROG_LIBTOOL
+LT_INIT
 AC_PROG_CXX
 AC_PROG_LN_S
 AC_COPY_DIR
@@ -88,24 +87,29 @@ FFLAGS=""
 AC_SUBST(AM_FFLAGS)
 
 #=================================================================
+# We are far enough along in time that we should be able to just
+# require a C++17 compiler. We can perhaps relax that is needed to
+# support older versions, but as of now (2024) this standard is already
+# 7 years old. It is probably too soon to require C++20 right now,
+# we can revisit that as needed (and perhaps just have this code
+# conditional for now).
+#=================================================================
+
+AX_CXX_COMPILE_STDCXX([17], [ext], [mandatory])
+
+#=================================================================
+# C++ Threading requires pthread sometimes
+#=================================================================
+
+AX_PTHREAD()
+CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
+
+#=================================================================
 # Test if we are using GCC compiler. Some flags get set in the 
 # Makefile that should only be set for GCC.
 #=================================================================
 
 AM_CONDITIONAL([HAVE_GCC], [test "$GCC" = yes])
-
-#=================================================================
-# Start allowing code that requires newer version of compilers.
-# C++ 11 in particular has been around for a long time, and we
-# should probably be able to depend on this being available.
-#
-# For now, don't require any of this - we'll compile code with
-# HAVE_CXX11 etc. We may relax this over time.
-#=================================================================
-
-AX_CXX_COMPILE_STDCXX([11], [ext], [optional])
-# Don't currently have 14 or 17 code, but could add tests if this
-# before useful
 
 #=================================================================
 # We have a small amount of code that gets different flags depending on

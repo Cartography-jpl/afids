@@ -299,7 +299,6 @@ void rpc1tranb(buf1,buf2,offset)
 int rpc_f10()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,numer,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -374,7 +373,6 @@ int rpc_f10()
 int rpc_f20()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -457,7 +455,6 @@ int rpc_f20()
 int rpc_f11()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,numer,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -532,7 +529,6 @@ int rpc_f11()
 int rpc_fzt()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,numer,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -607,7 +603,6 @@ int rpc_fzt()
 int rpc_fz2()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,numer,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -666,7 +661,6 @@ int rpc_fz2()
 int rpc_fz1()
 {
   double rpcn[20],rpcd[20],l,p,h,l2,p2,h2,l3,p3,h3,numer,denom;
-  int strcmp();
   size_t i;
 
   for (i=0;i<20;i++) rpcn[i] = tguess[i+rpc_linsmp*40];
@@ -727,7 +721,7 @@ void main44(void)
    int i,j,datacol[20],coeffcol[100],unit,indcount,coeffcount,coldef;
    int ibis,status,clen,depcol,rescol,concol,numlsq,ier;
    int unit2,ibis2,clen2,solcount,soldef;
-   int dummy,dct,noprint,uptr,lptr,igroup,strcmp();
+   int dummy,dct,noprint,uptr,lptr,igroup;
    int (*fptr)() = NULL;
    float *concolv,groupnbr;
    double **sout,eps,*solnck;

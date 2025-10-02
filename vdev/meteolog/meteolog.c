@@ -479,7 +479,6 @@ int refgeo(real * line, real * pixel, real * lat, real * long__, logical1 * visi
   real r__1;
 
   /* Builtin functions */
-  double tan(), sqrt(), atan(), cos();
 
   /* Local variables */
   static real step, rpol, altitude, a, b, c__, k, p, q, r__, aline, x, y, 
@@ -588,8 +587,6 @@ int refgeo(real * line, real * pixel, real * lat, real * long__, logical1 * visi
     real r__1, r__2, r__3, r__4;
 
     /* Builtin functions */
-    double tan(doublereal), atan(doublereal), cos(doublereal), sin(doublereal)
-	    , sqrt(doublereal);
 
     /* Local variables */
     static real long__, rpol, altitude, x, y, z__, aline, asamp, pi, oblate, 

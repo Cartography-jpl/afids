@@ -20,6 +20,7 @@
 #include <math.h>
 #include "geotiffio.h"
 #include "geo_tiffp.h"
+#define PJ_CONTEXT void
 #include "geo_keyp.h"
 
 #ifdef EXTENDED_TIFF 

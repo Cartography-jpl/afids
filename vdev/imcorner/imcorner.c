@@ -55,7 +55,6 @@ void main44(void)
    double lineur2=0,sampur2=0,lineur=0,sampur=0;
    double linell2=0,sampll2=0,linell=0,sampll=0;
    double linelr2=0,samplr2=0,linelr=0,samplr=0;
-   double triarea();
    
    zifmessage("imcorner version Wed Feb 3 2016");
    

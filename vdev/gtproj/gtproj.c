@@ -623,8 +623,6 @@ void geotranssub(argc,argv)
    
    /* what is this? */
    
-   long Set_Albers_Parameters(); /* do I need to get all of these */
-   
    /* determine inverse */
    
    geotransinverse = getargboolean(argc,argv,"inv");

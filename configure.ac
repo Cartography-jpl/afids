@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(afids, 1.26)
+AC_INIT([afids],[1.27])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([config/m4])
 AFIDS_COMMON
-ACX_PTHREAD
-MP_WITH_CURSES
+AX_PTHREAD
+AX_WITH_CURSES
 AC_CONFIG_FILES([afids/script/setup_afids_env.csh afids/script/setup_afids_env.sh afids/script/run_me_if_moved.sh])
 AC_CONFIG_FILES([afids/script/vicar afids/script/vicarb afids/script/taetm afids/script/vifclient afids/script/vextract afids/script/afids afids/script/ctv2 afids/vdev/AfidsMakefile.in])
 AC_CONFIG_FILES([afids/tdps/src/tdps afids/tma/bin/tma afids/tma/tcllib/maptcl/map_srv afids/tma/tcllib/tma/regionCreate.tcl])

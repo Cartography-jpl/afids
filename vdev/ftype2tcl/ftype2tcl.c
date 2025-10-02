@@ -11,6 +11,7 @@
 
 #include "geotiffio.h"
 #include "geo_tiffp.h"
+#define PJ_CONTEXT void
 #include "geo_keyp.h"
 #include "geotiff.h"
 #include "xtiffio.h"
