@@ -1347,6 +1347,9 @@ afids_PROGRAMS = $(am__EXEEXT_1) $(am__EXEEXT_2) $(am__EXEEXT_3) \
 # Program stretch
 
 # Program subsamp - added 2013-9-01
+# The mcmodel=medium option is needs to avoid an error
+# relocation truncated to fit: R_X86_64_PC32 against `.bss'
+#subsamp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS) -mcmodel=medium
 
 # Program substr2tcl - added 2013-10-02
 @BUILD_AFIDS_TRUE@am__append_27 = spotref rpdeyeref rpdeyestrtch \
@@ -4335,9 +4338,6 @@ am__subsamp_SOURCES_DIST = @srcafids@/subsamp/subsamp.F
 subsamp_OBJECTS = $(am_subsamp_OBJECTS)
 @BUILD_AFIDS_TRUE@subsamp_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 @BUILD_AFIDS_TRUE@	$(am__DEPENDENCIES_1)
-subsamp_LINK = $(LIBTOOL) $(AM_V_lt) --tag=F77 $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(F77LD) $(subsamp_FFLAGS) \
-	$(FFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 am__substr2tcl_SOURCES_DIST = @srcafids@/substr2tcl/substr2tcl.c
 @BUILD_AFIDS_TRUE@am_substr2tcl_OBJECTS = @srcafids@/substr2tcl/substr2tcl-substr2tcl.$(OBJEXT)
 substr2tcl_OBJECTS = $(am_substr2tcl_OBJECTS)
@@ -8001,9 +8001,6 @@ dist_afids_DATA = $(am__append_6) $(am__append_7) $(am__append_8) \
 @BUILD_AFIDS_TRUE@subsamp_SOURCES = @srcafids@/subsamp/subsamp.F
 @BUILD_AFIDS_TRUE@subsamp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
 @BUILD_AFIDS_TRUE@subsamp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
-# The mcmodel=medium option is needs to avoid an error
-# relocation truncated to fit: R_X86_64_PC32 against `.bss'
-@BUILD_AFIDS_TRUE@subsamp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS) -mcmodel=medium
 @BUILD_AFIDS_TRUE@EXTRA_substr2tcl_DEPENDENCIES = $(CARTO_BUILD_DEPEND) substr2tcl.pdf
 @BUILD_AFIDS_TRUE@substr2tcl_SOURCES = @srcafids@/substr2tcl/substr2tcl.c
 @BUILD_AFIDS_TRUE@substr2tcl_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
@@ -11836,7 +11833,7 @@ stretch$(EXEEXT): $(stretch_OBJECTS) $(stretch_DEPENDENCIES) $(EXTRA_stretch_DEP
 
 subsamp$(EXEEXT): $(subsamp_OBJECTS) $(subsamp_DEPENDENCIES) $(EXTRA_subsamp_DEPENDENCIES) 
 	@rm -f subsamp$(EXEEXT)
-	$(AM_V_F77LD)$(subsamp_LINK) $(subsamp_OBJECTS) $(subsamp_LDADD) $(LIBS)
+	$(AM_V_F77LD)$(F77LINK) $(subsamp_OBJECTS) $(subsamp_LDADD) $(LIBS)
 @srcafids@/substr2tcl/$(am__dirstamp):
 	@$(MKDIR_P) @srcafids@/substr2tcl
 	@: >>@srcafids@/substr2tcl/$(am__dirstamp)
@@ -13917,10 +13914,10 @@ am--depfiles: $(am__depfiles_remade)
 	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stretch_CPPFLAGS) $(CPPFLAGS) $(stretch_FFLAGS) $(FFLAGS) -c -o @srcafids@/stretch/stretch-stati.obj `if test -f '@srcafids@/stretch/stati.F'; then $(CYGPATH_W) '@srcafids@/stretch/stati.F'; else $(CYGPATH_W) '$(srcdir)/@srcafids@/stretch/stati.F'; fi`
 
 @srcafids@/subsamp/subsamp-subsamp.o: @srcafids@/subsamp/subsamp.F
-	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(subsamp_CPPFLAGS) $(CPPFLAGS) $(subsamp_FFLAGS) $(FFLAGS) -c -o @srcafids@/subsamp/subsamp-subsamp.o `test -f '@srcafids@/subsamp/subsamp.F' || echo '$(srcdir)/'`@srcafids@/subsamp/subsamp.F
+	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(subsamp_CPPFLAGS) $(CPPFLAGS) $(AM_FFLAGS) $(FFLAGS) -c -o @srcafids@/subsamp/subsamp-subsamp.o `test -f '@srcafids@/subsamp/subsamp.F' || echo '$(srcdir)/'`@srcafids@/subsamp/subsamp.F
 
 @srcafids@/subsamp/subsamp-subsamp.obj: @srcafids@/subsamp/subsamp.F
-	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(subsamp_CPPFLAGS) $(CPPFLAGS) $(subsamp_FFLAGS) $(FFLAGS) -c -o @srcafids@/subsamp/subsamp-subsamp.obj `if test -f '@srcafids@/subsamp/subsamp.F'; then $(CYGPATH_W) '@srcafids@/subsamp/subsamp.F'; else $(CYGPATH_W) '$(srcdir)/@srcafids@/subsamp/subsamp.F'; fi`
+	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(subsamp_CPPFLAGS) $(CPPFLAGS) $(AM_FFLAGS) $(FFLAGS) -c -o @srcafids@/subsamp/subsamp-subsamp.obj `if test -f '@srcafids@/subsamp/subsamp.F'; then $(CYGPATH_W) '@srcafids@/subsamp/subsamp.F'; else $(CYGPATH_W) '$(srcdir)/@srcafids@/subsamp/subsamp.F'; fi`
 
 @srcafids@/tclmath/tclmath-tclmath.o: @srcafids@/tclmath/tclmath.F
 	$(AM_V_PPF77)$(F77) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tclmath_CPPFLAGS) $(CPPFLAGS) $(tclmath_FFLAGS) $(FFLAGS) -c -o @srcafids@/tclmath/tclmath-tclmath.o `test -f '@srcafids@/tclmath/tclmath.F' || echo '$(srcdir)/'`@srcafids@/tclmath/tclmath.F

@@ -2407,7 +2407,7 @@ subsamp_LDADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
 subsamp_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS) $(CODE_COVERAGE_CPPFLAGS)
 # The mcmodel=medium option is needs to avoid an error
 # relocation truncated to fit: R_X86_64_PC32 against `.bss'
-subsamp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS) -mcmodel=medium
+#subsamp_FFLAGS = $(AM_FFLAGS) $(CODE_COVERAGE_FFLAGS) -mcmodel=medium
 
 # Program substr2tcl - added 2013-10-02
 afids_PROGRAMS += substr2tcl
