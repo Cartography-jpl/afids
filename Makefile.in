@@ -6826,7 +6826,7 @@ dist_afids_DATA = $(am__append_6) $(am__append_7) $(am__append_8) \
 @BUILD_AFIDS_TRUE@	$(RPC_CPPFLAGS) $(CARTO_CFLAGS) \
 @BUILD_AFIDS_TRUE@	$(CODE_COVERAGE_CPPFLAGS)
 @BUILD_AFIDS_TRUE@libafidshelper_la_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
-@BUILD_AFIDS_TRUE@libafidshelper_la_CXXFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CXXFLAGS)
+@BUILD_AFIDS_TRUE@libafidshelper_la_CXXFLAGS = $(AM_CXXFLAGS) $(CODE_COVERAGE_CXXFLAGS)
 @BUILD_AFIDS_TRUE@EXTRA_libafidshelper_la_DEPENDENCIES = $(CARTO_BUILD_DEPEND)
 
 # Not really a dependency of acca, but we tack it on here to force the
@@ -8173,17 +8173,17 @@ dist_afids_DATA = $(am__append_6) $(am__append_7) $(am__append_8) \
 @BUILD_AFIDS_TRUE@libvif_la_CPPFLAGS = $(AM_CPPFLAGS) \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/sample/inc \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/inc
-@BUILD_AFIDS_TRUE@libvif_la_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+@BUILD_AFIDS_TRUE@libvif_la_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
 @BUILD_AFIDS_TRUE@Notify_App_CPPFLAGS = $(AM_CPPFLAGS) \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/sample/inc \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/inc
-@BUILD_AFIDS_TRUE@Notify_App_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+@BUILD_AFIDS_TRUE@Notify_App_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
 @BUILD_AFIDS_TRUE@vif_CPPFLAGS = $(AM_CPPFLAGS) \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/sample/inc \
 @BUILD_AFIDS_TRUE@	-I$(srcdir)/$(srcfilenotify)/api/inc
-@BUILD_AFIDS_TRUE@vif_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+@BUILD_AFIDS_TRUE@vif_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
 @BUILD_AFIDS_TRUE@vif_LDADD = libvif.la
-@BUILD_AFIDS_TRUE@libfilenotify_la_CXXFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS) $(OPENSSL_CFLAGS)
+@BUILD_AFIDS_TRUE@libfilenotify_la_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS) $(OPENSSL_CFLAGS)
 @BUILD_AFIDS_TRUE@libfilenotify_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/$(srcfilenotify)/api/inc
 @BUILD_AFIDS_TRUE@libfilenotify_la_LIBADD = $(OPENSSL_LIBS) $(PTHREAD_LIBS)
 @BUILD_AFIDS_TRUE@notifyTcl_la_DEPENDENCIES = libvif.la

@@ -202,7 +202,7 @@ libafidshelper_la_LIBADD = $(CARTO_LIBS) $(CODE_COVERAGE_LIBS)
 libafidshelper_la_CPPFLAGS = $(AM_CPPFLAGS) $(RPC_CPPFLAGS) $(CARTO_CFLAGS)
 libafidshelper_la_CPPFLAGS+= $(CODE_COVERAGE_CPPFLAGS)
 libafidshelper_la_CFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CFLAGS)
-libafidshelper_la_CXXFLAGS = $(AM_CFLAGS) $(CODE_COVERAGE_CXXFLAGS)
+libafidshelper_la_CXXFLAGS = $(AM_CXXFLAGS) $(CODE_COVERAGE_CXXFLAGS)
 EXTRA_libafidshelper_la_DEPENDENCIES = $(CARTO_BUILD_DEPEND)
 
 # All of the PDF files are listed separately at the end.
