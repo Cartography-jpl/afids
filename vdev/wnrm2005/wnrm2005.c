@@ -176,7 +176,7 @@ void main44(void)
       getBuf(iun[nids-1], snrbuf, nl, ns);
 
    /* Apply wiener restoration filter */
-   wiener(im, otf, nl, ns, oun, snrbuf, nids, iun);
+   wiener(im, otf, nl, ns, oun, snrbuf, iun);
 
    mz_free2((unsigned char**)im, nl);
    mz_free2((unsigned char**)otf, nl);
