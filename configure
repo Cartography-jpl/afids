@@ -41640,6 +41640,25 @@ CPPFLAGS="$saved_CPPFLAGS"
 esac
 fi
 
+ac_fn_c_check_header_compile "$LINENO" "rpc/rpc.h" "ac_cv_header_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_rpc_rpc_h" = xyes
+then :
+
+else case e in #(
+  e)
+saved_CPPFLAGS=$CPPFLAGS
+CPPFLAGS="$saved_CPPFLAGS -I$CONDA_PREFIX/include/tirpc"
+ac_fn_c_check_header_compile "$LINENO" "tirpc/rpc/rpc.h" "ac_cv_header_tirpc_rpc_rpc_h" "$ac_includes_default"
+if test "x$ac_cv_header_tirpc_rpc_rpc_h" = xyes
+then :
+  have_tirpc="yes"; RPC_CPPFLAGS="-I$CONDA_PREFIX/include/tirpc"
+fi
+
+CPPFLAGS="$saved_CPPFLAGS"
+ ;;
+esac
+fi
+
  if test "$have_tirpc" = "yes"; then
   HAVE_NEW_TIRPC_TRUE=
   HAVE_NEW_TIRPC_FALSE='#'
