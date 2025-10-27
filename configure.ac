@@ -87,25 +87,9 @@ RPC_CPPFLAGS=""
 AC_CHECK_HEADER([rpc/rpc.h],,
 [
 saved_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$saved_CPPFLAGS -I/usr/include/tirpc"
+CPPFLAGS="$saved_CPPFLAGS -I$CONDA_PREFIX/include/tirpc -I$PREFIX/include/tirpc -I/usr/include/tirpc "
 AC_CHECK_HEADER([tirpc/rpc/rpc.h],
-		[have_tirpc="yes"; RPC_CPPFLAGS="-I/usr/include/tirpc"])
-CPPFLAGS="$saved_CPPFLAGS"		
-])
-AC_CHECK_HEADER([rpc/rpc.h],,
-[
-saved_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$saved_CPPFLAGS -I$CONDA_PREFIX/include/tirpc"
-AC_CHECK_HEADER([tirpc/rpc/rpc.h],
-		[have_tirpc="yes"; RPC_CPPFLAGS="-I$CONDA_PREFIX/include/tirpc"])
-CPPFLAGS="$saved_CPPFLAGS"		
-])
-AC_CHECK_HEADER([rpc/rpc.h],,
-[
-saved_CPPFLAGS=$CPPFLAGS
-CPPFLAGS="$saved_CPPFLAGS -I$PREFIX/include/tirpc"
-AC_CHECK_HEADER([tirpc/rpc/rpc.h],
-		[have_tirpc="yes"; RPC_CPPFLAGS="-I$PREFIX/include/tirpc"])
+		[have_tirpc="yes"; RPC_CPPFLAGS="-I$CONDA_PREFIX/include/tirpc -I$PREFIX/include/tirpc -I/usr/include/tirpc"])
 CPPFLAGS="$saved_CPPFLAGS"		
 ])
 AM_CONDITIONAL([HAVE_NEW_TIRPC],[test "$have_tirpc" = "yes"])
